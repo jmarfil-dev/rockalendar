@@ -140,16 +140,18 @@ AS $$
 
         -- Fallback para prefijos/fragmentos en query corta ("milen" -> "milenrama")
         -- Se activa SOLO para queries cortas para mantener rendimiento.
-        OR (length(q.q_norm) <= 6 AND e.search_text LIKE '%' || q.q_norm || '%')
+        OR (length(q.q_norm) <= 10 AND e.search_text LIKE '%' || q.q_norm || '%')
 
         -- TRGM tolerante (sirve para typos y para query corta en texto largo)
         OR word_similarity(e.search_text, q.q_norm) >=
            CASE
-             WHEN length(q.q_norm) <= 3 THEN 0.12
-             WHEN length(q.q_norm) <= 6 THEN 0.18
-             WHEN length(q.q_norm) <= 12 THEN 0.25
+             WHEN length(q.q_norm) <= 3 THEN 0.10
+             WHEN length(q.q_norm) <= 6 THEN 0.12
+             WHEN length(q.q_norm) <= 10 THEN 0.14
+             WHEN length(q.q_norm) <= 12 THEN 0.18
              ELSE p_min_similarity
            END
+
         OR e.search_text % q.q_norm
         OR similarity(e.search_text, q.q_norm) >= p_min_similarity
       )
@@ -224,9 +226,10 @@ AS $$
           OR e.search_text LIKE '%' || t.term || '%'
           OR word_similarity(e.search_text, t.term) >=
              CASE
-               WHEN length(t.term) <= 3 THEN 0.12
-               WHEN length(t.term) <= 6 THEN 0.18
-               WHEN length(t.term) <= 12 THEN 0.25
+               WHEN length(q.q_norm) <= 3 THEN 0.10
+               WHEN length(q.q_norm) <= 6 THEN 0.12
+               WHEN length(q.q_norm) <= 10 THEN 0.14
+               WHEN length(q.q_norm) <= 12 THEN 0.18
                ELSE p_min_similarity
              END
       )

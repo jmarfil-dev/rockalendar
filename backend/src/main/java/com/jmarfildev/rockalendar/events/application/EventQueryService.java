@@ -16,6 +16,7 @@ import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
+import com.jmarfildev.rockalendar.config.PublicSearchProperties;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
@@ -40,6 +41,7 @@ public class EventQueryService {
     private final EventRepository eRepository;
     private final EventSearchPublicRepository espRepository;
     private final EventMapper mapper;
+    private final PublicSearchProperties props;
 
     @Transactional(readOnly = true)
     public Page<EventPublicDto> searchPublic(Optional<String> query,
@@ -62,9 +64,9 @@ public class EventQueryService {
             q = "";
         }
 
-        double minSim = recommendMinSimilarity(q);
-        double ftsW = 2.0;
-        double trgmW = 1.0;
+        double minSim = props.minSimilarity();
+        double ftsW = props.ftsWeight();
+        double trgmW = props.trgmWeight();
 
         var from = dateFrom.orElse(null);
         var to = dateTo.orElse(null);
@@ -90,23 +92,6 @@ public class EventQueryService {
         return eRepository.findByIdAndStatus(id, EventStatus.APPROVED)
                 .map(mapper::toPublicDto)
                 .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
-    }
-
-    private double recommendMinSimilarity(String q) {
-        int len = q == null ? 0 : q.length();
-        if (len <= 0) {
-            return 1.0;
-        }
-        if (len <= 3) {
-            return 0.15;
-        }
-        if (len <= 6) {
-            return 0.25;
-        }
-        if (len <= 12) {
-            return 0.30;
-        }
-        return 0.35;
     }
 
     private boolean hasMultipleTokens(String q) {

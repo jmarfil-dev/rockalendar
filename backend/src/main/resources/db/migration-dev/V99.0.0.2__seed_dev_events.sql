@@ -5,7 +5,8 @@ INSERT INTO artists (id, name, slug) VALUES
   ('bbbbbbbb-0000-0000-0000-000000000001', 'A Granel', 'a granel'),
   ('bbbbbbbb-0000-0000-0000-000000000002', 'Milenrama', 'milenrama'),
   ('bbbbbbbb-0000-0000-0000-000000000003', 'Los de Marras', 'los de marras'),
-  ('bbbbbbbb-0000-0000-0000-000000000004', 'Ska-P', 'ska p')
+  ('bbbbbbbb-0000-0000-0000-000000000004', 'Ska-P', 'ska p'),
+  ('bbbbbbbb-0000-0000-0000-000000000005', 'Metallica', 'metallica')
 ON CONFLICT (slug) DO NOTHING;
 
 -- ============================================================
@@ -88,6 +89,19 @@ INSERT INTO events (
     'valencia',
     'APPROVED',
     'aaaaaaaa-0000-0000-0000-000000000001'
+  ),
+  (
+    'cccccccc-0000-0000-0000-000000000006',
+    'Metallica en Barcelona',
+    'Un concierto de tantos que dan',
+    '2026-05-11T22:00:00Z',
+    'Plaza de Toros',
+    'plaza de toros',
+    (SELECT id FROM provinces WHERE name = 'Barcelona'),
+    'València',
+    'valencia',
+    'APPROVED',
+    'aaaaaaaa-0000-0000-0000-000000000001'
   );
 
 -- ============================================================
@@ -96,5 +110,8 @@ INSERT INTO events (
 INSERT INTO event_artists (event_id, artist_id) VALUES
   ('cccccccc-0000-0000-0000-000000000001', 'bbbbbbbb-0000-0000-0000-000000000004'),
   ('cccccccc-0000-0000-0000-000000000002', 'bbbbbbbb-0000-0000-0000-000000000002'),
-  ('cccccccc-0000-0000-0000-000000000003', 'bbbbbbbb-0000-0000-0000-000000000003')
+  ('cccccccc-0000-0000-0000-000000000003', 'bbbbbbbb-0000-0000-0000-000000000003'),
+  ('cccccccc-0000-0000-0000-000000000004', 'bbbbbbbb-0000-0000-0000-000000000001'),
+  ('cccccccc-0000-0000-0000-000000000005', 'bbbbbbbb-0000-0000-0000-000000000004'),
+  ('cccccccc-0000-0000-0000-000000000006', 'bbbbbbbb-0000-0000-0000-000000000005')
 ON CONFLICT DO NOTHING;
