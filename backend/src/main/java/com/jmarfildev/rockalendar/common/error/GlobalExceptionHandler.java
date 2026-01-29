@@ -18,6 +18,16 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(NotFoundException.class)
+    public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        pd.setTitle(HttpStatus.NOT_FOUND.getReasonPhrase());
+        pd.setDetail(ex.getMessage());
+        pd.setType(URI.create("urn:rockalendar:error:not-found"));
+        pd.setProperty("timestamp", OffsetDateTime.now());
+        return pd;
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ProblemDetail handleBadRequest(BadRequestException ex) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
