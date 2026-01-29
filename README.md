@@ -69,8 +69,7 @@ La documentación del proyecto vive en la carpeta [`docs/`](docs/) y está pensa
 
 ## Arranque rápido (entorno local)
 
-> Las instrucciones completas de desarrollo están documentadas en
-> [**Guía de desarrollo**](docs/08-guia-de-desarrollo.md).
+> Las instrucciones completas de desarrollo están documentadas en [**Guía de desarrollo**](docs/08-guia-de-desarrollo.md).
 
 ### Requisitos
 
@@ -98,6 +97,28 @@ Para resetear datos (borra volumen):
 docker compose -f docker/compose.yml -p rockalendar down -v
 docker compose -f docker/compose.yml -p rockalendar up -d
 ~~~
+
+### 2) Backend
+
+~~~
+cd backend
+mvn clean spring-boot:run
+~~~
+
+La API estará disponible en:
+
+- [http://localhost:8080](http://localhost:8080)
+
+Si usas perfiles: `-Dspring-boot.run.profiles=dev` o mediante variable de entorno `SPRING_PROFILES_ACTIVE=dev`
+
+Perfiles disponibles:
+
+- `dev`
+- `local`
+
+### 3) Frontend
+
+🚧 Próximamente
 
 ## Desarrolladores
 
