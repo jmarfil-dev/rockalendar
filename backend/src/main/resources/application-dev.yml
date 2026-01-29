@@ -4,6 +4,7 @@ spring:
 
   flyway:
     locations: classpath:db/migration,classpath:db/migration-dev
+    outOfOrder: true # Para migrar las versiones 1.x.x.x aunque ya estén migradas las 99.x.x.x
 
   jackson:
     time-zone: UTC
