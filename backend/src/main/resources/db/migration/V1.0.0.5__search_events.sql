@@ -70,7 +70,7 @@ CREATE INDEX IF NOT EXISTS idx_event_artists_artist_event ON event_artists (arti
 
 -- Función: búsqueda pública (solo APPROVED) con filtros:
 -- query, fechas, provincia, ciudad(slug), artista(slug)
-CREATE FUNCTION search_events(
+CREATE FUNCTION search_public_events(
   p_q_raw text,
   p_min_similarity double precision,
   p_fts_weight double precision,
@@ -158,7 +158,7 @@ $$;
 
 
 -- Función más pesada pero que solo se ejecutará si la principal search_events() no devuelve resultados
-CREATE FUNCTION search_events_or(
+CREATE FUNCTION search_public_events_fallback(
   p_q_raw text,
   p_min_similarity double precision,
   p_fts_weight double precision,

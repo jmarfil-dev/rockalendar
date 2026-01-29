@@ -37,8 +37,8 @@ import com.jmarfildev.rockalendar.events.persistence.EventSearchPublicRepository
 @RequiredArgsConstructor
 public class EventQueryService {
 
-    private final EventRepository eventRepository;
-    private final EventSearchPublicRepository eventSearchRepository;
+    private final EventRepository eRepository;
+    private final EventSearchPublicRepository espRepository;
     private final EventMapper mapper;
 
     @Transactional(readOnly = true)
@@ -73,12 +73,12 @@ public class EventQueryService {
         String citySlug = city.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
         String artistSlug = artist.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
 
-        var results = eventSearchRepository.searchPublic(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
+        var results = espRepository.searchPublicEvents(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
                 .map(mapper::toPublicDto);
 
         // Si no hay resultados y la query tiene más de dos palabras se intenta la segunda consulta
         if (hasMultipleTokens(q) && results.isEmpty()) {
-            return eventSearchRepository.searchPublicOrFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
+            return espRepository.searchPublicEventsFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
                     .map(mapper::toPublicDto);
         }
 
@@ -87,7 +87,7 @@ public class EventQueryService {
 
     @Transactional(readOnly = true)
     public EventPublicDto getPublicById(UUID id) {
-        return eventRepository.findByIdAndStatus(id, EventStatus.APPROVED)
+        return eRepository.findByIdAndStatus(id, EventStatus.APPROVED)
                 .map(mapper::toPublicDto)
                 .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
     }
