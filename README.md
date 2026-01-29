@@ -67,6 +67,38 @@ La documentación del proyecto vive en la carpeta [`docs/`](docs/) y está pensa
 - Flyway
 - Frontend: por decidir
 
+## Arranque rápido (entorno local)
+
+> Las instrucciones completas de desarrollo están documentadas en
+> [**Guía de desarrollo**](docs/08-guia-de-desarrollo.md).
+
+### Requisitos
+
+- Java 21
+- Maven 3.9+
+- Docker + Docker Compose
+
+### 1) Levantar infraestructura (PostgreSQL)
+
+Desde la raíz del repositorio:
+
+~~~
+docker compose -f docker/compose.yml -p rockalendar up -d
+~~~
+
+Para parar:
+
+~~~
+docker compose -f docker/compose.yml -p rockalendar down
+~~~
+
+Para resetear datos (borra volumen):
+
+~~~
+docker compose -f docker/compose.yml -p rockalendar down -v
+docker compose -f docker/compose.yml -p rockalendar up -d
+~~~
+
 ## Desarrolladores
 
 Proyecto personal mantenido por su autor: jmarfil
