@@ -12,6 +12,18 @@ Este repositorio es un **monorepo** que contiene:
 - tooling local (Docker, Postman)
 - documentación del proyecto
 
+## Índice
+
+- [Estado del proyecto](#estado-del-proyecto)
+- [Estructura del repositorio](#estructura-del-repositorio)
+- [Documentación](#documentacion)
+- [Tecnologías utilizadas](#tecnologias-utilizadas)
+- [Arranque rápido (entorno local)](#arranque-rapido-\(entorno-local\))
+- [Seguridad (JWT)](#seguridad-\(jwt\))
+- [Flujo de trabajo (Git)](#flujo-de-trabajo-\(git\))
+- [Desarrolladores](#desarrolladores)
+- [Licencia](#licencia)
+
 ## Estado del proyecto
 
 🛠️ En desarrollo activo\
@@ -119,6 +131,24 @@ Perfiles disponibles:
 ### 3) Frontend
 
 🚧 Próximamente
+
+## Seguridad (JWT)
+
+🚧 Próximamente
+
+## Flujo de trabajo (Git)
+
+- Rama principal: `main`
+- Todo cambio entra mediante **Pull Request**
+- Ramas:
+  - `feature/<tema>`
+  - `fix/<tema>`
+  - `docs/<tema>`
+- Los releases siguen los hitos del roadmap (`v0.x`, `v1.0.0`)
+- Se mantiene un `CHANGELOG.md`
+
+> Detalles completos en la
+> [**Guía de desarrollo**](docs/08-guia-de-desarrollo.md)
 
 ## Desarrolladores
 
