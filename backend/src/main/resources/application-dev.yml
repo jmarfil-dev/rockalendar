@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    show-sql: true
+
+  flyway:
+    locations: classpath:db/migration,classpath:db/migration-dev
+
+  jackson:
+    time-zone: UTC
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+logging:
+  level:
+    org.hibernate.SQL: debug
