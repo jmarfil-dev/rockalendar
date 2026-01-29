@@ -28,3 +28,11 @@ logging:
   level:
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+# propiedades de la app
+rockalendar:
+  search:
+    public:
+      minSimilarity: 0.30
+      ftsWeight: 2.0
+      trgmWeight: 1.0

@@ -16,6 +16,7 @@ import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
+import com.jmarfildev.rockalendar.config.PublicSearchProperties;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
@@ -37,9 +38,10 @@ import com.jmarfildev.rockalendar.events.persistence.EventSearchPublicRepository
 @RequiredArgsConstructor
 public class EventQueryService {
 
-    private final EventRepository eventRepository;
-    private final EventSearchPublicRepository eventSearchRepository;
+    private final EventRepository eRepository;
+    private final EventSearchPublicRepository espRepository;
     private final EventMapper mapper;
+    private final PublicSearchProperties props;
 
     @Transactional(readOnly = true)
     public Page<EventPublicDto> searchPublic(Optional<String> query,
@@ -62,9 +64,9 @@ public class EventQueryService {
             q = "";
         }
 
-        double minSim = recommendMinSimilarity(q);
-        double ftsW = 2.0;
-        double trgmW = 1.0;
+        double minSim = props.minSimilarity();
+        double ftsW = props.ftsWeight();
+        double trgmW = props.trgmWeight();
 
         var from = dateFrom.orElse(null);
         var to = dateTo.orElse(null);
@@ -73,12 +75,12 @@ public class EventQueryService {
         String citySlug = city.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
         String artistSlug = artist.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
 
-        var results = eventSearchRepository.searchPublic(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
+        var results = espRepository.searchPublicEvents(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
                 .map(mapper::toPublicDto);
 
         // Si no hay resultados y la query tiene más de dos palabras se intenta la segunda consulta
         if (hasMultipleTokens(q) && results.isEmpty()) {
-            return eventSearchRepository.searchPublicOrFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
+            return espRepository.searchPublicEventsFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
                     .map(mapper::toPublicDto);
         }
 
@@ -87,26 +89,9 @@ public class EventQueryService {
 
     @Transactional(readOnly = true)
     public EventPublicDto getPublicById(UUID id) {
-        return eventRepository.findByIdAndStatus(id, EventStatus.APPROVED)
+        return eRepository.findByIdAndStatus(id, EventStatus.APPROVED)
                 .map(mapper::toPublicDto)
                 .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
-    }
-
-    private double recommendMinSimilarity(String q) {
-        int len = q == null ? 0 : q.length();
-        if (len <= 0) {
-            return 1.0;
-        }
-        if (len <= 3) {
-            return 0.15;
-        }
-        if (len <= 6) {
-            return 0.25;
-        }
-        if (len <= 12) {
-            return 0.30;
-        }
-        return 0.35;
     }
 
     private boolean hasMultipleTokens(String q) {

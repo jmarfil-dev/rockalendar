@@ -32,7 +32,7 @@ public interface EventSearchPublicRepository extends Repository<Event, UUID> {
                       e.city_name           AS cityName,
                       COALESCE(art.artists, ARRAY[]::text[]) AS artists,
                       e.source_url          AS sourceUrl
-                    FROM search_events(
+                    FROM search_public_events(
                       :q, :minSim, :ftsW, :trgmW,
                       :dateFrom, :dateTo,
                       :provinceId, :citySlug, :artistSlug
@@ -61,16 +61,16 @@ public interface EventSearchPublicRepository extends Repository<Event, UUID> {
                     )
                     """,
             nativeQuery = true)
-    Page<EventPublicSearchProjection> searchPublic(@Param("q") String query,
-                                                   @Param("minSim") double minSimilarity,
-                                                   @Param("ftsW") double ftsWeight,
-                                                   @Param("trgmW") double trgmWeight,
-                                                   @Param("dateFrom") OffsetDateTime dateFrom,
-                                                   @Param("dateTo") OffsetDateTime dateTo,
-                                                   @Param("provinceId") UUID provinceId,
-                                                   @Param("citySlug") String citySlug,
-                                                   @Param("artistSlug") String artistSlug,
-                                                   Pageable pageable);
+    Page<EventPublicSearchProjection> searchPublicEvents(@Param("q") String query,
+                                                         @Param("minSim") double minSimilarity,
+                                                         @Param("ftsW") double ftsWeight,
+                                                         @Param("trgmW") double trgmWeight,
+                                                         @Param("dateFrom") OffsetDateTime dateFrom,
+                                                         @Param("dateTo") OffsetDateTime dateTo,
+                                                         @Param("provinceId") UUID provinceId,
+                                                         @Param("citySlug") String citySlug,
+                                                         @Param("artistSlug") String artistSlug,
+                                                         Pageable pageable);
 
     @Query(
             value = """
@@ -86,7 +86,7 @@ public interface EventSearchPublicRepository extends Repository<Event, UUID> {
                       e.city_name           AS cityName,
                       COALESCE(art.artists, ARRAY[]::text[]) AS artists,
                       e.source_url          AS sourceUrl
-                      FROM search_events_or(
+                      FROM search_public_events_fallback(
                         :q, :minSim, :ftsW, :trgmW,
                         :dateFrom, :dateTo,
                         :provinceId, :citySlug, :artistSlug
@@ -115,14 +115,14 @@ public interface EventSearchPublicRepository extends Repository<Event, UUID> {
                       )
                     """,
             nativeQuery = true)
-    Page<EventPublicSearchProjection> searchPublicOrFallback(@Param("q") String query,
-                                                             @Param("minSim") double minSimilarity,
-                                                             @Param("ftsW") double ftsWeight,
-                                                             @Param("trgmW") double trgmWeight,
-                                                             @Param("dateFrom") OffsetDateTime dateFrom,
-                                                             @Param("dateTo") OffsetDateTime dateTo,
-                                                             @Param("provinceId") UUID provinceId,
-                                                             @Param("citySlug") String citySlug,
-                                                             @Param("artistSlug") String artistSlug,
-                                                             Pageable pageable);
+    Page<EventPublicSearchProjection> searchPublicEventsFallback(@Param("q") String query,
+                                                                 @Param("minSim") double minSimilarity,
+                                                                 @Param("ftsW") double ftsWeight,
+                                                                 @Param("trgmW") double trgmWeight,
+                                                                 @Param("dateFrom") OffsetDateTime dateFrom,
+                                                                 @Param("dateTo") OffsetDateTime dateTo,
+                                                                 @Param("provinceId") UUID provinceId,
+                                                                 @Param("citySlug") String citySlug,
+                                                                 @Param("artistSlug") String artistSlug,
+                                                                 Pageable pageable);
 }
