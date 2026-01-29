@@ -1,0 +1,10 @@
+package com.jmarfildev.rockalendar.auth.api.dto;
+
+import java.time.Instant;
+
+/**
+ * @author jmarfil
+ *
+ */
+public record LoginResponse(String accessToken,
+                            Instant expiresAt) {}

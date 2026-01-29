@@ -5,11 +5,14 @@ import java.time.OffsetDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import com.jmarfildev.rockalendar.auth.application.AuthService;
 
 /**
  * @author jmarfil
@@ -17,6 +20,32 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BadRequestException.class)
+    public ProblemDetail handleBadRequest(BadRequestException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        pd.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
+        pd.setDetail(ex.getMessage());
+        pd.setType(URI.create("urn:rockalendar:error:bad-request"));
+        pd.setProperty("timestamp", OffsetDateTime.now());
+        return pd;
+    }
+
+    /**
+     * Para capturar la excepción que lanza {@link AuthService}.
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ProblemDetail handleBadCredentials(BadCredentialsException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        pd.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        pd.setDetail(ErrorMessages.INVALID_CREDENTIALS);
+        pd.setType(URI.create("urn:rockalendar:error:unauthorized"));
+        pd.setProperty("timestamp", OffsetDateTime.now());
+        return pd;
+    }
 
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
@@ -28,12 +57,12 @@ public class GlobalExceptionHandler {
         return pd;
     }
 
-    @ExceptionHandler(BadRequestException.class)
-    public ProblemDetail handleBadRequest(BadRequestException ex) {
-        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        pd.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
+    @ExceptionHandler(ForbiddenException.class)
+    public ProblemDetail handleForbidden(ForbiddenException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        pd.setTitle(HttpStatus.FORBIDDEN.getReasonPhrase());
         pd.setDetail(ex.getMessage());
-        pd.setType(URI.create("urn:rockalendar:error:bad-request"));
+        pd.setType(URI.create("urn:rockalendar:error:forbidden"));
         pd.setProperty("timestamp", OffsetDateTime.now());
         return pd;
     }
