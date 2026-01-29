@@ -2,6 +2,8 @@ package com.jmarfildev.rockalendar.artists.api;
 
 import java.util.UUID;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -23,9 +25,9 @@ public class ArtistAdminController implements ArtistAdminApi {
     private final ArtistMapper mapper;
 
     @Override
-    public ArtistDto createArtist(CreateArtistRequest request) {
-        // TODO: userId sacado de jwt
-        UUID userId = UUID.fromString("aaaaaaaa-0000-0000-0000-000000000003"); // usuario mock en dev
+    @PreAuthorize("hasAnyRole('MODERATOR','ADMIN')")
+    public ArtistDto createArtist(Jwt jwt, CreateArtistRequest request) {
+        UUID userId = UUID.fromString(jwt.getSubject());
         return mapper.toDto(artistService.createArtist(request, userId));
     }
 

@@ -24,6 +24,12 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+security:
+  jwt:
+    secret: "${JWT_SECRET:?JWT_SECRET environment variable must be set}"
+    issuer: "rockalendar"
+    ttl-minutes: 120
+
 logging:
   level:
     org.hibernate.SQL: trace

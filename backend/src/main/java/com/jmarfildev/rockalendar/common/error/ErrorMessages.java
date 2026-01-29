@@ -18,4 +18,7 @@ public final class ErrorMessages {
     public static final String ARTIST_ALREADY_EXISTS = "Artist already exists";
     public static final String INVALID_DATE_RANGE = "Invalid date range: dateFrom must be <= dateTo";
     public static final String PAGE_SIZE_TOO_LARGE = "page size exceeds the maximum allowed limit: " + Constants.maxPageSize;
+
+    // Unauthorized
+    public static final String INVALID_CREDENTIALS = "Incorrect email or password";
 }
