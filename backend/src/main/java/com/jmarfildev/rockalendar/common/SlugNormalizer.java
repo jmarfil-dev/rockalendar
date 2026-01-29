@@ -18,9 +18,9 @@ public final class SlugNormalizer {
         // Quita tildes y otros signos diacríticos
         s = Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("\\p{M}+", "");
         // Elimina símbolos
-        s = s.replaceAll("[^a-z0-9]+", "");
-        // Elimina espacios
-        s = s.replaceAll("\\s+", "").trim();
+        s = s.replaceAll("[^a-z0-9]+", " ");
+        // Colapsa espacios múltiples, tabuladores y saltos de línea
+        s = s.replaceAll("\\s+", " ").trim();
 
         return s;
     }
