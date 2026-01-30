@@ -2,11 +2,13 @@ package com.jmarfildev.rockalendar.common.error;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.ErrorResponseException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,6 +22,26 @@ import com.jmarfildev.rockalendar.auth.application.AuthService;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        pd.setTitle("Validation error");
+        pd.setDetail("Request validation failed");
+        pd.setType(URI.create("urn:rockalendar:error:validation"));
+        pd.setProperty("timestamp", OffsetDateTime.now());
+
+        var errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(
+                        fe -> fe.getField(),
+                        fe -> fe.getDefaultMessage() == null ? "Invalid value" : fe.getDefaultMessage(),
+                        (a, b) -> a));
+        pd.setProperty("errors", errors);
+
+        return pd;
+    }
 
     @ExceptionHandler(BadRequestException.class)
     public ProblemDetail handleBadRequest(BadRequestException ex) {

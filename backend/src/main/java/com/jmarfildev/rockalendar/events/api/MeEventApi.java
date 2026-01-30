@@ -1,0 +1,39 @@
+package com.jmarfildev.rockalendar.events.api;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
+import com.jmarfildev.rockalendar.events.api.dto.ProposeEventRequest;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+
+/**
+ * @author jmarfil
+ *
+ */
+@Tag(name = "My Events", description = "Gestión de eventos del usuario autenticado")
+@SecurityRequirement(name = "bearerAuth")
+public interface MeEventApi {
+
+    @PostMapping("/api/events")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Proponer un nuevo evento",
+            description = "Permite al usuario autenticado proponer un nuevo evento. El evento quedará pendiente de moderación antes de ser visible públicamente.")
+    @ApiResponse(responseCode = "201", description = "Evento propuesto correctamente")
+    @ApiResponse(responseCode = "400", description = "Datos inválidos en la solicitud")
+    @ApiResponse(responseCode = "401", description = "Usuario no autenticado")
+    EventPrivateDto propose(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
+                            @Parameter(description = "Datos del evento a proponer",
+                                    required = true) @Valid @RequestBody ProposeEventRequest request);
+
+}
