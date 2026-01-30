@@ -3,11 +3,13 @@ package com.jmarfildev.rockalendar.support;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -19,6 +21,29 @@ import org.springframework.test.web.servlet.ResultActions;
 @Component
 @Profile("test")
 public class ContractApiTestUtils {
+
+    /*
+     * Auth
+     */
+
+    private JwtRequestPostProcessor authJwt(String role) {
+        return jwt().jwt(j -> j.subject(TestConstants.MOCK_USER_ID)
+                .claim("iss", "rockalendar")
+                .claim("email", TestConstants.MOCK_EMAIL)
+                .claim("roles", new String[] { role }));
+    }
+
+    public JwtRequestPostProcessor authJwt() {
+        return authJwt("ROLE_USER");
+    }
+
+    public JwtRequestPostProcessor authJwtModerator() {
+        return authJwt("ROLE_MODERATOR");
+    }
+
+    public JwtRequestPostProcessor authJwtAdmin() {
+        return authJwt("ROLE_ADMIN");
+    }
 
     /*
      * Assertions
