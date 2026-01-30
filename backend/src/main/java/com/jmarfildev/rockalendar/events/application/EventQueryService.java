@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.config.PublicSearchProperties;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
@@ -42,6 +44,18 @@ public class EventQueryService {
     private final EventSearchPublicRepository espRepository;
     private final EventMapper mapper;
     private final PublicSearchProperties props;
+
+    @Transactional(readOnly = true)
+    public Page<EventPublicDto> listHome(Pageable pageable) {
+        if (pageable.getPageSize() > Constants.maxPageSize) {
+            throw new BadRequestException(ErrorMessages.PAGE_SIZE_TOO_LARGE);
+        }
+
+        // "sanitiza" el sort (tu SQL ya tiene ORDER BY fijo)
+        Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        return espRepository.findHome(safePageable).map(mapper::toPublicDto);
+    }
 
     @Transactional(readOnly = true)
     public Page<EventPublicDto> searchPublic(Optional<String> query,

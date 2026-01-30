@@ -8,7 +8,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPublicHomeProjection;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicSearchProjection;
 import com.jmarfildev.rockalendar.events.domain.Event;
 
@@ -36,6 +38,13 @@ public interface EventMapper {
     default String mapProvinceName(Event event) {
         return event.getProvince() == null ? null : event.getProvince().getName();
     }
+
+    @Mapping(target = "artists", expression = "java(toList(projection.getArtists()))")
+    @Mapping(target = "startDateTime",
+            expression = "java(projection.getStartDateTime() == null ? null : projection.getStartDateTime().atOffset(java.time.ZoneOffset.UTC))")
+    @Mapping(target = "endDateTime",
+            expression = "java(projection.getEndDateTime() == null ? null : projection.getEndDateTime().atOffset(java.time.ZoneOffset.UTC))")
+    EventPublicDto toPublicDto(EventPublicHomeProjection projection);
 
     @Mapping(target = "artists", expression = "java(toList(projection.getArtists()))")
     @Mapping(target = "startDateTime",

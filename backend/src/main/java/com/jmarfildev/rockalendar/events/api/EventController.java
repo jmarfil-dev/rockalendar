@@ -24,7 +24,12 @@ public class EventController implements EventApi {
     private final EventQueryService queryService;
 
     @Override
-    public Page<EventPublicDto> search(Optional<String> query,
+    public Page<EventPublicDto> listHome(Pageable pageable) {
+        return queryService.listHome(pageable);
+    }
+
+    @Override
+    public Page<EventPublicDto> searchPublic(Optional<String> query,
                                        Optional<OffsetDateTime> dateFrom,
                                        Optional<OffsetDateTime> dateTo,
                                        Optional<UUID> provinceId,
@@ -35,7 +40,7 @@ public class EventController implements EventApi {
     }
 
     @Override
-    public EventPublicDto getById(UUID id) {
+    public EventPublicDto getPublicById(UUID id) {
         return queryService.getPublicById(id);
     }
 }

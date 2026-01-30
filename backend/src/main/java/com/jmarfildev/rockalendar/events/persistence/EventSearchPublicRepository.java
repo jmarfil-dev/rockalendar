@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
+import com.jmarfildev.rockalendar.events.api.dto.EventPublicHomeProjection;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicSearchProjection;
 import com.jmarfildev.rockalendar.events.domain.Event;
 
@@ -17,6 +18,47 @@ import com.jmarfildev.rockalendar.events.domain.Event;
  *
  */
 public interface EventSearchPublicRepository extends Repository<Event, UUID> {
+
+    @Query(
+            value = """
+                    SELECT
+                      e.id                  AS id,
+                      e.title               AS title,
+                      e.description         AS description,
+                      e.start_date_time     AS startDateTime,
+                      e.end_date_time       AS endDateTime,
+                      e.venue_name          AS venueName,
+                      e.province_id         AS provinceId,
+                      p.name                AS provinceName,
+                      e.city_name           AS cityName,
+                      COALESCE(art.artists, ARRAY[]::text[]) AS artists,
+                      e.source_url          AS sourceUrl
+                    FROM events e
+                    JOIN provinces p ON p.id = e.province_id
+                    LEFT JOIN LATERAL (
+                      SELECT array_agg(a.name ORDER BY a.name) AS artists
+                      FROM event_artists ea
+                      JOIN artists a ON a.id = ea.artist_id
+                      WHERE ea.event_id = e.id
+                    ) art ON true
+                    WHERE e.status = 'APPROVED'
+                      AND e.start_date_time >= now()
+                    ORDER BY
+                      e.start_date_time ASC,
+                      e.title ASC,
+                      p.name ASC,
+                      e.city_name ASC,
+                      e.id ASC
+                    """,
+            countQuery = """
+                    SELECT COUNT(*)
+                    FROM events e
+                    JOIN provinces p ON p.id = e.province_id
+                    WHERE e.status = 'APPROVED'
+                      AND e.start_date_time >= now()
+                    """,
+            nativeQuery = true)
+    Page<EventPublicHomeProjection> findHome(Pageable pageable);
 
     @Query(
             value = """
