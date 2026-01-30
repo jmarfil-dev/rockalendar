@@ -6,9 +6,22 @@ Este documento recoge ideas, mejoras y posibles evoluciones surgidas durante el 
 
 Son ideas sujetas a validación, disponibilidad de tiempo y coherencia con la filosofía del proyecto. Su función es preservar contexto y decisiones futuras, no definir el rumbo del proyecto.
 
-## V2
+## Arquitectura y base técnica
 
-### Arquitectura
+Estas implementaciones tienen prioridad sobre las demás.
+
+### Backend
+
+**PRIORITARIO:** cuando haya volumen alto de datos:
+- Medir con `EXPLAIN ANALYZE` sobre 2–3 consultas reales (búsqueda + listados)
+- Si hay muchos eventos REJECTED acumulados:
+  - Migrar GIN global → GIN parcial APPROVED (y borrar el global)
+
+~~~
+-- Índices parciales para búsqueda pública (si tienes muchos no-APPROVED)
+CREATE INDEX idx_events_search_document_gin_approved ON events USING gin (search_document) WHERE status = 'APPROVED';
+CREATE INDEX idx_events_search_text_trgm_approved ON events USING gin (search_text gin_trgm_ops) WHERE status = 'APPROVED';
+~~~
 
 - Wrapper `CurrentUser` para centralizar autenticación y acceso al usuario actual.
 - Base común para búsquedas, filtros y mapas.
@@ -18,57 +31,84 @@ Son ideas sujetas a validación, disponibilidad de tiempo y coherencia con la fi
   - Mantener `@EnableSpringDataWebSupport(VIA_DTO)` solo como solución temporal
   - Estructura estable: `content`, `page`, `size`, `totalElements`, `totalPages`
 - Devolver `ResponseEntity` en los controladores y en `GlobalExceptionHandler` (`@ControllerAdvice`).
-- Constraint `UNIQUE` y evitar duplicados en eventos (por provincia, ciudad, recinto y fecha). Agregar también el error 409 cuando se detecte un duplicado a `MeEventApi.propose()`.
-- Anotaciones de validación compuestas si hay repetición real; Validators propios solo si hay reglas reutilizables.
-- Cron job cada 24 horas para cerrar eventos pasados. Agregar estado REALIZADO o PASADO o parecido.
+- Anotaciones de validación compuestas si hay repetición real.
+- Validators propios solo si hay reglas reutilizables.
+
+## Gestión del ciclo de vida de eventos
+
+- Constraint `UNIQUE` y evitar duplicados en eventos (por provincia, ciudad, recinto y fecha).
+- Devolver error 409 Conflict cuando se detecte un duplicado a `MeEventApi.propose()`.
+- Cron job cada 24 horas para cerrar eventos pasados.
+- Nuevo estado `REALIZADO` o `PASADO` (nombre por decidir).
 - Historial de estados para auditoría.
 
-### Funciones de eventos
+## Artistas y contenido de eventos
 
 - Detalle de artista.
 - Imágenes (cartel del evento).
-- Reachazo automático de eventos por blacklist o similar:
-  - La Blacklist podría incluir palabras clave para el título y combinación de fecha + ciudad (ejemplo: primero de abril + Villarobledo = Viñarock)
-  - Funciones para agregar a la blacklist los administradores
 
-### Funciones sociales y notificaciones
+## Moderación automática y calidad
 
-- Preferencias de notificaciones por usuario.
+- Reachazo automático de eventos mediante blacklist:
+  - Palabras clave para el título
+  - Combinación de fecha + ciudad (ejemplo: primero de abril + Villarobledo = Viñarock)
+- Gestión de blacklist por administradores.
+
+## Funciones sociales (base)
+
 - Seguir artistas.
 - Notificación cuando se publica un nuevo evento de un artista seguido.
-- Canales: email, notificaciones in-app.
-- Crews:
-  - Creación de grupos privados (crew)
-  - Acceso solo mediante invitación
-  - Notificaciones internas cuando: un integrante publica un evento, un integrante marca que asistirá a un evento, un integrante marca un evento como "opción interesante"
-  - Preferencias de notificaciones por usuario dentro de cada crew: elegir qué acciones generan notificación, ejemplo: recibir solo notificaciones de asistencia, pero no de creación de eventos
-  - Base pensada para futura apertura a crews públicas
+- Compartir eventos / artistas por:
+  - WhatsApp
+  - X
+  - Instagram
+  - Facebook
 
-## V3
+## Notificaciones
 
+- Preferencias de notificaciones por usuario.
+- Canales:
+  - Email
+  - Notificaciones in-app
+  - Push (prioridad muy baja)
 - Recordatorios cuando se acerca la fecha del evento.
-- Notificaciones push.
-- Espacios para publicidad.
+
+## Crews (grupos)
+
+- Creación de grupos privados (crew).
+- Acceso solo mediante invitación.
+- Notificaciones internas cuando:
+  - Un integrante publica un evento
+  - Un integrante marca asistencia
+  - Un integrante marca un evento como "opción interesante"
+- Preferencias de notificaciones por usuario y por crew.
+- Base pensada para futura apertura a crews públicas.
+
+## Geografía y localización
+
+- Precargar ciudades desde dataset (INE / GeoNames / otro).
 - Autocompletado de direcciones y lugares.
-
-### Integración con plataformas externas
-
-- Precargar ciudades desde un dataset (INE / GeoNames / otro) en tabla cities.
 - Integración con Places / Geocoding (Google / Mapbox / OpenStreetMap).
-- Spotify: enlazar artista.
-- Compartir evento / artista por WhatsApp, X, Instagram, Facebook.
-- Entradas: enlaces a plataformas de venta (Ticketmaster, Entradium, etc.).
+- Mapas de eventos (por ciudad / provincia).
 
-## V4 y posteriores
+## Integraciones externas
 
-- App móvil nativa.
+- Spotify:
+  - Enlazar artista
+  - Mostrar canciones populares
+  - Verificación de artista
+- Plataformas de venta de entradas (Ticketmaster, Entradium, etc.).
+- Enlaces externos desde eventos.
 
-### Funciones sociales
+## Monetización y sostenibilidad
+
+- Espacios para publicidad (ética y no intrusiva).
+
+## Clientes nativos
+
+- App móvil nativa (iOS / Android).
+
+## Funciones sociales avanzadas
 
 - Recomendaciones personalizadas.
 - Comentarios y valoraciones.
-
-### Integración con plataformas externas
-
-- Spotify: mostrar canciones populares, verificación de artista.
-- Mapas de eventos (por ciudad / provincia).
