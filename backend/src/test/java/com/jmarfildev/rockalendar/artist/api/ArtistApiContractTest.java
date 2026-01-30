@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
+import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
 
 /**
@@ -38,6 +39,7 @@ class ArtistApiContractTest extends AbstractPostgresTest {
 
     private final String API_ADMIN_ARTIST = "/api/admin/artists";
     private final String API_ARTISTS = "/api/artists";
+    private final String MOCK_ARTIST_NAME_CGPP = "Catalina Grande Piñón Pequeño";
 
     @Test
     @DisplayName("POST /api/artists como MODERATOR -> 201 con artista creado")
@@ -46,12 +48,12 @@ class ArtistApiContractTest extends AbstractPostgresTest {
                 .with(contractUtils.authJwtModerator())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                            { "name": "Ska-P" }
-                        """))
+                            { "name": "%s" }
+                        """.formatted(MOCK_ARTIST_NAME_CGPP)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", not(emptyOrNullString())))
-                .andExpect(jsonPath("$.name").value("Ska-P"))
+                .andExpect(jsonPath("$.name").value(MOCK_ARTIST_NAME_CGPP))
                 .andExpect(jsonPath("$.slug", not(emptyOrNullString())));
     }
 
@@ -63,8 +65,8 @@ class ArtistApiContractTest extends AbstractPostgresTest {
                 .with(contractUtils.authJwtAdmin())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                            { "name": "Against You" }
-                        """))
+                            { "name": "%s" }
+                        """.formatted(TestConstants.MOCK_ARTIST_NAME_AY)))
                 .andExpect(status().isCreated());
 
         // segunda creación repetida (por slug)
@@ -112,8 +114,8 @@ class ArtistApiContractTest extends AbstractPostgresTest {
                 .with(contractUtils.authJwtAdmin())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                            { "name": "Against You" }
-                        """));
+                            { "name": "%s" }
+                        """.formatted(TestConstants.MOCK_ARTIST_NAME_AY)));
 
         // Después se consulta
         mockMvc.perform(get(API_ARTISTS).param("query", "you"))

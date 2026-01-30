@@ -147,22 +147,22 @@ public class TestDataFactory {
 
     public Event approvedMadridAgainstYou() {
         return approvedEvent(
-                "Against You en Madrid",
+                "%s en Madrid".formatted(TestConstants.MOCK_ARTIST_NAME_AY),
                 madrid(),
                 "Madrid",
                 "Sala Copérnico",
                 OffsetDateTime.parse(TestConstants.MADRID_DATE),
-                "Against You");
+                TestConstants.MOCK_ARTIST_NAME_AY);
     }
 
     public Event pendingMadridAgainstYou() {
         return pendingEvent(
-                "Against You en MADRID (pendiente)",
+                "%s en MADRID (pendiente)".formatted(TestConstants.MOCK_ARTIST_NAME_AY),
                 madrid(),
                 "Madrid",
                 "Sala Copérnico",
                 OffsetDateTime.parse("2026-03-16T21:00:00Z"),
-                "Against You");
+                TestConstants.MOCK_ARTIST_NAME_AY);
     }
 
     public Event approvedBarcelonaBoikot() {
