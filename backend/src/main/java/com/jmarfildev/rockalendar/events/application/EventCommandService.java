@@ -13,7 +13,7 @@ import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
-import com.jmarfildev.rockalendar.events.api.dto.CreateEventRequest;
+import com.jmarfildev.rockalendar.events.api.dto.ProposeEventRequest;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
@@ -42,7 +42,7 @@ public class EventCommandService {
     private final ProvinceRepository provinceRepository;
 
     @Transactional
-    public Event proposeEvent(CreateEventRequest req, UUID userId) {
+    public Event proposeEvent(ProposeEventRequest req, UUID userId) {
         if (req.endDateTime() != null && req.endDateTime().isBefore(req.startDateTime())) {
             throw new BadRequestException(ErrorMessages.INVALID_EVENT_DATE);
         }
