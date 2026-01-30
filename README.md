@@ -16,11 +16,11 @@ Este repositorio es un **monorepo** que contiene:
 
 - [Estado del proyecto](#estado-del-proyecto)
 - [Estructura del repositorio](#estructura-del-repositorio)
-- [Documentación](#documentacion)
-- [Tecnologías utilizadas](#tecnologias-utilizadas)
-- [Arranque rápido (entorno local)](#arranque-rapido-\(entorno-local\))
-- [Seguridad (JWT)](#seguridad-\(jwt\))
-- [Flujo de trabajo (Git)](#flujo-de-trabajo-\(git\))
+- [Documentación](#documentación)
+- [Tecnologías utilizadas](#tecnologías-utilizadas)
+- [Arranque rápido (entorno local)](#arranque-rápido-entorno-local)
+- [Seguridad (JWT)](#seguridad-jwt)
+- [Flujo de trabajo (Git)](#flujo-de-trabajo-git)
 - [Desarrolladores](#desarrolladores)
 - [Licencia](#licencia)
 
@@ -134,7 +134,21 @@ Perfiles disponibles:
 
 ## Seguridad (JWT)
 
-🚧 Próximamente
+*Rockalendar* utiliza autenticación **JWT (HS256)**.
+
+La clave de firma **NO está incluida en el repositorio** y debe definirse mediante la variable de entorno:
+
+~~~
+JWT_SECRET
+~~~
+
+### Desarrollo
+
+~~~
+export JWT_SECRET="dev-secret-change-me-please-dev-secret-change-me"
+~~~
+
+O configurar un valor por defecto en `application-dev.yml`.
 
 ## Flujo de trabajo (Git)
 
