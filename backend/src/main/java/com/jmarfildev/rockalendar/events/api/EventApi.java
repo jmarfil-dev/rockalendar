@@ -31,20 +31,39 @@ import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 @Tag(name = "Events", description = "Consulta de eventos públicos")
 public interface EventApi {
 
+    @GetMapping("/home")
+    @Operation(summary = "Home público: próximos eventos",
+            description = """
+                    Lista eventos públicos (APPROVED) a partir de la fecha actual.
+                    Orden fijo: startDateTime ASC, title ASC, provinceName ASC, cityName ASC.
+                    El parámetro sort se ignora.
+                    Devuelve lo mismo que "/api/events" sin filtros, pero con una consulta más ligera y sin eventos pasados.
+                    """)
+    @ApiResponse(responseCode = "200", description = "Página de eventos públicos",
+            content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
+    Page<EventPublicDto> listHome(@Parameter(description = "Paginación (sort se ignora, orden fijo)",
+            example = "page=0&size=20") @PageableDefault(size = 20) Pageable pageable);
+
     @GetMapping
     @Operation(summary = "Buscar eventos públicos",
             description = """
-                    Devuelve eventos públicos con estado APPROVED.
+                    Búsqueda flexible de eventos públicos (APPROVED) con tolerancia a errores tipográficos.
+
+                    La búsqueda combina:
+                    - Full Text Search (FTS) para coincidencias exactas y relevantes.
+                    - Búsqueda tolerante (trigram similarity) para prefijos y errores de escritura.
+                    - Filtros exactos por provincia, ciudad y artista.
 
                     Reglas importantes:
-                    - query: búsqueda libre tokenizada (tokens < 3 caracteres se ignoran).
-                    - city: texto libre; se normaliza internamente a slug (tildes/espacios/mayúsculas).
-                    - artist: texto libre; se normaliza internamente a slug.
+                    - Solo se devuelven eventos con estado APPROVED.
+                    - Los filtros por ciudad y artista son exactos (por slug).
+                    - La tolerancia a errores se aplica únicamente al parámetro `query`.
+                    - Si `query` está vacío, se listan eventos según los filtros y el orden por defecto.
                     """)
     @ApiResponse(responseCode = "200", description = "Página de eventos públicos",
             content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
     @ApiResponse(responseCode = "400", description = "Parámetros de búsqueda inválidos")
-    Page<EventPublicDto> search(@Parameter(description = "Búsqueda libre (título, sala, ciudad, artista)",
+    Page<EventPublicDto> searchPublic(@Parameter(description = "Búsqueda libre (título, sala, ciudad, artista)",
             example = "metallica madrid") @RequestParam Optional<String> query,
                                 @Parameter(description = "Fecha/hora desde (ISO-8601)",
                                         example = "2026-04-01T00:00:00Z") @RequestParam @DateTimeFormat(
@@ -66,6 +85,6 @@ public interface EventApi {
     @ApiResponse(responseCode = "200", description = "Evento encontrado",
             content = @Content(schema = @Schema(implementation = EventPublicDto.class)))
     @ApiResponse(responseCode = "404", description = "Evento no encontrado o no público")
-    EventPublicDto getById(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
+    EventPublicDto getPublicById(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
             required = true) @PathVariable UUID id);
 }
