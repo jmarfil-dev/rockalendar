@@ -1,0 +1,25 @@
+package com.jmarfildev.rockalendar.events.api.dto;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.validator.constraints.URL;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+/**
+ * @author jmarfil
+ *
+ */
+public record ProposeEventRequest(@NotBlank @Size(max = 200) String title,
+                                 @Size(max = 5_000) String description,
+                                 @NotNull OffsetDateTime startDateTime,
+                                 OffsetDateTime endDateTime,
+                                 @NotBlank @Size(max = 200) String venueName,
+                                 @NotNull UUID provinceId,
+                                 @NotBlank @Size(max = 120) String cityName,
+                                 @NotNull @Size(min = 1) List<@NotBlank @Size(max = 200) String> artists,
+                                 @URL(protocol = "https") @Size(max = 2_048) String sourceUrl) {}

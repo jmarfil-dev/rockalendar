@@ -94,6 +94,15 @@ public class EventQueryService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public Page<EventPrivateDto> listMine(UUID userId, Pageable pageable) {
+        if (pageable.getPageSize() > Constants.maxPageSize) {
+            throw new BadRequestException(ErrorMessages.PAGE_SIZE_TOO_LARGE);
+        }
+
+        return eRepository.listMineOrderFutureFirst(userId, pageable).map(mapper::toPrivateDto);
+    }
+
     private boolean hasMultipleTokens(String q) {
         if (q == null) {
             return false;

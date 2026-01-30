@@ -48,4 +48,9 @@ public interface EventMapper {
     @Mapping(target = "provinceId", expression = "java(mapProvinceId(event))")
     @Mapping(target = "provinceName", expression = "java(mapProvinceName(event))")
     EventPublicDto toPublicDto(Event event);
+
+    @Mapping(target = "artists", expression = "java(mapArtists(event))")
+    @Mapping(target = "provinceId", expression = "java(mapProvinceId(event))")
+    @Mapping(target = "provinceName", expression = "java(mapProvinceName(event))")
+    EventPrivateDto toPrivateDto(Event event);
 }
