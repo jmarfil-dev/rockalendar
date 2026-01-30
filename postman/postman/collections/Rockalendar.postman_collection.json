@@ -1,0 +1,605 @@
+{
+  "info": {
+    "_postman_id": "10e67583-5375-4fe3-808a-2ccfdb3396d5",
+    "name": "Rockalendar API",
+    "description": "Colección básica para probar endpoints de eventos en Rockalendar",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Public events",
+          "item": [
+            {
+              "name": "listHome",
+              "id": "e5495d00-134b-4671-aca0-9af74ba77594",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events/home",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events",
+                    "home"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "listHome (paginación)",
+              "id": "4cc76ff0-ee70-4dac-a239-2d14c59a4664",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events?page=1&size=2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "uuid": "ba7c4aae-225a-45b3-8dca-28b49d23f293"
+                    },
+                    {
+                      "key": "size",
+                      "value": "2",
+                      "uuid": "26c51ff1-331f-4351-a379-26ec40bf8b20"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPublic",
+              "id": "415d6cea-ad27-4173-bf1f-dd3d3e80a6ad",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPublic (pagination)",
+              "id": "0713882d-f0a4-4d37-b9fb-01bf0c41895b",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events?page=0&size=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPublic (filter city)",
+              "id": "42d8fbbd-366f-4ac2-93a2-4eefc45d3943",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events?city={{city}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "city",
+                      "value": "{{city}}",
+                      "uuid": "08d90f55-f2fc-476c-8422-459a12a43e77"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPublic (filter province)",
+              "id": "bca6a472-3601-49ab-9f46-14d433e67ae9",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events?provinceId={{provinceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "provinceId",
+                      "value": "{{provinceId}}",
+                      "uuid": "bbd9cb5f-fa30-463b-bde2-2c6bb4569d56"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPublic (filter artis)",
+              "id": "4a67b909-e5ff-4c71-b34d-f4745ec1eb03",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events?artist={{artist}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "artist",
+                      "value": "{{artist}}",
+                      "uuid": "2e83b385-dd59-4bde-86a2-17143e895cca"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPublic (free query)",
+              "id": "97431d1f-840c-427e-9008-f7af7e36dd1d",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events?query={{query}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "{{query}}",
+                      "uuid": "692d6763-f3b5-47d8-9a42-971c94033c62"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPublic (date range)",
+              "id": "3e7bbcd8-bb08-4b3c-b385-bd15d6de5b13",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "dateFrom",
+                      "value": "{{dateFrom}}",
+                      "uuid": "3cb49246-7898-4147-8d6b-c7128e3b7d85"
+                    },
+                    {
+                      "key": "dateTo",
+                      "value": "{{dateTo}}",
+                      "uuid": "e4cb9e4d-1986-47cb-b424-3ba256a1a3b8"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPublic (multiple filter)",
+              "id": "14698362-954e-4e2e-8766-98a7f4c1c2c8",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events?city={{city}}&artist={{artist}}&dateFrom={{dateFrom}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "city",
+                      "value": "{{city}}",
+                      "uuid": "3ff58c7c-eeb8-4c25-8c67-c802e7c11de8"
+                    },
+                    {
+                      "key": "artist",
+                      "value": "{{artist}}",
+                      "uuid": "fdcc6390-4c9c-4cab-a42b-13b3419d6afa"
+                    },
+                    {
+                      "key": "dateFrom",
+                      "value": "{{dateFrom}}",
+                      "uuid": "083ec516-06b5-41c5-acd7-648601e5a952"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getPublicById",
+              "id": "4b0740d3-5a55-41fd-8733-fa87ac59d451",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/events/{{eventId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events",
+                    "{{eventId}}"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "3434718b-7dde-43ec-95aa-930581e6c9db",
+                  "name": "404",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/events/{{eventId}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "events",
+                        "{{eventId}}"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "X-Content-Type-Options",
+                      "value": "nosniff"
+                    },
+                    {
+                      "key": "X-XSS-Protection",
+                      "value": "0"
+                    },
+                    {
+                      "key": "Cache-Control",
+                      "value": "no-cache, no-store, max-age=0, must-revalidate"
+                    },
+                    {
+                      "key": "Pragma",
+                      "value": "no-cache"
+                    },
+                    {
+                      "key": "Expires",
+                      "value": "0"
+                    },
+                    {
+                      "key": "X-Frame-Options",
+                      "value": "DENY"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Fri, 16 Jan 2026 13:29:33 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": "2026-01-16T13:29:43.318Z",
+                  "body": "{\n    \"type\": \"urn:rockalendar:error:not-found\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"detail\": \"Event not found\",\n    \"instance\": \"/api/events/cccccccc-0000-0000-0000-000000000008\",\n    \"timestamp\": \"2026-01-16T13:29:33.3572952Z\"\n}"
+                }
+              ]
+            }
+          ],
+          "id": "fa616988-ae4e-4aa3-8f14-5f03e6ebf10f"
+        },
+        {
+          "name": "Private events",
+          "item": [
+            {
+              "name": "propose",
+              "id": "714e8847-c3cb-47e4-8110-09a7f20701b9",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"title\": \"Concierto de prueba en Sevilla\",\n    \"description\": \"Evento creado desde curl\",\n    \"startDateTime\": \"2026-06-20T21:30:00Z\",\n    \"venueName\": \"Sala Custom\",\n    \"provinceId\": \"c74b11af-8d7f-50d1-b39b-4b10f1eb1b4f\",\n    \"cityName\": \"Sevilla\",\n    \"artists\": [\n        \"Grupo Demo\"\n    ],\n    \"sourceUrl\": \"https://example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/events",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "events"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "listMine",
+              "id": "6c970dd3-3555-4d09-a105-94df93de00b6",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/me/events",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "me",
+                    "events"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "c1031574-faad-4f05-b63b-516d0b72e6a2"
+        }
+      ],
+      "id": "c61ce41f-87f4-4052-8dbb-13f46b7ad92d"
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "58d5d460-6e34-4510-a191-268cd0fb17e4",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "937da908-9049-4b16-877a-0b7ca9354c09",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "\r",
+                  "    pm.test(\"Body matches string\", function () {\r",
+                  "        pm.expect(pm.response.text()).to.include(\"string_you_want_to_search\");\r",
+                  "    });\r",
+                  "\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.environment.set(\"token\", jsonData.accessToken);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "283504d9-9e08-462e-9756-c84a5531f250",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"{{userEmail}}\",\r\n    \"password\": \"{{userPassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "6ede465b-96ce-4325-abb4-5c5325f204d1"
+    },
+    {
+      "name": "Artists",
+      "item": [
+        {
+          "name": "Public artists",
+          "item": [
+            {
+              "name": "Autocomplete artists",
+              "id": "e92c4ea6-0471-4b42-9053-4580c87f8494",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/artists?query={{query_artist}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "artists"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "{{query_artist}}",
+                      "uuid": "5b94275f-f233-4c42-a1e2-12010ef5f5c4"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "9c07b964-795f-4137-9d22-e2d85cf825f7"
+        },
+        {
+          "name": "Admin artists",
+          "item": [
+            {
+              "name": "Create artist",
+              "id": "7a3c87ae-5c6e-4603-b696-997e34630108",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "aaaaaaaa-0000-0000-0000-000000000003"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Artista de prueba\"\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/artists",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "artists"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "42b88634-2d41-4782-904b-567a1fb47e23"
+        }
+      ],
+      "id": "27b52846-254f-4c2f-99e6-d4648ba81c39"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "workspace": {
+    "id": "48b04580-3f6d-4365-9228-54186e6747dc"
+  },
+  "entities": {
+    "collections": [
+      "..\\postman\\collections\\Rockalendar.postman_collection.json"
+    ],
+    "environments": [
+      "..\\postman\\environments\\rockalendar-local.postman_environment.json"
+    ],
+    "specs": [],
+    "flows": [],
+    "globals": []
+  }
+}
