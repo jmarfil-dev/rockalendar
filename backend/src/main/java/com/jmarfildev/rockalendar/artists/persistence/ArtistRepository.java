@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,9 +22,9 @@ public interface ArtistRepository extends JpaRepository<Artist, UUID> {
 
     @Query("""
                 select a from Artist a
-                where lower(a.name) like lower(concat('%', :query, '%'))
-                   or lower(a.slug) like lower(concat('%', :query, '%'))
+                where lower(a.name) like lower(concat('%', :qRaw, '%'))
+                   or a.slug like concat('%', :qSlug, '%')
                 order by a.name asc
             """)
-    List<Artist> findTop10ForAutocomplete(@Param("query") String query);
+    List<Artist> findForAutocomplete(@Param("qRaw") String qRaw, @Param("qSlug") String qSlug, Pageable pageable);
 }
