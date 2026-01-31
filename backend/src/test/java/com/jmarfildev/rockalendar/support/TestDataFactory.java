@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Profile;
@@ -91,15 +92,6 @@ public class TestDataFactory {
         return artist("La Polla Recordas");
     }
 
-    private Artist saveArtist(String name) {
-        Artist artist = Artist.builder()
-                .name(name)
-                .slug(SlugNormalizer.of(name))
-                .build();
-
-        return artistRepository.save(artist);
-    }
-
     /*
      * Events
      */
@@ -156,6 +148,7 @@ public class TestDataFactory {
                 .venueName(venue)
                 .venueSlug(SlugNormalizer.of(venue))
                 .status(status)
+                .createdByUserId(UUID.fromString(TestConstants.MOCK_USER_ID))
                 .artists(artists(artistNames))
                 .build();
 
@@ -164,9 +157,9 @@ public class TestDataFactory {
 
     public Event approvedMadridAgainstYou() {
         return approvedEvent(
-                "%s en Madrid".formatted(TestConstants.MOCK_ARTIST_NAME_AY),
+                "%s en %s".formatted(TestConstants.MOCK_ARTIST_NAME_AY, TestConstants.MADRID),
                 madrid(),
-                "Madrid",
+                TestConstants.MADRID,
                 "Sala Copérnico",
                 TestDates.madrid(),
                 TestConstants.MOCK_ARTIST_NAME_AY);
@@ -176,7 +169,7 @@ public class TestDataFactory {
         return pendingEvent(
                 "%s en MADRID (pendiente)".formatted(TestConstants.MOCK_ARTIST_NAME_AY),
                 madrid(),
-                "Madrid",
+                TestConstants.MADRID,
                 "Sala Copérnico",
                 TestDates.madrid().plusDays(1),
                 TestConstants.MOCK_ARTIST_NAME_AY);
@@ -184,9 +177,9 @@ public class TestDataFactory {
 
     public Event approvedBarcelonaBoikot() {
         return approvedEvent(
-                "Boikot en Barcelona",
+                "Boikot en %s".formatted(TestConstants.BARCELONA),
                 barcelona(),
-                "Barcelona",
+                TestConstants.BARCELONA,
                 "Palau Sant Jordi",
                 TestDates.barcelona(),
                 "Boikot");
@@ -200,5 +193,15 @@ public class TestDataFactory {
                 "Sala Moon",
                 TestDates.genericFuture(),
                 "Los de Marras");
+    }
+
+    public Event approvedValenciaPast() {
+        return approvedEvent(
+                "Desera en València",
+                valencia(),
+                "València",
+                "Sala Moon",
+                TestDates.past(),
+                "Desera");
     }
 }

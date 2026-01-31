@@ -30,9 +30,4 @@ public abstract class AbstractPostgresTest {
         registry.add("spring.datasource.password", pg::getPassword);
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
     }
-
-    protected void flush() {
-        em.flush();
-        em.clear();
-    }
 }

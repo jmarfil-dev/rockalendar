@@ -45,7 +45,6 @@ public class ArtistQueryServiceTest extends AbstractPostgresTest {
     void autocomplete_trimsQuery_andReturnsMatches() {
         factory.againstYou();
         factory.laPolla();
-        flush();
 
         var result = service.searchArtistsAutocomplete("  aga  ");
 
@@ -57,7 +56,6 @@ public class ArtistQueryServiceTest extends AbstractPostgresTest {
     @DisplayName("searchArtistsAutocomplete: encuentra por slug normalizado (ska-p -> ska p)")
     void autocomplete_matchesBySlug() {
         factory.artist(MOCK_ARTIST_NAME_SKAP);
-        flush();
 
         var result = service.searchArtistsAutocomplete("ska-p");
 
@@ -72,7 +70,6 @@ public class ArtistQueryServiceTest extends AbstractPostgresTest {
                 .mapToObj(i -> "Artist " + i)
                 .toArray(String[]::new);
         factory.artists(names);
-        flush();
 
         var result = service.searchArtistsAutocomplete("artist");
 
@@ -84,7 +81,6 @@ public class ArtistQueryServiceTest extends AbstractPostgresTest {
     @DisplayName("searchArtistsAutocomplete: no revienta con mayúsculas/minúsculas")
     void autocomplete_isCaseInsensitive() {
         factory.artist(MOCK_ARTIST_NAME_SKAP);
-        flush();
 
         var resultUpper = service.searchArtistsAutocomplete("SKA");
         var resultLower = service.searchArtistsAutocomplete("ska");

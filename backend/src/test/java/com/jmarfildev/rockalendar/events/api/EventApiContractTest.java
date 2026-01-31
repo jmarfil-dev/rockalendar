@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
+import com.jmarfildev.rockalendar.support.TestDataFactory;
 import com.jmarfildev.rockalendar.support.TestDates;
 
 /**
@@ -28,6 +29,8 @@ class EventApiContractTest extends AbstractPostgresTest {
 
     @Autowired
     ContractApiTestUtils contractUtils;
+    @Autowired
+    TestDataFactory factory;
     @Autowired
     MockMvc mockMvc;
 
@@ -82,9 +85,9 @@ class EventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("GET /api/events/{id} es público -> 200 cuando existe")
     void getEventById_isPublic_returns200WhenExists() throws Exception {
-        var existingId = UUID.fromString(TestConstants.MOCK_EVENT_ID_APPROVED);
+        var eventM = factory.approvedMadridAgainstYou();
 
-        mockMvc.perform(get(API_EVENTS_ID.formatted("{id}"), existingId))
+        mockMvc.perform(get(API_EVENTS_ID.formatted("{id}"), eventM.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
