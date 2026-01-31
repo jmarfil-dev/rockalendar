@@ -24,7 +24,7 @@ import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AuthApiContractTest extends AbstractPostgresTest {
+class AuthApiContractTest extends AbstractPostgresTest {
 
     @Autowired
     ContractApiTestUtils contractUtils;

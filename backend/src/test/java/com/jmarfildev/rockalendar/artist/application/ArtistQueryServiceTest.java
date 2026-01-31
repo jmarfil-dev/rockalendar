@@ -24,7 +24,7 @@ import com.jmarfildev.rockalendar.support.TestDataFactory;
  */
 @DataJpaTest
 @Import({ ArtistQueryService.class, DatabaseCleaner.class, TestDataFactory.class })
-public class ArtistQueryServiceTest extends AbstractPostgresTest {
+class ArtistQueryServiceTest extends AbstractPostgresTest {
 
     @Autowired
     ArtistQueryService service;

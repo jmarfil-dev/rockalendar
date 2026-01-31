@@ -42,7 +42,7 @@ public class EventCommandService {
     private final ProvinceRepository provinceRepository;
 
     @Transactional
-    public Event proposeEvent(ProposeEventRequest req, UUID userId) {
+    public Event propose(ProposeEventRequest req, UUID userId) {
         if (req.endDateTime() != null && req.endDateTime().isBefore(req.startDateTime())) {
             throw new BadRequestException(ErrorMessages.INVALID_EVENT_DATE);
         }
@@ -106,7 +106,7 @@ public class EventCommandService {
 
         var event = Event.builder()
                 .title(title)
-                .description(req.description())
+                .description(description)
                 .startDateTime(req.startDateTime())
                 .endDateTime(req.endDateTime())
                 .province(province)
@@ -114,7 +114,7 @@ public class EventCommandService {
                 .citySlug(citySlug)
                 .venueName(venueName)
                 .venueSlug(venueSlug)
-                .sourceUrl(req.sourceUrl())
+                .sourceUrl(sourceUrl)
                 .status(EventStatus.PENDING_MODERATION)
                 .createdByUserId(userId)
                 .artists(artists)

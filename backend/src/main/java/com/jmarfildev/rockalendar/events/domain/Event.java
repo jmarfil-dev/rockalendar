@@ -79,7 +79,7 @@ public class Event {
     @Column(name = "source_url")
     private String sourceUrl;
 
-    @Column(name = "created_by_user_id")
+    @Column(name = "created_by_user_id", nullable = false)
     private UUID createdByUserId;
 
     @Column(name = "approved_by_user_id")
