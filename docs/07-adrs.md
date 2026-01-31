@@ -66,9 +66,13 @@
 
 - Se priorizan tests de integración por encima de unit tests aislados.
 - La base de datos de tests se ejecuta en contenedor y el esquema se gestiona con migraciones.
-- Se utilizan dos familias principales:
+- Se utilizan dos familias principales, ambas extienden la clase `AbstractPostgresTest`:
   1. **Tests de contrato de API** con `@SpringBootTest`
   2. **Tests de persistencia/servicios** con `@DataJpaTest`
+
+> Nota: los servicios que no tienen lógica de negocio o de dominio propia se pueden saltar esta norma **como excepción**.\
+> Si no valida datos reales, el test se pueden mockear.\
+> Ejemplos: `AuthService`, `JwtTokenService`.
 
 **Infra de tests (DB + migraciones)**
 
