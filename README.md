@@ -1,6 +1,14 @@
-# Rockalendar
+<p align="center">
+  <img src="assets/images/banner.png" alt="Rockalendar banner">
+</p>
 
-Agenda de conciertos y festivales
+---
+
+![Badge Status](https://img.shields.io/badge/STATUS-Work%20in%20Progress-green)
+![GitHub Release](https://img.shields.io/github/v/release/jmarfil-dev/rockalendar)
+![Static Badge](https://img.shields.io/badge/Spring_Boot-6DB33F?logo=spring-boot&logoColor=white)
+
+:musical_note: Agenda de conciertos y festivales :musical_note:
 
 **Rockalendar** es una aplicación web para **descubrir conciertos y festivales de forma clara, colaborativa y sin ruido**.
 Su foco está en el descubrimiento y la planificación, evitando anuncios, rankings artificiales o dinámicas sociales innecesarias.
@@ -12,7 +20,7 @@ Este repositorio es un **monorepo** que contiene:
 - tooling local (Docker, Postman)
 - documentación del proyecto
 
-## Índice
+## :arrow_forward: Índice
 
 - [Estado del proyecto](#estado-del-proyecto)
 - [Estructura del repositorio](#estructura-del-repositorio)
@@ -24,14 +32,14 @@ Este repositorio es un **monorepo** que contiene:
 - [Desarrolladores](#desarrolladores)
 - [Licencia](#licencia)
 
-## Estado del proyecto
+## :arrow_forward: Estado del proyecto
 
-🛠️ En desarrollo activo\
-🎯 Objetivo: **MVP 1.0**
+:hammer_and_wrench: En desarrollo activo :hammer_and_wrench:\
+:dart: Objetivo: **MVP 1.0** :dart:
 
 El alcance y la hoja de ruta están definidos en la documentación.
 
-## Estructura del repositorio
+## :arrow_forward: Estructura del repositorio
 
 - `backend/` — API Spring Boot (Java, Maven)
 - `frontend/` — Aplicación web (tecnología por decidir)
@@ -39,7 +47,7 @@ El alcance y la hoja de ruta están definidos en la documentación.
 - `postman/` — Colecciones y entornos de Postman
 - `docs/` — Documentación funcional y técnica
 
-## Documentación
+## :arrow_forward: Documentación
 
 La documentación del proyecto vive en la carpeta [`docs/`](docs/) y está pensada para leerse en orden.
 
@@ -49,7 +57,7 @@ La documentación del proyecto vive en la carpeta [`docs/`](docs/) y está pensa
   Qué es *Rockalendar*, para quién es y qué problema resuelve (y qué no).
 
 - [**02 – Filosofía del proyecto**](docs/02-filosofia_del_proyecto.md)
-  Principios y valores que guían las decisiones del proyecto.
+  Principios y valores que guían las decisiones del proyecto :small_red_triangle_down:.
 
 - [**03 – Usuarios y casos de uso**](docs/03-usuarios_y_casos_de_uso.md)
   Tipos de usuarios y escenarios de uso de la aplicación.
@@ -69,7 +77,7 @@ La documentación del proyecto vive en la carpeta [`docs/`](docs/) y está pensa
 - [**08 – Guía de desarrollo)**](docs/07-guia_de_desarrollo.md)
   Manual de desarrollo y convenciones, y forma de trabajo en GIT para contribuciones.
 
-## Tecnologías utilizadas
+## :arrow_forward: Tecnologías utilizadas
 
 - Java 21
 - Spring Boot
@@ -79,7 +87,7 @@ La documentación del proyecto vive en la carpeta [`docs/`](docs/) y está pensa
 - Flyway
 - Frontend: por decidir
 
-## Arranque rápido (entorno local)
+## :arrow_forward: Arranque rápido (entorno local)
 
 > Las instrucciones completas de desarrollo están documentadas en [**Guía de desarrollo**](docs/08-guia-de-desarrollo.md).
 
@@ -130,9 +138,9 @@ Perfiles disponibles:
 
 ### 3) Frontend
 
-🚧 Próximamente
+:construction: Próximamente :construction:
 
-## Seguridad (JWT)
+## :arrow_forward: Seguridad (JWT)
 
 *Rockalendar* utiliza autenticación **JWT (HS256)**.
 
@@ -150,7 +158,7 @@ export JWT_SECRET="dev-secret-change-me-please-dev-secret-change-me"
 
 O configurar un valor por defecto en `application-dev.yml`.
 
-## Flujo de trabajo (Git)
+## :arrow_forward: Flujo de trabajo (Git)
 
 - Rama principal: `main`
 - Todo cambio entra mediante **Pull Request**
@@ -164,10 +172,10 @@ O configurar un valor por defecto en `application-dev.yml`.
 > Detalles completos en la
 > [**Guía de desarrollo**](docs/08-guia-de-desarrollo.md)
 
-## Desarrolladores
+## :arrow_forward: Desarrolladores
 
 Proyecto personal mantenido por su autor: jmarfil
 
-## Licencia
+## :arrow_forward: Licencia
 
 Por definir
