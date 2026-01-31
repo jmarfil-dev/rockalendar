@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
-import com.jmarfildev.rockalendar.support.TestConstants;
+import com.jmarfildev.rockalendar.support.TestDates;
 
 /**
  * @author jmarfil
@@ -47,8 +47,8 @@ class EventApiContractTest extends AbstractPostgresTest {
     @DisplayName("GET /api/events con dateFrom > dateTo -> 400 ProblemDetail")
     void getEvents_invalidDateRange_returns400ProblemDetail() throws Exception {
         var ra = mockMvc.perform(get(API_EVENTS)
-                .param("dateFrom", TestConstants.RANGE_END_DATE)
-                .param("dateTo", TestConstants.RANGE_START_DATE));
+                .param("dateFrom", TestDates.rangeEnd().toString())
+                .param("dateTo", TestDates.rangeStart().toString()));
 
         contractUtils.expectProblemDetail(ra, 400, API_EVENTS);
     }

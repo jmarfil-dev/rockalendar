@@ -168,7 +168,7 @@ public class TestDataFactory {
                 madrid(),
                 "Madrid",
                 "Sala Copérnico",
-                OffsetDateTime.parse(TestConstants.MADRID_DATE),
+                TestDates.madrid(),
                 TestConstants.MOCK_ARTIST_NAME_AY);
     }
 
@@ -178,7 +178,7 @@ public class TestDataFactory {
                 madrid(),
                 "Madrid",
                 "Sala Copérnico",
-                OffsetDateTime.parse("2026-03-16T21:00:00Z"),
+                TestDates.madrid().plusDays(1),
                 TestConstants.MOCK_ARTIST_NAME_AY);
     }
 
@@ -188,7 +188,7 @@ public class TestDataFactory {
                 barcelona(),
                 "Barcelona",
                 "Palau Sant Jordi",
-                OffsetDateTime.parse(TestConstants.BARCELONA_DATE),
+                TestDates.barcelona(),
                 "Boikot");
     }
 
@@ -198,7 +198,7 @@ public class TestDataFactory {
                 valencia(),
                 "València",
                 "Sala Moon",
-                OffsetDateTime.parse(TestConstants.GENERIC_DATE),
+                TestDates.genericFuture(),
                 "Los de Marras");
     }
 }

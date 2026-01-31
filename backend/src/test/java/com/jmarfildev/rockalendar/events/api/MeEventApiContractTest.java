@@ -18,6 +18,7 @@ import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
+import com.jmarfildev.rockalendar.support.TestDates;
 
 /**
  * @author jmarfil
@@ -96,6 +97,6 @@ class MeEventApiContractTest extends AbstractPostgresTest {
                   "artists": %s,
                   "sourceUrl": "https://example.com"
                 }
-                """.formatted(TestConstants.GENERIC_DATE, provinceId, artists);
+                """.formatted(TestDates.genericFuture(), provinceId, artists);
     }
 }
