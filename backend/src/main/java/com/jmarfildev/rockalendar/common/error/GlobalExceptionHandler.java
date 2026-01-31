@@ -4,6 +4,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,6 +12,7 @@ import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -43,11 +45,23 @@ public class GlobalExceptionHandler {
         return pd;
     }
 
-    @ExceptionHandler(BadRequestException.class)
-    public ProblemDetail handleBadRequest(BadRequestException ex) {
+    @ExceptionHandler({
+                        BadRequestException.class,
+                        MethodArgumentTypeMismatchException.class,
+                        ConversionFailedException.class
+    })
+    public ProblemDetail handleBadRequest(Exception ex) {
+        /*
+         * BadRequestException es una excepción custom y se controla el mensaje al lanzarla
+         * Las otras excepciones tienen mensajes de sistema que no deben exponerse
+         */
+        String detail = ex instanceof BadRequestException bre
+                ? bre.getMessage()
+                : "Invalid value for request parameter";
+
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         pd.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
-        pd.setDetail(ex.getMessage());
+        pd.setDetail(detail);
         pd.setType(URI.create("urn:rockalendar:error:bad-request"));
         pd.setProperty("timestamp", OffsetDateTime.now());
         return pd;

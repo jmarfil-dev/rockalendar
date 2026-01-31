@@ -30,7 +30,7 @@ public class MeEventController implements MeEventApi {
     @Override
     public EventPrivateDto propose(Jwt jwt, ProposeEventRequest request) {
         UUID userId = UUID.fromString(jwt.getSubject());
-        return mapper.toPrivateDto(commandService.proposeEvent(request, userId));
+        return mapper.toPrivateDto(commandService.propose(request, userId));
     }
 
     @Override
