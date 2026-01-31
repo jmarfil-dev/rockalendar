@@ -83,6 +83,23 @@ public class TestDataFactory {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    public Artist againstYou() {
+        return artist(TestConstants.MOCK_ARTIST_NAME_AY);
+    }
+
+    public Artist laPolla() {
+        return artist("La Polla Recordas");
+    }
+
+    private Artist saveArtist(String name) {
+        Artist artist = Artist.builder()
+                .name(name)
+                .slug(SlugNormalizer.of(name))
+                .build();
+
+        return artistRepository.save(artist);
+    }
+
     /*
      * Events
      */
