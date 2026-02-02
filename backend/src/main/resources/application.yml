@@ -24,6 +24,12 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
 security:
   jwt:
     secret: "${JWT_SECRET:?JWT_SECRET environment variable must be set}"

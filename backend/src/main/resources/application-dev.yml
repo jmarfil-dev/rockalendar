@@ -11,6 +11,12 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 security:
   jwt:
     secret: "dev-secret-change-me-please-dev-secret-change-me"

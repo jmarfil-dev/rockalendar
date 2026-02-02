@@ -15,6 +15,9 @@ import jakarta.validation.Valid;
 import com.jmarfildev.rockalendar.auth.api.dto.AuthTokenResponse;
 import com.jmarfildev.rockalendar.auth.api.dto.LoginRequest;
 import com.jmarfildev.rockalendar.auth.api.dto.RegisterRequest;
+import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
+import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
+import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
 
 /**
  * @author jmarfil
@@ -28,7 +31,7 @@ public interface AuthApi {
     @Operation(summary = "Login de usuario", description = "Autentica un usuario usando email y password, y devuelve un token JWT")
     @ApiResponse(responseCode = "200", description = "Login correcto",
             content = @Content(schema = @Schema(implementation = AuthTokenResponse.class)))
-    @ApiResponse(responseCode = "401", description = "Credenciales incorrectas")
+    @ApiUnauthorized
     AuthTokenResponse login(@Parameter(description = "Credenciales email y password",
             required = true) @Valid @RequestBody LoginRequest request);
 
@@ -36,8 +39,8 @@ public interface AuthApi {
     @Operation(summary = "Registro de usuario", description = "Crea un usuario nuevo y devuelve un JWT para iniciar sesión inmediatamente.")
     @ApiResponse(responseCode = "200", description = "Registro correcto",
             content = @Content(schema = @Schema(implementation = AuthTokenResponse.class)))
-    @ApiResponse(responseCode = "400", description = "Datos inválidos")
-    @ApiResponse(responseCode = "409", description = "Email ya existe")
+    @ApiBadRequest
+    @ApiConflict
     AuthTokenResponse register(@Parameter(description = "Credenciales email y password",
             required = true) @Valid @RequestBody RegisterRequest request);
 }
