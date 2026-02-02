@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
+import com.jmarfildev.rockalendar.support.TestConstants;
 
 /**
  * @author jmarfil
@@ -32,19 +33,22 @@ class AuthApiContractTest extends AbstractPostgresTest {
     MockMvc mockMvc;
 
     private final String API_AUTH_LOGIN = "/api/auth/login";
+    private final String API_AUTH_REGISTER = "/api/auth/register";
 
     @Test
     @DisplayName("POST /api/auth/login con credenciales válidas -> 200 y token")
     void login_validCredentials_returnsToken() throws Exception {
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post(API_AUTH_LOGIN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                        { "email": "user@rockalendar.local", "password": "test1234" }
-                        """))
+                        { "email": "%s", "password": "test1234" }
+                        """.formatted(TestConstants.MOCK_EMAIL)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.accessToken").isString())
-                .andExpect(jsonPath("$.accessToken").isNotEmpty());
+                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.expiresAt").isString())
+                .andExpect(jsonPath("$.expiresAt").isNotEmpty());
     }
 
     @Test
@@ -60,5 +64,47 @@ class AuthApiContractTest extends AbstractPostgresTest {
 
         // No revelar "user not found".
         ra.andExpect(jsonPath("$.detail", not(containsStringIgnoringCase("not found"))));
+    }
+
+    @Test
+    void register_returns200_andTokenAndExpiresAt() throws Exception {
+        mockMvc.perform(post(API_AUTH_REGISTER)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        { "email": "user01@test.com", "password": "test1234" }
+                        """))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.accessToken").isString())
+                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.expiresAt").isString())
+                .andExpect(jsonPath("$.expiresAt").isNotEmpty());
+    }
+
+    @Test
+    void register_returns400_whenInvalidRequest() throws Exception {
+        mockMvc.perform(post(API_AUTH_REGISTER)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        { "email": "not-an-email","password": "short" }
+                        """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void register_returns409_whenEmailExists() throws Exception {
+        mockMvc.perform(post(API_AUTH_REGISTER)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        { "email": "User02@Test.com", "password": "password123" }
+                        """))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post(API_AUTH_REGISTER)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        { "email": "user02@test.com", "password": "test1234" }
+                        """))
+                .andExpect(status().isConflict());
     }
 }
