@@ -83,22 +83,22 @@ public class GlobalExceptionHandler {
         return pd;
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
-        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        pd.setTitle(HttpStatus.NOT_FOUND.getReasonPhrase());
-        pd.setDetail(ex.getMessage());
-        pd.setType(URI.create("urn:rockalendar:error:not-found"));
-        pd.setProperty("timestamp", OffsetDateTime.now());
-        return pd;
-    }
-
     @ExceptionHandler(ForbiddenException.class)
     public ProblemDetail handleForbidden(ForbiddenException ex) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         pd.setTitle(HttpStatus.FORBIDDEN.getReasonPhrase());
         pd.setDetail(ex.getMessage());
         pd.setType(URI.create("urn:rockalendar:error:forbidden"));
+        pd.setProperty("timestamp", OffsetDateTime.now());
+        return pd;
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        pd.setTitle(HttpStatus.NOT_FOUND.getReasonPhrase());
+        pd.setDetail(ex.getMessage());
+        pd.setType(URI.create("urn:rockalendar:error:not-found"));
         pd.setProperty("timestamp", OffsetDateTime.now());
         return pd;
     }
