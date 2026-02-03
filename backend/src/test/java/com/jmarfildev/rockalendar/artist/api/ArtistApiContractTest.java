@@ -37,14 +37,39 @@ class ArtistApiContractTest extends AbstractPostgresTest {
     @Autowired
     MockMvc mockMvc;
 
-    private final String API_ADMIN_ARTIST = "/api/admin/artists";
+    private final String API_MODERATION_ARTIST = "/api/moderation/artists";
     private final String API_ARTISTS = "/api/artists";
     private final String MOCK_ARTIST_NAME_CGPP = "Catalina Grande Piñón Pequeño";
 
     @Test
+    @DisplayName("POST /api/moderation/artists como anonimo -> 401")
+    void createArtist_asAnon_returns401() throws Exception {
+        var ra = mockMvc.perform(post(API_MODERATION_ARTIST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                            { "name": "%s" }
+                        """.formatted(MOCK_ARTIST_NAME_CGPP)));
+
+        contractUtils.expectProblemDetail(ra, 401, API_MODERATION_ARTIST);
+    }
+
+    @Test
+    @DisplayName("POST /api/moderation/artists como USER -> 403")
+    void createArtist_asUser_returns403() throws Exception {
+        var ra = mockMvc.perform(post(API_MODERATION_ARTIST)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                            { "name": "%s" }
+                        """.formatted(MOCK_ARTIST_NAME_CGPP)));
+
+        contractUtils.expectProblemDetail(ra, 403, API_MODERATION_ARTIST);
+    }
+
+    @Test
     @DisplayName("POST /api/artists como MODERATOR -> 201 con artista creado")
     void createArtist_asModerator_returns201() throws Exception {
-        mockMvc.perform(post(API_ADMIN_ARTIST)
+        mockMvc.perform(post(API_MODERATION_ARTIST)
                 .with(contractUtils.authJwtModerator())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -61,7 +86,7 @@ class ArtistApiContractTest extends AbstractPostgresTest {
     @DisplayName("POST /api/artists duplicado por slug -> 409 Conflict")
     void createArtist_duplicateSlug_returns409() throws Exception {
         // primera creación OK
-        mockMvc.perform(post(API_ADMIN_ARTIST)
+        mockMvc.perform(post(API_MODERATION_ARTIST)
                 .with(contractUtils.authJwtAdmin())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -70,47 +95,47 @@ class ArtistApiContractTest extends AbstractPostgresTest {
                 .andExpect(status().isCreated());
 
         // segunda creación repetida (por slug)
-        var ra = mockMvc.perform(post(API_ADMIN_ARTIST)
+        var ra = mockMvc.perform(post(API_MODERATION_ARTIST)
                 .with(contractUtils.authJwtAdmin())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                            { "name": "AGAINST   YOU" }
                         """));
 
-        contractUtils.expectProblemDetail(ra, 409, API_ADMIN_ARTIST);
+        contractUtils.expectProblemDetail(ra, 409, API_MODERATION_ARTIST);
     }
 
     @Test
     @DisplayName("POST /api/artists con name vacío -> 400 Validation ProblemDetail")
     void createArtist_blankName_returns400() throws Exception {
-        var ra = mockMvc.perform(post(API_ADMIN_ARTIST)
+        var ra = mockMvc.perform(post(API_MODERATION_ARTIST)
                 .with(contractUtils.authJwtAdmin())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                             { "name": "   " }
                         """));
 
-        contractUtils.expectProblemDetail(ra, 400, API_ADMIN_ARTIST);
+        contractUtils.expectProblemDetail(ra, 400, API_MODERATION_ARTIST);
     }
 
     @Test
     @DisplayName("POST /api/artists con name que normaliza a slug vacío -> 400 BadRequest ProblemDetail")
     void createArtist_slugBlank_returns400() throws Exception {
-        var ra = mockMvc.perform(post(API_ADMIN_ARTIST)
+        var ra = mockMvc.perform(post(API_MODERATION_ARTIST)
                 .with(contractUtils.authJwtAdmin())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                             { "name": "!!!" }
                         """));
 
-        contractUtils.expectProblemDetail(ra, 400, API_ADMIN_ARTIST);
+        contractUtils.expectProblemDetail(ra, 400, API_MODERATION_ARTIST);
     }
 
     @Test
     @DisplayName("GET /api/artists?query=metal (público) -> 200 lista")
     void searchArtists_public_returns200List() throws Exception {
         // Primero se crea
-        mockMvc.perform(post(API_ADMIN_ARTIST)
+        mockMvc.perform(post(API_MODERATION_ARTIST)
                 .with(contractUtils.authJwtAdmin())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
