@@ -28,10 +28,10 @@ import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
  * @author jmarfil
  *
  */
-@RequestMapping("/api/admin/artists")
+@RequestMapping("/api/moderation/artists")
 @Tag(name = "Admin Artists", description = "Operaciones privadas con artistas")
 @SecurityRequirement(name = "bearerAuth")
-public interface ArtistAdminApi {
+public interface ArtistModerationApi {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -39,9 +39,9 @@ public interface ArtistAdminApi {
             description = "Crea un artista nuevo. Solo usuarios con rol MODERATOR o ADMIN pueden crear artistas de forma explícita.")
     @ApiResponse(responseCode = "201", description = "Artista creado correctamente",
             content = @Content(schema = @Schema(implementation = ArtistDto.class)))
-    @ApiBadRequest
     @ApiUnauthorized
     @ApiForbidden
+    @ApiBadRequest
     @ApiConflict
     ArtistDto createArtist(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
                            @Parameter(description = "Datos del artista", required = true) @Valid @RequestBody CreateArtistRequest request);
