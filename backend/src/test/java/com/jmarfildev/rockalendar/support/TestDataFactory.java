@@ -148,8 +148,11 @@ public class TestDataFactory {
                 .venueName(venue)
                 .venueSlug(SlugNormalizer.of(venue))
                 .status(status)
-                .createdByUserId(UUID.fromString(TestConstants.MOCK_USER_ID))
                 .artists(artists(artistNames))
+                .createdByUserId(UUID.fromString(TestConstants.MOCK_USER_ID))
+                .submittedAt(TestDates.now())
+                .moderatedByUserId(UUID.fromString(TestConstants.MOCK_MODERATOR_ID))
+                .moderatedAt(TestDates.tomorrow())
                 .build();
 
         return eventRepository.save(event);

@@ -14,8 +14,16 @@ public final class TestDates {
 
     private TestDates() {}
 
+    public static OffsetDateTime now() {
+        return OffsetDateTime.now(CLOCK);
+    }
+
+    public static OffsetDateTime tomorrow() {
+        return now().plusDays(1);
+    }
+
     public static OffsetDateTime madrid() {
-        return OffsetDateTime.now(CLOCK).plusMonths(1).withDayOfMonth(15);
+        return now().plusMonths(1).withDayOfMonth(15);
     }
 
     public static OffsetDateTime barcelona() {
@@ -23,18 +31,18 @@ public final class TestDates {
     }
 
     public static OffsetDateTime genericFuture() {
-        return OffsetDateTime.now(CLOCK).plusMonths(3).withDayOfMonth(20);
+        return now().plusMonths(3).withDayOfMonth(20);
     }
 
     public static OffsetDateTime past() {
-        return OffsetDateTime.now(CLOCK).minusMonths(1);
+        return now().minusMonths(1);
     }
 
     public static OffsetDateTime rangeStart() {
-        return OffsetDateTime.now(CLOCK).plusMonths(2).withDayOfMonth(1);
+        return now().plusMonths(2).withDayOfMonth(1);
     }
 
     public static OffsetDateTime rangeEnd() {
-        return OffsetDateTime.now(CLOCK).plusMonths(2).withDayOfMonth(28);
+        return now().plusMonths(2).withDayOfMonth(28);
     }
 }

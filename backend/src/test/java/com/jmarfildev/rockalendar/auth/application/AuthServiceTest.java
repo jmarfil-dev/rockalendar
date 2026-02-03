@@ -65,12 +65,12 @@ class AuthServiceTest {
     void login_validCredentials_returnsToken() {
         var req = new LoginRequest("User@Rockalendar.local", "pw");
         Authentication auth = new UsernamePasswordAuthenticationToken(
-                TestConstants.MOCK_EMAIL,
+                TestConstants.MOCK_USER_EMAIL,
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
         User user = User.builder()
                 .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
-                .email(TestConstants.MOCK_EMAIL)
+                .email(TestConstants.MOCK_USER_EMAIL)
                 .passwordHash("hash")
                 .build();
         var token = new JwtTokenService.LoginToken("jwt-token", Instant.parse("2030-01-01T00:00:00Z"));
@@ -78,7 +78,7 @@ class AuthServiceTest {
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(auth);
-        when(userRepository.findByEmail(TestConstants.MOCK_EMAIL))
+        when(userRepository.findByEmail(TestConstants.MOCK_USER_EMAIL))
                 .thenReturn(Optional.of(user));
         when(jwtTokenService.createToken(eq(user), eq(List.of("ROLE_USER"))))
                 .thenReturn(token);
@@ -90,14 +90,14 @@ class AuthServiceTest {
         // Verifica que authenticate se llama con email/password del request
         ArgumentCaptor<UsernamePasswordAuthenticationToken> captor = ArgumentCaptor.forClass(UsernamePasswordAuthenticationToken.class);
         verify(authenticationManager).authenticate(captor.capture());
-        assertThat(captor.getValue().getPrincipal()).isEqualTo(TestConstants.MOCK_EMAIL);
+        assertThat(captor.getValue().getPrincipal()).isEqualTo(TestConstants.MOCK_USER_EMAIL);
         assertThat(captor.getValue().getCredentials()).isEqualTo("pw");
     }
 
     @Test
     @DisplayName("login: AuthenticationManager lanza AuthenticationException -> BadCredentialsException")
     void login_authenticationFails_throwsBadCredentials() {
-        var req = new LoginRequest(TestConstants.MOCK_EMAIL, "wrong");
+        var req = new LoginRequest(TestConstants.MOCK_USER_EMAIL, "wrong");
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("spring msg"));
@@ -112,15 +112,15 @@ class AuthServiceTest {
     @Test
     @DisplayName("login: auth ok pero usuario no existe -> BadCredentialsException")
     void login_userNotFound_throwsBadCredentials() {
-        var req = new LoginRequest(TestConstants.MOCK_EMAIL, "pw");
+        var req = new LoginRequest(TestConstants.MOCK_USER_EMAIL, "pw");
         Authentication auth = new UsernamePasswordAuthenticationToken(
-                TestConstants.MOCK_EMAIL,
+                TestConstants.MOCK_USER_EMAIL,
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(auth);
-        when(userRepository.findByEmail(TestConstants.MOCK_EMAIL))
+        when(userRepository.findByEmail(TestConstants.MOCK_USER_EMAIL))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.login(req))
