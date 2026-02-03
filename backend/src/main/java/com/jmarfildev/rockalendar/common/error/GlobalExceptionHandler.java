@@ -1,6 +1,5 @@
 package com.jmarfildev.rockalendar.common.error;
 
-import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,8 @@ public class GlobalExceptionHandler {
                         (a, b) -> a));
         pd.setProperty("errors", errors);
 
-        return setGenericProperties(pd, "Validation error", "Request validation failed");
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, "Validation error", "Request validation failed", req.getRequestURI());
     }
 
     @ExceptionHandler({
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
                         MethodArgumentTypeMismatchException.class,
                         ConversionFailedException.class
     })
-    public ProblemDetail handleBadRequest(Exception ex) {
+    public ProblemDetail handleBadRequest(Exception ex, HttpServletRequest req) {
         /*
          * BadRequestException es una excepción custom y se controla el mensaje al lanzarla
          * Las otras excepciones tienen mensajes de sistema que no deben exponerse
@@ -55,7 +55,8 @@ public class GlobalExceptionHandler {
                 : "Invalid value for request parameter";
 
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        return setGenericProperties(pd, HttpStatus.BAD_REQUEST.getReasonPhrase(), detail);
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.BAD_REQUEST.getReasonPhrase(), detail, req.getRequestURI());
     }
 
     /**
@@ -65,27 +66,31 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(BadCredentialsException.class)
-    public ProblemDetail handleBadCredentials(BadCredentialsException ex) {
+    public ProblemDetail handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        return setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage());
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ProblemDetail handleForbidden(ForbiddenException ex) {
+    public ProblemDetail handleForbidden(ForbiddenException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-        return setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage());
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        return setGenericProperties(pd, HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage());
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ProblemDetail handleConflict(ConflictException ex) {
+    public ProblemDetail handleConflict(ConflictException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-        return setGenericProperties(pd, HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage());
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
 
     /**
@@ -95,14 +100,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ErrorResponseException.class)
     public ProblemDetail handleErrorResponse(ErrorResponseException ex, HttpServletRequest req) {
         ProblemDetail pd = ex.getBody();
-        pd.setProperty("timestamp", OffsetDateTime.now());
-        return pd;
-    }
-
-    private ProblemDetail setGenericProperties(ProblemDetail pd, String status, String message) {
-        pd.setTitle(status);
-        pd.setDetail(message);
-        pd.setType(URI.create("urn:rockalendar:error:%s".formatted(status.toLowerCase().replaceAll("\\s+", "-"))));
         pd.setProperty("timestamp", OffsetDateTime.now());
         return pd;
     }

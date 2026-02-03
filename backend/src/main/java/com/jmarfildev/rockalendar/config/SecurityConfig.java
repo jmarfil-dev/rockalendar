@@ -1,6 +1,5 @@
 package com.jmarfildev.rockalendar.config;
 
-import java.net.URI;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -23,6 +22,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import lombok.RequiredArgsConstructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 
 /**
  * @author jmarfil
@@ -42,10 +42,8 @@ public class SecurityConfig {
                 .exceptionHandling(eh -> eh
                         .authenticationEntryPoint((request, response, authException) -> {
                             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-                            pd.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());
-                            pd.setDetail("Authentication is required to access this resource");
-                            pd.setType(URI.create("urn:rockalendar:error:unauthorized"));
-                            pd.setInstance(URI.create(request.getRequestURI()));
+                            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                                    "Authentication is required to access this resource", request.getRequestURI());
 
                             response.setStatus(HttpStatus.UNAUTHORIZED.value());
                             response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
@@ -54,10 +52,8 @@ public class SecurityConfig {
                         // Token válido pero sin Rol adecuado o acceso denegado por configuración
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-                            pd.setTitle(HttpStatus.FORBIDDEN.getReasonPhrase());
-                            pd.setDetail("You don't have permission to access this resource");
-                            pd.setType(URI.create("urn:rockalendar:error:forbidden"));
-                            pd.setInstance(URI.create(request.getRequestURI()));
+                            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(),
+                                    "You don't have permission to access this resource", request.getRequestURI());
 
                             response.setStatus(HttpStatus.FORBIDDEN.value());
                             response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
