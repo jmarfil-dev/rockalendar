@@ -97,30 +97,12 @@ public class TestDataFactory {
      */
 
     public Event approvedEvent(String title,
-                               short provinceIne,
-                               String city,
-                               String venue,
-                               OffsetDateTime start,
-                               String... artistNames) {
-        return saveEvent(title, province(provinceIne), city, venue, start, EventStatus.APPROVED, artistNames);
-    }
-
-    public Event approvedEvent(String title,
                                Province province,
                                String city,
                                String venue,
                                OffsetDateTime start,
                                String... artistNames) {
-        return saveEvent(title, province, city, venue, start, EventStatus.APPROVED, artistNames);
-    }
-
-    public Event pendingEvent(String title,
-                              short provinceIne,
-                              String city,
-                              String venue,
-                              OffsetDateTime start,
-                              String... artistNames) {
-        return saveEvent(title, province(provinceIne), city, venue, start, EventStatus.PENDING_MODERATION, artistNames);
+        return saveEvent(title, province, city, venue, start, EventStatus.APPROVED, TestDates.yesterday(), null, artistNames);
     }
 
     public Event pendingEvent(String title,
@@ -128,8 +110,43 @@ public class TestDataFactory {
                               String city,
                               String venue,
                               OffsetDateTime start,
+                              OffsetDateTime submittedAt,
+                              OffsetDateTime moderatedAtAt,
                               String... artistNames) {
-        return saveEvent(title, province, city, venue, start, EventStatus.PENDING_MODERATION, artistNames);
+        return saveEvent(title, province, city, venue, start, EventStatus.PENDING_MODERATION, submittedAt, moderatedAtAt, artistNames);
+    }
+
+    public Event rejectedEvent(String title,
+                               Province province,
+                               String city,
+                               String venue,
+                               OffsetDateTime start,
+                               OffsetDateTime submittedAt,
+                               OffsetDateTime moderatedAtAt,
+                               String... artistNames) {
+        return saveEvent(title, province, city, venue, start, EventStatus.REJECTED, submittedAt, moderatedAtAt, artistNames);
+    }
+
+    public Event hiddenEvent(String title,
+                             Province province,
+                             String city,
+                             String venue,
+                             OffsetDateTime start,
+                             OffsetDateTime submittedAt,
+                             OffsetDateTime moderatedAtAt,
+                             String... artistNames) {
+        return saveEvent(title, province, city, venue, start, EventStatus.HIDDEN, submittedAt, moderatedAtAt, artistNames);
+    }
+
+    public Event canceledEvent(String title,
+                               Province province,
+                               String city,
+                               String venue,
+                               OffsetDateTime start,
+                               OffsetDateTime submittedAt,
+                               OffsetDateTime moderatedAtAt,
+                               String... artistNames) {
+        return saveEvent(title, province, city, venue, start, EventStatus.CANCELED, submittedAt, moderatedAtAt, artistNames);
     }
 
     private Event saveEvent(String title,
@@ -138,6 +155,8 @@ public class TestDataFactory {
                             String venue,
                             OffsetDateTime start,
                             EventStatus status,
+                            OffsetDateTime submittedAt,
+                            OffsetDateTime moderatedAtAt,
                             String... artistNames) {
         Event event = Event.builder()
                 .title(title)
@@ -150,7 +169,7 @@ public class TestDataFactory {
                 .status(status)
                 .artists(artists(artistNames))
                 .createdByUserId(UUID.fromString(TestConstants.MOCK_USER_ID))
-                .submittedAt(TestDates.now())
+                .submittedAt(submittedAt)
                 .moderatedByUserId(UUID.fromString(TestConstants.MOCK_MODERATOR_ID))
                 .moderatedAt(TestDates.tomorrow())
                 .build();
@@ -168,16 +187,6 @@ public class TestDataFactory {
                 TestConstants.MOCK_ARTIST_NAME_AY);
     }
 
-    public Event pendingMadridAgainstYou() {
-        return pendingEvent(
-                "%s en MADRID (pendiente)".formatted(TestConstants.MOCK_ARTIST_NAME_AY),
-                madrid(),
-                TestConstants.MADRID,
-                "Sala Copérnico",
-                TestDates.madrid().plusDays(1),
-                TestConstants.MOCK_ARTIST_NAME_AY);
-    }
-
     public Event approvedBarcelonaBoikot() {
         return approvedEvent(
                 "Boikot en %s".formatted(TestConstants.BARCELONA),
@@ -188,16 +197,6 @@ public class TestDataFactory {
                 "Boikot");
     }
 
-    public Event pendingValenciaLosDeMarras() {
-        return pendingEvent(
-                "Los de Marras en València",
-                valencia(),
-                "València",
-                "Sala Moon",
-                TestDates.genericFuture(),
-                "Los de Marras");
-    }
-
     public Event approvedValenciaPast() {
         return approvedEvent(
                 "Desera en València",
@@ -206,5 +205,65 @@ public class TestDataFactory {
                 "Sala Moon",
                 TestDates.past(),
                 "Desera");
+    }
+
+    public Event pendingMadridAgainstYou() {
+        return pendingEvent(
+                "%s en MADRID (pendiente)".formatted(TestConstants.MOCK_ARTIST_NAME_AY),
+                madrid(),
+                TestConstants.MADRID,
+                "Sala Copérnico",
+                TestDates.madrid().plusDays(1),
+                TestDates.yesterday(),
+                null,
+                TestConstants.MOCK_ARTIST_NAME_AY);
+    }
+
+    public Event pendingValenciaLosDeMarras() {
+        return pendingEvent(
+                "Los de Marras en València",
+                valencia(),
+                "València",
+                "Sala Moon",
+                TestDates.genericFuture(),
+                TestDates.yesterday().minusDays(1),
+                TestDates.now(),
+                "Los de Marras");
+    }
+
+    public Event rejectedValenciaMafalda() {
+        return rejectedEvent(
+                "Mafalda en València",
+                valencia(),
+                "València",
+                "Sala Moon",
+                TestDates.past(),
+                TestDates.past().minusMonths(2),
+                TestDates.past().minusMonths(1),
+                "Mafalda");
+    }
+
+    public Event hiddenMadridSoziedadAlkoholika() {
+        return hiddenEvent(
+                "Soziedad Alkoholika en %s".formatted(TestConstants.MADRID),
+                madrid(),
+                TestConstants.MADRID,
+                "Sala Copérnico",
+                TestDates.madrid(),
+                TestDates.yesterday().minusDays(5),
+                TestDates.yesterday().minusDays(4),
+                "Soziedad Alkoholika");
+    }
+
+    public Event canceledBarcelonaManifa() {
+        return canceledEvent(
+                "Manifa en %s".formatted(TestConstants.BARCELONA),
+                barcelona(),
+                TestConstants.BARCELONA,
+                "Palau Sant Jordi",
+                TestDates.barcelona(),
+                TestDates.yesterday().minusDays(2),
+                TestDates.now(),
+                "Manifa");
     }
 }

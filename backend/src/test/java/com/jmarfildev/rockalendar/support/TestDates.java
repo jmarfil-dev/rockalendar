@@ -18,6 +18,10 @@ public final class TestDates {
         return OffsetDateTime.now(CLOCK);
     }
 
+    public static OffsetDateTime yesterday() {
+        return now().minusDays(1);
+    }
+
     public static OffsetDateTime tomorrow() {
         return now().plusDays(1);
     }

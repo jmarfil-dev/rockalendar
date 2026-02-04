@@ -8,5 +8,5 @@ import java.util.UUID;
  *
  */
 public record ModerationPendingDto(UUID id,
-                                        String title,
-                                        Instant submittedAt) {}
+                                   String title,
+                                   Instant submittedAt) {}

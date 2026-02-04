@@ -10,7 +10,7 @@ import com.jmarfildev.rockalendar.events.domain.EventStatus;
  *
  */
 public record ModerationArchivedDto(UUID id,
-                                         String title,
-                                         EventStatus status,
-                                         String moderationMessage,
-                                         Instant moderatedAt) {}
+                                    String title,
+                                    EventStatus status,
+                                    String moderationMessage,
+                                    Instant moderatedAt) {}

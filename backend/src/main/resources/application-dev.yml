@@ -23,4 +23,5 @@ security:
 
 logging:
   level:
+    com.jmarfildev.rockalendar: debug
     org.hibernate.SQL: debug
