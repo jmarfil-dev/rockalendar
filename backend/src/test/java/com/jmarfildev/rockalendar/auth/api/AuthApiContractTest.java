@@ -42,7 +42,7 @@ class AuthApiContractTest extends AbstractPostgresTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         { "email": "%s", "password": "test1234" }
-                        """.formatted(TestConstants.MOCK_EMAIL)))
+                        """.formatted(TestConstants.MOCK_USER_EMAIL)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.accessToken").isString())

@@ -82,17 +82,23 @@ public class Event {
     @Column(name = "created_by_user_id", nullable = false)
     private UUID createdByUserId;
 
-    @Column(name = "approved_by_user_id")
-    private UUID approvedByUserId;
+    @Column(name = "moderated_by_user_id")
+    private UUID moderatedByUserId;
 
-    @Column(name = "rejection_reason", columnDefinition = "text")
-    private String rejectionReason;
+    @Column(name = "moderation_message", columnDefinition = "text")
+    private String moderationMessage;
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
+
+    @Column(name = "submitted_at", nullable = false)
+    private OffsetDateTime submittedAt;
+
+    @Column(name = "moderated_at")
+    private OffsetDateTime moderatedAt;
 
     @ManyToMany
     @JoinTable(name = "event_artists",
@@ -109,6 +115,9 @@ public class Event {
         var now = OffsetDateTime.now();
         if (createdAt == null) {
             createdAt = now;
+        }
+        if (submittedAt == null && status == EventStatus.PENDING_MODERATION) {
+            submittedAt = now;
         }
         updatedAt = now;
     }

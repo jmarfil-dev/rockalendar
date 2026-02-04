@@ -2,7 +2,6 @@ package com.jmarfildev.rockalendar.artists.api;
 
 import java.util.UUID;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,13 +18,12 @@ import com.jmarfildev.rockalendar.artists.application.ArtistCommandService;
  */
 @RestController
 @RequiredArgsConstructor
-public class ArtistAdminController implements ArtistAdminApi {
+public class ArtistModerationController implements ArtistModerationApi {
 
     private final ArtistCommandService artistService;
     private final ArtistMapper mapper;
 
     @Override
-    @PreAuthorize("hasAnyRole('MODERATOR','ADMIN')")
     public ArtistDto createArtist(Jwt jwt, CreateArtistRequest request) {
         UUID userId = UUID.fromString(jwt.getSubject());
         return mapper.toDto(artistService.createArtist(request, userId));

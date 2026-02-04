@@ -19,15 +19,19 @@ import jakarta.validation.Valid;
 
 import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
 import com.jmarfildev.rockalendar.artists.api.dto.CreateArtistRequest;
+import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
+import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
+import com.jmarfildev.rockalendar.common.annotations.ApiForbidden;
+import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
 
 /**
  * @author jmarfil
  *
  */
-@RequestMapping("/api/admin/artists")
+@RequestMapping("/api/moderation/artists")
 @Tag(name = "Admin Artists", description = "Operaciones privadas con artistas")
 @SecurityRequirement(name = "bearerAuth")
-public interface ArtistAdminApi {
+public interface ArtistModerationApi {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -35,10 +39,10 @@ public interface ArtistAdminApi {
             description = "Crea un artista nuevo. Solo usuarios con rol MODERATOR o ADMIN pueden crear artistas de forma explícita.")
     @ApiResponse(responseCode = "201", description = "Artista creado correctamente",
             content = @Content(schema = @Schema(implementation = ArtistDto.class)))
-    @ApiResponse(responseCode = "400", description = "Datos incorrectos")
-    @ApiResponse(responseCode = "401", description = "Usuario no autenticado")
-    @ApiResponse(responseCode = "403", description = "Rol de usuario incorrecto")
-    @ApiResponse(responseCode = "409", description = "Artista ya existente")
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiBadRequest
+    @ApiConflict
     ArtistDto createArtist(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
                            @Parameter(description = "Datos del artista", required = true) @Valid @RequestBody CreateArtistRequest request);
 }

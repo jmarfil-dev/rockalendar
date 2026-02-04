@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
 import com.jmarfildev.rockalendar.events.api.doc.EventPublicPageDoc;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 
@@ -62,7 +63,7 @@ public interface EventApi {
                     """)
     @ApiResponse(responseCode = "200", description = "Página de eventos públicos",
             content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
-    @ApiResponse(responseCode = "400", description = "Parámetros de búsqueda inválidos")
+    @ApiBadRequest
     Page<EventPublicDto> searchPublic(@Parameter(description = "Búsqueda libre (título, sala, ciudad, artista)",
             example = "metallica madrid") @RequestParam Optional<String> query,
                                 @Parameter(description = "Fecha/hora desde (ISO-8601)",

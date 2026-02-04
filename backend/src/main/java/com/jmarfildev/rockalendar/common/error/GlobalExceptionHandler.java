@@ -1,6 +1,5 @@
 package com.jmarfildev.rockalendar.common.error;
 
-import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 
@@ -28,11 +27,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        pd.setTitle("Validation error");
-        pd.setDetail("Request validation failed");
-        pd.setType(URI.create("urn:rockalendar:error:validation"));
-        pd.setProperty("timestamp", OffsetDateTime.now());
-
         var errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -42,7 +36,8 @@ public class GlobalExceptionHandler {
                         (a, b) -> a));
         pd.setProperty("errors", errors);
 
-        return pd;
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, "Validation error", "Request validation failed", req.getRequestURI());
     }
 
     @ExceptionHandler({
@@ -50,7 +45,7 @@ public class GlobalExceptionHandler {
                         MethodArgumentTypeMismatchException.class,
                         ConversionFailedException.class
     })
-    public ProblemDetail handleBadRequest(Exception ex) {
+    public ProblemDetail handleBadRequest(Exception ex, HttpServletRequest req) {
         /*
          * BadRequestException es una excepción custom y se controla el mensaje al lanzarla
          * Las otras excepciones tienen mensajes de sistema que no deben exponerse
@@ -60,11 +55,8 @@ public class GlobalExceptionHandler {
                 : "Invalid value for request parameter";
 
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        pd.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
-        pd.setDetail(detail);
-        pd.setType(URI.create("urn:rockalendar:error:bad-request"));
-        pd.setProperty("timestamp", OffsetDateTime.now());
-        return pd;
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.BAD_REQUEST.getReasonPhrase(), detail, req.getRequestURI());
     }
 
     /**
@@ -74,43 +66,31 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(BadCredentialsException.class)
-    public ProblemDetail handleBadCredentials(BadCredentialsException ex) {
+    public ProblemDetail handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        pd.setTitle(HttpStatus.UNAUTHORIZED.getReasonPhrase());
-        pd.setDetail(ErrorMessages.INVALID_CREDENTIALS);
-        pd.setType(URI.create("urn:rockalendar:error:unauthorized"));
-        pd.setProperty("timestamp", OffsetDateTime.now());
-        return pd;
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ProblemDetail handleForbidden(ForbiddenException ex) {
+    public ProblemDetail handleForbidden(ForbiddenException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-        pd.setTitle(HttpStatus.FORBIDDEN.getReasonPhrase());
-        pd.setDetail(ex.getMessage());
-        pd.setType(URI.create("urn:rockalendar:error:forbidden"));
-        pd.setProperty("timestamp", OffsetDateTime.now());
-        return pd;
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        pd.setTitle(HttpStatus.NOT_FOUND.getReasonPhrase());
-        pd.setDetail(ex.getMessage());
-        pd.setType(URI.create("urn:rockalendar:error:not-found"));
-        pd.setProperty("timestamp", OffsetDateTime.now());
-        return pd;
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ProblemDetail handleConflict(ConflictException ex) {
+    public ProblemDetail handleConflict(ConflictException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-        pd.setTitle(HttpStatus.CONFLICT.getReasonPhrase());
-        pd.setDetail(ex.getMessage());
-        pd.setType(URI.create("urn:rockalendar:error:conflict"));
-        pd.setProperty("timestamp", OffsetDateTime.now());
-        return pd;
+        return ProblemDetailGenericProperties.setGenericProperties(
+                pd, HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
 
     /**

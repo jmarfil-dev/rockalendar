@@ -20,9 +20,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
+import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
 import com.jmarfildev.rockalendar.events.api.doc.EventPrivatePageDoc;
-import com.jmarfildev.rockalendar.events.api.dto.ProposeEventRequest;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.events.api.dto.ProposeEventRequest;
 
 /**
  * @author jmarfil
@@ -37,8 +39,8 @@ public interface MeEventApi {
     @Operation(summary = "Proponer un nuevo evento",
             description = "Permite al usuario autenticado proponer un nuevo evento. El evento quedará pendiente de moderación antes de ser visible públicamente.")
     @ApiResponse(responseCode = "201", description = "Evento propuesto correctamente")
-    @ApiResponse(responseCode = "400", description = "Datos inválidos en la solicitud")
-    @ApiResponse(responseCode = "401", description = "Usuario no autenticado")
+    @ApiBadRequest
+    @ApiUnauthorized
     EventPrivateDto propose(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
                             @Parameter(description = "Datos del evento a proponer",
                                     required = true) @Valid @RequestBody ProposeEventRequest request);
@@ -48,7 +50,7 @@ public interface MeEventApi {
             description = "Devuelve los eventos creados por el usuario autenticado.")
     @ApiResponse(responseCode = "200", description = "Listado de eventos del usuario",
             content = @Content(schema = @Schema(implementation = EventPrivatePageDoc.class)))
-    @ApiResponse(responseCode = "401", description = "Usuario no autenticado")
+    @ApiUnauthorized
     Page<EventPrivateDto> listMine(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
                                    @Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 }

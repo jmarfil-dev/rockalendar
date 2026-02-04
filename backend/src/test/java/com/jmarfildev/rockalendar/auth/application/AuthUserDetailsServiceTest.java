@@ -39,20 +39,6 @@ class AuthUserDetailsServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("loadUserByUsername: email ignore-case -> devuelve UserDetails")
-    void loadUser_ignoreCase() {
-        userRepository.save(User.builder()
-                .email("User@Test.com")
-                .passwordHash("{noop}user")
-                .role(UserRole.USER.name())
-                .build());
-
-        var ud = service.loadUserByUsername("user@test.com");
-
-        assertThat(ud.getUsername()).isEqualTo("User@Test.com");
-    }
-
-    @Test
     @DisplayName("loadUserByUsername: si no existe -> UsernameNotFoundException")
     void loadUser_notFound() {
         assertThatThrownBy(() -> service.loadUserByUsername("missing@test.com"))

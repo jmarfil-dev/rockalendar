@@ -7,8 +7,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultActions;
@@ -27,10 +30,13 @@ public class ContractApiTestUtils {
      */
 
     private JwtRequestPostProcessor authJwt(String role) {
-        return jwt().jwt(j -> j.subject(TestConstants.MOCK_USER_ID)
-                .claim("iss", "rockalendar")
-                .claim("email", TestConstants.MOCK_EMAIL)
-                .claim("roles", new String[] { role }));
+        return jwt()
+                .authorities(new SimpleGrantedAuthority(role))
+                .jwt(j -> j
+                        .subject(TestConstants.MOCK_USER_ID)
+                        .claim("email", TestConstants.MOCK_USER_EMAIL)
+                        .claim("roles", List.of(role))
+                );
     }
 
     public JwtRequestPostProcessor authJwt() {
