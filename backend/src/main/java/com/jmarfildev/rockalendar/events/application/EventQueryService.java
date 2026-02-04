@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import com.jmarfildev.rockalendar.common.Constants;
+import com.jmarfildev.rockalendar.common.CommonValidations;
 import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
@@ -47,9 +47,7 @@ public class EventQueryService {
 
     @Transactional(readOnly = true)
     public Page<EventPublicDto> listHome(Pageable pageable) {
-        if (pageable.getPageSize() > Constants.maxPageSize) {
-            throw new BadRequestException(ErrorMessages.PAGE_SIZE_TOO_LARGE);
-        }
+        CommonValidations.validatePageable(pageable);
 
         // "sanitiza" el sort (tu SQL ya tiene ORDER BY fijo)
         Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
@@ -65,12 +63,9 @@ public class EventQueryService {
                                              Optional<String> city,
                                              Optional<String> artist,
                                              Pageable pageable) {
+        CommonValidations.validatePageable(pageable);
         if (dateFrom.isPresent() && dateTo.isPresent() && dateFrom.get().isAfter(dateTo.get())) {
             throw new BadRequestException(ErrorMessages.INVALID_DATE_RANGE);
-        }
-
-        if (pageable.getPageSize() > Constants.maxPageSize) {
-            throw new BadRequestException(ErrorMessages.PAGE_SIZE_TOO_LARGE);
         }
 
         String q = query.map(String::trim).orElse("");
@@ -110,10 +105,7 @@ public class EventQueryService {
 
     @Transactional(readOnly = true)
     public Page<EventPrivateDto> listMine(UUID userId, Pageable pageable) {
-        if (pageable.getPageSize() > Constants.maxPageSize) {
-            throw new BadRequestException(ErrorMessages.PAGE_SIZE_TOO_LARGE);
-        }
-
+        CommonValidations.validatePageable(pageable);
         return eRepository.listMineOrderFutureFirst(userId, pageable).map(mapper::toPrivateDto);
     }
 

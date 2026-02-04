@@ -39,8 +39,8 @@ public interface MeEventApi {
     @Operation(summary = "Proponer un nuevo evento",
             description = "Permite al usuario autenticado proponer un nuevo evento. El evento quedará pendiente de moderación antes de ser visible públicamente.")
     @ApiResponse(responseCode = "201", description = "Evento propuesto correctamente")
-    @ApiBadRequest
     @ApiUnauthorized
+    @ApiBadRequest
     EventPrivateDto propose(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
                             @Parameter(description = "Datos del evento a proponer",
                                     required = true) @Valid @RequestBody ProposeEventRequest request);
