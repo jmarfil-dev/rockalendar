@@ -10,9 +10,9 @@ import org.mapstruct.Mapping;
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
-import com.jmarfildev.rockalendar.events.api.dto.EventPublicHomeProjection;
-import com.jmarfildev.rockalendar.events.api.dto.EventPublicSearchProjection;
 import com.jmarfildev.rockalendar.events.domain.Event;
+import com.jmarfildev.rockalendar.events.persistence.EventPublicHomeProjection;
+import com.jmarfildev.rockalendar.events.persistence.EventPublicSearchProjection;
 
 /**
  * @author jmarfil

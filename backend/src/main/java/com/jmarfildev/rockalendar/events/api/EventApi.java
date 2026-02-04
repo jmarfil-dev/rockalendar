@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
+import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.events.api.doc.EventPublicPageDoc;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 
@@ -85,7 +86,7 @@ public interface EventApi {
     @Operation(summary = "Obtener evento público por ID", description = "Devuelve un evento público por su ID (solo estado APPROVED).")
     @ApiResponse(responseCode = "200", description = "Evento encontrado",
             content = @Content(schema = @Schema(implementation = EventPublicDto.class)))
-    @ApiResponse(responseCode = "404", description = "Evento no encontrado o no público")
+    @ApiNotFound
     EventPublicDto getPublicById(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
             required = true) @PathVariable UUID id);
 }

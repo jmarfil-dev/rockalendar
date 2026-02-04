@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-import com.jmarfildev.rockalendar.events.api.dto.EventPublicHomeProjection;
-import com.jmarfildev.rockalendar.events.api.dto.EventPublicSearchProjection;
 import com.jmarfildev.rockalendar.events.domain.Event;
 
 /**

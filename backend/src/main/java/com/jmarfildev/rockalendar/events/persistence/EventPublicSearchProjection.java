@@ -1,4 +1,4 @@
-package com.jmarfildev.rockalendar.events.api.dto;
+package com.jmarfildev.rockalendar.events.persistence;
 
 import java.time.Instant;
 import java.util.UUID;
