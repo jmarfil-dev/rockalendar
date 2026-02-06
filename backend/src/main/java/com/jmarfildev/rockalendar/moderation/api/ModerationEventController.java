@@ -47,4 +47,14 @@ public class ModerationEventController implements ModerationEventApi {
     public EventPrivateDto reject(UUID eventId, @Valid ModerationArchiveRequest request) {
         return commandService.reject(eventId, request);
     }
+
+    @Override
+    public EventPrivateDto hide(UUID eventId, @Valid ModerationArchiveRequest request) {
+        return commandService.hide(eventId, request);
+    }
+
+    @Override
+    public EventPrivateDto requestChanges(UUID eventId, @Valid ModerationArchiveRequest request) {
+        return commandService.requestChanges(eventId, request);
+    }
 }

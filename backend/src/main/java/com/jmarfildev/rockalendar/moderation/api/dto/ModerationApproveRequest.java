@@ -6,4 +6,4 @@ import jakarta.validation.constraints.Size;
  * @author jmarfil
  *
  */
-public record ModerationApproveRequest(@Size(max = 500) String reason) {}
+public record ModerationApproveRequest(@Size(max = 500) String comment) {}

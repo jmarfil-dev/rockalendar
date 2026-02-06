@@ -44,8 +44,7 @@ public class ModerationCommandService {
 
     @Transactional
     public EventPrivateDto approve(UUID eventId, ModerationApproveRequest request) {
-        String comment = request != null ? StringUtils.blankToNull(request.reason()) : null;
-
+        String comment = request != null ? StringUtils.blankToNull(request.comment()) : null;
         return moderate(eventId, ActionType.APPROVE, comment, (event, moderatorId, now, message) -> {
             event.setStatus(EventStatus.APPROVED);
             event.setModeratedByUserId(moderatorId);
@@ -56,12 +55,26 @@ public class ModerationCommandService {
 
     @Transactional
     public EventPrivateDto reject(UUID eventId, ModerationArchiveRequest request) {
-        String reason = StringUtils.blankToNull(request.reason()); // request ya es @NotBlank, pero por seguridad
+        return archive(eventId, request.reason(), ActionType.REJECT, EventStatus.REJECTED);
+    }
+
+    @Transactional
+    public EventPrivateDto hide(UUID eventId, ModerationArchiveRequest request) {
+        return archive(eventId, request.reason(), ActionType.HIDE, EventStatus.HIDDEN);
+    }
+
+    @Transactional
+    public EventPrivateDto requestChanges(UUID eventId, ModerationArchiveRequest request) {
+        return archive(eventId, request.reason(), ActionType.COMMENT, EventStatus.NEEDS_CHANGES);
+    }
+
+    private EventPrivateDto archive(UUID eventId, String requestReason, ActionType action, EventStatus status) {
+        String reason = StringUtils.blankToNull(requestReason);
         if (reason == null) {
             throw new BadRequestException(ErrorMessages.REASON_REQUIRED, ErrorMessages.TYPE_400_VALIDATION);
         }
-        return moderate(eventId, ActionType.REJECT, reason, (event, moderatorId, now, msg) -> {
-            event.setStatus(EventStatus.REJECTED);
+        return moderate(eventId, action, reason, (event, moderatorId, now, msg) -> {
+            event.setStatus(status);
             event.setModeratedByUserId(moderatorId);
             event.setModeratedAt(now);
             event.setModerationMessage(msg);

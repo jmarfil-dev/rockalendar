@@ -92,4 +92,31 @@ public interface ModerationEventApi {
             required = true) @PathVariable UUID eventId,
                            @Parameter(description = "Motivo de rechazo",
                                    required = true) @Valid @RequestBody ModerationArchiveRequest request);
+
+    @PostMapping("/{eventId}/hide")
+    @Operation(summary = "Ocultar eventos pendientes de moderación", description = "Pasa a HIDDEN un evento en PENDING_MODERATION.")
+    @ApiResponse(responseCode = "200", description = "Evento ocultado con éxito")
+    @ApiBadRequest
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    @ApiConflict
+    EventPrivateDto hide(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
+            required = true) @PathVariable UUID eventId,
+                         @Parameter(description = "Motivo de ocultación",
+                                 required = true) @Valid @RequestBody ModerationArchiveRequest request);
+
+    @PostMapping("/{eventId}/request-changes")
+    @Operation(summary = "Devolver evento al autor solicitando cambios",
+            description = "Pasa a NEED_CHANGES un evento en PENDING_MODERATION.")
+    @ApiResponse(responseCode = "200", description = "Evento cambiado de estado con éxito")
+    @ApiBadRequest
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    @ApiConflict
+    EventPrivateDto requestChanges(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
+            required = true) @PathVariable UUID eventId,
+                                   @Parameter(description = "Cambios solicitados",
+                                           required = true) @Valid @RequestBody ModerationArchiveRequest request);
 }

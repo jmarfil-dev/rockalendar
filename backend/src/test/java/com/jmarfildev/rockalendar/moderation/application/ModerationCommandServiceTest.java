@@ -154,6 +154,66 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
         assertThat(action.getCreatedAt()).isNotNull();
     }
 
+    @Test
+    @DisplayName("hide: ok -> actualiza events y crea moderation_actions(HIDE)")
+    void hide_ok_persistsEventAndAction() {
+        var event = factory.pendingMadridAgainstYou();
+        UUID eventId = event.getId();
+        UUID moderatorId = currentUser.userId();
+
+        var dto = service.hide(eventId, new ModerationArchiveRequest(MOCK_REASON));
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.id()).isEqualTo(eventId);
+        assertThat(dto.status()).isEqualTo(EventStatus.HIDDEN);
+
+        Event persisted = eventRepository.findById(eventId).orElseThrow();
+        assertThat(persisted.getStatus()).isEqualTo(EventStatus.HIDDEN);
+        assertThat(persisted.getModeratedByUserId()).isEqualTo(moderatorId);
+        assertThat(persisted.getModeratedAt()).isNotNull();
+        assertThat(persisted.getModerationMessage()).isEqualTo(MOCK_REASON);
+
+        ModerationAction action = moderationActionRepository.findAll()
+                .stream()
+                .filter(a -> a.getEventId().equals(eventId) && a.getAction() == ActionType.HIDE)
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(action.getReason()).isEqualTo(MOCK_REASON);
+        assertThat(action.getModeratedByUserId()).isEqualTo(moderatorId);
+        assertThat(action.getCreatedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("requestChanges: ok -> actualiza events y crea moderation_actions(COMMENT)")
+    void requestChanges_ok_persistsEventAndAction() {
+        var event = factory.pendingMadridAgainstYou();
+        UUID eventId = event.getId();
+        UUID moderatorId = currentUser.userId();
+
+        var dto = service.requestChanges(eventId, new ModerationArchiveRequest(MOCK_REASON));
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.id()).isEqualTo(eventId);
+        assertThat(dto.status()).isEqualTo(EventStatus.NEEDS_CHANGES);
+
+        Event persisted = eventRepository.findById(eventId).orElseThrow();
+        assertThat(persisted.getStatus()).isEqualTo(EventStatus.NEEDS_CHANGES);
+        assertThat(persisted.getModeratedByUserId()).isEqualTo(moderatorId);
+        assertThat(persisted.getModeratedAt()).isNotNull();
+        assertThat(persisted.getModerationMessage()).isEqualTo(MOCK_REASON);
+
+        ModerationAction action = moderationActionRepository.findAll()
+                .stream()
+                .filter(a -> a.getEventId().equals(eventId) && a.getAction() == ActionType.COMMENT)
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(action.getReason()).isEqualTo(MOCK_REASON);
+        assertThat(action.getModeratedByUserId()).isEqualTo(moderatorId);
+        assertThat(action.getCreatedAt()).isNotNull();
+    }
+
     /**
      * Para probar esta excepción hay que usar concurrencia de 2 hilos.
      *
