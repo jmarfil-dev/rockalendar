@@ -10,7 +10,17 @@ import com.jmarfildev.rockalendar.common.Constants;
  */
 @NoArgsConstructor
 public final class ErrorMessages {
+    // Types
+    public static final String TYPE_400_VALIDATION = "validation";
+    public static final String TYPE_400_BAD_REQUEST = "bad-request";
+    public static final String TYPE_401_UNAUTHORIZED = "unauthorized";
+    public static final String TYPE_403_FORBIDDEN = "forbidden";
+    public static final String TYPE_404_NOT_FOUND = "not-found";
+    public static final String TYPE_409_CONFLICT = "conflict";
+    public static final String TYPE_409_MODERATION_STATE = "moderation-state";
+
     // Bad request 400
+    public static final String VALIDATION_ERROR = "Validation error";
     public static final String CITY_REQUIRED = "cityName is required";
     public static final String VENUE_REQUIRED = "venueName is required";
     public static final String TITLE_REQUIRED = "title is required";
@@ -29,4 +39,7 @@ public final class ErrorMessages {
     // Conflict 409
     public static final String ARTIST_ALREADY_EXISTS = "Artist already exists";
     public static final String EMAIL_ALREADY_EXISTS = "email already exists";
+    public static final String EVENT_NOT_PENDING = "Event is not pending moderation";
+    public static final String MOERATOR_OWN = "Moderator cannot approve own event";
+    public static final String EVENT_ALREADY_MOD = "Event was modified by another moderator";
 }

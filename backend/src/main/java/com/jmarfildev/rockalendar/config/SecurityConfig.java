@@ -17,11 +17,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 import lombok.RequiredArgsConstructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 
 /**
@@ -40,25 +43,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())// Para APIs REST en dev
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(eh -> eh
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-                            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                                    "Authentication is required to access this resource", request.getRequestURI());
-
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-                            objectMapper.writeValue(response.getOutputStream(), pd);
-                        })
+                        .authenticationEntryPoint(unauthorizedError())
                         // Token válido pero sin Rol adecuado o acceso denegado por configuración
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-                            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(),
-                                    "You don't have permission to access this resource", request.getRequestURI());
-
-                            response.setStatus(HttpStatus.FORBIDDEN.value());
-                            response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-                            objectMapper.writeValue(response.getOutputStream(), pd);
-                        }))
+                        .accessDeniedHandler(forbiddenError()))
                 .authorizeHttpRequests(auth -> auth
                         // Swagger / OpenAPI
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
@@ -86,7 +73,10 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
 
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .authenticationEntryPoint(unauthorizedError())
+                        .accessDeniedHandler(forbiddenError())
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }
@@ -111,5 +101,29 @@ public class SecurityConfig {
                     : roles.stream().map(r -> (GrantedAuthority) new SimpleGrantedAuthority(r)).toList();
         });
         return conv;
+    }
+
+    private AuthenticationEntryPoint unauthorizedError() {
+        return (request, response, authException) -> {
+            ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    "Authentication is required to access this resource", request.getRequestURI(), ErrorMessages.TYPE_401_UNAUTHORIZED);
+
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+            objectMapper.writeValue(response.getOutputStream(), pd);
+        };
+    }
+
+    private AccessDeniedHandler forbiddenError() {
+        return (request, response, accessDeniedException) -> {
+            ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(),
+                    "You don't have permission to access this resource", request.getRequestURI(), ErrorMessages.TYPE_403_FORBIDDEN);
+
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+            objectMapper.writeValue(response.getOutputStream(), pd);
+        };
     }
 }
