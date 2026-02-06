@@ -12,6 +12,22 @@ Estas implementaciones tienen prioridad sobre las demás.
 
 ### Backend
 
+- Wrapper `CurrentUser` para centralizar autenticación y acceso al usuario actual.
+- Base común para búsquedas, filtros y mapas.
+- Reemplazar `Page<T>` por un DTO propio de paginación: `PageResponse`:
+  - Control total del contrato JSON
+  - Desacoplar API pública de Spring Data
+  - Mantener `@EnableSpringDataWebSupport(VIA_DTO)` solo como solución temporal
+  - Estructura estable: `content`, `page`, `size`, `totalElements`, `totalPages`
+- Devolver `ResponseEntity` en los controladores y en `GlobalExceptionHandler` (`@ControllerAdvice`).
+- Anotaciones de validación compuestas si hay repetición real.
+- Validators propios solo si hay reglas reutilizables.
+- TRGM para Autocompletar de `artist`.
+
+### Mejora de búsquedas
+
+**Mejora búsqueda de eventos públicos**
+
 **PRIORITARIO:** cuando haya volumen alto de datos:
 - Medir con `EXPLAIN ANALYZE` sobre 2–3 consultas reales (búsqueda + listados)
 - Si hay muchos eventos REJECTED acumulados:
@@ -23,16 +39,18 @@ CREATE INDEX idx_events_search_document_gin_approved ON events USING gin (search
 CREATE INDEX idx_events_search_text_trgm_approved ON events USING gin (search_text gin_trgm_ops) WHERE status = 'APPROVED';
 ~~~
 
-- Wrapper `CurrentUser` para centralizar autenticación y acceso al usuario actual.
-- Base común para búsquedas, filtros y mapas.
-- Reemplazar `Page<T>` por un DTO propio de paginación: `PageResponse`:
-  - Control total del contrato JSON
-  - Desacoplar API pública de Spring Data
-  - Mantener `@EnableSpringDataWebSupport(VIA_DTO)` solo como solución temporal
-  - Estructura estable: `content`, `page`, `size`, `totalElements`, `totalPages`
-- Devolver `ResponseEntity` en los controladores y en `GlobalExceptionHandler` (`@ControllerAdvice`).
-- Anotaciones de validación compuestas si hay repetición real.
-- Validators propios solo si hay reglas reutilizables.
+**Mejora búsqueda de artistas (autocomplete)**
+
+Migrar búsqueda LIKE '%term%' (como está ahora en ArtistRepository) a pg_trgm:
+- Crear índices GIN (lower(name) gin_trgm_ops) y GIN (slug gin_trgm_ops)
+- Ajustar query para aprovechar similarity / % operator
+- Mantener límite Top 10 y orden por relevancia
+Motivo: escalar con cientos/miles de artistas sin degradar autocomplete.
+
+Cuándo hacerlo:
+- artistas > 5 000–10 000
+- autocomplete empieza a “rascar” en producción
+- EXPLAIN muestra Seq Scan constante en artists
 
 ## Gestión del ciclo de vida de eventos
 
