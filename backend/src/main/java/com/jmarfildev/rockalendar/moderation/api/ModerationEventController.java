@@ -1,14 +1,19 @@
 package com.jmarfildev.rockalendar.moderation.api;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingDto;
+import com.jmarfildev.rockalendar.moderation.application.ModerationCommandService;
 import com.jmarfildev.rockalendar.moderation.application.ModerationQueryService;
 
 /**
@@ -17,10 +22,10 @@ import com.jmarfildev.rockalendar.moderation.application.ModerationQueryService;
  */
 @RestController
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('MODERATOR','ADMIN')")
-public class ModerationController implements ModerationApi {
+public class ModerationEventController implements ModerationEventApi {
 
     private final ModerationQueryService queryService;
+    private final ModerationCommandService commandService;
 
     @Override
     public Page<ModerationPendingDto> listPending(Pageable pageable) {
@@ -30,6 +35,11 @@ public class ModerationController implements ModerationApi {
     @Override
     public Page<ModerationArchivedDto> listArchived(Pageable pageable) {
         return queryService.listArchived(pageable);
+    }
+
+    @Override
+    public EventPrivateDto approve(UUID eventId, @Valid ModerationApproveRequest request) {
+        return commandService.approve(eventId, request);
     }
 
 }

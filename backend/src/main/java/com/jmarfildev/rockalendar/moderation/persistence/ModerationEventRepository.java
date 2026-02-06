@@ -13,7 +13,7 @@ import com.jmarfildev.rockalendar.events.domain.Event;
  * @author jmarfil
  *
  */
-public interface ModerationRepository extends Repository<Event, UUID> {
+public interface ModerationEventRepository extends Repository<Event, UUID> {
 
     @Query(value = """
                     SELECT

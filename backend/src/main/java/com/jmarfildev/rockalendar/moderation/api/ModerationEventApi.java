@@ -1,22 +1,33 @@
 package com.jmarfildev.rockalendar.moderation.api;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
+import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
 import com.jmarfildev.rockalendar.common.annotations.ApiForbidden;
+import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.moderation.api.doc.ModerationArchivedPageDoc;
 import com.jmarfildev.rockalendar.moderation.api.doc.ModerationPendingPageDoc;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingDto;
 
@@ -27,7 +38,11 @@ import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingDto;
 @RequestMapping("/api/moderation/events")
 @Tag(name = "Moderation Events", description = "Operaciones de moderación de eventos")
 @SecurityRequirement(name = "bearerAuth")
-public interface ModerationApi {
+public interface ModerationEventApi {
+
+    /*
+     * Query endpoints
+     */
 
     @GetMapping("/pending")
     @Operation(summary = "Listar eventos pendientes de moderación",
@@ -46,4 +61,20 @@ public interface ModerationApi {
     @ApiUnauthorized
     @ApiForbidden
     Page<ModerationArchivedDto> listArchived(@PageableDefault(size = 20) Pageable pageable);
+
+    /*
+     * Command endpoints
+     */
+
+    @PostMapping("/{eventId}/approve")
+    @Operation(summary = "Aprobar eventos pendientes de moderación", description = "Pasa a APPROVED un evento en PENDING_MODERATION.")
+    @ApiResponse(responseCode = "200", description = "Evento aprobado con éxito")
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    @ApiConflict
+    EventPrivateDto approve(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
+            required = true) @PathVariable UUID eventId,
+                            @Parameter(description = "Mensaje (si procede)") @Valid @RequestBody(
+                                    required = false) ModerationApproveRequest request);
 }

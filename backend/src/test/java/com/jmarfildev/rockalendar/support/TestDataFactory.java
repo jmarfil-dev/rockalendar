@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
-import com.jmarfildev.rockalendar.common.SlugNormalizer;
+import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
@@ -102,7 +102,17 @@ public class TestDataFactory {
                                String venue,
                                OffsetDateTime start,
                                String... artistNames) {
-        return saveEvent(title, province, city, venue, start, EventStatus.APPROVED, TestDates.yesterday(), null, artistNames);
+        return saveEvent(title,
+                province,
+                city,
+                venue,
+                start,
+                EventStatus.APPROVED,
+                TestConstants.MOCK_USER_ID,
+                TestDates.yesterday().minusDays(1),
+                TestConstants.MOCK_MODERATOR_ID,
+                TestDates.yesterday(),
+                artistNames);
     }
 
     public Event pendingEvent(String title,
@@ -110,10 +120,22 @@ public class TestDataFactory {
                               String city,
                               String venue,
                               OffsetDateTime start,
+                              String createByUserId,
                               OffsetDateTime submittedAt,
-                              OffsetDateTime moderatedAtAt,
+                              String moderatedByUserId,
+                              OffsetDateTime moderatedAt,
                               String... artistNames) {
-        return saveEvent(title, province, city, venue, start, EventStatus.PENDING_MODERATION, submittedAt, moderatedAtAt, artistNames);
+        return saveEvent(title,
+                province,
+                city,
+                venue,
+                start,
+                EventStatus.PENDING_MODERATION,
+                createByUserId,
+                submittedAt,
+                moderatedByUserId,
+                moderatedAt,
+                artistNames);
     }
 
     public Event rejectedEvent(String title,
@@ -121,10 +143,22 @@ public class TestDataFactory {
                                String city,
                                String venue,
                                OffsetDateTime start,
+                               String createByUserId,
                                OffsetDateTime submittedAt,
-                               OffsetDateTime moderatedAtAt,
+                               String moderatedByUserId,
+                               OffsetDateTime moderatedAt,
                                String... artistNames) {
-        return saveEvent(title, province, city, venue, start, EventStatus.REJECTED, submittedAt, moderatedAtAt, artistNames);
+        return saveEvent(title,
+                province,
+                city,
+                venue,
+                start,
+                EventStatus.REJECTED,
+                createByUserId,
+                submittedAt,
+                moderatedByUserId,
+                moderatedAt,
+                artistNames);
     }
 
     public Event hiddenEvent(String title,
@@ -132,10 +166,22 @@ public class TestDataFactory {
                              String city,
                              String venue,
                              OffsetDateTime start,
+                             String createByUserId,
                              OffsetDateTime submittedAt,
-                             OffsetDateTime moderatedAtAt,
+                             String moderatedByUserId,
+                             OffsetDateTime moderatedAt,
                              String... artistNames) {
-        return saveEvent(title, province, city, venue, start, EventStatus.HIDDEN, submittedAt, moderatedAtAt, artistNames);
+        return saveEvent(title,
+                province,
+                city,
+                venue,
+                start,
+                EventStatus.HIDDEN,
+                createByUserId,
+                submittedAt,
+                moderatedByUserId,
+                moderatedAt,
+                artistNames);
     }
 
     public Event canceledEvent(String title,
@@ -143,10 +189,22 @@ public class TestDataFactory {
                                String city,
                                String venue,
                                OffsetDateTime start,
+                               String createByUserId,
                                OffsetDateTime submittedAt,
-                               OffsetDateTime moderatedAtAt,
+                               String moderatedByUserId,
+                               OffsetDateTime moderatedAt,
                                String... artistNames) {
-        return saveEvent(title, province, city, venue, start, EventStatus.CANCELED, submittedAt, moderatedAtAt, artistNames);
+        return saveEvent(title,
+                province,
+                city,
+                venue,
+                start,
+                EventStatus.CANCELED,
+                createByUserId,
+                submittedAt,
+                moderatedByUserId,
+                moderatedAt,
+                artistNames);
     }
 
     private Event saveEvent(String title,
@@ -155,8 +213,10 @@ public class TestDataFactory {
                             String venue,
                             OffsetDateTime start,
                             EventStatus status,
+                            String createByUserId,
                             OffsetDateTime submittedAt,
-                            OffsetDateTime moderatedAtAt,
+                            String moderatedByUserId,
+                            OffsetDateTime moderatedAt,
                             String... artistNames) {
         Event event = Event.builder()
                 .title(title)
@@ -168,9 +228,9 @@ public class TestDataFactory {
                 .venueSlug(SlugNormalizer.of(venue))
                 .status(status)
                 .artists(artists(artistNames))
-                .createdByUserId(UUID.fromString(TestConstants.MOCK_USER_ID))
+                .createdByUserId(UUID.fromString(createByUserId))
                 .submittedAt(submittedAt)
-                .moderatedByUserId(UUID.fromString(TestConstants.MOCK_MODERATOR_ID))
+                .moderatedByUserId(moderatedByUserId != null ? UUID.fromString(moderatedByUserId) : null)
                 .moderatedAt(TestDates.tomorrow())
                 .build();
 
@@ -214,8 +274,10 @@ public class TestDataFactory {
                 TestConstants.MADRID,
                 "Sala Copérnico",
                 TestDates.madrid().plusDays(1),
+                TestConstants.MOCK_USER_ID,
                 TestDates.yesterday(),
-                null,
+                TestConstants.MOCK_MODERATOR_ID,
+                TestDates.yesterday().minusDays(1),
                 TestConstants.MOCK_ARTIST_NAME_AY);
     }
 
@@ -226,8 +288,10 @@ public class TestDataFactory {
                 "València",
                 "Sala Moon",
                 TestDates.genericFuture(),
+                TestConstants.MOCK_MODERATOR_ID,
                 TestDates.yesterday().minusDays(1),
-                TestDates.now(),
+                null,
+                null,
                 "Los de Marras");
     }
 
@@ -238,7 +302,9 @@ public class TestDataFactory {
                 "València",
                 "Sala Moon",
                 TestDates.past(),
+                TestConstants.MOCK_USER_ID,
                 TestDates.past().minusMonths(2),
+                TestConstants.MOCK_MODERATOR_ID,
                 TestDates.past().minusMonths(1),
                 "Mafalda");
     }
@@ -250,7 +316,9 @@ public class TestDataFactory {
                 TestConstants.MADRID,
                 "Sala Copérnico",
                 TestDates.madrid(),
+                TestConstants.MOCK_USER_ID,
                 TestDates.yesterday().minusDays(5),
+                TestConstants.MOCK_ADMIN_ID,
                 TestDates.yesterday().minusDays(4),
                 "Soziedad Alkoholika");
     }
@@ -262,7 +330,9 @@ public class TestDataFactory {
                 TestConstants.BARCELONA,
                 "Palau Sant Jordi",
                 TestDates.barcelona(),
+                TestConstants.MOCK_USER_ID,
                 TestDates.yesterday().minusDays(2),
+                TestConstants.MOCK_MODERATOR_ID,
                 TestDates.now(),
                 "Manifa");
     }

@@ -29,4 +29,8 @@ public final class ErrorMessages {
     // Conflict 409
     public static final String ARTIST_ALREADY_EXISTS = "Artist already exists";
     public static final String EMAIL_ALREADY_EXISTS = "email already exists";
+    public static final String EVENT_NOT_PENDING = "Event is not pending moderation";
+    public static final String MOERATOR_OWN = "Moderator cannot approve own event";
+    public static final String EVENT_ALREADY_MOD = "Event was modified by another moderator";
+    public static final String TYPE_MODERATION_STATE = "moderation-state";
 }
