@@ -36,6 +36,7 @@ import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.domain.ActionType;
 import com.jmarfildev.rockalendar.moderation.domain.ModerationAction;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationActionRepository;
@@ -66,6 +67,8 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
     @MockitoBean
     CurrentUser currentUser;
 
+    private final String MOCK_REASON = "Mock Reason to archive event";
+
     @BeforeEach
     void cleanDb() {
         cleaner.truncateMutableTables();
@@ -74,13 +77,13 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("approve: ok -> actualiza events y crea moderation_actions")
+    @DisplayName("approve: ok -> actualiza events y crea moderation_actions (moderationMessage y reason a null)")
     void approve_ok_persistsEventAndAction() {
         var event = factory.pendingMadridAgainstYou(); // status=PENDING_MODERATION, createdBy != moderator
         UUID eventId = event.getId();
         UUID moderatorId = currentUser.userId();
 
-        var dto = service.approve(eventId, new ModerationApproveRequest("Looks good"));
+        var dto = service.approve(eventId, new ModerationApproveRequest("   ")); // blankToNull
 
         assertThat(dto).isNotNull();
         assertThat(dto.id()).isEqualTo(eventId);
@@ -90,7 +93,7 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
         assertThat(persisted.getStatus()).isEqualTo(EventStatus.APPROVED);
         assertThat(persisted.getModeratedByUserId()).isEqualTo(moderatorId);
         assertThat(persisted.getModeratedAt()).isNotNull();
-        assertThat(persisted.getModerationMessage()).isEqualTo("Looks good");
+        assertThat(persisted.getModerationMessage()).isNull();
 
         ModerationAction action = moderationActionRepository.findAll()
                 .stream()
@@ -98,49 +101,9 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
                 .findFirst()
                 .orElseThrow();
 
-        assertThat(action.getReason()).isEqualTo("Looks good");
+        assertThat(action.getReason()).isNull();
         assertThat(action.getModeratedByUserId()).isEqualTo(moderatorId);
         assertThat(action.getCreatedAt()).isNotNull();
-    }
-
-    @Test
-    @DisplayName("approve: request null -> moderationMessage null")
-    void approve_requestNull_ok_messageNull() {
-        var event = factory.pendingMadridAgainstYou();
-        UUID eventId = event.getId();
-
-        var dto = service.approve(eventId, null);
-
-        assertThat(dto.status()).isEqualTo(EventStatus.APPROVED);
-
-        Event persisted = eventRepository.findById(eventId).orElseThrow();
-        assertThat(persisted.getModerationMessage()).isNull();
-
-        ModerationAction action = moderationActionRepository.findAll()
-                .stream()
-                .filter(a -> a.getEventId().equals(eventId) && a.getAction() == ActionType.APPROVE)
-                .findFirst()
-                .orElseThrow();
-        assertThat(action.getReason()).isNull();
-    }
-
-    @Test
-    @DisplayName("approve: reason blank -> se actualiza a null en event y action")
-    void approve_blankReason_normalizedToNull() {
-        var event = factory.pendingMadridAgainstYou();
-        UUID eventId = event.getId();
-
-        service.approve(eventId, new ModerationApproveRequest("   "));
-
-        Event persisted = eventRepository.findById(eventId).orElseThrow();
-        assertThat(persisted.getModerationMessage()).isNull();
-
-        ModerationAction action = moderationActionRepository.findAll()
-                .stream()
-                .filter(a -> a.getEventId().equals(eventId) && a.getAction() == ActionType.APPROVE)
-                .findFirst()
-                .orElseThrow();
-        assertThat(action.getReason()).isNull();
     }
 
     @Test
@@ -149,16 +112,46 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
         var event = factory.pendingMadridAgainstYou();
         UUID eventId = event.getId();
 
-        doThrow(new DataIntegrityViolationException("boom"))
+        doThrow(new DataIntegrityViolationException("concierto de reguetón"))
                 .when(moderationActionRepository)
                 .saveAndFlush(any(ModerationAction.class));
 
-        assertThatThrownBy(() -> service.approve(eventId, new ModerationApproveRequest("ok")))
+        assertThatThrownBy(() -> service.approve(eventId, null))
                 .isInstanceOf(DataIntegrityViolationException.class);
 
         Event persisted = eventRepository.findById(eventId).orElseThrow();
         assertThat(persisted.getStatus()).isEqualTo(EventStatus.PENDING_MODERATION);
         assertThat(persisted.getId()).isEqualTo(eventId);
+    }
+
+    @Test
+    @DisplayName("reject: ok -> actualiza events y crea moderation_actions(REJECT)")
+    void reject_ok_persistsEventAndAction() {
+        var event = factory.pendingMadridAgainstYou();
+        UUID eventId = event.getId();
+        UUID moderatorId = currentUser.userId();
+
+        var dto = service.reject(eventId, new ModerationArchiveRequest(MOCK_REASON));
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.id()).isEqualTo(eventId);
+        assertThat(dto.status()).isEqualTo(EventStatus.REJECTED);
+
+        Event persisted = eventRepository.findById(eventId).orElseThrow();
+        assertThat(persisted.getStatus()).isEqualTo(EventStatus.REJECTED);
+        assertThat(persisted.getModeratedByUserId()).isEqualTo(moderatorId);
+        assertThat(persisted.getModeratedAt()).isNotNull();
+        assertThat(persisted.getModerationMessage()).isEqualTo(MOCK_REASON);
+
+        ModerationAction action = moderationActionRepository.findAll()
+                .stream()
+                .filter(a -> a.getEventId().equals(eventId) && a.getAction() == ActionType.REJECT)
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(action.getReason()).isEqualTo(MOCK_REASON);
+        assertThat(action.getModeratedByUserId()).isEqualTo(moderatorId);
+        assertThat(action.getCreatedAt()).isNotNull();
     }
 
     /**
@@ -168,7 +161,7 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
      */
     @Test
     @DisplayName("approve: intentar aprobar dos veces el mismo evento -> ConflictException")
-    void approve_sameEventTwice_throws() throws Exception {
+    void approve_sameEventTwice_concurrent_throws() throws Exception {
         UUID eventId = factory.pendingMadridAgainstYou().getId();
 
         var barrier = new CyclicBarrier(2);
@@ -189,7 +182,7 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
                             throw new RuntimeException(e);
                         }
 
-                        service.approve(eventId, new ModerationApproveRequest(null));
+                        service.approve(eventId, null);
                         // El commit ocurre al salir del executeWithoutResult
                     });
                     return null; // Éxito

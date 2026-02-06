@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
 import com.jmarfildev.rockalendar.common.annotations.ApiForbidden;
 import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
@@ -28,6 +29,7 @@ import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.moderation.api.doc.ModerationArchivedPageDoc;
 import com.jmarfildev.rockalendar.moderation.api.doc.ModerationPendingPageDoc;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingDto;
 
@@ -77,4 +79,17 @@ public interface ModerationEventApi {
             required = true) @PathVariable UUID eventId,
                             @Parameter(description = "Mensaje (si procede)") @Valid @RequestBody(
                                     required = false) ModerationApproveRequest request);
+
+    @PostMapping("/{eventId}/reject")
+    @Operation(summary = "Rechazar eventos pendientes de moderación", description = "Pasa a REJECTED un evento en PENDING_MODERATION.")
+    @ApiResponse(responseCode = "200", description = "Evento rechazado con éxito")
+    @ApiBadRequest
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    @ApiConflict
+    EventPrivateDto reject(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
+            required = true) @PathVariable UUID eventId,
+                           @Parameter(description = "Motivo de rechazo",
+                                   required = true) @Valid @RequestBody ModerationArchiveRequest request);
 }

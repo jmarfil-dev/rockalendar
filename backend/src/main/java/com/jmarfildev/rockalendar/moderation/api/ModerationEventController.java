@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingDto;
 import com.jmarfildev.rockalendar.moderation.application.ModerationCommandService;
@@ -42,4 +43,8 @@ public class ModerationEventController implements ModerationEventApi {
         return commandService.approve(eventId, request);
     }
 
+    @Override
+    public EventPrivateDto reject(UUID eventId, @Valid ModerationArchiveRequest request) {
+        return commandService.reject(eventId, request);
+    }
 }

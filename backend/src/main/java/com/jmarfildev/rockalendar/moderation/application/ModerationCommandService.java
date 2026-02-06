@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
@@ -22,6 +24,7 @@ import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.domain.ActionType;
 import com.jmarfildev.rockalendar.moderation.domain.ModerationAction;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationActionRepository;
@@ -32,6 +35,7 @@ import com.jmarfildev.rockalendar.moderation.persistence.ModerationActionReposit
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ModerationCommandService {
     private final EventRepository eventRepository;
     private final ModerationActionRepository moderationActionRepository;
@@ -40,27 +44,57 @@ public class ModerationCommandService {
 
     @Transactional
     public EventPrivateDto approve(UUID eventId, ModerationApproveRequest request) {
+        String comment = request != null ? StringUtils.blankToNull(request.reason()) : null;
+
+        return moderate(eventId, ActionType.APPROVE, comment, (event, moderatorId, now, message) -> {
+            event.setStatus(EventStatus.APPROVED);
+            event.setModeratedByUserId(moderatorId);
+            event.setModeratedAt(now);
+            event.setModerationMessage(message);
+        });
+    }
+
+    @Transactional
+    public EventPrivateDto reject(UUID eventId, ModerationArchiveRequest request) {
+        String reason = StringUtils.blankToNull(request.reason()); // request ya es @NotBlank, pero por seguridad
+        if (reason == null) {
+            throw new BadRequestException(ErrorMessages.REASON_REQUIRED, ErrorMessages.TYPE_400_VALIDATION);
+        }
+        return moderate(eventId, ActionType.REJECT, reason, (event, moderatorId, now, msg) -> {
+            event.setStatus(EventStatus.REJECTED);
+            event.setModeratedByUserId(moderatorId);
+            event.setModeratedAt(now);
+            event.setModerationMessage(msg);
+        });
+    }
+
+    @FunctionalInterface
+    private interface EventModerationMutation {
+        void apply(Event event, UUID moderatorId, OffsetDateTime now, String message);
+    }
+
+    private EventPrivateDto moderate(UUID eventId,
+                                     ActionType actionType,
+                                     String message,
+                                     EventModerationMutation mutation) {
         UUID moderatorId = currentUser.userId();
-        String message = request != null ? StringUtils.blankToNull(request.reason()) : null;
         OffsetDateTime now = OffsetDateTime.now();
+        log.info("moderation action={} eventId={} moderatorId={}", actionType.name(), eventId, moderatorId);
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
 
         if (event.getStatus() != EventStatus.PENDING_MODERATION) {
-            throw new ConflictException(ErrorMessages.EVENT_NOT_PENDING, ErrorMessages.TYPE_MODERATION_STATE);
+            throw new ConflictException(ErrorMessages.EVENT_NOT_PENDING, ErrorMessages.TYPE_409_MODERATION_STATE);
         }
         if (moderatorId.equals(event.getCreatedByUserId())) {
-            throw new ConflictException(ErrorMessages.MOERATOR_OWN, ErrorMessages.TYPE_MODERATION_STATE);
+            throw new ConflictException(ErrorMessages.MOERATOR_OWN, ErrorMessages.TYPE_409_MODERATION_STATE);
         }
 
-        event.setStatus(EventStatus.APPROVED);
-        event.setModeratedByUserId(moderatorId);
-        event.setModeratedAt(now);
-        event.setModerationMessage(message);
+        mutation.apply(event, moderatorId, now, message);
 
         ModerationAction action = new ModerationAction();
         action.setEventId(eventId);
-        action.setAction(ActionType.APPROVE);
+        action.setAction(actionType);
         action.setReason(message);
         action.setModeratedByUserId(moderatorId);
         action.setCreatedAt(now);
@@ -69,11 +103,10 @@ public class ModerationCommandService {
             moderationActionRepository.saveAndFlush(action);
             return eventMapper.toPrivateDto(event);
         }
-        catch (ObjectOptimisticLockingFailureException // Excepción de spring
-                | OptimisticLockException // Excepción de java (jakarta.persistence)
-                | StaleObjectStateException e) { // Excepción de hibernate
-            // otro moderador lo tocó entre lectura y commit
-            throw new ConflictException(ErrorMessages.EVENT_ALREADY_MOD, ErrorMessages.TYPE_MODERATION_STATE);
+        catch (ObjectOptimisticLockingFailureException
+                | OptimisticLockException
+                | StaleObjectStateException e) {
+            throw new ConflictException(ErrorMessages.EVENT_ALREADY_MOD, ErrorMessages.TYPE_409_MODERATION_STATE);
         }
     }
 }

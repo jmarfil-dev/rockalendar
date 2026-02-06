@@ -15,6 +15,7 @@ public final class ErrorMessages {
     public static final String VENUE_REQUIRED = "venueName is required";
     public static final String TITLE_REQUIRED = "title is required";
     public static final String ARTIST_REQUIRED = "At least one artist is required";
+    public static final String REASON_REQUIRED = "reason is required";
     public static final String INVALID_PROVINCE = "Invalid provinceId";
     public static final String INVALID_DATE_RANGE = "Invalid date range: dateFrom must be <= dateTo";
     public static final String INVALID_EVENT_DATE = "endDateTime must be after or equal to startDateTime";
