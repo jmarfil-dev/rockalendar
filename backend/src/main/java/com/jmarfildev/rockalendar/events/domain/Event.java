@@ -18,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -99,6 +100,10 @@ public class Event {
 
     @Column(name = "moderated_at")
     private OffsetDateTime moderatedAt;
+
+    @Version
+    @Column(nullable = false)
+    private long version; // Para OptimisticLockException
 
     @ManyToMany
     @JoinTable(name = "event_artists",

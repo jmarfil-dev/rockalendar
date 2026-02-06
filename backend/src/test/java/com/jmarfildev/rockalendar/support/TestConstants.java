@@ -17,6 +17,8 @@ public final class TestConstants {
     public static final String MADRID = "Madrid";
 
     // Coinciden con un usuario del script R__seed_test_users
+    public static final String MOCK_ADMIN_ID = "aaaaaaaa-0000-0000-0000-000000000001";
+    public static final String MOCK_ADMIN_EMAIL = "admin@rockalendar.local";
     public static final String MOCK_MODERATOR_ID = "aaaaaaaa-0000-0000-0000-000000000002";
     public static final String MOCK_MODERATOR_EMAIL = "moderator@rockalendar.local";
     public static final String MOCK_USER_ID = "aaaaaaaa-0000-0000-0000-000000000003";

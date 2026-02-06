@@ -11,7 +11,7 @@ import com.jmarfildev.rockalendar.common.CommonValidations;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingDto;
 import com.jmarfildev.rockalendar.moderation.api.mapper.ModerationMapper;
-import com.jmarfildev.rockalendar.moderation.persistence.ModerationRepository;
+import com.jmarfildev.rockalendar.moderation.persistence.ModerationEventRepository;
 
 /**
  * @author jmarfil
@@ -21,7 +21,7 @@ import com.jmarfildev.rockalendar.moderation.persistence.ModerationRepository;
 @RequiredArgsConstructor
 public class ModerationQueryService {
 
-    private final ModerationRepository repository;
+    private final ModerationEventRepository repository;
     private final ModerationMapper mapper;
 
     @Transactional(readOnly = true)

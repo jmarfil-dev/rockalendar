@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
         pd.setProperty("errors", errors);
 
         return ProblemDetailGenericProperties.setGenericProperties(
-                pd, "Validation error", "Request validation failed", req.getRequestURI());
+                pd, "Validation error", "Request validation failed", req.getRequestURI(), null);
     }
 
     @ExceptionHandler({
@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
 
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.BAD_REQUEST.getReasonPhrase(), detail, req.getRequestURI());
+                pd, HttpStatus.BAD_REQUEST.getReasonPhrase(), detail, req.getRequestURI(), null);
     }
 
     /**
@@ -69,28 +69,28 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
+                pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(), req.getRequestURI(), null);
     }
 
     @ExceptionHandler(ForbiddenException.class)
     public ProblemDetail handleForbidden(ForbiddenException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
+                pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage(), req.getRequestURI(), null);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
+                pd, HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), req.getRequestURI(), null);
     }
 
     @ExceptionHandler(ConflictException.class)
     public ProblemDetail handleConflict(ConflictException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
+                pd, HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage(), req.getRequestURI(), ex.getType());
     }
 
     /**

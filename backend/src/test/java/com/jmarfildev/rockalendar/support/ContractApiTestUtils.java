@@ -29,26 +29,26 @@ public class ContractApiTestUtils {
      * Auth
      */
 
-    private JwtRequestPostProcessor authJwt(String role) {
+    private JwtRequestPostProcessor authJwt(String uuid, String email, String role) {
         return jwt()
                 .authorities(new SimpleGrantedAuthority(role))
                 .jwt(j -> j
-                        .subject(TestConstants.MOCK_USER_ID)
-                        .claim("email", TestConstants.MOCK_USER_EMAIL)
+                        .subject(uuid)
+                        .claim("email", email)
                         .claim("roles", List.of(role))
                 );
     }
 
     public JwtRequestPostProcessor authJwt() {
-        return authJwt("ROLE_USER");
+        return authJwt(TestConstants.MOCK_USER_ID, TestConstants.MOCK_USER_ID, "ROLE_USER");
     }
 
     public JwtRequestPostProcessor authJwtModerator() {
-        return authJwt("ROLE_MODERATOR");
+        return authJwt(TestConstants.MOCK_MODERATOR_ID, TestConstants.MOCK_MODERATOR_ID, "ROLE_MODERATOR");
     }
 
     public JwtRequestPostProcessor authJwtAdmin() {
-        return authJwt("ROLE_ADMIN");
+        return authJwt(TestConstants.MOCK_ADMIN_ID, TestConstants.MOCK_ADMIN_ID, "ROLE_ADMIN");
     }
 
     /*

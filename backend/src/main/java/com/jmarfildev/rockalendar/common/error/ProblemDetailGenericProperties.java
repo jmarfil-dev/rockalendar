@@ -10,11 +10,11 @@ import org.springframework.http.ProblemDetail;
  *
  */
 public class ProblemDetailGenericProperties {
-    public static ProblemDetail setGenericProperties(ProblemDetail pd, String status, String message, String instance) {
+    public static ProblemDetail setGenericProperties(ProblemDetail pd, String status, String message, String instance, String type) {
         pd.setTitle(status);
         pd.setDetail(message);
         pd.setInstance(URI.create(instance));
-        pd.setType(URI.create("urn:rockalendar:error:%s".formatted(status.toLowerCase().replaceAll("\\s+", "-"))));
+        pd.setType(URI.create("urn:rockalendar:error:%s".formatted(type != null ? type : status.toLowerCase().replaceAll("\\s+", "-"))));
         pd.setProperty("timestamp", OffsetDateTime.now());
         return pd;
     }

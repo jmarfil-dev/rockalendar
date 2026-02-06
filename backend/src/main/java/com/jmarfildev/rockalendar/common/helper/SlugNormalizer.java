@@ -1,4 +1,4 @@
-package com.jmarfildev.rockalendar.common;
+package com.jmarfildev.rockalendar.common.helper;
 
 import java.text.Normalizer;
 
