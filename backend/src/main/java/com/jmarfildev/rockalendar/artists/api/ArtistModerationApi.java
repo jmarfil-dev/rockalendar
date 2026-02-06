@@ -1,8 +1,6 @@
 package com.jmarfildev.rockalendar.artists.api;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +41,5 @@ public interface ArtistModerationApi {
     @ApiForbidden
     @ApiBadRequest
     @ApiConflict
-    ArtistDto createArtist(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
-                           @Parameter(description = "Datos del artista", required = true) @Valid @RequestBody CreateArtistRequest request);
+    ArtistDto createArtist(@Parameter(description = "Datos del artista", required = true) @Valid @RequestBody CreateArtistRequest request);
 }

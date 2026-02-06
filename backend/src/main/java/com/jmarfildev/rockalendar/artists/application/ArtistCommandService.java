@@ -9,10 +9,11 @@ import lombok.RequiredArgsConstructor;
 import com.jmarfildev.rockalendar.artists.api.dto.CreateArtistRequest;
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
-import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.helper.CurrentUser;
+import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 
 /**
  * Servicio con los métodos para <b>casos de uso que modifican</b> Artistas:
@@ -30,8 +31,10 @@ import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 public class ArtistCommandService {
 
     private final ArtistRepository artistRepository;
+    private final CurrentUser currentUser;
 
-    public Artist createArtist(CreateArtistRequest req, UUID userId) {
+    public Artist createArtist(CreateArtistRequest req) {
+        UUID userId = currentUser.userId();
         String displayName = req.name().trim();
         String slug = SlugNormalizer.of(displayName);
 

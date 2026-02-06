@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
-import com.jmarfildev.rockalendar.common.SlugNormalizer;
+import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 
 /**
  * Servicio con los métodos para <b>casos de uso que modifican</b> Artistas:
