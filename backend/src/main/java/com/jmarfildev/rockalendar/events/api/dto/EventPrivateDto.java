@@ -20,5 +20,5 @@ public record EventPrivateDto(UUID id,
                               List<String> artists,
                               String sourceUrl,
                               EventStatus status,
-                              String rejectionReason,
+                              String moderationMessage,
                               OffsetDateTime createdAt) {}

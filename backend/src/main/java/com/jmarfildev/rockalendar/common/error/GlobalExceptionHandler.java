@@ -40,10 +40,6 @@ public class GlobalExceptionHandler {
                         (a, b) -> a));
         pd.setProperty("errors", errors);
 
-<<<<<<< Updated upstream
-        return ProblemDetailGenericProperties.setGenericProperties(
-                pd, "Validation error", "Request validation failed", req.getRequestURI());
-=======
         return ProblemDetailGenericProperties.setGenericProperties(pd, ErrorMessages.VALIDATION_ERROR, "Request validation failed",
                 req.getRequestURI(), ErrorMessages.TYPE_400_VALIDATION);
     }
@@ -53,7 +49,6 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         return ProblemDetailGenericProperties.setGenericProperties(pd, ErrorMessages.VALIDATION_ERROR, "Request body is required",
                 req.getRequestURI(), ErrorMessages.TYPE_400_VALIDATION);
->>>>>>> Stashed changes
     }
 
     @ExceptionHandler({
@@ -62,10 +57,6 @@ public class GlobalExceptionHandler {
     })
     public ProblemDetail handleBadRequest(RuntimeException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-<<<<<<< Updated upstream
-        return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.BAD_REQUEST.getReasonPhrase(), detail, req.getRequestURI());
-=======
         String detail = "Invalid value for request parameter";
 
         if (ex instanceof MethodArgumentTypeMismatchException matme) {
@@ -85,7 +76,6 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage(),
                 req.getRequestURI(), ex.getType() != null ? ex.getType() : ErrorMessages.TYPE_400_BAD_REQUEST);
->>>>>>> Stashed changes
     }
 
     /**
@@ -97,49 +87,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-<<<<<<< Updated upstream
-        return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
-=======
         return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(),
                 req.getRequestURI(), ErrorMessages.TYPE_401_UNAUTHORIZED);
->>>>>>> Stashed changes
     }
 
     @ExceptionHandler(ForbiddenException.class)
     public ProblemDetail handleForbidden(ForbiddenException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-<<<<<<< Updated upstream
-        return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
-=======
         return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage(),
                 req.getRequestURI(), ErrorMessages.TYPE_403_FORBIDDEN);
->>>>>>> Stashed changes
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-<<<<<<< Updated upstream
-        return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
-=======
         return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(),
                 req.getRequestURI(), ErrorMessages.TYPE_404_NOT_FOUND);
->>>>>>> Stashed changes
     }
 
     @ExceptionHandler(ConflictException.class)
     public ProblemDetail handleConflict(ConflictException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-<<<<<<< Updated upstream
-        return ProblemDetailGenericProperties.setGenericProperties(
-                pd, HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
-=======
         return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage(),
                 req.getRequestURI(), ex.getType() != null ? ex.getType() : ErrorMessages.TYPE_409_CONFLICT);
->>>>>>> Stashed changes
     }
 
     /**

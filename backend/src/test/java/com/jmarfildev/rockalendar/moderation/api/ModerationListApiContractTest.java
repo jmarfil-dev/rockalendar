@@ -24,7 +24,7 @@ import com.jmarfildev.rockalendar.support.TestDataFactory;
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ModerationApiContractTest extends AbstractPostgresTest {
+class ModerationListApiContractTest extends AbstractPostgresTest {
 
     @Autowired
     TestDataFactory factory;

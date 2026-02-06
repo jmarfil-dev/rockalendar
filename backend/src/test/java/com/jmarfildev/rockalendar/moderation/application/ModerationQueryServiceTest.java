@@ -48,6 +48,7 @@ public class ModerationQueryServiceTest extends AbstractPostgresTest {
                 .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
     }
 
+    // Este test parece redundante con los de contrato pero aquí además comprueba que el evento se mappea
     @Test
     @DisplayName("listPending: ok -> eventos PENDING_MODERATION ordenados por submittedAt ASC")
     void listPending_ok_returnPendingOrderBySubmittedAtAsc() {
@@ -79,6 +80,7 @@ public class ModerationQueryServiceTest extends AbstractPostgresTest {
                 .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
     }
 
+    // Este test parece redundante con los de contrato pero aquí además comprueba que el evento se mappea
     @Test
     @DisplayName("listArchived: ok -> eventos REJECTED, HIDEN y CANCELED ordenados por moderatedAt DES")
     void listArchived_ok_retuenArchivedOrderByModeratedAtDesc() {

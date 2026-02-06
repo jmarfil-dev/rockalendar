@@ -21,6 +21,9 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @EntityGraph(attributePaths = { "province", "artists" })
     Optional<Event> findByIdAndStatus(UUID id, EventStatus status);
 
+    @EntityGraph(attributePaths = { "province", "artists" })
+    Optional<Event> findByTitleAndStatus(String title, EventStatus status);
+
     @Query("""
                 SELECT e
                 FROM Event e
