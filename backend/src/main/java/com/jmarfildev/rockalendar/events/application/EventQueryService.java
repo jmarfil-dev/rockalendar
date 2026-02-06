@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.common.CommonValidations;
-import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
+import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
+import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.config.PublicSearchProperties;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
@@ -113,14 +114,7 @@ public class EventQueryService {
     }
 
     private boolean hasMultipleTokens(String q) {
-        if (q == null) {
-            return false;
-        }
-        String trimmed = q.trim();
-        if (trimmed.isEmpty()) {
-            return false;
-        }
-
-        return trimmed.split("\\s+").length >= 2;
+        String trimmed = StringUtils.blankToNull(q);
+        return trimmed == null ? false : trimmed.split("\\s+").length >= 2;
     }
 }

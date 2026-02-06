@@ -17,10 +17,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
-import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
+import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.api.dto.ProposeEventRequest;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;

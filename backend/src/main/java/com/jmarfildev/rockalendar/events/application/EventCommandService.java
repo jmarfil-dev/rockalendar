@@ -10,10 +10,11 @@ import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
-import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
+import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
+import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.events.api.dto.ProposeEventRequest;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
@@ -96,15 +97,8 @@ public class EventCommandService {
         Province province = provinceRepository.findById(req.provinceId())
                 .orElseThrow(() -> new BadRequestException(ErrorMessages.INVALID_PROVINCE));
 
-        String description = req.description() == null ? null : req.description().trim();
-        if (description != null && description.isBlank()) {
-            description = null;
-        }
-
-        String sourceUrl = req.sourceUrl() == null ? null : req.sourceUrl().trim();
-        if (sourceUrl != null && sourceUrl.isBlank()) {
-            sourceUrl = null;
-        }
+        String description = StringUtils.blankToNull(req.description());
+        String sourceUrl = StringUtils.blankToNull(req.sourceUrl());
 
         // TODO: Evitar eventos duplicados
 
