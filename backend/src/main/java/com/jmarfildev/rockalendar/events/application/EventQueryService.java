@@ -17,6 +17,7 @@ import com.jmarfildev.rockalendar.common.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
+import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.config.PublicSearchProperties;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
@@ -44,6 +45,7 @@ public class EventQueryService {
     private final EventSearchPublicRepository espRepository;
     private final EventMapper mapper;
     private final PublicSearchProperties props;
+    private final CurrentUser currentUser;
 
     @Transactional(readOnly = true)
     public Page<EventPublicDto> listHome(Pageable pageable) {
@@ -104,7 +106,8 @@ public class EventQueryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<EventPrivateDto> listMine(UUID userId, Pageable pageable) {
+    public Page<EventPrivateDto> listMine(Pageable pageable) {
+        UUID userId = currentUser.userId();
         CommonValidations.validatePageable(pageable);
         return eRepository.listMineOrderFutureFirst(userId, pageable).map(mapper::toPrivateDto);
     }

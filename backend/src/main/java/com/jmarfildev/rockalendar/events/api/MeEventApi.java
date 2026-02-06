@@ -4,8 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,8 +39,7 @@ public interface MeEventApi {
     @ApiResponse(responseCode = "201", description = "Evento propuesto correctamente")
     @ApiUnauthorized
     @ApiBadRequest
-    EventPrivateDto propose(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
-                            @Parameter(description = "Datos del evento a proponer",
+    EventPrivateDto propose(@Parameter(description = "Datos del evento a proponer",
                                     required = true) @Valid @RequestBody ProposeEventRequest request);
 
     @GetMapping("/api/me/events")
@@ -51,6 +48,5 @@ public interface MeEventApi {
     @ApiResponse(responseCode = "200", description = "Listado de eventos del usuario",
             content = @Content(schema = @Schema(implementation = EventPrivatePageDoc.class)))
     @ApiUnauthorized
-    Page<EventPrivateDto> listMine(@Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
-                                   @Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
+    Page<EventPrivateDto> listMine(@Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 }

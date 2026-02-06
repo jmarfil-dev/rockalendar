@@ -1,8 +1,5 @@
 package com.jmarfildev.rockalendar.artists.api;
 
-import java.util.UUID;
-
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -24,9 +21,8 @@ public class ArtistModerationController implements ArtistModerationApi {
     private final ArtistMapper mapper;
 
     @Override
-    public ArtistDto createArtist(Jwt jwt, CreateArtistRequest request) {
-        UUID userId = UUID.fromString(jwt.getSubject());
-        return mapper.toDto(artistService.createArtist(request, userId));
+    public ArtistDto createArtist(CreateArtistRequest request) {
+        return mapper.toDto(artistService.createArtist(request));
     }
 
 }

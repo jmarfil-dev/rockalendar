@@ -2,6 +2,7 @@ package com.jmarfildev.rockalendar.events.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -15,10 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
+import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
@@ -42,6 +45,9 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     TestDataFactory factory;
     @Autowired
     EventMapper mapper;
+
+    @MockitoBean
+    CurrentUser currentUser;
 
     @BeforeEach
     void cleanDb() {
@@ -235,9 +241,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("listMine: size demasiado grande -> 400 BadRequestException")
     void listMine_pageSizeTooLarge_throws() {
-        UUID userId = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
-
-        assertThatThrownBy(() -> service.listMine(userId, PageRequest.of(0, 10_000)))
+        assertThatThrownBy(() -> service.listMine(PageRequest.of(0, 10_000)))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
     }
@@ -245,13 +249,14 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("listMine: futuros primero (los pasados al final)")
     void listMine_futureFirst() {
-        UUID userId = UUID.fromString(TestConstants.MOCK_USER_ID);
-
         factory.approvedBarcelonaBoikot();
         factory.approvedMadridAgainstYou();
         factory.approvedValenciaPast();
 
-        var page = service.listMine(userId, PageRequest.of(0, 10));
+        when(currentUser.userId())
+                .thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
+
+        var page = service.listMine(PageRequest.of(0, 10));
 
         // Los futuros deben aparecer antes que cualquier pasado y ordenados
         assertThat(page.getContent())
