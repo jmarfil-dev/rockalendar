@@ -48,4 +48,6 @@ public final class ErrorMessages {
     public static final String MOERATOR_OWN = "Moderator cannot approve own event";
     public static final String EVENT_ALREADY_MOD = "Event was modified by another moderator";
     public static final String EVENT_NOT_EDITABLE = "Event does not have an editable state";
+    public static final String EVENT_NOT_ERASABLE = "Event does not have an erasable state";
+    public static final String EVENT_NOT_ERASABLE_APPROVED = "Approved events cannot be deleted";
 }

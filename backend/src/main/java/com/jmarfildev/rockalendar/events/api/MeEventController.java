@@ -38,4 +38,9 @@ public class MeEventController implements MeEventApi {
     public EventPrivateDto update(UUID eventId, SubmitEventRequest request) {
         return commandService.update(eventId, request);
     }
+
+    @Override
+    public void delete(UUID eventId) {
+        commandService.delete(eventId);
+    }
 }

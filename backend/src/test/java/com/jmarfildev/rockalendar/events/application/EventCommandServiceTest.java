@@ -370,4 +370,65 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 .isInstanceOf(ConflictException.class)
                 .hasMessage(ErrorMessages.EVENT_NOT_EDITABLE);
     }
+
+    @Test
+    @DisplayName("delete: ok -> elimina el evento")
+    void delete_ok_deleteEvent() {
+        var event = factory.pendingMadridAgainstYou();
+
+        service.delete(event.getId());
+
+        var reloaded = eventRepository.findById(event.getId()).orElseThrow();
+        assertThat(reloaded.getStatus()).isEqualTo(EventStatus.ERASED);
+    }
+
+    @Test
+    @DisplayName("delete: evento ya eliminado -> ok (no hace nada)")
+    void delete_alreadyErased_ok() {
+        var event = factory.pendingMadridAgainstYou();
+
+        service.delete(event.getId());
+
+        var reloaded = eventRepository.findById(event.getId()).orElseThrow();
+        assertThat(reloaded.getStatus()).isEqualTo(EventStatus.ERASED);
+    }
+
+    @Test
+    @DisplayName("delete: evento no existe -> NotFoundException")
+    void delete_missingEvent_throws() {
+        assertThatThrownBy(() -> service.delete(UUID.fromString("cccccccc-0000-0000-0000-000000000099")))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ErrorMessages.EVENT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("delete: evento no pertenece al usuario -> ForbiddenException")
+    void delete_notOwner_throws() {
+        var event = factory.pendingEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
+                TestConstants.MOCK_MODERATOR_ID, TestDates.yesterday(), null, null, TestConstants.MOCK_ARTIST_NAME_AY); // Otro usuario lo crea
+
+        assertThatThrownBy(() -> service.delete(event.getId()))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(ErrorMessages.EVENT_NOT_OWNER);
+    }
+
+    @Test
+    @DisplayName("delete: evento en estado no eliminable -> ConflictException")
+    void delete_notEditableStatus_throws() {
+        var event = factory.canceledBarcelonaManifa();
+
+        assertThatThrownBy(() -> service.delete(event.getId()))
+                .isInstanceOf(ConflictException.class)
+                .hasMessage(ErrorMessages.EVENT_NOT_ERASABLE);
+    }
+
+    @Test
+    @DisplayName("delete: evento aprobado no eliminable -> ConflictException")
+    void delete_approvedEvent_throws() {
+        var event = factory.approvedMadridAgainstYou();
+
+        assertThatThrownBy(() -> service.delete(event.getId()))
+                .isInstanceOf(ConflictException.class)
+                .hasMessage(ErrorMessages.EVENT_NOT_ERASABLE_APPROVED);
+    }
 }

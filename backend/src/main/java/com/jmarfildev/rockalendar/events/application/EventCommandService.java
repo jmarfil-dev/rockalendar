@@ -115,6 +115,33 @@ public class EventCommandService {
         return mapper.toPrivateDto(event);
     }
 
+    @Transactional
+    public void delete(UUID eventId) {
+        UUID userId = currentUser.userId();
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
+
+        if (!userId.equals(event.getCreatedByUserId())) {
+            throw new ForbiddenException(ErrorMessages.EVENT_NOT_OWNER);
+        }
+
+        if (event.getStatus() == EventStatus.ERASED) {
+            return; // idempotente
+        }
+
+        // TODO: en frontend mensaje de "contactar con administración
+        if (event.getStatus() == EventStatus.APPROVED) {
+            throw new ConflictException(ErrorMessages.EVENT_NOT_ERASABLE_APPROVED, ErrorMessages.TYPE_409_EVENT_STATE);
+        }
+
+        if (event.getStatus() != EventStatus.PENDING_MODERATION && event.getStatus() != EventStatus.NEEDS_CHANGES) {
+            throw new ConflictException(ErrorMessages.EVENT_NOT_ERASABLE, ErrorMessages.TYPE_409_EVENT_STATE);
+        }
+
+        event.setStatus(EventStatus.ERASED);
+    }
+
     private EventInputValidate validate(SubmitEventRequest req) {
         if (req.endDateTime() != null && req.endDateTime().isBefore(req.startDateTime())) {
             throw new BadRequestException(ErrorMessages.INVALID_EVENT_DATE);

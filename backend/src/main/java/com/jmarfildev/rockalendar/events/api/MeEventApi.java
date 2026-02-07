@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,4 +72,18 @@ public interface MeEventApi {
             required = true) @PathVariable UUID eventId,
                                   @Parameter(description = "Datos nuevos del evento",
                                           required = true) @Valid @RequestBody SubmitEventRequest request);
+
+    @DeleteMapping("/api/me/events/{eventId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Eliminar (retirar) un evento propio",
+            description = "Cambia el estado del evento a ERASED. Solo permitido en PENDING_MODERATION y NEEDS_CHANGES. " +
+                    "Si el evento está APPROVED devuelve 409 indicando que hay que contactar con moderación.")
+    @ApiResponse(responseCode = "204", description = "Evento eliminado correctamente")
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    @ApiBadRequest
+    @ApiConflict
+    void delete(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
+            required = true) @PathVariable UUID eventId);
 }
