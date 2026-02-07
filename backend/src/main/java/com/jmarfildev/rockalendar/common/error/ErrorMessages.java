@@ -18,6 +18,7 @@ public final class ErrorMessages {
     public static final String TYPE_404_NOT_FOUND = "not-found";
     public static final String TYPE_409_CONFLICT = "conflict";
     public static final String TYPE_409_MODERATION_STATE = "moderation-state";
+    public static final String TYPE_409_EVENT_STATE = "event-state";
 
     // Bad request 400
     public static final String VALIDATION_ERROR = "Validation error";
@@ -34,6 +35,9 @@ public final class ErrorMessages {
     // Unauthorized 401
     public static final String INVALID_CREDENTIALS = "Incorrect email or password";
 
+    // Forbidden 403
+    public static final String EVENT_NOT_OWNER = "Event is not created by the same user";
+
     // Not found 404
     public static final String EVENT_NOT_FOUND = "Event not found";
 
@@ -43,4 +47,5 @@ public final class ErrorMessages {
     public static final String EVENT_NOT_PENDING = "Event is not pending moderation";
     public static final String MOERATOR_OWN = "Moderator cannot approve own event";
     public static final String EVENT_ALREADY_MOD = "Event was modified by another moderator";
+    public static final String EVENT_NOT_EDITABLE = "Event does not have an editable state";
 }

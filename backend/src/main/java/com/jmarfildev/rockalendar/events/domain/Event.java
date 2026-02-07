@@ -121,9 +121,6 @@ public class Event {
         if (createdAt == null) {
             createdAt = now;
         }
-        if (submittedAt == null && status == EventStatus.PENDING_MODERATION) {
-            submittedAt = now;
-        }
         updatedAt = now;
     }
 

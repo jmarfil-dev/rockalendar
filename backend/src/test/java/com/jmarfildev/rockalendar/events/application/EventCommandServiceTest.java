@@ -18,11 +18,15 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
+import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ForbiddenException;
+import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
-import com.jmarfildev.rockalendar.events.api.dto.ProposeEventRequest;
+import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
+import com.jmarfildev.rockalendar.events.api.mapper.EventMapperImpl;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
@@ -35,7 +39,7 @@ import com.jmarfildev.rockalendar.support.TestDates;
  *
  */
 @DataJpaTest
-@Import({ EventCommandService.class, DatabaseCleaner.class, TestDataFactory.class })
+@Import({ EventCommandService.class, DatabaseCleaner.class, TestDataFactory.class, EventMapperImpl.class })
 class EventCommandServiceTest extends AbstractPostgresTest {
 
     @Autowired
@@ -63,9 +67,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("propose: endDateTime < startDateTime -> 400 INVALID_EVENT_DATE")
-    void propose_invalidEndBeforeStart_throws() {
-        var req = new ProposeEventRequest(
+    @DisplayName("propose: invalid date range -> BadRequestException")
+    void propose_invalidDateRange_throws() {
+        var req = new SubmitEventRequest(
                 MOCK_TITLE,
                 "Desc",
                 TestDates.rangeEnd(),
@@ -82,9 +86,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("propose: artists vacíos tras normalizar -> 400 ARTIST_REQUIRED")
+    @DisplayName("propose: artists vacíos tras normalizar -> BadRequestException")
     void propose_artistsBecomeEmptyAfterNormalize_throws() {
-        var req = new ProposeEventRequest(
+        var req = new SubmitEventRequest(
                 MOCK_TITLE,
                 null,
                 TestDates.madrid(),
@@ -101,9 +105,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("propose: cityName se queda vacío tras normalizar -> 400 CITY_REQUIRED")
+    @DisplayName("propose: citySlug se queda vacío tras normalizar -> BadRequestException")
     void propose_cityBecomesBlankAfterNormalize_throws() {
-        var req = new ProposeEventRequest(
+        var req = new SubmitEventRequest(
                 MOCK_TITLE,
                 null,
                 TestDates.madrid(),
@@ -120,9 +124,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("propose: venueName se queda vacío tras normalizar -> 400 VENUE_REQUIRED")
+    @DisplayName("propose: venueSlug se queda vacío tras normalizar -> BadRequestException")
     void propose_venueBecomesBlankAfterNormalize_throws() {
-        var req = new ProposeEventRequest(
+        var req = new SubmitEventRequest(
                 MOCK_TITLE,
                 null,
                 TestDates.madrid(),
@@ -139,9 +143,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("propose: title se queda vacío tras normalizar -> 400 TITLE_REQUIRED")
+    @DisplayName("propose: title se queda vacío tras normalizar -> BadRequestException")
     void propose_titleBecomesBlankAfterNormalize_throws() {
-        var req = new ProposeEventRequest(
+        var req = new SubmitEventRequest(
                 "!!!",
                 null,
                 TestDates.madrid(),
@@ -158,11 +162,11 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("propose: provinceId inválida -> 400 INVALID_PROVINCE")
+    @DisplayName("propose: provinceId inválida -> BadRequestException")
     void propose_invalidProvince_throws() {
         UUID missingProv = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
 
-        var req = new ProposeEventRequest(
+        var req = new SubmitEventRequest(
                 MOCK_TITLE,
                 null,
                 TestDates.madrid(),
@@ -179,9 +183,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("propose: crea evento PENDING_MODERATION con slugs normalizados y createdByUserId")
-    void propose_createsPendingEvent_withNormalizedSlugs() {
-        var req = new ProposeEventRequest(
+    @DisplayName("propose: ok -> crea evento PENDING_MODERATION")
+    void propose_ok_createPendingEvent() {
+        var req = new SubmitEventRequest(
                 "  Ska-P en Madrid  ",
                 "  descripcion  ",
                 TestDates.madrid(),
@@ -194,7 +198,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.getId()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
 
         assertThat(reloaded.getStatus()).isEqualTo(EventStatus.PENDING_MODERATION);
         assertThat(reloaded.getCreatedByUserId()).isEqualTo(UUID.fromString(TestConstants.MOCK_USER_ID));
@@ -212,11 +216,11 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
     @Test
     @DisplayName("propose: reusa artista existente por slug (no crea duplicados)")
-    void propose_reusesExistingArtistBySlug() {
+    void propose_reusesExistingArtistBySlug_createEvent() {
         var existing = factory.againstYou();
         long before = artistRepository.count();
 
-        var req = new ProposeEventRequest(
+        var req = new SubmitEventRequest(
                 "Against You en Madrid",
                 null,
                 TestDates.madrid(),
@@ -229,16 +233,16 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.getId()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
 
         assertThat(artistRepository.count()).isEqualTo(before); // No crece count porque no vuelve a crear mismo artista
         assertThat(reloaded.getArtists()).singleElement().satisfies(a -> assertThat(a.getId()).isEqualTo(existing.getId()));
     }
 
     @Test
-    @DisplayName("propose: artistas se deduplican por slug y preservan orden (LinkedHashSet)")
+    @DisplayName("propose: artistas  no se duplican por slug y preservan orden (LinkedHashSet)")
     void propose_deduplicatesArtists_preservesOrder() {
-        var req = new ProposeEventRequest(
+        var req = new SubmitEventRequest(
                 MOCK_TITLE,
                 null,
                 TestDates.madrid(),
@@ -251,7 +255,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.getId()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
         assertThat(reloaded.getArtists())
                 .extracting(Artist::getSlug)
                 .containsExactly("ska p", "boikot");
@@ -262,7 +266,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("propose: description y sourceUrl en blanco se guardan como null")
     void propose_blankOptionalFields_becomeNull() {
-        var req = new ProposeEventRequest(
+        var req = new SubmitEventRequest(
                 MOCK_TITLE,
                 "    ",
                 TestDates.madrid(),
@@ -275,8 +279,95 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.getId()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
         assertThat(reloaded.getDescription()).isNull();
         assertThat(reloaded.getSourceUrl()).isNull();
+    }
+
+    @Test
+    @DisplayName("update: ok -> actualiza evento PENDING_MODERATION")
+    void update_ok_updatePendingEvent() {
+        var event = factory.approvedMadridAgainstYou();
+        var req = new SubmitEventRequest(
+                "  Against You en concierto  ",
+                "  descripcion  ",
+                TestDates.madrid(),
+                null,
+                "  WiZink Center  ",
+                factory.madrid().getId(),
+                "  Madrid  ",
+                List.of("  Against You  "),
+                "  https://example.com  ");
+
+        var updated = service.update(event.getId(), req);
+
+        var reloaded = eventRepository.findById(updated.id()).orElseThrow();
+
+        assertThat(reloaded.getStatus()).isEqualTo(EventStatus.PENDING_MODERATION);
+        assertThat(reloaded.getTitle()).isEqualTo("Against You en concierto");
+        assertThat(reloaded.getVenueName()).isEqualTo(MOCK_WIZINK);
+        assertThat(reloaded.getVenueSlug()).isEqualTo(SlugNormalizer.of(MOCK_WIZINK));
+        assertThat(reloaded.getArtists()).hasSize(1);
+        assertThat(reloaded.getArtists().iterator().next().getSlug()).isEqualTo(SlugNormalizer.of(TestConstants.MOCK_ARTIST_NAME_AY));
+    }
+
+    @Test
+    @DisplayName("update: evento no existe -> NotFoundException")
+    void update_missingEvent_throws() {
+        var req = new SubmitEventRequest(
+                MOCK_TITLE,
+                "Desc",
+                TestDates.rangeStart(),
+                TestDates.rangeEnd(),
+                MOCK_WIZINK,
+                factory.madrid().getId(),
+                TestConstants.MADRID,
+                List.of("Ska-P"),
+                null);
+
+        assertThatThrownBy(() -> service.update(UUID.fromString("cccccccc-0000-0000-0000-000000000099"), req))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ErrorMessages.EVENT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("update: evento no pertenece al usuario -> ForbiddenException")
+    void update_notOwner_throws() {
+        var event = factory.approvedEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
+                TestConstants.MOCK_MODERATOR_ID, TestConstants.MOCK_ARTIST_NAME_AY); // Otro usuario lo crea
+        var req = new SubmitEventRequest(
+                MOCK_TITLE,
+                "Desc",
+                TestDates.rangeStart(),
+                TestDates.rangeEnd(),
+                MOCK_WIZINK,
+                factory.madrid().getId(),
+                TestConstants.MADRID,
+                List.of("Ska-P"),
+                null);
+
+        assertThatThrownBy(() -> service.update(event.getId(), req))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(ErrorMessages.EVENT_NOT_OWNER);
+    }
+
+    @Test
+    @DisplayName("update: evento en estado no editable -> ConflictException")
+    void update_notEditableStatus_throws() {
+        var event = factory.pendingMadridAgainstYou();
+        var req = new SubmitEventRequest(
+                MOCK_TITLE,
+                "Desc",
+                TestDates.rangeStart(),
+                TestDates.rangeEnd(),
+                MOCK_WIZINK,
+                factory.madrid().getId(),
+                TestConstants.MADRID,
+                List.of("Ska-P"),
+                null);
+
+        assertThatThrownBy(() -> service.update(event.getId(), req))
+                .isInstanceOf(ConflictException.class)
+                .hasMessage(ErrorMessages.EVENT_NOT_EDITABLE);
     }
 }

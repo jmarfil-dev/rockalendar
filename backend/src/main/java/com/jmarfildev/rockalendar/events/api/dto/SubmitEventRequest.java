@@ -14,7 +14,7 @@ import jakarta.validation.constraints.Size;
  * @author jmarfil
  *
  */
-public record ProposeEventRequest(@NotBlank @Size(max = 200) String title,
+public record SubmitEventRequest(@NotBlank @Size(max = 200) String title,
                                  @Size(max = 5_000) String description,
                                  @NotNull OffsetDateTime startDateTime,
                                  OffsetDateTime endDateTime,
