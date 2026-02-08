@@ -61,6 +61,8 @@ Cuándo hacerlo:
 - Nuevo estado `REALIZADO` o `PASADO` (nombre por decidir).
 - Historial de estados para auditoría.
 - Pensar qué hacer con un evento `REJECTED` para que no se vuelva a intentar crear.
+- Estado `REQUEST_CANCEL` para solicitar cancelación de evento.
+  - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED` o `PENDING_MODERATION`.
 
 ## Artistas y contenido de eventos
 
