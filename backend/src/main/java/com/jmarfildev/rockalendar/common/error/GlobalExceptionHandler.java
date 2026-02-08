@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +45,14 @@ public class GlobalExceptionHandler {
                 req.getRequestURI(), ErrorMessages.TYPE_400_VALIDATION);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ProblemDetail handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest req) {
+    @ExceptionHandler({
+                        HttpMessageNotReadableException.class,
+                        NoResourceFoundException.class
+    })
+    public ProblemDetail handleHttpMessageNotReadable(Exception ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        return ProblemDetailGenericProperties.setGenericProperties(pd, ErrorMessages.VALIDATION_ERROR, "Request body is required",
+        return ProblemDetailGenericProperties.setGenericProperties(pd, ErrorMessages.VALIDATION_ERROR,
+                "Path resource or request body is required",
                 req.getRequestURI(), ErrorMessages.TYPE_400_VALIDATION);
     }
 

@@ -57,12 +57,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/events/**", "/api/artists/**")
                         .permitAll()
 
-                        // Proponer evento y "mis eventos" requieren login
-                        .requestMatchers(HttpMethod.POST, "/api/events")
-                        .authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/me/**")
-                        .authenticated()
-
                         // Moderación y admin
                         .requestMatchers("/api/moderation/**")
                         .hasAnyRole("MODERATOR", "ADMIN")

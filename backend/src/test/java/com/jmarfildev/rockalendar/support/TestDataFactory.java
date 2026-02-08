@@ -101,6 +101,7 @@ public class TestDataFactory {
                                String city,
                                String venue,
                                OffsetDateTime start,
+                               String createByUserId,
                                String... artistNames) {
         return saveEvent(title,
                 province,
@@ -108,7 +109,7 @@ public class TestDataFactory {
                 venue,
                 start,
                 EventStatus.APPROVED,
-                TestConstants.MOCK_USER_ID,
+                createByUserId,
                 TestDates.yesterday().minusDays(1),
                 TestConstants.MOCK_MODERATOR_ID,
                 TestDates.yesterday(),
@@ -228,7 +229,7 @@ public class TestDataFactory {
                 .venueSlug(SlugNormalizer.of(venue))
                 .status(status)
                 .artists(artists(artistNames))
-                .createdByUserId(UUID.fromString(createByUserId))
+                .createdByUserId(createByUserId != null ? UUID.fromString(createByUserId) : null)
                 .submittedAt(submittedAt)
                 .moderatedByUserId(moderatedByUserId != null ? UUID.fromString(moderatedByUserId) : null)
                 .moderatedAt(TestDates.tomorrow())
@@ -244,6 +245,7 @@ public class TestDataFactory {
                 TestConstants.MADRID,
                 "Sala Copérnico",
                 TestDates.madrid(),
+                TestConstants.MOCK_USER_ID,
                 TestConstants.MOCK_ARTIST_NAME_AY);
     }
 
@@ -254,6 +256,7 @@ public class TestDataFactory {
                 TestConstants.BARCELONA,
                 "Palau Sant Jordi",
                 TestDates.barcelona(),
+                TestConstants.MOCK_USER_ID,
                 "Boikot");
     }
 
@@ -264,6 +267,7 @@ public class TestDataFactory {
                 "València",
                 "Sala Moon",
                 TestDates.past(),
+                TestConstants.MOCK_USER_ID,
                 "Desera");
     }
 

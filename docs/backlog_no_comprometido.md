@@ -57,8 +57,12 @@ Cuándo hacerlo:
 - Constraint `UNIQUE` y evitar duplicados en eventos (por provincia, ciudad, recinto y fecha).
 - Devolver error 409 Conflict cuando se detecte un duplicado a `MeEventApi.propose()`.
 - Cron job cada 24 horas para cerrar eventos pasados.
+- Desarrollar estado `DRAFT`.
 - Nuevo estado `REALIZADO` o `PASADO` (nombre por decidir).
 - Historial de estados para auditoría.
+- Pensar qué hacer con un evento `REJECTED` para que no se vuelva a intentar crear.
+- Estado `REQUEST_CANCEL` para solicitar cancelación de evento.
+  - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED` o `PENDING_MODERATION`.
 
 ## Artistas y contenido de eventos
 

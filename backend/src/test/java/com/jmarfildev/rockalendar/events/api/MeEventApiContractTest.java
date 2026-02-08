@@ -1,8 +1,12 @@
 package com.jmarfildev.rockalendar.events.api;
 
+import static org.hamcrest.Matchers.not;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
+import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
@@ -34,8 +38,6 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     ContractApiTestUtils contractUtils;
     @Autowired
     MockMvc mockMvc;
-    @Autowired
-    ObjectMapper objectMapper;
 
     private final String API_ME_EVENTS = "/api/me/events";
     private final String API_EVENTS = "/api/events";
@@ -56,10 +58,26 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST /api/events sin auth -> 401 ProblemDetail")
-    void postEvents_withoutAuth_returns401ProblemDetail() throws Exception {
+    @DisplayName("POST " + API_EVENTS + " con auth -> 201 EventPrivateDto con status PENDING_MODERATION")
+    void propose_withAuth_ok_201ReturnsEvent() throws Exception {
+        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+
+        mockMvc.perform(post(API_EVENTS)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.status").value(EventStatus.PENDING_MODERATION.name()))
+                .andExpect(jsonPath("$.title").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("POST /api/events sin auth -> 401")
+    void postEvents_withoutAuth_401ProblemDetail() throws Exception {
         String artists = "[%s]".formatted(TestConstants.MOCK_ARTIST_NAME_AY);
-        var body = proposeEventBody(factory.sevilla().getId().toString(), artists);
+        var body = eventBody(factory.sevilla().getId().toString(), artists);
 
         var ra = mockMvc.perform(post(API_EVENTS)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -69,10 +87,10 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST /api/events con auth pero payload inválido -> 400 ProblemDetail")
-    void postEvents_withAuth_invalidPayload_returns400ProblemDetail() throws Exception {
+    @DisplayName("POST /api/events con auth pero payload inválido -> 400")
+    void postEvents_withAuth_invalidPayload_400ProblemDetail() throws Exception {
         // Error artists vacío
-        var body = proposeEventBody(factory.sevilla().getId().toString(), "[]");
+        var body = eventBody(factory.sevilla().getId().toString(), "[]");
 
         var ra = mockMvc.perform(post(API_EVENTS)
                 .with(contractUtils.authJwt())
@@ -82,10 +100,229 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         contractUtils.expectProblemDetail(ra, 400, API_EVENTS);
     }
 
+    @Test
+    @DisplayName("PUT " + API_ME_EVENTS + "/{eventId} con auth -> 200 EventPrivateDto con status PENDING_MODERATION")
+    void update_withAuth_ok_200ReturnsEvent() throws Exception {
+        var event = factory.approvedMadridAgainstYou();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+
+        mockMvc.perform(put(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.status").value(EventStatus.PENDING_MODERATION.name()))
+                .andExpect(jsonPath("$.title").isNotEmpty())
+                .andExpect(jsonPath("$.title").value(not(event.getTitle())));
+    }
+
+    @Test
+    @DisplayName("PUT " + API_ME_EVENTS + "/{eventId} con auth sin body -> 400")
+    void update_withAuth_noRequest_400ProblemDetail() throws Exception {
+        var event = factory.approvedMadridAgainstYou();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+
+        var ra = mockMvc.perform(put(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        contractUtils.expectProblemDetail(ra, 400, api);
+    }
+
+    @Test
+    @DisplayName("PUT " + API_ME_EVENTS + "/{eventId} endDateTime < startDateTime -> 400")
+    void update_invalidDateRange_400ProblemDetail() throws Exception {
+        var event = factory.approvedMadridAgainstYou();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+
+        String body = """
+                {
+                  "title": "Nuevo título",
+                  "description": "desc",
+                  "startDateTime": "2026-03-10T20:00:00Z",
+                  "endDateTime": "2026-03-10T19:00:00Z",
+                  "venueName": "Sala X",
+                  "provinceId": "%s",
+                  "cityName": "Madrid",
+                  "artists": ["Band A"],
+                  "sourceUrl": "https://example.com"
+                }
+                """.formatted(factory.madrid().getId());
+
+        var ra = mockMvc.perform(put(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isBadRequest());
+
+        contractUtils.expectProblemDetail(ra, 400, api);
+    }
+
+    @Test
+    @DisplayName("PUT " + API_ME_EVENTS + "/{eventId} sin auth -> 401")
+    void update_withoutAuth_401ProblemDetail() throws Exception {
+        var event = factory.approvedMadridAgainstYou();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+
+        var ra = mockMvc.perform(put(api)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isUnauthorized());
+
+        contractUtils.expectProblemDetail(ra, 401, api);
+    }
+
+    @Test
+    @DisplayName("PUT " + API_ME_EVENTS + "/{eventId} evento de otro usuario -> 403")
+    void update_notOwner_403ProblemDetail() throws Exception {
+        var event = factory.approvedEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
+                TestConstants.MOCK_MODERATOR_ID, TestConstants.MOCK_ARTIST_NAME_AY); // Otro usuario lo crea
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+
+        var ra = mockMvc.perform(put(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isForbidden());
+
+        contractUtils.expectProblemDetail(ra, 403, api);
+    }
+
+    @Test
+    @DisplayName("PUT " + API_ME_EVENTS + "/{eventId} no existe -> 404")
+    void update_missingEvent_404ProblemDetail() throws Exception {
+        String api = API_ME_EVENTS.concat("/cccccccc-0000-0000-0000-000000000099");
+        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+
+        var ra = mockMvc.perform(put(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isNotFound());
+
+        contractUtils.expectProblemDetail(ra, 404, api);
+    }
+
+    @Test
+    @DisplayName("PUT " + API_ME_EVENTS + "/{eventId} estado no editable -> 409")
+    void update_notEditableStatus_409ProblemDetail() throws Exception {
+        var event = factory.pendingMadridAgainstYou();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+
+        var ra = mockMvc.perform(put(api)
+                .with(contractUtils.authJwt()) // debe ser owner
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andExpect(status().isConflict());
+
+        contractUtils.expectProblemDetail(ra, 409, api);
+    }
+
+    @Test
+    @DisplayName("DELETE " + API_ME_EVENTS + "/{eventId} con auth -> 204 sin contenido")
+    void delete_withAuth_ok_204NoContent() throws Exception {
+        var event = factory.pendingMadridAgainstYou();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+
+        mockMvc.perform(delete(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("DELETE " + API_ME_EVENTS + "/{eventId} con auth sin eventId -> 400")
+    void delete_withAuth_noEventId_400ProblemDetail() throws Exception {
+        String api = API_ME_EVENTS.concat("/");
+
+        var ra = mockMvc.perform(delete(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        contractUtils.expectProblemDetail(ra, 400, api);
+    }
+
+    @Test
+    @DisplayName("DELETE " + API_ME_EVENTS + "/{eventId} sin auth -> 401")
+    void delete_withoutAuth_401ProblemDetail() throws Exception {
+        var event = factory.approvedMadridAgainstYou();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+
+        var ra = mockMvc.perform(delete(api)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+
+        contractUtils.expectProblemDetail(ra, 401, api);
+    }
+
+    @Test
+    @DisplayName("DELETE " + API_ME_EVENTS + "/{eventId} evento de otro usuario -> 403")
+    void delete_notOwner_403ProblemDetail() throws Exception {
+        var event = factory.approvedEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
+                TestConstants.MOCK_MODERATOR_ID, TestConstants.MOCK_ARTIST_NAME_AY); // Otro usuario lo crea
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+
+        var ra = mockMvc.perform(delete(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+
+        contractUtils.expectProblemDetail(ra, 403, api);
+    }
+
+    @Test
+    @DisplayName("DELETE " + API_ME_EVENTS + "/{eventId} no existe -> 404")
+    void delete_missingEvent_404ProblemDetail() throws Exception {
+        String api = API_ME_EVENTS.concat("/cccccccc-0000-0000-0000-000000000099");
+
+        var ra = mockMvc.perform(delete(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        contractUtils.expectProblemDetail(ra, 404, api);
+    }
+
+    @Test
+    @DisplayName("DELETE " + API_ME_EVENTS + "/{eventId} estado no eliminable -> 409")
+    void delete_notErasableStatus_409ProblemDetail() throws Exception {
+        var event = factory.canceledBarcelonaManifa();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+
+        var ra = mockMvc.perform(delete(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
+
+        contractUtils.expectProblemDetail(ra, 409, api);
+    }
+
+    @Test
+    @DisplayName("DELETE " + API_ME_EVENTS + "/{eventId} estado no eliminable -> 409")
+    void delete_approvedEvent_409ProblemDetail() throws Exception {
+        var event = factory.approvedMadridAgainstYou();
+        String api = API_ME_EVENTS.concat("/" + event.getId());
+
+        var ra = mockMvc.perform(delete(api)
+                .with(contractUtils.authJwt())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
+
+        contractUtils.expectProblemDetail(ra, 409, api);
+    }
+
     /*
      * Payload crear evento
      */
-    private static String proposeEventBody(String provinceId, String artists) {
+    private static String eventBody(String provinceId, String artists) {
         return """
                 {
                   "title": "Concierto de prueba en Sevilla",
