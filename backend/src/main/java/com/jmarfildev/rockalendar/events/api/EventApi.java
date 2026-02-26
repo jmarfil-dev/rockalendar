@@ -24,6 +24,7 @@ import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.events.api.doc.EventPublicPageDoc;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 
 /**
  * @author jmarfil
@@ -35,16 +36,18 @@ public interface EventApi {
 
     @GetMapping("/home")
     @Operation(summary = "Home público: próximos eventos",
-            description = """
-                    Lista eventos públicos (APPROVED) a partir de la fecha actual.
-                    Orden fijo: startDateTime ASC, title ASC, provinceName ASC, cityName ASC.
-                    El parámetro sort se ignora.
-                    Devuelve lo mismo que "/api/events" sin filtros, pero con una consulta más ligera y sin eventos pasados.
-                    """)
-    @ApiResponse(responseCode = "200", description = "Página de eventos públicos",
-            content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
-    Page<EventPublicDto> listHome(@Parameter(description = "Paginación (sort se ignora, orden fijo)",
-            example = "page=0&size=20") @PageableDefault(size = 20) Pageable pageable);
+               description = """
+                             Lista eventos públicos (APPROVED) a partir de la fecha actual. Devuelve lo mismo que "/api/events" sin filtros, pero con una consulta más ligera y sin eventos pasados.
+
+                             La ordenación por pageable permite direcciones asc y desc, y los campos title, date (fecha de inicio),
+                             province y city. Ignora cualquier valor distinto.
+
+
+                             """)
+    @ApiResponse(responseCode = "200",
+                 description = "Página de eventos públicos",
+                 content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
+    Page<EventPublicListItemDto> listHome(@Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping
     @Operation(summary = "Buscar eventos públicos",

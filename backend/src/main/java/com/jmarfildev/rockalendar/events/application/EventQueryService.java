@@ -58,14 +58,12 @@ public class EventQueryService {
             "date", "startDateTime",
             "province", "province.name",
             "city", "cityName");
+
     @Transactional(readOnly = true)
-    public Page<EventPublicDto> listHome(Pageable pageable) {
+    public Page<EventPublicListItemDto> listHome(Pageable pageable) {
         CommonValidations.validatePageable(pageable);
-
-        // "sanitiza" el sort (tu SQL ya tiene ORDER BY fijo)
-        Pageable safePageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-
-        return espRepository.findHome(safePageable).map(mapper::toPublicDto);
+        Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortCriteria(pageable));
+        return eRepository.findHome(pageableWithSort);
     }
 
     @Transactional(readOnly = true)

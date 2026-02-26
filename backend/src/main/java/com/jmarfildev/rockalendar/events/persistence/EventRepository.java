@@ -1,5 +1,6 @@
 package com.jmarfildev.rockalendar.events.persistence;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 
@@ -25,8 +28,24 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     Optional<Event> findByTitleAndStatus(String title, EventStatus status);
 
     @Query("""
-                SELECT e
+                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto(
+                    e.id,
+                    e.title,
+                    e.startDateTime,
+                    e.endDateTime,
+                    p.name,
+                    e.cityName
+                )
                 FROM Event e
+                JOIN e.province p
+                WHERE e.status = 'APPROVED'
+                    AND (
+                        (e.endDateTime IS NOT NULL AND e.endDateTime >= CURRENT_TIMESTAMP)
+                            OR (e.endDateTime IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
+                    )
+            """)
+    Page<EventPublicListItemDto> findHome(Pageable pageable);
+
     @Query("""
                 SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
                     e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.createdAt
