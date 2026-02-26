@@ -1,12 +1,16 @@
 package com.jmarfildev.rockalendar.events.application;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +24,9 @@ import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.config.PublicSearchProperties;
-import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
@@ -48,6 +53,11 @@ public class EventQueryService {
     private final PublicSearchProperties props;
     private final CurrentUser currentUser;
 
+    private static final Map<String, String> SORT_MAP = Map.of(
+            "title", "title",
+            "date", "startDateTime",
+            "province", "province.name",
+            "city", "cityName");
     @Transactional(readOnly = true)
     public Page<EventPublicDto> listHome(Pageable pageable) {
         CommonValidations.validatePageable(pageable);
@@ -107,10 +117,60 @@ public class EventQueryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<EventPrivateDto> listMine(Pageable pageable) {
-        UUID userId = currentUser.userId();
+    public Page<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {
         CommonValidations.validatePageable(pageable);
-        return eRepository.listMineOrderFutureFirst(userId, pageable).map(mapper::toPrivateDto);
+        UUID userId = currentUser.userId();
+        Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortCriteria(pageable));
+        return switch (tab) {
+            case CHANGES -> eRepository.listMineByStatus(userId, EventStatus.NEEDS_CHANGES, pageableWithSort);
+
+            case PENDING -> eRepository.listMineByStatus(userId, EventStatus.PENDING_MODERATION, pageableWithSort);
+
+            case OTHERS -> eRepository.listMineExcludingStatuses(userId,
+                                                                 List.of(EventStatus.NEEDS_CHANGES, EventStatus.PENDING_MODERATION),
+                                                                 pageableWithSort);
+
+            case ALL -> eRepository.listMineAllPriorityFutureFirst(userId, pageable);
+        };
+    }
+
+    private Sort sortCriteria(Pageable pageable) {
+        Sort sort = mapAllowedSort(pageable.getSort());
+        if (sort == null) {
+            // Ordenación por defecto si sort viene vacío o con valores no válidos
+            sort = Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc("title"));
+        }
+
+        // Estabiliza paginación: siempre añadir id al final
+        if (sort.getOrderFor("id") == null) {
+            sort = sort.and(Sort.by(Sort.Order.asc("id")));
+        }
+
+        return sort;
+    }
+
+    private Sort mapAllowedSort(Sort inSort) {
+        if (inSort.isUnsorted()) {
+            return null;
+        }
+
+        List<Sort.Order> orders = new ArrayList<>();
+
+        for (Sort.Order o : inSort) {
+            String mapped = SORT_MAP.get(o.getProperty());
+
+            if (mapped == null) {
+                // Si el orden no existe en SORT_MAP, lo ignora
+                continue;
+            }
+            orders.add(new Sort.Order(o.getDirection(), mapped));
+        }
+
+        if (orders.isEmpty()) {
+            return null;
+        }
+
+        return Sort.by(orders);
     }
 
     private boolean hasMultipleTokens(String q) {

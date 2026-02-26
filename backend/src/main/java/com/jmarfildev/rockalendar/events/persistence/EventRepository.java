@@ -27,12 +27,52 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("""
                 SELECT e
                 FROM Event e
+    @Query("""
+                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
+                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.createdAt
+                )
+                FROM Event e
+                JOIN e.province p
+                WHERE e.createdByUserId = :userId
+                  AND e.status = :status
+            """)
+    Page<EventPrivateListItemDto> listMineByStatus(UUID userId, EventStatus status, Pageable pageable);
+
+    @Query("""
+                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
+                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.createdAt
+                )
+                FROM Event e
+                JOIN e.province p
+                WHERE e.createdByUserId = :userId
+                  AND e.status NOT IN :excluded
+            """)
+    Page<EventPrivateListItemDto> listMineExcludingStatuses(UUID userId, Collection<EventStatus> excluded, Pageable pageable);
+
+    /**
+     * 1º NEED_CHANGES, 2º PENDING_MODERATION, 3º resto y dentro de cada grupo: futuros primero (cercanos) y pasados después (recientes)
+     *
+     * @param userId
+     * @param pageable
+     * @return
+     */
+    @Query("""
+                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
+                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.createdAt
+                )
+                FROM Event e
+                JOIN e.province p
                 WHERE e.createdByUserId = :userId
                 ORDER BY
+                  CASE
+                    WHEN e.status = 'NEEDS_CHANGES' THEN 0
+                    WHEN e.status = 'PENDING_MODERATION' THEN 1
+                    ELSE 2
+                  END ASC,
+                  e.status ASC,
                   CASE WHEN e.startDateTime >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END ASC,
                   CASE WHEN e.startDateTime >= CURRENT_TIMESTAMP THEN e.startDateTime END ASC,
                   CASE WHEN e.startDateTime <  CURRENT_TIMESTAMP THEN e.startDateTime END DESC
             """)
-    @EntityGraph(attributePaths = { "province", "artists" })
-    Page<Event> listMineOrderFutureFirst(UUID userId, Pageable pageable);
+    Page<EventPrivateListItemDto> listMineAllPriorityFutureFirst(UUID userId, Pageable pageable);
 }

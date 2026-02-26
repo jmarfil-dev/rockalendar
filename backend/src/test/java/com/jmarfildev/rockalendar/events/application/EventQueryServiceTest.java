@@ -241,7 +241,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("listMine: size demasiado grande -> 400 BadRequestException")
     void listMine_pageSizeTooLarge_throws() {
-        assertThatThrownBy(() -> service.listMine(PageRequest.of(0, 10_000)))
+        assertThatThrownBy(() -> service.listMine(MeEventTabEnum.ALL, PageRequest.of(0, 10_000)))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
     }
@@ -256,7 +256,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         when(currentUser.userId())
                 .thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
 
-        var page = service.listMine(PageRequest.of(0, 10));
+        var page = service.listMine(MeEventTabEnum.ALL, PageRequest.of(0, 10));
 
         // Los futuros deben aparecer antes que cualquier pasado y ordenados
         assertThat(page.getContent())
