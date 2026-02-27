@@ -105,7 +105,7 @@ class ModerationListApiContractTest extends AbstractPostgresTest {
         factory.hiddenMadridSoziedadAlkoholika();
         factory.canceledBarcelonaManifa();
 
-        mockMvc.perform(get(API_ARCHIVED)
+        mockMvc.perform(get(API_ARCHIVED).param("sort", "moderated,desc")
                 .with(contractUtils.authJwtModerator()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(3))

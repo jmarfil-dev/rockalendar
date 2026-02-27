@@ -47,6 +47,7 @@ import com.jmarfildev.rockalendar.events.persistence.EventRepository;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventQueryService {
 
     private final EventRepository repository;
@@ -60,19 +61,17 @@ public class EventQueryService {
                    "province", "city_name", "city");
     private static final Map<String, String> HOME_SORT_JPA =
             Map.of("title", "title", "date", "startDateTime", "province", "province.name", "city", "cityName");
+    private static final Sort DEFAULT_SORT_JPA =
+            Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc("title"));
 
     @Transactional(readOnly = true)
     public Page<EventPublicListItemDto> listHome(Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                                                   SortUtils.toJpaSort(pageable, HOME_SORT_JPA,
-                                                                       Sort.by(Sort.Order.asc("startDateTime"),
-                                                                               Sort.Order.asc("province.name"), Sort.Order.asc("title")),
-                                                                       "id"));
+                                                   SortUtils.toJpaSort(pageable, HOME_SORT_JPA, DEFAULT_SORT_JPA, "id"));
         return repository.findHome(pageableWithSort);
     }
 
-    @Transactional(readOnly = true)
     public Page<EventPublicListItemDto> searchPublic(Optional<String> query,
                                              Optional<OffsetDateTime> dateFrom,
                                              Optional<OffsetDateTime> dateTo,
@@ -120,22 +119,17 @@ public class EventQueryService {
         return results.map(mapper::toPublicListItemDto);
     }
 
-    @Transactional(readOnly = true)
     public EventPublicDto getPublicById(UUID id) {
         return repository.findByIdAndStatus(id, EventStatus.APPROVED)
                 .map(mapper::toPublicDto)
                 .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
     public Page<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         UUID userId = currentUser.userId();
         Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                                                   SortUtils.toJpaSort(pageable, HOME_SORT_JPA,
-                                                                       Sort.by(Sort.Order.asc("startDateTime"),
-                                                                               Sort.Order.asc("province.name"), Sort.Order.asc("title")),
-                                                                       "id"));
+                                                   SortUtils.toJpaSort(pageable, HOME_SORT_JPA, DEFAULT_SORT_JPA, "id"));
         return switch (tab) {
             case CHANGES -> repository.listMineByStatus(userId, EventStatus.NEEDS_CHANGES, pageableWithSort);
 

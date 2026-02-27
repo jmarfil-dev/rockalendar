@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import com.jmarfildev.rockalendar.common.Constants;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
-import com.jmarfildev.rockalendar.moderation.api.mapper.ModerationMapperImpl;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
 
@@ -25,7 +25,7 @@ import com.jmarfildev.rockalendar.support.TestDataFactory;
  *
  */
 @DataJpaTest
-@Import({ ModerationQueryService.class, DatabaseCleaner.class, TestDataFactory.class, ModerationMapperImpl.class })
+@Import({ ModerationQueryService.class, DatabaseCleaner.class, TestDataFactory.class })
 public class ModerationQueryServiceTest extends AbstractPostgresTest {
 
     @Autowired
@@ -89,7 +89,7 @@ public class ModerationQueryServiceTest extends AbstractPostgresTest {
         factory.hiddenMadridSoziedadAlkoholika();
         factory.canceledBarcelonaManifa();
 
-        var page = service.listArchived(PageRequest.of(0, 20));
+        var page = service.listArchived(PageRequest.of(0, 20, Sort.by(Sort.Order.desc("moderated"))));
 
         assertThat(page.getContent())
                 .hasSize(3)
