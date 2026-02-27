@@ -16,4 +16,4 @@ public record EventPrivateListItemDto(UUID id,
                                       String cityName,
                                       EventStatus status,
                                       String moderationMessage,
-                                      OffsetDateTime createdAt) {}
+                                      OffsetDateTime submittedAt) {}

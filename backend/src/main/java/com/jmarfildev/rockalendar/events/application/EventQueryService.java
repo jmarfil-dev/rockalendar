@@ -55,12 +55,14 @@ public class EventQueryService {
     private final PublicSearchProperties props;
     private final CurrentUser currentUser;
 
-    private static final Set<String> SEARCH_SORT_SQL = Set.of("relevance", "date", "title", "province", "city");
+    private static final Set<String> SEARCH_SORT_ALLOW = Set.of("relevance", "date", "title", "province", "city");
     private static final Map<String, String> SEARCH_SORT_ALIASES =
             Map.of("startDateTime", "date", "provinceName", "province", "cityName", "city", "start_date_time", "date", "province_name",
                    "province", "city_name", "city");
-    private static final Map<String, String> HOME_SORT_JPA =
+    private static final Map<String, String> HOME_SORT_ALLOW =
             Map.of("title", "title", "date", "startDateTime", "province", "province.name", "city", "cityName");
+    private static final Map<String, String> MINE_SORT_ALLOW =
+            Map.of("title", "title", "date", "submittedAt", "province", "province.name", "city", "cityName", "status", "status");
     private static final Sort DEFAULT_SORT_JPA =
             Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc("title"));
 
@@ -68,17 +70,17 @@ public class EventQueryService {
     public Page<EventPublicListItemDto> listHome(Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                                                   SortUtils.toJpaSort(pageable, HOME_SORT_JPA, DEFAULT_SORT_JPA, "id"));
+                                                   SortUtils.toJpaSort(pageable, HOME_SORT_ALLOW, DEFAULT_SORT_JPA, "id"));
         return repository.findHome(pageableWithSort);
     }
 
     public Page<EventPublicListItemDto> searchPublic(Optional<String> query,
-                                             Optional<OffsetDateTime> dateFrom,
-                                             Optional<OffsetDateTime> dateTo,
-                                             Optional<UUID> provinceId,
-                                             Optional<String> city,
-                                             Optional<String> artist,
-                                             Pageable pageable) {
+                                                     Optional<OffsetDateTime> dateFrom,
+                                                     Optional<OffsetDateTime> dateTo,
+                                                     Optional<UUID> provinceId,
+                                                     Optional<String> city,
+                                                     Optional<String> artist,
+                                                     Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         if (dateFrom.isPresent() && dateTo.isPresent() && dateFrom.get().isAfter(dateTo.get())) {
             throw new BadRequestException(ErrorMessages.INVALID_DATE_RANGE);
@@ -102,18 +104,17 @@ public class EventQueryService {
 
         String defaultKey = !q.isBlank() ? "relevance" : "date";
         String defaultDir = !q.isBlank() ? "desc" : "asc";
-        SortChoice sort = SortUtils.toSqlSortChoice(pageable, SEARCH_SORT_SQL, SEARCH_SORT_ALIASES, defaultKey, defaultDir);
+        SortChoice sort = SortUtils.toSqlSortChoice(pageable, SEARCH_SORT_ALLOW, SEARCH_SORT_ALIASES, defaultKey, defaultDir);
         Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
         Page<EventPublicSearchProjection> results = repository.searchPublicEvents(q, minSim, ftsW, trgmW, from, to, provId, citySlug,
-                                                                                  artistSlug, sort.sortKey(),
-                                                                                  sort.sortDir(), pageOnly);
+                                                                                  artistSlug, sort.sortKey(), sort.sortDir(), pageOnly);
 
         // Si no hay resultados y la query tiene más de dos palabras se intenta la segunda consulta
         if (hasMultipleTokens(q) && results.isEmpty()) {
             return repository.searchPublicEventsFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, sort.sortKey(),
-                                                      sort.sortDir(), pageOnly)
-                                .map(mapper::toPublicListItemDto);
+                                                         sort.sortDir(), pageOnly)
+                             .map(mapper::toPublicListItemDto);
         }
 
         return results.map(mapper::toPublicListItemDto);
@@ -121,23 +122,22 @@ public class EventQueryService {
 
     public EventPublicDto getPublicById(UUID id) {
         return repository.findByIdAndStatus(id, EventStatus.APPROVED)
-                .map(mapper::toPublicDto)
-                .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
+                         .map(mapper::toPublicDto)
+                         .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
     }
 
     public Page<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         UUID userId = currentUser.userId();
         Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                                                   SortUtils.toJpaSort(pageable, HOME_SORT_JPA, DEFAULT_SORT_JPA, "id"));
+                                                   SortUtils.toJpaSort(pageable, MINE_SORT_ALLOW, DEFAULT_SORT_JPA, "id"));
         return switch (tab) {
             case CHANGES -> repository.listMineByStatus(userId, EventStatus.NEEDS_CHANGES, pageableWithSort);
 
             case PENDING -> repository.listMineByStatus(userId, EventStatus.PENDING_MODERATION, pageableWithSort);
 
-            case OTHERS -> repository.listMineExcludingStatuses(userId,
-                                                                 List.of(EventStatus.NEEDS_CHANGES, EventStatus.PENDING_MODERATION),
-                                                                 pageableWithSort);
+            case OTHERS -> repository.listMineExcludingStatuses(userId, List.of(EventStatus.NEEDS_CHANGES, EventStatus.PENDING_MODERATION),
+                                                                pageableWithSort);
 
             case ALL -> repository.listMineAllPriorityFutureFirst(userId, pageable);
         };
