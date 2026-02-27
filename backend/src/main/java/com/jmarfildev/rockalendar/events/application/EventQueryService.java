@@ -1,10 +1,10 @@
 package com.jmarfildev.rockalendar.events.application;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -22,6 +22,8 @@ import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
+import com.jmarfildev.rockalendar.common.helper.SortUtils;
+import com.jmarfildev.rockalendar.common.helper.SortUtils.SortChoice;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.config.PublicSearchProperties;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
@@ -29,8 +31,8 @@ import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
+import com.jmarfildev.rockalendar.events.persistence.EventPublicSearchProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
-import com.jmarfildev.rockalendar.events.persistence.EventSearchPublicRepository;
 
 /**
  * @author jmarfil
@@ -47,27 +49,31 @@ import com.jmarfildev.rockalendar.events.persistence.EventSearchPublicRepository
 @RequiredArgsConstructor
 public class EventQueryService {
 
-    private final EventRepository eRepository;
-    private final EventSearchPublicRepository espRepository;
+    private final EventRepository repository;
     private final EventMapper mapper;
     private final PublicSearchProperties props;
     private final CurrentUser currentUser;
 
-    private static final Map<String, String> SORT_MAP = Map.of(
-            "title", "title",
-            "date", "startDateTime",
-            "province", "province.name",
-            "city", "cityName");
+    private static final Set<String> SEARCH_SORT_SQL = Set.of("relevance", "date", "title", "province", "city");
+    private static final Map<String, String> SEARCH_SORT_ALIASES =
+            Map.of("startDateTime", "date", "provinceName", "province", "cityName", "city", "start_date_time", "date", "province_name",
+                   "province", "city_name", "city");
+    private static final Map<String, String> HOME_SORT_JPA =
+            Map.of("title", "title", "date", "startDateTime", "province", "province.name", "city", "cityName");
 
     @Transactional(readOnly = true)
     public Page<EventPublicListItemDto> listHome(Pageable pageable) {
         CommonValidations.validatePageable(pageable);
-        Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortCriteria(pageable));
-        return eRepository.findHome(pageableWithSort);
+        Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                                                   SortUtils.toJpaSort(pageable, HOME_SORT_JPA,
+                                                                       Sort.by(Sort.Order.asc("startDateTime"),
+                                                                               Sort.Order.asc("province.name"), Sort.Order.asc("title")),
+                                                                       "id"));
+        return repository.findHome(pageableWithSort);
     }
 
     @Transactional(readOnly = true)
-    public Page<EventPublicDto> searchPublic(Optional<String> query,
+    public Page<EventPublicListItemDto> searchPublic(Optional<String> query,
                                              Optional<OffsetDateTime> dateFrom,
                                              Optional<OffsetDateTime> dateTo,
                                              Optional<UUID> provinceId,
@@ -95,21 +101,28 @@ public class EventQueryService {
         String citySlug = city.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
         String artistSlug = artist.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
 
-        var results = espRepository.searchPublicEvents(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
-                .map(mapper::toPublicDto);
+        String defaultKey = !q.isBlank() ? "relevance" : "date";
+        String defaultDir = !q.isBlank() ? "desc" : "asc";
+        SortChoice sort = SortUtils.toSqlSortChoice(pageable, SEARCH_SORT_SQL, SEARCH_SORT_ALIASES, defaultKey, defaultDir);
+        Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<EventPublicSearchProjection> results = repository.searchPublicEvents(q, minSim, ftsW, trgmW, from, to, provId, citySlug,
+                                                                                  artistSlug, sort.sortKey(),
+                                                                                  sort.sortDir(), pageOnly);
 
         // Si no hay resultados y la query tiene más de dos palabras se intenta la segunda consulta
         if (hasMultipleTokens(q) && results.isEmpty()) {
-            return espRepository.searchPublicEventsFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, pageable)
-                    .map(mapper::toPublicDto);
+            return repository.searchPublicEventsFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, sort.sortKey(),
+                                                      sort.sortDir(), pageOnly)
+                                .map(mapper::toPublicListItemDto);
         }
 
-        return results;
+        return results.map(mapper::toPublicListItemDto);
     }
 
     @Transactional(readOnly = true)
     public EventPublicDto getPublicById(UUID id) {
-        return eRepository.findByIdAndStatus(id, EventStatus.APPROVED)
+        return repository.findByIdAndStatus(id, EventStatus.APPROVED)
                 .map(mapper::toPublicDto)
                 .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
     }
@@ -118,57 +131,22 @@ public class EventQueryService {
     public Page<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         UUID userId = currentUser.userId();
-        Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortCriteria(pageable));
+        Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                                                   SortUtils.toJpaSort(pageable, HOME_SORT_JPA,
+                                                                       Sort.by(Sort.Order.asc("startDateTime"),
+                                                                               Sort.Order.asc("province.name"), Sort.Order.asc("title")),
+                                                                       "id"));
         return switch (tab) {
-            case CHANGES -> eRepository.listMineByStatus(userId, EventStatus.NEEDS_CHANGES, pageableWithSort);
+            case CHANGES -> repository.listMineByStatus(userId, EventStatus.NEEDS_CHANGES, pageableWithSort);
 
-            case PENDING -> eRepository.listMineByStatus(userId, EventStatus.PENDING_MODERATION, pageableWithSort);
+            case PENDING -> repository.listMineByStatus(userId, EventStatus.PENDING_MODERATION, pageableWithSort);
 
-            case OTHERS -> eRepository.listMineExcludingStatuses(userId,
+            case OTHERS -> repository.listMineExcludingStatuses(userId,
                                                                  List.of(EventStatus.NEEDS_CHANGES, EventStatus.PENDING_MODERATION),
                                                                  pageableWithSort);
 
-            case ALL -> eRepository.listMineAllPriorityFutureFirst(userId, pageable);
+            case ALL -> repository.listMineAllPriorityFutureFirst(userId, pageable);
         };
-    }
-
-    private Sort sortCriteria(Pageable pageable) {
-        Sort sort = mapAllowedSort(pageable.getSort());
-        if (sort == null) {
-            // Ordenación por defecto si sort viene vacío o con valores no válidos
-            sort = Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc("title"));
-        }
-
-        // Estabiliza paginación: siempre añadir id al final
-        if (sort.getOrderFor("id") == null) {
-            sort = sort.and(Sort.by(Sort.Order.asc("id")));
-        }
-
-        return sort;
-    }
-
-    private Sort mapAllowedSort(Sort inSort) {
-        if (inSort.isUnsorted()) {
-            return null;
-        }
-
-        List<Sort.Order> orders = new ArrayList<>();
-
-        for (Sort.Order o : inSort) {
-            String mapped = SORT_MAP.get(o.getProperty());
-
-            if (mapped == null) {
-                // Si el orden no existe en SORT_MAP, lo ignora
-                continue;
-            }
-            orders.add(new Sort.Order(o.getDirection(), mapped));
-        }
-
-        if (orders.isEmpty()) {
-            return null;
-        }
-
-        return Sort.by(orders);
     }
 
     private boolean hasMultipleTokens(String q) {

@@ -34,62 +34,66 @@ import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 @Tag(name = "Events", description = "Consulta de eventos públicos")
 public interface EventApi {
 
+    @GetMapping
+    @Operation(summary = "Buscar eventos públicos",
+               description = """
+                             Búsqueda flexible de eventos públicos (APPROVED) con tolerancia a errores tipográficos.
+
+                             La búsqueda combina:
+                             - Full Text Search (FTS) para coincidencias exactas y relevantes.
+                             - Búsqueda tolerante (trigram similarity) para prefijos y errores de escritura.
+                             - Filtros exactos por provincia (id), ciudad (nombre) y artista (nombre), y por rango de fechas.
+
+                             Reglas importantes:
+                             - Solo se devuelven eventos con estado APPROVED.
+                             - La tolerancia a errores se aplica únicamente al parámetro `query`.
+
+                             La ordenación por pageable permite direcciones asc y desc, y los campos title, date (fecha de inicio),
+                             province, city y relevance. Ignora cualquier valor distinto. La ordenación por relevancia se aplica solo si
+                             el parámetro `query` tiene valor.
+                             """)
+    @ApiResponse(responseCode = "200",
+                 description = "Página de eventos públicos",
+                 content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
+    @ApiBadRequest
+    Page<EventPublicListItemDto> searchPublic(@Parameter(description = "Búsqueda libre (título, sala, ciudad, artista)",
+                                                 example = "metallica madrid") @RequestParam Optional<String> query,
+                                      @Parameter(description = "Fecha/hora desde (ISO-8601)",
+                                                 example = "2026-04-01T00:00:00Z") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<
+                                                         OffsetDateTime> dateFrom,
+                                      @Parameter(description = "Fecha/hora hasta (ISO-8601)",
+                                                 example = "2026-04-30T23:59:59Z") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<
+                                                         OffsetDateTime> dateTo,
+                                      @Parameter(description = "Filtra por provincia",
+                                                 example = "11111111-1111-1111-1111-111111111111") @RequestParam Optional<UUID> provinceId,
+                                      @Parameter(description = "Ciudad (texto libre); se normaliza internamente a slug",
+                                                 example = "València") @RequestParam Optional<String> city,
+                                      @Parameter(description = "Artista (texto libre); se normaliza internamente a slug",
+                                                 example = "Iron Maiden") @RequestParam Optional<String> artist,
+                                      @Parameter(description = "Paginación (page, size, sort)",
+                                                 example = "page=0&size=20") @PageableDefault(size = 20) Pageable pageable);
+
     @GetMapping("/home")
     @Operation(summary = "Home público: próximos eventos",
                description = """
-                             Lista eventos públicos (APPROVED) a partir de la fecha actual. Devuelve lo mismo que "/api/events" sin filtros, pero con una consulta más ligera y sin eventos pasados.
+                             Lista eventos públicos (APPROVED) a partir de la fecha actual. Devuelve lo mismo que "/api/events" sin filtros,
+                             pero con una consulta más ligera y sin eventos pasados.
 
                              La ordenación por pageable permite direcciones asc y desc, y los campos title, date (fecha de inicio),
                              province y city. Ignora cualquier valor distinto.
-
-
                              """)
     @ApiResponse(responseCode = "200",
                  description = "Página de eventos públicos",
                  content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
     Page<EventPublicListItemDto> listHome(@Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 
-    @GetMapping
-    @Operation(summary = "Buscar eventos públicos",
-            description = """
-                    Búsqueda flexible de eventos públicos (APPROVED) con tolerancia a errores tipográficos.
-
-                    La búsqueda combina:
-                    - Full Text Search (FTS) para coincidencias exactas y relevantes.
-                    - Búsqueda tolerante (trigram similarity) para prefijos y errores de escritura.
-                    - Filtros exactos por provincia, ciudad y artista.
-
-                    Reglas importantes:
-                    - Solo se devuelven eventos con estado APPROVED.
-                    - Los filtros por ciudad y artista son exactos (por slug).
-                    - La tolerancia a errores se aplica únicamente al parámetro `query`.
-                    - Si `query` está vacío, se listan eventos según los filtros y el orden por defecto.
-                    """)
-    @ApiResponse(responseCode = "200", description = "Página de eventos públicos",
-            content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
-    @ApiBadRequest
-    Page<EventPublicDto> searchPublic(@Parameter(description = "Búsqueda libre (título, sala, ciudad, artista)",
-            example = "metallica madrid") @RequestParam Optional<String> query,
-                                @Parameter(description = "Fecha/hora desde (ISO-8601)",
-                                        example = "2026-04-01T00:00:00Z") @RequestParam @DateTimeFormat(
-                                                iso = DateTimeFormat.ISO.DATE_TIME) Optional<OffsetDateTime> dateFrom,
-                                @Parameter(description = "Fecha/hora hasta (ISO-8601)",
-                                        example = "2026-04-30T23:59:59Z") @RequestParam @DateTimeFormat(
-                                                iso = DateTimeFormat.ISO.DATE_TIME) Optional<OffsetDateTime> dateTo,
-                                @Parameter(description = "Filtra por provincia",
-                                        example = "11111111-1111-1111-1111-111111111111") @RequestParam Optional<UUID> provinceId,
-                                @Parameter(description = "Ciudad (texto libre); se normaliza internamente a slug",
-                                        example = "València") @RequestParam Optional<String> city,
-                                @Parameter(description = "Artista (texto libre); se normaliza internamente a slug",
-                                        example = "Iron Maiden") @RequestParam Optional<String> artist,
-                                @Parameter(description = "Paginación (page, size, sort)",
-                                        example = "page=0&size=20") @PageableDefault(size = 20) Pageable pageable);
-
     @GetMapping("/{id}")
     @Operation(summary = "Obtener evento público por ID", description = "Devuelve un evento público por su ID (solo estado APPROVED).")
-    @ApiResponse(responseCode = "200", description = "Evento encontrado",
-            content = @Content(schema = @Schema(implementation = EventPublicDto.class)))
+    @ApiResponse(responseCode = "200",
+                 description = "Evento encontrado",
+                 content = @Content(schema = @Schema(implementation = EventPublicDto.class)))
     @ApiNotFound
-    EventPublicDto getPublicById(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
-            required = true) @PathVariable UUID id);
+    EventPublicDto getPublicById(@Parameter(description = "ID del evento",
+                                            example = "cccccccc-0000-0000-0000-000000000001",
+                                            required = true) @PathVariable UUID id);
 }

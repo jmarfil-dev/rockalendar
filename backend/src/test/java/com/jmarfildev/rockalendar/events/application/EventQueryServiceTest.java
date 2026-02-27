@@ -23,7 +23,7 @@ import com.jmarfildev.rockalendar.common.error.ErrorMessages;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
-import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestConstants;
@@ -150,10 +150,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
                 Optional.empty(),
                 PageRequest.of(0, 10));
 
-        assertThat(page.getContent())
-                .singleElement()
-                .extracting(EventPublicDto::cityName)
-                .isEqualTo(TestConstants.MADRID);
+        assertThat(page.getContent()).singleElement().extracting(EventPublicListItemDto::cityName).isEqualTo(TestConstants.MADRID);
     }
 
     @Test
@@ -174,7 +171,6 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         assertThat(page.getContent())
                 .singleElement()
                 .satisfies(e -> {
-                    assertThat(e.artists()).contains(TestConstants.MOCK_ARTIST_NAME_AY);
                     assertThat(e.cityName()).isEqualTo(TestConstants.MADRID);
                 });
     }
@@ -198,12 +194,9 @@ class EventQueryServiceTest extends AbstractPostgresTest {
          * Como no hay eventos que coincidan con "palau" AND "madri",
          * entra en el fallback para buscar con OR y devuelve ambos conciertos.
          */
-        assertThat(page.getContent())
-                .hasSize(2)
-                .extracting(EventPublicDto::cityName)
-                .containsExactlyInAnyOrder(
-                        TestConstants.MADRID,
-                        TestConstants.BARCELONA);
+        assertThat(page.getContent()).hasSize(2)
+                                     .extracting(EventPublicListItemDto::cityName)
+                                     .containsExactlyInAnyOrder(TestConstants.MADRID, TestConstants.BARCELONA);
     }
 
     /*

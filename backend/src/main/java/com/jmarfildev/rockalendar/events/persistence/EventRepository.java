@@ -1,5 +1,6 @@
 package com.jmarfildev.rockalendar.events.persistence;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
@@ -94,4 +96,110 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                   CASE WHEN e.startDateTime <  CURRENT_TIMESTAMP THEN e.startDateTime END DESC
             """)
     Page<EventPrivateListItemDto> listMineAllPriorityFutureFirst(UUID userId, Pageable pageable);
+
+    @Query(value = """
+                   SELECT
+                     e.id              AS id,
+                     e.title           AS title,
+                     e.start_date_time AS startDateTime,
+                     e.end_date_time   AS endDateTime,
+                     p.name            AS provinceName,
+                     e.city_name       AS cityName,
+                     s.score           AS score
+                   FROM search_public_events(
+                     :q, :minSim, :ftsW, :trgmW,
+                     :dateFrom, :dateTo,
+                     :provinceId, :citySlug, :artistSlug
+                   ) s
+                   JOIN events e ON e.id = s.event_id
+                   JOIN provinces p ON p.id = e.province_id
+                   ORDER BY
+                     -- relevancia solo si se pide explícitamente
+                     CASE WHEN lower(:sortKey) = 'relevance' THEN s.score END DESC,
+
+                     -- ASC
+                     CASE WHEN lower(:sortDir) = 'asc'  AND lower(:sortKey) = 'date'     THEN e.start_date_time END ASC,
+                     CASE WHEN lower(:sortDir) = 'asc'  AND lower(:sortKey) = 'title'    THEN e.title          END ASC,
+                     CASE WHEN lower(:sortDir) = 'asc'  AND lower(:sortKey) = 'province' THEN p.name           END ASC,
+                     CASE WHEN lower(:sortDir) = 'asc'  AND lower(:sortKey) = 'city'     THEN e.city_name      END ASC,
+
+                     -- DESC
+                     CASE WHEN lower(:sortDir) = 'desc' AND lower(:sortKey) = 'date'     THEN e.start_date_time END DESC,
+                     CASE WHEN lower(:sortDir) = 'desc' AND lower(:sortKey) = 'title'    THEN e.title          END DESC,
+                     CASE WHEN lower(:sortDir) = 'desc' AND lower(:sortKey) = 'province' THEN p.name           END DESC,
+                     CASE WHEN lower(:sortDir) = 'desc' AND lower(:sortKey) = 'city'     THEN e.city_name      END DESC,
+
+                     e.id ASC
+                   """, countQuery = """
+                                     SELECT COUNT(*)
+                                     FROM search_public_events(
+                                       :q, :minSim, :ftsW, :trgmW,
+                                       :dateFrom, :dateTo,
+                                       :provinceId, :citySlug, :artistSlug
+                                     ) s
+                                     """, nativeQuery = true)
+    Page<EventPublicSearchProjection> searchPublicEvents(@Param("q") String q,
+                                                         @Param("minSim") double minSim,
+                                                         @Param("ftsW") double ftsW,
+                                                         @Param("trgmW") double trgmW,
+                                                         @Param("dateFrom") OffsetDateTime dateFrom,
+                                                         @Param("dateTo") OffsetDateTime dateTo,
+                                                         @Param("provinceId") UUID provinceId,
+                                                         @Param("citySlug") String citySlug,
+                                                         @Param("artistSlug") String artistSlug,
+                                                         @Param("sortKey") String sortKey,
+                                                         @Param("sortDir") String sortDir,
+                                                         Pageable pageable);
+
+    @Query(value = """
+                   SELECT
+                     e.id              AS id,
+                     e.title           AS title,
+                     e.start_date_time AS startDateTime,
+                     e.end_date_time   AS endDateTime,
+                     p.name            AS provinceName,
+                     e.city_name       AS cityName,
+                     s.score           AS score
+                   FROM search_public_events_fallback(
+                     :q, :minSim, :ftsW, :trgmW,
+                     :dateFrom, :dateTo,
+                     :provinceId, :citySlug, :artistSlug
+                   ) s
+                   JOIN events e ON e.id = s.event_id
+                   JOIN provinces p ON p.id = e.province_id
+                   ORDER BY
+                     -- relevancia solo si se pide explícitamente
+                     CASE WHEN lower(:sortKey) = 'relevance' THEN s.score END DESC,
+
+                     CASE WHEN lower(:sortDir) = 'asc'  AND lower(:sortKey) = 'date'     THEN e.start_date_time END ASC,
+                     CASE WHEN lower(:sortDir) = 'asc'  AND lower(:sortKey) = 'title'    THEN e.title          END ASC,
+                     CASE WHEN lower(:sortDir) = 'asc'  AND lower(:sortKey) = 'province' THEN p.name           END ASC,
+                     CASE WHEN lower(:sortDir) = 'asc'  AND lower(:sortKey) = 'city'     THEN e.city_name      END ASC,
+
+                     CASE WHEN lower(:sortDir) = 'desc' AND lower(:sortKey) = 'date'     THEN e.start_date_time END DESC,
+                     CASE WHEN lower(:sortDir) = 'desc' AND lower(:sortKey) = 'title'    THEN e.title          END DESC,
+                     CASE WHEN lower(:sortDir) = 'desc' AND lower(:sortKey) = 'province' THEN p.name           END DESC,
+                     CASE WHEN lower(:sortDir) = 'desc' AND lower(:sortKey) = 'city'     THEN e.city_name      END DESC,
+
+                     e.id ASC
+                   """, countQuery = """
+                                     SELECT COUNT(*)
+                                     FROM search_public_events_fallback(
+                                       :q, :minSim, :ftsW, :trgmW,
+                                       :dateFrom, :dateTo,
+                                       :provinceId, :citySlug, :artistSlug
+                                     ) s
+                                     """, nativeQuery = true)
+    Page<EventPublicSearchProjection> searchPublicEventsFallback(@Param("q") String q,
+                                                                 @Param("minSim") double minSim,
+                                                                 @Param("ftsW") double ftsW,
+                                                                 @Param("trgmW") double trgmW,
+                                                                 @Param("dateFrom") OffsetDateTime dateFrom,
+                                                                 @Param("dateTo") OffsetDateTime dateTo,
+                                                                 @Param("provinceId") UUID provinceId,
+                                                                 @Param("citySlug") String citySlug,
+                                                                 @Param("artistSlug") String artistSlug,
+                                                                 @Param("sortKey") String sortKey,
+                                                                 @Param("sortDir") String sortDir,
+                                                                 Pageable pageable);
 }
