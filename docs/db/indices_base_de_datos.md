@@ -2,7 +2,7 @@
 
 Este documento lista TODOS los índices (excluyendo PKs), su propósito, y qué consultas típicas los aprovechan.
 
-> Fuente: inventario hasta Flyway V1.0.0.6__clean_indexes.sql.
+> Fuente: inventario hasta Flyway V1.2.0.2__moderation_actions.sql.
 
 ## Tabla: artists
 
@@ -77,6 +77,20 @@ Este documento lista TODOS los índices (excluyendo PKs), su propósito, y qué 
 **Propósito:** filtrar por sala/recinto por slug.\
 **Usado por:** `WHERE venue_slug = ?`.\
 **Nota:** si más adelante se añade filtro + orden por fecha, puede interesar un índice compuesto (venue_slug, start_date_time).
+
+### idx_events_created_by_status_start_date (btree) (created_by_user_id, status, start_date_time)
+**Propósito:** filtrar por usuario, estado y fecha.\
+**Usado por:** búsquedas de eventos privados.\
+
+## Tabla: moderation_actions
+
+### idx_moderation_actions_event_id (btree) (event_id)
+**Propósito:** acelerar listados/ordenaciones por eventos.\
+**Útil en:** hacer `ORDER BY event_id`.
+
+### idx_moderation_actions_created_at (btree) (created_at)
+**Propósito:** acelerar listados/ordenaciones por fecha de creación.\
+**Útil en:** hacer `ORDER BY created_at` o filtros por rango de fechas.
 
 ## Tabla: provinces
 

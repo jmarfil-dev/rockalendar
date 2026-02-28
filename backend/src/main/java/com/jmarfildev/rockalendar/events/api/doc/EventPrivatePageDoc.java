@@ -5,12 +5,12 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import com.jmarfildev.rockalendar.common.doc.PageMetadataDoc;
-import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 
 /**
  * @author jmarfil
  *
  */
 @Schema(name = "EventPrivatePage", description = "Respuesta paginada de eventos del usuario autenticado")
-public record EventPrivatePageDoc(@Schema(description = "Lista de eventos") List<EventPrivateDto> content,
+public record EventPrivatePageDoc(@Schema(description = "Lista de eventos") List<EventPrivateListItemDto> content,
                                   @Schema(description = "Metadatos de paginación") PageMetadataDoc page) {}

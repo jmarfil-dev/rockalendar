@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.application.EventQueryService;
 
 /**
@@ -24,18 +25,18 @@ public class EventController implements EventApi {
     private final EventQueryService queryService;
 
     @Override
-    public Page<EventPublicDto> listHome(Pageable pageable) {
+    public Page<EventPublicListItemDto> listHome(Pageable pageable) {
         return queryService.listHome(pageable);
     }
 
     @Override
-    public Page<EventPublicDto> searchPublic(Optional<String> query,
-                                       Optional<OffsetDateTime> dateFrom,
-                                       Optional<OffsetDateTime> dateTo,
-                                       Optional<UUID> provinceId,
-                                       Optional<String> city,
-                                       Optional<String> artist,
-                                       Pageable pageable) {
+    public Page<EventPublicListItemDto> searchPublic(Optional<String> query,
+                                                     Optional<OffsetDateTime> dateFrom,
+                                                     Optional<OffsetDateTime> dateTo,
+                                                     Optional<UUID> provinceId,
+                                                     Optional<String> city,
+                                                     Optional<String> artist,
+                                                     Pageable pageable) {
         return queryService.searchPublic(query, dateFrom, dateTo, provinceId, city, artist, pageable);
     }
 

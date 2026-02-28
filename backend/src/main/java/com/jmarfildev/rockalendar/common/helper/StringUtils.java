@@ -4,7 +4,7 @@ package com.jmarfildev.rockalendar.common.helper;
  * @author jmarfil
  *
  */
-public class StringUtils {
+public final class StringUtils {
 
     /**
      * Devuelve null si la cadena es null o blank.

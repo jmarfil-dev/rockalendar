@@ -30,17 +30,18 @@ import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
 
 /**
- * @author jmarfil
- * <br/><br/>
- * Servicio con los métodos para <b>casos de uso que modifican</b> Eventos:
- * <ul>
- * <li>crear/proponer eventos</li>
- * <li>aprobar/rechazar (cuando entre moderación)</li>
- * <li>cambiar estado</li>
- * <li>aplicar reglas de negocio</li>
- * <li>tocar varias entidades en una transacción</li>
- * </ul>
  *
+ * Servicio con los métodos para <b>casos de uso que modifican</b>
+ * Eventos:
+ *         <ul>
+ *         <li>crear/proponer eventos</li>
+ *         <li>aprobar/rechazar (cuando entre moderación)</li>
+ *         <li>cambiar estado</li>
+ *         <li>aplicar reglas de negocio</li>
+ *         <li>tocar varias entidades en una transacción</li>
+ *         </ul>
+ *
+ * @author jmarfil
  */
 @Service
 @RequiredArgsConstructor
@@ -52,38 +53,52 @@ public class EventCommandService {
     private final EventMapper mapper;
     private final CurrentUser currentUser;
 
+    /**
+     * Propone un evento que queda en estado PENDING_MODERATION si todos los datos se validan correctamente.
+     * Crea los artistas que no existen.
+     *
+     * @param req request con los datos del evento
+     * @return el evento propuesto
+     */
     @Transactional
     public EventPrivateDto propose(SubmitEventRequest req) {
         UUID userId = currentUser.userId();
         EventInputValidate in = validate(req);
 
         var event = Event.builder()
-                .title(in.title)
-                .description(in.description)
-                .startDateTime(in.startDateTime())
-                .endDateTime(in.endDateTime())
-                .province(in.province)
-                .cityName(in.cityName)
-                .citySlug(in.citySlug)
-                .venueName(in.venueName)
-                .venueSlug(in.venueSlug)
-                .sourceUrl(in.sourceUrl)
-                .status(EventStatus.PENDING_MODERATION)
-                .createdByUserId(userId)
-                .submittedAt(OffsetDateTime.now())
-                .artists(in.artists)
-                .build();
+                         .title(in.title)
+                         .description(in.description)
+                         .startDateTime(in.startDateTime())
+                         .endDateTime(in.endDateTime())
+                         .province(in.province)
+                         .cityName(in.cityName)
+                         .citySlug(in.citySlug)
+                         .venueName(in.venueName)
+                         .venueSlug(in.venueSlug)
+                         .sourceUrl(in.sourceUrl)
+                         .status(EventStatus.PENDING_MODERATION)
+                         .createdByUserId(userId)
+                         .submittedAt(OffsetDateTime.now())
+                         .artists(in.artists)
+                         .build();
 
         return mapper.toPrivateDto(eventRepository.save(event));
     }
 
+    /**
+     * Actualiza un evento que queda en estado PENDING_MODERATION si todos los datos se validan correctamente.
+     * Crea los artistas que no existen.
+     *
+     * @param eventId id del evento a actualizar
+     * @param req request con los datos del evento
+     * @return el evento actualizado
+     */
     @Transactional
     public EventPrivateDto update(UUID eventId, SubmitEventRequest req) {
         UUID userId = currentUser.userId();
         EventInputValidate in = validate(req);
 
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
 
         if (!userId.equals(event.getCreatedByUserId())) {
             throw new ForbiddenException(ErrorMessages.EVENT_NOT_OWNER);
@@ -111,7 +126,7 @@ public class EventCommandService {
         event.setStatus(EventStatus.PENDING_MODERATION);
         event.setSubmittedAt(OffsetDateTime.now());
 
-        // No hace falta save() porque al ser un evento administrado por JPA (vien de un find()) se actualiza al terminar la transacción.
+        // No hace falta save() porque al ser un evento administrado por JPA (viene de un find()) se actualiza al terminar la transacción.
         return mapper.toPrivateDto(event);
     }
 
@@ -119,8 +134,7 @@ public class EventCommandService {
     public void delete(UUID eventId) {
         UUID userId = currentUser.userId();
 
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
 
         if (!userId.equals(event.getCreatedByUserId())) {
             throw new ForbiddenException(ErrorMessages.EVENT_NOT_OWNER);
@@ -142,6 +156,20 @@ public class EventCommandService {
         event.setStatus(EventStatus.ERASED);
     }
 
+    /**
+     * Valida los datos comunes para proponer o actualizar un evento.
+     * <ul>
+     * <li> Rengo de fechas correcto </li>
+     * <li> Nombre de artistas correctos tras normalizar </li>
+     * <li> Título obligatorio </li>
+     * <li> Ciudad obligatoria </li>
+     * <li> Recinto obligatorio </li>
+     * <li> Id de provincia correcto </li>
+     * </ul>
+     *
+     * @param req request con los datos del evento
+     * @return un record con los datos validados
+     */
     private EventInputValidate validate(SubmitEventRequest req) {
         if (req.endDateTime() != null && req.endDateTime().isBefore(req.startDateTime())) {
             throw new BadRequestException(ErrorMessages.INVALID_EVENT_DATE);
@@ -158,11 +186,7 @@ public class EventCommandService {
             }
 
             var artist = artistRepository.findBySlug(slug)
-                    .orElseGet(() -> artistRepository.save(
-                            Artist.builder()
-                                    .name(displayName)
-                                    .slug(slug)
-                                    .build()));
+                                         .orElseGet(() -> artistRepository.save(Artist.builder().name(displayName).slug(slug).build()));
 
             artists.add(artist);
         }
@@ -188,44 +212,31 @@ public class EventCommandService {
             throw new BadRequestException(ErrorMessages.TITLE_REQUIRED);
         }
 
-        Province province = provinceRepository.findById(req.provinceId())
-                .orElseThrow(() -> new BadRequestException(ErrorMessages.INVALID_PROVINCE));
+        Province province =
+                provinceRepository.findById(req.provinceId()).orElseThrow(() -> new BadRequestException(ErrorMessages.INVALID_PROVINCE));
 
         String description = StringUtils.blankToNull(req.description());
         String sourceUrl = StringUtils.blankToNull(req.sourceUrl());
 
         // TODO: Evitar eventos duplicados
 
-        return new EventInputValidate(
-                title,
-                description,
-                req.startDateTime(),
-                req.endDateTime(),
-                province,
-                cityName,
-                citySlug,
-                venueName,
-                venueSlug,
-                sourceUrl,
-                artists
-        );
+        return new EventInputValidate(title, description, req.startDateTime(), req.endDateTime(), province, cityName, citySlug, venueName,
+                                      venueSlug, sourceUrl, artists);
     }
 
     private boolean hasEditableStatus(EventStatus status) {
-        return status == EventStatus.DRAFT
-                || status == EventStatus.NEEDS_CHANGES
-                || status == EventStatus.APPROVED;
+        return status == EventStatus.DRAFT || status == EventStatus.NEEDS_CHANGES || status == EventStatus.APPROVED;
     }
 
     private record EventInputValidate(String title,
-                                        String description,
-                                        OffsetDateTime startDateTime,
-                                        OffsetDateTime endDateTime,
-                                        Province province,
-                                        String cityName,
-                                        String citySlug,
-                                        String venueName,
-                                        String venueSlug,
-                                        String sourceUrl,
-                                        Set<Artist> artists) {}
+                                      String description,
+                                      OffsetDateTime startDateTime,
+                                      OffsetDateTime endDateTime,
+                                      Province province,
+                                      String cityName,
+                                      String citySlug,
+                                      String venueName,
+                                      String venueSlug,
+                                      String sourceUrl,
+                                      Set<Artist> artists) {}
 }

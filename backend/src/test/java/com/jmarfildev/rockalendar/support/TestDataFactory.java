@@ -232,7 +232,7 @@ public class TestDataFactory {
                 .createdByUserId(createByUserId != null ? UUID.fromString(createByUserId) : null)
                 .submittedAt(submittedAt)
                 .moderatedByUserId(moderatedByUserId != null ? UUID.fromString(moderatedByUserId) : null)
-                .moderatedAt(TestDates.tomorrow())
+                           .moderatedAt(moderatedAt != null ? moderatedAt : TestDates.tomorrow())
                 .build();
 
         return eventRepository.save(event);

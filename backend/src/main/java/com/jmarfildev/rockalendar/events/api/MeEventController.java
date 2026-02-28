@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.application.EventCommandService;
 import com.jmarfildev.rockalendar.events.application.EventQueryService;
+import com.jmarfildev.rockalendar.events.application.MeEventTabEnum;
 
 /**
  * @author jmarfil
@@ -30,8 +32,8 @@ public class MeEventController implements MeEventApi {
     }
 
     @Override
-    public Page<EventPrivateDto> listMine(Pageable pageable) {
-        return queryService.listMine(pageable);
+    public Page<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {
+        return queryService.listMine(tab, pageable);
     }
 
     @Override

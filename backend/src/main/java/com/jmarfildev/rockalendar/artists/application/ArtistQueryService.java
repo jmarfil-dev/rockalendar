@@ -30,6 +30,12 @@ public class ArtistQueryService {
 
     private final ArtistRepository artistRepository;
 
+    /**
+     * Busca artistas. Normaliza query para buscar por nombre y slug.
+     *
+     * @param query texto libre de búsqueda
+     * @return lista de artistas con entre 0 y 10 resultados
+     */
     @Transactional(readOnly = true)
     public List<ArtistDto> searchArtistsAutocomplete(String query) {
         String qRaw = query == null ? "" : query.trim();
@@ -42,8 +48,8 @@ public class ArtistQueryService {
         Pageable top10 = PageRequest.of(0, 10);
 
         return artistRepository.findForAutocomplete(qRaw, qSlug, top10)
-                .stream()
-                .map(a -> new ArtistDto(a.getId(), a.getName(), a.getSlug()))
-                .toList();
+                               .stream()
+                               .map(a -> new ArtistDto(a.getId(), a.getName(), a.getSlug()))
+                               .toList();
     }
 }

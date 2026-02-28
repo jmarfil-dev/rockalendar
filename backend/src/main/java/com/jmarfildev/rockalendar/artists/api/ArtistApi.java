@@ -28,9 +28,11 @@ public interface ArtistApi {
 
     @GetMapping
     @Operation(summary = "Busca artistas para el autocompletado",
-            description = "Devuelve una pequeña lista de artistas que coinciden con la query")
-    @ApiResponse(responseCode = "200", description = "Lista de artistas",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ArtistDto.class))))
-    List<ArtistDto> searchArtistsAutocomplete(@Parameter(description = "Texto libre de búsqueda por nombre de artista", example = "maiden",
-            required = true) @NotBlank @Size(min = 2, max = 50) @RequestParam String query);
+               description = "Devuelve una lista de artistas, de entre 0 y 10 resultados, que coinciden con la query.")
+    @ApiResponse(responseCode = "200",
+                 description = "Lista de artistas",
+                 content = @Content(array = @ArraySchema(schema = @Schema(implementation = ArtistDto.class))))
+    List<ArtistDto> searchArtistsAutocomplete(@Parameter(description = "Texto libre de búsqueda por nombre de artista, 2-50 caracteres",
+                                                         example = "maiden",
+                                                         required = true) @NotBlank @Size(min = 2, max = 50) @RequestParam String query);
 }

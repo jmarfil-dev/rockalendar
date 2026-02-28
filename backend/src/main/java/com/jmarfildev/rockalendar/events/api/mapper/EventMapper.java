@@ -10,8 +10,8 @@ import org.mapstruct.Mapping;
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
+import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.domain.Event;
-import com.jmarfildev.rockalendar.events.persistence.EventPublicHomeProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventPublicSearchProjection;
 
 /**
@@ -39,19 +39,11 @@ public interface EventMapper {
         return event.getProvince() == null ? null : event.getProvince().getName();
     }
 
-    @Mapping(target = "artists", expression = "java(toList(projection.getArtists()))")
     @Mapping(target = "startDateTime",
             expression = "java(projection.getStartDateTime() == null ? null : projection.getStartDateTime().atOffset(java.time.ZoneOffset.UTC))")
     @Mapping(target = "endDateTime",
             expression = "java(projection.getEndDateTime() == null ? null : projection.getEndDateTime().atOffset(java.time.ZoneOffset.UTC))")
-    EventPublicDto toPublicDto(EventPublicHomeProjection projection);
-
-    @Mapping(target = "artists", expression = "java(toList(projection.getArtists()))")
-    @Mapping(target = "startDateTime",
-            expression = "java(projection.getStartDateTime() == null ? null : projection.getStartDateTime().atOffset(java.time.ZoneOffset.UTC))")
-    @Mapping(target = "endDateTime",
-            expression = "java(projection.getEndDateTime() == null ? null : projection.getEndDateTime().atOffset(java.time.ZoneOffset.UTC))")
-    EventPublicDto toPublicDto(EventPublicSearchProjection projection);
+    EventPublicListItemDto toPublicListItemDto(EventPublicSearchProjection projection);
 
     @Mapping(target = "artists", expression = "java(mapArtists(event))")
     @Mapping(target = "provinceId", expression = "java(mapProvinceId(event))")

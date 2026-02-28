@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
-import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedDto;
-import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
 import com.jmarfildev.rockalendar.moderation.application.ModerationCommandService;
 import com.jmarfildev.rockalendar.moderation.application.ModerationQueryService;
 
@@ -29,12 +29,12 @@ public class ModerationEventController implements ModerationEventApi {
     private final ModerationCommandService commandService;
 
     @Override
-    public Page<ModerationPendingDto> listPending(Pageable pageable) {
+    public Page<ModerationPendingListItemDto> listPending(Pageable pageable) {
         return queryService.listPending(pageable);
     }
 
     @Override
-    public Page<ModerationArchivedDto> listArchived(Pageable pageable) {
+    public Page<ModerationArchivedListItemDto> listArchived(Pageable pageable) {
         return queryService.listArchived(pageable);
     }
 

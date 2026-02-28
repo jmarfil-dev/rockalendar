@@ -30,8 +30,8 @@ import com.jmarfildev.rockalendar.moderation.api.doc.ModerationArchivedPageDoc;
 import com.jmarfildev.rockalendar.moderation.api.doc.ModerationPendingPageDoc;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
-import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedDto;
-import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
 
 /**
  * @author jmarfil
@@ -48,21 +48,33 @@ public interface ModerationEventApi {
 
     @GetMapping("/pending")
     @Operation(summary = "Listar eventos pendientes de moderación",
-            description = "Devuelve eventos en estado PENDING_MODERATION. Listado ligero para revisión.")
-    @ApiResponse(responseCode = "200", description = "Listado paginado de eventos pendientes",
-            content = @Content(schema = @Schema(implementation = ModerationPendingPageDoc.class)))
+               description = """
+                             Devuelve eventos en estado PENDING_MODERATION. Listado ligero para revisión.
+
+                             La ordenación por pageable permite direcciones asc y desc, y los campos title, submitted (fecha de submit)
+                             y created (fecha de creación). Ignora cualquier valor distinto.
+                             """)
+    @ApiResponse(responseCode = "200",
+                 description = "Listado paginado de eventos pendientes",
+                 content = @Content(schema = @Schema(implementation = ModerationPendingPageDoc.class)))
     @ApiUnauthorized
     @ApiForbidden
-    Page<ModerationPendingDto> listPending(@PageableDefault(size = 20) Pageable pageable);
+    Page<ModerationPendingListItemDto> listPending(@PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping("/archived")
     @Operation(summary = "Listar eventos archivados de moderación",
-            description = "Devuelve eventos en estado REJECTED, HIDDEN o CANCELED. Incluye estado y último mensaje de moderación.")
-    @ApiResponse(responseCode = "200", description = "Listado paginado de eventos archivados",
-            content = @Content(schema = @Schema(implementation = ModerationArchivedPageDoc.class)))
+               description = """
+                             Devuelve eventos en estado REJECTED, HIDDEN o CANCELED. Incluye estado y último mensaje de moderación.
+
+                             La ordenación por pageable permite direcciones asc y desc, y los campos title, status,
+                             moderated (fecha de moderación) y created (fecha de creación). Ignora cualquier valor distinto.
+                             """)
+    @ApiResponse(responseCode = "200",
+                 description = "Listado paginado de eventos archivados",
+                 content = @Content(schema = @Schema(implementation = ModerationArchivedPageDoc.class)))
     @ApiUnauthorized
     @ApiForbidden
-    Page<ModerationArchivedDto> listArchived(@PageableDefault(size = 20) Pageable pageable);
+    Page<ModerationArchivedListItemDto> listArchived(@PageableDefault(size = 20) Pageable pageable);
 
     /*
      * Command endpoints
@@ -75,10 +87,10 @@ public interface ModerationEventApi {
     @ApiForbidden
     @ApiNotFound
     @ApiConflict
-    EventPrivateDto approve(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
-            required = true) @PathVariable UUID eventId,
-                            @Parameter(description = "Mensaje (si procede)") @Valid @RequestBody(
-                                    required = false) ModerationApproveRequest request);
+    EventPrivateDto approve(@Parameter(description = "ID del evento",
+                                       example = "cccccccc-0000-0000-0000-000000000001",
+                                       required = true) @PathVariable UUID eventId,
+                            @Parameter(description = "Mensaje (si procede)") @Valid @RequestBody(required = false) ModerationApproveRequest request);
 
     @PostMapping("/{eventId}/reject")
     @Operation(summary = "Rechazar eventos pendientes de moderación", description = "Pasa a REJECTED un evento en PENDING_MODERATION.")
@@ -88,10 +100,11 @@ public interface ModerationEventApi {
     @ApiForbidden
     @ApiNotFound
     @ApiConflict
-    EventPrivateDto reject(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
-            required = true) @PathVariable UUID eventId,
+    EventPrivateDto reject(@Parameter(description = "ID del evento",
+                                      example = "cccccccc-0000-0000-0000-000000000001",
+                                      required = true) @PathVariable UUID eventId,
                            @Parameter(description = "Motivo de rechazo",
-                                   required = true) @Valid @RequestBody ModerationArchiveRequest request);
+                                      required = true) @Valid @RequestBody ModerationArchiveRequest request);
 
     @PostMapping("/{eventId}/hide")
     @Operation(summary = "Ocultar eventos pendientes de moderación", description = "Pasa a HIDDEN un evento en PENDING_MODERATION.")
@@ -101,22 +114,24 @@ public interface ModerationEventApi {
     @ApiForbidden
     @ApiNotFound
     @ApiConflict
-    EventPrivateDto hide(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
-            required = true) @PathVariable UUID eventId,
+    EventPrivateDto hide(@Parameter(description = "ID del evento",
+                                    example = "cccccccc-0000-0000-0000-000000000001",
+                                    required = true) @PathVariable UUID eventId,
                          @Parameter(description = "Motivo de ocultación",
-                                 required = true) @Valid @RequestBody ModerationArchiveRequest request);
+                                    required = true) @Valid @RequestBody ModerationArchiveRequest request);
 
     @PostMapping("/{eventId}/request-changes")
     @Operation(summary = "Devolver evento al autor solicitando cambios",
-            description = "Pasa a NEED_CHANGES un evento en PENDING_MODERATION.")
+               description = "Pasa a NEED_CHANGES un evento en PENDING_MODERATION.")
     @ApiResponse(responseCode = "200", description = "Evento cambiado de estado con éxito")
     @ApiBadRequest
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound
     @ApiConflict
-    EventPrivateDto requestChanges(@Parameter(description = "ID del evento", example = "cccccccc-0000-0000-0000-000000000001",
-            required = true) @PathVariable UUID eventId,
+    EventPrivateDto requestChanges(@Parameter(description = "ID del evento",
+                                              example = "cccccccc-0000-0000-0000-000000000001",
+                                              required = true) @PathVariable UUID eventId,
                                    @Parameter(description = "Cambios solicitados",
-                                           required = true) @Valid @RequestBody ModerationArchiveRequest request);
+                                              required = true) @Valid @RequestBody ModerationArchiveRequest request);
 }

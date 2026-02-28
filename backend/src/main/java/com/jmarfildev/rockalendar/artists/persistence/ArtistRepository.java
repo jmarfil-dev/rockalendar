@@ -20,11 +20,19 @@ public interface ArtistRepository extends JpaRepository<Artist, UUID> {
 
     boolean existsBySlug(String slug);
 
+    /**
+     * Busca artistas por nombre o slug.
+     *
+     * @param qRaw nombre normalizado
+     * @param qSlug slug normalizado
+     * @param pageable
+     * @return lista de artistas o vacía
+     */
     @Query("""
-                select a from Artist a
-                where lower(a.name) like lower(concat('%', :qRaw, '%'))
-                   or a.slug like concat('%', :qSlug, '%')
-                order by a.name asc
-            """)
+           SELECT a FROM Artist a
+           WHERE lower(a.name) LIKE lower(concat('%', :qRaw, '%'))
+               OR a.slug LIKE concat('%', :qSlug, '%')
+           ORDER BY a.name asc
+           """)
     List<Artist> findForAutocomplete(@Param("qRaw") String qRaw, @Param("qSlug") String qSlug, Pageable pageable);
 }
