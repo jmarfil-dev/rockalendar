@@ -185,14 +185,14 @@ Regla de oro: lo transversal existe para reducir duplicación, no para crear un 
 
 ### Frontend
 
-- **Por decidir**. Objetivo: el stack más sencillo posible de mantener, priorizando productividad y claridad.
-- Candidatos (mencionados): **Node + Next.js**, y queda por decidir si se usa React u otra opción compatible.
+- **Vue 3 + Nuxt**
 
 **Por qué:**
 
-- Minimizar barreras (no se asume experiencia profunda en frontend).
-- Reutilizar convenciones y tooling ampliamente adoptados.
+- Sencillo y fácil de aprender, con plantillas, componentes y configuración estándar.
+- Flexibilidad para alternar entre SSR y SPA para búsquedas y paneles privados.
 - Mantener una UI simple, enfocada a búsqueda y lectura.
+- Ecosistema que encaja con lo que hemos ido planeando al desarrollar el back.
 
 ### Backend
 
