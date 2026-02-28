@@ -54,6 +54,7 @@ Cuándo hacerlo:
 
 ## Gestión del ciclo de vida de eventos
 
+- Lista de eventos públicos pasados.
 - Constraint `UNIQUE` y evitar duplicados en eventos (por provincia, ciudad, recinto y fecha).
 - Devolver error 409 Conflict cuando se detecte un duplicado a `MeEventApi.propose()`.
 - Cron job cada 24 horas para cerrar eventos pasados.

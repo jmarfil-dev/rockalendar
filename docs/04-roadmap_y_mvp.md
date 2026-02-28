@@ -175,6 +175,19 @@ Incluye:
 - Complejidad visual.
 - Saturación de información.
 
+### Backend v0.5 - Otras funcionalidades
+
+Completa la aplicación con detalles vistos durante el desarrollo.
+
+Incluye:
+
+- Refresh token
+- Logout
+
+### Frontend v0.5 - Otras funcionalidades
+
+Complementa la v0.5 de Backend.
+
 ### v1.0 - MVP
 
 Versión considerada **mínima viable y públicamente usable**.

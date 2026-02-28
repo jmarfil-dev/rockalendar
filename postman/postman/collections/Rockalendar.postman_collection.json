@@ -7,6 +7,152 @@
   },
   "item": [
     {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "58d5d460-6e34-4510-a191-268cd0fb17e4",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "937da908-9049-4b16-877a-0b7ca9354c09",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "\r",
+                  "    pm.test(\"Body matches string\", function () {\r",
+                  "        pm.expect(pm.response.text()).to.include(\"string_you_want_to_search\");\r",
+                  "    });\r",
+                  "\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.environment.set(\"token\", jsonData.accessToken);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "283504d9-9e08-462e-9756-c84a5531f250",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"{{userEmail}}\",\r\n    \"password\": \"{{userPassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "58d5d460-6e34-4510-a191-268cd0fb17e4",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "937da908-9049-4b16-877a-0b7ca9354c09",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "\r",
+                  "    pm.test(\"Body matches string\", function () {\r",
+                  "        pm.expect(pm.response.text()).to.include(\"string_you_want_to_search\");\r",
+                  "    });\r",
+                  "\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.environment.set(\"token\", jsonData.accessToken);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "77fb29a2-eac1-4271-ba14-b743dca0fabd",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"usuario@prueba.com\",\r\n    \"password\": \"{{userPassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "6ede465b-96ce-4325-abb4-5c5325f204d1"
+    },
+    {
       "name": "Events",
       "item": [
         {
@@ -39,13 +185,14 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/events?page=1&size=2",
+                  "raw": "{{baseUrl}}/api/events/home?page=1&size=2&sort=province",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "api",
-                    "events"
+                    "events",
+                    "home"
                   ],
                   "query": [
                     {
@@ -57,6 +204,11 @@
                       "key": "size",
                       "value": "2",
                       "uuid": "26c51ff1-331f-4351-a379-26ec40bf8b20"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "province",
+                      "uuid": "b9e8080c-9469-4325-adca-7714656b3c03"
                     }
                   ]
                 }
@@ -89,7 +241,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/events?page=0&size=10",
+                  "raw": "{{baseUrl}}/api/events?page=0&size=10&sort=province,asc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -100,11 +252,18 @@
                   "query": [
                     {
                       "key": "page",
-                      "value": "0"
+                      "value": "0",
+                      "uuid": "71324ff3-935d-4936-97b8-65e5f54d1535"
                     },
                     {
                       "key": "size",
-                      "value": "10"
+                      "value": "10",
+                      "uuid": "2f68ebaa-6582-4d20-8e1a-c844fc5b6a74"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "province,asc",
+                      "uuid": "f7838c61-4ce3-4091-b4cc-8ab97defd1a1"
                     }
                   ]
                 }
@@ -196,7 +355,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/events?query={{query}}",
+                  "raw": "{{baseUrl}}/api/events?query={{query}}&sort=title,asc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -209,6 +368,11 @@
                       "key": "query",
                       "value": "{{query}}",
                       "uuid": "692d6763-f3b5-47d8-9a42-971c94033c62"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "title,asc",
+                      "uuid": "9c27de3c-d16a-47e6-9ef9-8b9480a7762e"
                     }
                   ]
                 }
@@ -397,7 +561,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"title\": \"Concierto de prueba en Sevilla\",\n    \"description\": \"Evento creado desde curl\",\n    \"startDateTime\": \"2026-06-20T21:30:00Z\",\n    \"venueName\": \"Sala Custom\",\n    \"provinceId\": \"c74b11af-8d7f-50d1-b39b-4b10f1eb1b4f\",\n    \"cityName\": \"Sevilla\",\n    \"artists\": [\n        \"Grupo Demo\"\n    ],\n    \"sourceUrl\": \"https://example.com\"\n}"
+                  "raw": "{\n    \"title\": \"Concierto de prueba en Sevilla\",\n    \"description\": \"Evento creado desde curl\",\n    \"startDateTime\": \"2026-06-22T21:30:00Z\",\n    \"venueName\": \"Sala Custom\",\n    \"provinceId\": \"c74b11af-8d7f-50d1-b39b-4b10f1eb1b4f\",\n    \"cityName\": \"Sevilla\",\n    \"artists\": [\n        \"Grupo Demo\"\n    ],\n    \"sourceUrl\": \"https://example.com\"\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/events",
@@ -413,7 +577,7 @@
               "response": []
             },
             {
-              "name": "listMine",
+              "name": "listMine (ALL)",
               "id": "6c970dd3-3555-4d09-a105-94df93de00b6",
               "request": {
                 "method": "GET",
@@ -436,88 +600,150 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "listMine (PENDING)",
+              "id": "ec0493bd-1c7e-4621-ac3e-ffca69291bb4",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/me/events?tab=PENDING",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "me",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "tab",
+                      "value": "PENDING",
+                      "uuid": "2efdbe39-f9c5-46f3-b863-11b6c89f67e7"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "listMine (CHANGES)",
+              "id": "bbaf57f8-c208-41b5-a261-7eacf4506fc9",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/me/events?tab=CHANGES",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "me",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "tab",
+                      "value": "CHANGES",
+                      "uuid": "2efdbe39-f9c5-46f3-b863-11b6c89f67e7"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "listMine (OTHERS)",
+              "id": "5c7a67fb-f15b-490b-89b2-379f9d6f714a",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/me/events?tab=OTHERS&sort=city,desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "me",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "tab",
+                      "value": "OTHERS",
+                      "uuid": "2efdbe39-f9c5-46f3-b863-11b6c89f67e7"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "city,desc",
+                      "uuid": "7643092f-db72-456c-91c7-48de6a6a5161"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "listMine (CHANGES) (sorted)",
+              "id": "5185e1f4-48a0-4f0c-9bb6-5768d1584a77",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/me/events?tab=CHANGES&sort=status,desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "me",
+                    "events"
+                  ],
+                  "query": [
+                    {
+                      "key": "tab",
+                      "value": "CHANGES",
+                      "uuid": "2efdbe39-f9c5-46f3-b863-11b6c89f67e7"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "status,desc",
+                      "uuid": "a0fe07c7-c299-4f56-b56c-9fb29a193dc3"
+                    }
+                  ]
+                }
+              },
+              "response": []
             }
           ],
           "id": "c1031574-faad-4f05-b63b-516d0b72e6a2"
         }
       ],
       "id": "c61ce41f-87f4-4052-8dbb-13f46b7ad92d"
-    },
-    {
-      "name": "Auth",
-      "item": [
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "id": "58d5d460-6e34-4510-a191-268cd0fb17e4",
-                "exec": [
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "id": "937da908-9049-4b16-877a-0b7ca9354c09",
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "\r",
-                  "    pm.test(\"Body matches string\", function () {\r",
-                  "        pm.expect(pm.response.text()).to.include(\"string_you_want_to_search\");\r",
-                  "    });\r",
-                  "\r",
-                  "    var jsonData = pm.response.json();\r",
-                  "    pm.environment.set(\"token\", jsonData.accessToken);\r",
-                  "});\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "id": "283504d9-9e08-462e-9756-c84a5531f250",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"email\": \"{{userEmail}}\",\r\n    \"password\": \"{{userPassword}}\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "auth",
-                "login"
-              ]
-            }
-          },
-          "response": []
-        }
-      ],
-      "id": "6ede465b-96ce-4325-abb4-5c5325f204d1"
     },
     {
       "name": "Artists",
@@ -568,13 +794,13 @@
                     "value": "application/json"
                   },
                   {
-                    "key": "X-User-Id",
-                    "value": "aaaaaaaa-0000-0000-0000-000000000003"
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
                   }
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"name\": \"Artista de prueba\"\r\n  }",
+                  "raw": "{\r\n    \"name\": \"Yakovlev 42\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -582,13 +808,13 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/admin/artists",
+                  "raw": "{{baseUrl}}/api/moderation/artists",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "api",
-                    "admin",
+                    "moderation",
                     "artists"
                   ]
                 }
@@ -600,6 +826,119 @@
         }
       ],
       "id": "27b52846-254f-4c2f-99e6-d4648ba81c39"
+    },
+    {
+      "name": "Moderation",
+      "item": [
+        {
+          "name": "listPending",
+          "id": "055b0cce-3350-4d91-ae32-f68f3b28333b",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/moderation/events/pending?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "moderation",
+                "events",
+                "pending"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0",
+                  "uuid": "b36c3924-ed95-4109-acb6-03f1bb38f8fd"
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "uuid": "ad22f4a0-decf-4144-948f-14563f9a333a"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "listArchived",
+          "id": "5611622b-97c2-4dda-be19-d9cfba1ede3a",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/moderation/events/archived",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "moderation",
+                "events",
+                "archived"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "id": "ba332873-caa0-4438-8715-4ee1533ee603",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"reaseon\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/moderation/events/{{eventId}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "moderation",
+                "events",
+                "{{eventId}}",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "19439996-132a-4fee-9015-8069c9076586"
     }
   ]
 }

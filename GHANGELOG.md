@@ -3,6 +3,33 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v0.3.0-backend]
+### Added
+- Registro de usuarios.
+- Eventos privados: proponer, actualizar, eliminar y consultar.
+- Moderación: aprobar, rechazar, ocultar y solicitar cambios.
+- Moderación: listado de eventos pendientes y archivados.
+- Endpoint Home de eventos públicos.
+- Ordenación configurable desde frontend (whitelist) en:
+  - Home pública.
+  - Búsqueda pública.
+  - Eventos privados.
+  - Listas de moderación.
+- Tests:
+  - Base común con Testcontainers.
+  - Tests de contrato API.
+  - Tests de servicio.
+
+### Changed
+- Búsqueda pública avanzada con ranking (FTS + trigram).
+- Refactor del manejador global de errores y mensajes.
+- Simplificación del uso de JWT en endpoints y servicios.
+- Limpieza y mejora de índices en base de datos.
+
+### Fixed
+- Correcciones en seguridad y manejo de roles.
+- Ajustes en autocompletado de artistas.
+
 ## [v0.2.0-backend]
 ### Added
 - Autenticación y seguridad con JWT (login).
