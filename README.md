@@ -85,7 +85,7 @@ La documentación del proyecto vive en la carpeta [`docs/`](docs/) y está pensa
 - Docker / Docker Compose
 - OpenAPI (code-first)
 - Flyway
-- Frontend: por decidir
+- Frontend: Vue 3 + Nuxt 4 (Primeflex, PrimeVue)
 
 ## :arrow_forward: Arranque rápido (entorno local)
 
@@ -93,9 +93,10 @@ La documentación del proyecto vive en la carpeta [`docs/`](docs/) y está pensa
 
 ### Requisitos
 
+- Docker + Docker Compose
 - Java 21
 - Maven 3.9+
-- Docker + Docker Compose
+- Node.js 22
 
 ### 1) Levantar infraestructura (PostgreSQL)
 
@@ -138,7 +139,24 @@ Perfiles disponibles:
 
 ### 3) Frontend
 
-:construction: Próximamente :construction:
+~~~
+cd frontend
+npm install
+~~~
+
+Crear un fichero .env en la raíz del proyecto y agregar
+~~~
+NUXT_PUBLIC_API_BASE=http://localhost:8080/api
+~~~
+
+Iniciar la aplicación
+~~~
+npm run dev
+~~~
+
+La aplicación estará disponible en:
+
+- [http://localhost:3000](http://localhost:3000)
 
 ## :arrow_forward: Seguridad (JWT)
 
