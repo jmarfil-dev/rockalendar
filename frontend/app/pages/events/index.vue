@@ -1,7 +1,7 @@
 <script setup lang="ts">
-definePageMeta({ layout: "public" });
-
 import EventsPublicListPage from "~/components/events/EventsPublicListPage.vue";
+
+definePageMeta({ layout: "public" });
 </script>
 
 <template>
