@@ -149,7 +149,7 @@ watch(isSearchOpen, async (open) => {
             :maxLength="50"
             optionLabel="name"
             placeholder="Ej. Elektroduendes"
-            class="w-full"
+            inputClass="w-full"
             @complete="(e) => searchArtists(e.query)" />
         </div>
 
