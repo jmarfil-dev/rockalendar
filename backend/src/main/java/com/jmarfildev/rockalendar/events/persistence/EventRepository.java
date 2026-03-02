@@ -146,7 +146,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                          @Param("dateTo") OffsetDateTime dateTo,
                                                          @Param("provinceId") UUID provinceId,
                                                          @Param("citySlug") String citySlug,
-                                                         @Param("artistSlug") String artistSlug,
+                                                         @Param("artistSlug") UUID artistId,
                                                          @Param("sortKey") String sortKey,
                                                          @Param("sortDir") String sortDir,
                                                          Pageable pageable);
@@ -198,7 +198,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                                  @Param("dateTo") OffsetDateTime dateTo,
                                                                  @Param("provinceId") UUID provinceId,
                                                                  @Param("citySlug") String citySlug,
-                                                                 @Param("artistSlug") String artistSlug,
+                                                                 @Param("artistSlug") UUID artistId,
                                                                  @Param("sortKey") String sortKey,
                                                                  @Param("sortDir") String sortDir,
                                                                  Pageable pageable);
