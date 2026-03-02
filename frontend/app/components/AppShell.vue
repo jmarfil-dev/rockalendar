@@ -34,7 +34,8 @@ defineProps<{
     <!-- Bottom nav -->
     <nav
       v-if="bottomItems && bottomItems.length"
-      class="surface-900 border-top-1 surface-border fixed bottom-0 left-0 right-0">
+      class="surface-900 border-top-1 surface-border fixed bottom-0 left-0 right-0"
+      aria-label="Bottom navigation">
       <div class="mx-auto w-full max-w-7xl px-2 py-2 flex justify-content-around">
         <Button
           v-for="item in bottomItems"

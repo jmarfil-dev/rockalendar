@@ -146,59 +146,75 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
 </script>
 
 <template>
-  <section class="flex flex-column gap-3">
+  <article class="flex flex-column gap-3">
     <!-- Barra superior: ordenar -->
-    <div>
+    <header>
       <div class="flex align-items-center justify-content-between w-full">
         <span class="text-sm text-color-secondary">Ordenado por</span>
         <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" />
       </div>
-    </div>
+    </header>
 
-    <!-- Loading -->
-    <div v-if="pending" class="flex justify-content-center p-4">
-      <ProgressSpinner />
-    </div>
-
-    <Message v-else-if="error" severity="error">
-      Error cargando eventos. Revisa que el backend esté levantado y CORS configurado.
-      <div class="mt-2">
-        <button class="p-button p-component p-button-text" @click="refresh()">Reintentar</button>
+    <!-- Results -->
+    <section aria-label="Listado de eventos">
+      <!-- Loading -->
+      <div v-if="pending" class="flex justify-content-center p-4">
+        <ProgressSpinner />
       </div>
-    </Message>
 
-    <!-- Listado vacío -->
-    <Message v-else-if="events.length === 0" severity="info" :closable="false"> No se encontraron eventos. </Message>
+      <Message v-else-if="error" severity="error">
+        Error cargando eventos. Revisa que el backend esté levantado y CORS configurado.
+        <div class="mt-2">
+          <button class="p-button p-component p-button-text" @click="refresh()">Reintentar</button>
+        </div>
+      </Message>
 
-    <!-- Listado -->
-    <div v-else class="grid">
-      <div v-for="ev in events" :key="ev.id" class="col-12 md:col-6 lg:col-4">
-        <Card class="h-full border-1 surface-50 surface-border">
-          <template #title>
-            <span class="text-color-primary">{{ ev.title }}</span>
-          </template>
+      <!-- Listado vacío -->
+      <Message v-else-if="events.length === 0" severity="info" :closable="false"> No se encontraron eventos. </Message>
 
-          <template #content>
-            <div class="text-color-secondary text-sm flex flex-column gap-2">
-              <div>
-                <i class="pi pi-calendar mr-2"></i>
-                {{ new Date(ev.startDateTime).toLocaleString() }}
-                <span v-if="ev.endDateTime"> >> {{ new Date(ev.endDateTime).toLocaleString() }}</span>
+      <!-- Listado -->
+      <div v-else class="grid">
+        <div v-for="ev in events" :key="ev.id" class="col-12 md:col-6 lg:col-4">
+          <Card
+            class="h-full border-1 surface-50 surface-border cursor-pointer"
+            role="link"
+            tabindex="0"
+            @click="navigateTo(`/events/${ev.id}`)"
+            @keydown.enter.prevent="navigateTo(`/events/${ev.id}`)"
+            @keydown.space.prevent="navigateTo(`/events/${ev.id}`)">
+            <template #title>
+              <span class="text-color-primary">{{ ev.title }}</span>
+            </template>
+
+            <template #content>
+              <div class="text-color-secondary text-sm flex flex-column gap-2">
+                <div>
+                  <i class="pi pi-calendar mr-2"></i>
+                  <time :datetime="ev.startDateTime">
+                    {{ new Date(ev.startDateTime).toLocaleString() }}
+                  </time>
+                  <span v-if="ev.endDateTime">
+                    &nbsp;>>&nbsp;
+                    <time :datetime="ev.endDateTime">
+                      {{ new Date(ev.endDateTime).toLocaleString() }}
+                    </time>
+                  </span>
+                </div>
+
+                <div>
+                  <i class="pi pi-compass mr-2"></i>
+                  {{ ev.cityName }}<span v-if="ev.cityName && ev.provinceName">, </span>{{ ev.provinceName }}
+                </div>
               </div>
-
-              <div>
-                <i class="pi pi-compass mr-2"></i>
-                {{ ev.cityName }}<span v-if="ev.cityName && ev.provinceName">, </span>{{ ev.provinceName }}
-              </div>
-            </div>
-          </template>
-        </Card>
+            </template>
+          </Card>
+        </div>
       </div>
-    </div>
+    </section>
 
     <!-- Paginación -->
     <div v-if="!pending && !error && total > 0" class="border-1 border-round-xl p-2">
       <Paginator :first="first" :rows="size" :totalRecords="total" :rowsPerPageOptions="[20, 50, 100]" @page="onPage" />
     </div>
-  </section>
+  </article>
 </template>
