@@ -212,7 +212,7 @@ uuid_generate_v5('4b1c3d3a-9f7b-4f7a-8c2e-0d3d9e6f2a11'::uuid, 'rockalendar:prov
 
 - Código más limpio y contrato centralizado.
 
-## ADR-008 — Convención de rutas y namespaces de la API
+## ADR-008 - Convención de rutas y namespaces de la API
 
 **Decisión**
 La API de *Rockalendar* se organiza en namespaces claros y semánticos, en función del tipo de recurso y del contexto de uso:
@@ -258,3 +258,32 @@ El proyecto necesita una estructura de rutas que:
 - Las rutas comunican intención y nivel de acceso de forma explícita.
 - El frontend puede razonar fácilmente qué endpoints usar en cada vista.
 - Se reduce el riesgo de exponer operaciones sensibles por error.
+
+## ADR-009 - Estrategia de consumo de API en frontend (Nuxt 4)
+
+**Contexto**
+Rockalendar utiliza páginas públicas donde el SEO es relevante, el SSR aporta valor y se requiere manejo de estados de carga y error.\
+También existen acciones autenticadas (crear, editar, eliminar eventos) y páginas privadas.
+
+**Decisión**
+Se adopta la siguiente estrategia:
+- `useFetch` es el mecanismo estándar para lectura de datos en páginas.
+  - Página que carga datos para renderizar.
+- `$fetch` se utilizará exclusivamente para acciones imperativas o mutaciones.
+  - Acción iniciada por usuario (submit, delete, etc.) (POST, PUT, DELETE).
+  - Lógica en stores o composables sin SSR.
+
+**Alternativas consideradas**
+- Usar solo $fetch para todo.
+- Usar solo useFetch para todo.
+
+**Por qué se descartan**
+- Usar solo $fetch degrada la integración con SSR y SEO, que son relevantes en páginas públicas.
+- Usar solo useFetch introduce complejidad innecesaria en mutaciones.
+
+**Consecuencias**
+- Consistencia clara en el código.
+- SSR y SEO correcto en páginas públicas.
+- Separación clara entre lectura de datos (reactiva, declarativa) y mutaciones (imperativas).
+- Escalabilidad limpia a medida que crezca el proyecto.
+- Existen dos mecanismos en el proyecto pero es un coste asumible.
