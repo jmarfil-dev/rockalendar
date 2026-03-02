@@ -66,7 +66,6 @@ public class EventQueryService {
     private static final Sort DEFAULT_SORT_JPA =
             Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc("title"));
 
-    @Transactional(readOnly = true)
     public Page<EventPublicListItemDto> listHome(Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
@@ -79,7 +78,7 @@ public class EventQueryService {
                                                      Optional<OffsetDateTime> dateTo,
                                                      Optional<UUID> provinceId,
                                                      Optional<String> city,
-                                                     Optional<String> artist,
+                                                     Optional<UUID> artistId,
                                                      Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         if (dateFrom.isPresent() && dateTo.isPresent() && dateFrom.get().isAfter(dateTo.get())) {
@@ -98,9 +97,9 @@ public class EventQueryService {
         var from = dateFrom.orElse(null);
         var to = dateTo.orElse(null);
         var provId = provinceId.orElse(null);
+        var artId = artistId.orElse(null);
 
         String citySlug = city.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
-        String artistSlug = artist.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
 
         String defaultKey = !q.isBlank() ? "relevance" : "date";
         String defaultDir = !q.isBlank() ? "desc" : "asc";
@@ -108,11 +107,11 @@ public class EventQueryService {
         Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
         Page<EventPublicSearchProjection> results = repository.searchPublicEvents(q, minSim, ftsW, trgmW, from, to, provId, citySlug,
-                                                                                  artistSlug, sort.sortKey(), sort.sortDir(), pageOnly);
+                                                                                  artId, sort.sortKey(), sort.sortDir(), pageOnly);
 
         // Si no hay resultados y la query tiene más de dos palabras se intenta la segunda consulta
         if (hasMultipleTokens(q) && results.isEmpty()) {
-            return repository.searchPublicEventsFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artistSlug, sort.sortKey(),
+            return repository.searchPublicEventsFallback(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artId, sort.sortKey(),
                                                          sort.sortDir(), pageOnly)
                              .map(mapper::toPublicListItemDto);
         }

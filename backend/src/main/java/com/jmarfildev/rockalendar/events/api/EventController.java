@@ -35,9 +35,9 @@ public class EventController implements EventApi {
                                                      Optional<OffsetDateTime> dateTo,
                                                      Optional<UUID> provinceId,
                                                      Optional<String> city,
-                                                     Optional<String> artist,
+                                                     Optional<UUID> artistId,
                                                      Pageable pageable) {
-        return queryService.searchPublic(query, dateFrom, dateTo, provinceId, city, artist, pageable);
+        return queryService.searchPublic(query, dateFrom, dateTo, provinceId, city, artistId, pageable);
     }
 
     @Override

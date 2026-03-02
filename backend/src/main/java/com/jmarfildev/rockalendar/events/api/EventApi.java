@@ -57,21 +57,23 @@ public interface EventApi {
                  content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
     @ApiBadRequest
     Page<EventPublicListItemDto> searchPublic(@Parameter(description = "Búsqueda libre (título, sala, ciudad, artista)",
-                                                 example = "metallica madrid") @RequestParam Optional<String> query,
-                                      @Parameter(description = "Fecha/hora desde (ISO-8601)",
-                                                 example = "2026-04-01T00:00:00Z") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<
-                                                         OffsetDateTime> dateFrom,
-                                      @Parameter(description = "Fecha/hora hasta (ISO-8601)",
-                                                 example = "2026-04-30T23:59:59Z") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<
-                                                         OffsetDateTime> dateTo,
-                                      @Parameter(description = "Filtra por provincia",
-                                                 example = "11111111-1111-1111-1111-111111111111") @RequestParam Optional<UUID> provinceId,
-                                      @Parameter(description = "Ciudad (texto libre); se normaliza internamente a slug",
-                                                 example = "València") @RequestParam Optional<String> city,
-                                      @Parameter(description = "Artista (texto libre); se normaliza internamente a slug",
-                                                 example = "Iron Maiden") @RequestParam Optional<String> artist,
-                                      @Parameter(description = "Paginación (page, size, sort)",
-                                                 example = "page=0&size=20") @PageableDefault(size = 20) Pageable pageable);
+                                                         example = "metallica madrid") @RequestParam Optional<String> query,
+                                              @Parameter(description = "Fecha/hora desde (ISO-8601)",
+                                                         example = "2026-04-01T00:00:00Z") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<
+                                                                 OffsetDateTime> dateFrom,
+                                              @Parameter(description = "Fecha/hora hasta (ISO-8601)",
+                                                         example = "2026-04-30T23:59:59Z") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<
+                                                                 OffsetDateTime> dateTo,
+                                              @Parameter(description = "Filtra por provincia",
+                                                         example = "11111111-1111-1111-1111-111111111111") @RequestParam Optional<
+                                                                 UUID> provinceId,
+                                              @Parameter(description = "Ciudad (texto libre); se normaliza internamente a slug",
+                                                         example = "València") @RequestParam Optional<String> city,
+                                              @Parameter(description = "Filtra por artista",
+                                                         example = "11111111-1111-1111-1111-111111111111") @RequestParam Optional<
+                                                                 UUID> artistId,
+                                              @Parameter(description = "Paginación (page, size, sort)",
+                                                         example = "page=0&size=20") @PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping("/home")
     @Operation(summary = "Home público: próximos eventos",

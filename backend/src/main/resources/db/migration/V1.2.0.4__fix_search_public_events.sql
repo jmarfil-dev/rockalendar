@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION search_public_events(
   p_date_to timestamptz,
   p_province_id uuid,
   p_city_slug text,
-  p_artist_slug text
+  p_artist_id uuid
 )
 RETURNS TABLE(event_id uuid, score double precision)
 LANGUAGE sql
@@ -63,12 +63,12 @@ AS $$
     AND (p_province_id IS NULL OR e.province_id = p_province_id)
     AND (p_city_slug IS NULL OR e.city_slug = p_city_slug)
     AND (
-      p_artist_slug IS NULL
+      p_artist_id IS NULL
       OR EXISTS (
         SELECT 1
         FROM event_artists ea
         WHERE ea.event_id = e.id
-          AND ea.artist_id = (SELECT a.id FROM artists a WHERE a.slug = p_artist_slug)
+          AND ea.artist_id = p_artist_id
       )
     )
 
@@ -111,7 +111,7 @@ CREATE OR REPLACE FUNCTION search_public_events_fallback(
   p_date_to timestamptz,
   p_province_id uuid,
   p_city_slug text,
-  p_artist_slug text
+  p_artist_id uuid
 )
 RETURNS TABLE(event_id uuid, score double precision)
 LANGUAGE sql
@@ -157,12 +157,12 @@ AS $$
     AND (p_province_id IS NULL OR e.province_id = p_province_id)
     AND (p_city_slug IS NULL OR e.city_slug = p_city_slug)
     AND (
-      p_artist_slug IS NULL
+      p_artist_id IS NULL
       OR EXISTS (
         SELECT 1
         FROM event_artists ea
         WHERE ea.event_id = e.id
-          AND ea.artist_id = (SELECT a.id FROM artists a WHERE a.slug = p_artist_slug)
+          AND ea.artist_id = p_artist_id
       )
     )
     AND (
