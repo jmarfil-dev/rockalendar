@@ -154,7 +154,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("searchPublic: query en blanco -> filtra artist (artists.slug)")
+    @DisplayName("searchPublic: query en blanco -> filtra artist (artists.id)")
     void searchPublic_filtersByCityAndArtistSlug_exact() {
         factory.approvedBarcelonaBoikot();
         factory.approvedMadridAgainstYou();
@@ -165,7 +165,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
-                Optional.of("  AgAinST-you"),
+                Optional.of(factory.againstYou().getId()),
                 PageRequest.of(0, 10));
 
         assertThat(page.getContent())
