@@ -1,11 +1,12 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:16
     container_name: rockalendar-postgres
     environment:
       POSTGRES_DB: rockalendar
       POSTGRES_USER: rockalendar
       POSTGRES_PASSWORD: rockalendar
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale-provider=icu --icu-locale=es-ES"
     ports:
       - "5432:5432"
     volumes:
