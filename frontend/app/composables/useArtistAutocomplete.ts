@@ -26,7 +26,6 @@ export const useArtistAutocomplete = () => {
       loading.value = true;
       try {
         const { data, error } = await useFetch<Artist[]>("/api/artists", {
-          method: "GET",
           query: { query }, // ajusta si el back usa otro nombre
         });
         if (error.value) throw error.value;
