@@ -1,0 +1,263 @@
+<script setup lang="ts">
+definePageMeta({ layout: "public" });
+
+const route = useRoute();
+const config = useRuntimeConfig();
+
+const id = route.params.id as string;
+
+type EventPublic = {
+  id: string;
+  title: string;
+  description?: string | null;
+  startDateTime: string;
+  endDateTime?: string | null;
+  venueName?: string | null;
+  provinceId?: string | null;
+  provinceName?: string | null;
+  cityName?: string | null;
+  artists?: string[];
+  sourceUrl?: string | null;
+};
+
+const {
+  data: event,
+  pending,
+  error,
+} = await useFetch<EventPublic>(`/api/events/${id}`, {
+  key: `event-${id}`,
+});
+
+if (error.value?.statusCode === 404) {
+  throw createError({ statusCode: 404, statusMessage: "Evento no encontrado" });
+}
+</script>
+
+<template>
+  <article class="p-3 md:p-4 lg:p-5">
+    <!-- Loading -->
+    <div v-if="pending" class="flex align-items-center gap-2">
+      <ProgressSpinner style="width: 22px; height: 22px" strokeWidth="6" />
+      <span class="text-color-secondary">Cargando evento…</span>
+    </div>
+
+    <!-- Error -->
+    <Message v-else-if="error" severity="error" :closable="false" class="w-full">
+      <div class="flex align-items-center gap-2">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span>No se pudo cargar el evento.</span>
+      </div>
+    </Message>
+
+    <!-- Content -->
+    <div v-else-if="event" class="flex flex-column gap-3 md:gap-4">
+      <!-- Header (perfecto tal cual) -->
+      <header class="flex flex-column gap-2">
+        <div class="flex align-items-start justify-content-between gap-3 flex-wrap">
+          <div class="flex flex-column gap-1">
+            <h1 class="m-0 text-2xl md:text-3xl font-semibold line-height-2">
+              {{ event.title }}
+            </h1>
+
+            <div class="flex align-items-center gap-2 text-color-secondary">
+              <i class="pi pi-map-marker"></i>
+              <span>
+                <span v-if="event.venueName">{{ event.venueName }}</span>
+                <span v-if="event.venueName && (event.cityName || event.provinceName)"> · </span>
+                <span v-if="event.cityName">{{ event.cityName }}</span>
+                <span v-if="event.cityName && event.provinceName">, </span>
+                <span v-if="event.provinceName">{{ event.provinceName }}</span>
+              </span>
+            </div>
+
+            <div class="flex align-items-center gap-2 text-color-secondary">
+              <i class="pi pi-calendar"></i>
+              <span>
+                <time :datetime="event.startDateTime">
+                  {{ new Date(event.startDateTime).toLocaleString() }}
+                </time>
+                <span v-if="event.endDateTime">
+                  <span class="mx-2">→</span>
+                  <time :datetime="event.endDateTime">
+                    {{ new Date(event.endDateTime).toLocaleString() }}
+                  </time>
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <!-- (sin botón de fuente aquí) -->
+          <div class="flex align-items-center gap-2"></div>
+        </div>
+
+        <Divider class="my-1" />
+      </header>
+
+      <!-- Poster -->
+      <section aria-label="Cartel" class="w-full">
+        <Card class="border-1 surface-border">
+          <template #content>
+            <!-- Placeholder -->
+            <div
+              class="border-1 surface-border border-round-lg surface-50 flex align-items-center justify-content-center"
+              style="aspect-ratio: 16/9">
+              <div class="text-center text-color-secondary">
+                <i class="pi pi-image text-2xl"></i>
+                <div class="mt-2 text-sm">Cartel no disponible</div>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </section>
+
+      <!-- Main grid -->
+      <div class="grid">
+        <!-- Left: main -->
+        <div class="col-12 lg:col-8">
+          <Card class="border-1 surface-border">
+            <template #content>
+              <div class="flex flex-column gap-4">
+                <!-- Artists -->
+                <section v-if="event.artists?.length" aria-label="Artistas">
+                  <div class="flex align-items-center gap-2 mb-2">
+                    <i class="pi pi-users text-color-secondary"></i>
+                    <h2 class="m-0 text-xl font-semibold">Artistas</h2>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2">
+                    <Tag v-for="artist in event.artists" :key="artist" :value="artist" rounded severity="info" />
+                  </div>
+                </section>
+
+                <!-- Description -->
+                <section v-if="event.description" aria-label="Descripción">
+                  <div class="flex align-items-center gap-2 mb-2">
+                    <i class="pi pi-align-left text-color-secondary"></i>
+                    <h2 class="m-0 text-xl font-semibold">Descripción</h2>
+                  </div>
+
+                  <div class="text-color-secondary white-space-pre-line line-height-3">
+                    {{ event.description }}
+                  </div>
+                </section>
+
+                <!-- Fallback if empty -->
+                <Message
+                  v-if="
+                    (!event.description || !event.description.trim()) && (!event.artists || event.artists.length === 0)
+                  "
+                  severity="info"
+                  :closable="false">
+                  No hay más detalles disponibles para este evento.
+                </Message>
+              </div>
+            </template>
+          </Card>
+        </div>
+
+        <!-- Right: meta -->
+        <aside class="col-12 lg:col-4" aria-label="Detalles del evento">
+          <div class="flex flex-column gap-3">
+            <Card class="border-1 surface-border">
+              <template #title>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-info-circle"></i>
+                  <h2 class="m-0 text-lg font-semibold">Detalles</h2>
+                </div>
+              </template>
+
+              <template #content>
+                <div class="flex flex-column gap-3">
+                  <div class="flex align-items-start gap-2">
+                    <i class="pi pi-calendar text-color-secondary mt-1"></i>
+                    <div class="flex flex-column">
+                      <span class="font-medium">Fecha</span>
+                      <span class="text-color-secondary">
+                        <time :datetime="event.startDateTime">
+                          {{ new Date(event.startDateTime).toLocaleString() }}
+                        </time>
+                        <span v-if="event.endDateTime">
+                          <span class="mx-2">→</span>
+                          <time :datetime="event.endDateTime">
+                            {{ new Date(event.endDateTime).toLocaleString() }}
+                          </time>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex align-items-start gap-2"
+                    v-if="event.venueName || event.cityName || event.provinceName">
+                    <i class="pi pi-map-marker text-color-secondary mt-1"></i>
+                    <div class="flex flex-column">
+                      <span class="font-medium">Lugar</span>
+                      <span class="text-color-secondary">
+                        <span v-if="event.venueName">{{ event.venueName }}</span>
+                        <span v-if="event.venueName && (event.cityName || event.provinceName)"> · </span>
+                        <span v-if="event.cityName">{{ event.cityName }}</span>
+                        <span v-if="event.cityName && event.provinceName">, </span>
+                        <span v-if="event.provinceName">{{ event.provinceName }}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="flex align-items-start gap-2" v-if="event.provinceName">
+                    <i class="pi pi-compass text-color-secondary mt-1"></i>
+                    <div class="flex flex-column">
+                      <span class="font-medium">Provincia</span>
+                      <span class="text-color-secondary">{{ event.provinceName }}</span>
+                    </div>
+                  </div>
+
+                  <div class="flex align-items-start gap-2" v-if="event.cityName">
+                    <i class="pi pi-building text-color-secondary mt-1"></i>
+                    <div class="flex flex-column">
+                      <span class="font-medium">Ciudad</span>
+                      <span class="text-color-secondary">{{ event.cityName }}</span>
+                    </div>
+                  </div>
+
+                  <Divider class="my-1" />
+
+                  <!-- Más info (externo) -->
+                  <div class="flex flex-column gap-1">
+                    <span class="font-medium">Más info (link externo):</span>
+                    <span v-if="event.sourceUrl" class="text-sm">
+                      <a
+                        :href="event.sourceUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-primary underline">
+                        {{ event.sourceUrl }}
+                      </a>
+                    </span>
+                    <span v-else class="text-color-secondary text-sm">No disponible</span>
+                  </div>
+                </div>
+              </template>
+            </Card>
+
+            <!-- Small hint card -->
+            <Card class="border-1 surface-border">
+              <template #content>
+                <div class="flex flex-column gap-3">
+                  <div class="flex align-items-start gap-2">
+                    <i class="pi pi-bell text-color-secondary mt-1"></i>
+                    <div class="flex flex-column gap-1">
+                      <span class="font-medium">¿Ves algo incorrecto?</span>
+                      <span class="text-color-secondary text-sm"> Envía comentarios a moderación. </span>
+                    </div>
+                  </div>
+
+                  <!-- Por ahora no hace nada -->
+                  <Button label="Enviar comentario" icon="pi pi-send" class="w-full" type="button" />
+                </div>
+              </template>
+            </Card>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+</template>

@@ -39,38 +39,35 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())// Para APIs REST en dev
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(eh -> eh
-                        .authenticationEntryPoint(unauthorizedError())
-                        // Token válido pero sin Rol adecuado o acceso denegado por configuración
-                        .accessDeniedHandler(forbiddenError()))
-                .authorizeHttpRequests(auth -> auth
-                        // Swagger / OpenAPI
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
-                        .permitAll()
-                        // Auth
-                        .requestMatchers("/api/auth/**")
-                        .permitAll()
-                        // Público (lectura)
-                        .requestMatchers(HttpMethod.GET, "/api/events/**", "/api/artists/**")
-                        .permitAll()
+        http.csrf(csrf -> csrf.disable())// Para APIs REST en dev
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(eh -> eh.authenticationEntryPoint(unauthorizedError())
+                                       // Token válido pero sin Rol adecuado o acceso denegado por configuración
+                                       .accessDeniedHandler(forbiddenError()))
+            .authorizeHttpRequests(auth -> auth
+                                               // Swagger / OpenAPI
+                                               .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
+                                               .permitAll()
+                                               // Auth
+                                               .requestMatchers("/api/auth/**")
+                                               .permitAll()
+                                               // Público (lectura)
+                                               .requestMatchers(HttpMethod.GET, "/api/events/**", "/api/artists/**", "/api/provinces/**")
+                                               .permitAll()
 
-                        // Moderación y admin
-                        .requestMatchers("/api/moderation/**")
-                        .hasAnyRole("MODERATOR", "ADMIN")
-                        .requestMatchers("/api/admin/**")
-                        .hasRole("ADMIN")
+                                               // Moderación y admin
+                                               .requestMatchers("/api/moderation/**")
+                                               .hasAnyRole("MODERATOR", "ADMIN")
+                                               .requestMatchers("/api/admin/**")
+                                               .hasRole("ADMIN")
 
-                        // El resto, autenticado (por ahora)
-                        .anyRequest()
-                        .authenticated())
+                                               // El resto, autenticado (por ahora)
+                                               .anyRequest()
+                                               .authenticated())
 
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .authenticationEntryPoint(unauthorizedError())
-                        .accessDeniedHandler(forbiddenError())
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+            .oauth2ResourceServer(oauth2 -> oauth2.authenticationEntryPoint(unauthorizedError())
+                                                  .accessDeniedHandler(forbiddenError())
+                                                  .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }
@@ -90,9 +87,7 @@ public class SecurityConfig {
         var conv = new JwtAuthenticationConverter();
         conv.setJwtGrantedAuthoritiesConverter(jwt -> {
             var roles = jwt.getClaimAsStringList("roles");
-            return roles == null
-                    ? List.of()
-                    : roles.stream().map(r -> (GrantedAuthority) new SimpleGrantedAuthority(r)).toList();
+            return roles == null ? List.of() : roles.stream().map(r -> (GrantedAuthority) new SimpleGrantedAuthority(r)).toList();
         });
         return conv;
     }
@@ -101,7 +96,8 @@ public class SecurityConfig {
         return (request, response, authException) -> {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
             ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                    "Authentication is required to access this resource", request.getRequestURI(), ErrorMessages.TYPE_401_UNAUTHORIZED);
+                                                                "Authentication is required to access this resource",
+                                                                request.getRequestURI(), ErrorMessages.TYPE_401_UNAUTHORIZED);
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
@@ -113,7 +109,8 @@ public class SecurityConfig {
         return (request, response, accessDeniedException) -> {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
             ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(),
-                    "You don't have permission to access this resource", request.getRequestURI(), ErrorMessages.TYPE_403_FORBIDDEN);
+                                                                "You don't have permission to access this resource",
+                                                                request.getRequestURI(), ErrorMessages.TYPE_403_FORBIDDEN);
 
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);

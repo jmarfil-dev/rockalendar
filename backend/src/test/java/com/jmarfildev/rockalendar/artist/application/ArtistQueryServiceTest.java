@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
 import com.jmarfildev.rockalendar.artists.application.ArtistQueryService;
+import com.jmarfildev.rockalendar.common.dto.ComboItemDto;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestConstants;
@@ -49,7 +49,7 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
         var result = service.searchArtistsAutocomplete("  aga  ");
 
         assertThat(result).isNotEmpty();
-        assertThat(result).extracting(ArtistDto::name).anyMatch(TestConstants.MOCK_ARTIST_NAME_AY::equals);
+        assertThat(result).extracting(ComboItemDto::name).anyMatch(TestConstants.MOCK_ARTIST_NAME_AY::equals);
     }
 
     @Test
@@ -59,7 +59,7 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
 
         var result = service.searchArtistsAutocomplete("ska-p");
 
-        assertThat(result).extracting(ArtistDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
+        assertThat(result).extracting(ComboItemDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
     }
 
     @Test
@@ -85,8 +85,8 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
         var resultUpper = service.searchArtistsAutocomplete("SKA");
         var resultLower = service.searchArtistsAutocomplete("ska");
 
-        assertThat(resultUpper).extracting(ArtistDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
-        assertThat(resultLower).extracting(ArtistDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
+        assertThat(resultUpper).extracting(ComboItemDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
+        assertThat(resultLower).extracting(ComboItemDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
     }
 
     @Test

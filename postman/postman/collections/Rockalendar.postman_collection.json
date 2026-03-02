@@ -323,13 +323,13 @@
               "response": []
             },
             {
-              "name": "searchPublic (filter artis)",
+              "name": "searchPublic (filter artist)",
               "id": "4a67b909-e5ff-4c71-b34d-f4745ec1eb03",
               "request": {
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/events?artist={{artist}}",
+                  "raw": "{{baseUrl}}/api/events?artistId={{artistId}}",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -339,9 +339,9 @@
                   ],
                   "query": [
                     {
-                      "key": "artist",
-                      "value": "{{artist}}",
-                      "uuid": "2e83b385-dd59-4bde-86a2-17143e895cca"
+                      "key": "artistId",
+                      "value": "{{artistId}}",
+                      "uuid": "fe4561bd-9733-4513-a8e5-f820e1b539d4"
                     }
                   ]
                 }
@@ -776,6 +776,26 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "getById",
+              "id": "3c358b28-7d09-4645-a2fe-1f66861031da",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/artists/{{artistId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "artists",
+                    "{{artistId}}"
+                  ]
+                }
+              },
+              "response": []
             }
           ],
           "id": "9c07b964-795f-4137-9d22-e2d85cf825f7"
@@ -939,6 +959,32 @@
         }
       ],
       "id": "19439996-132a-4fee-9015-8069c9076586"
+    },
+    {
+      "name": "Provinces",
+      "item": [
+        {
+          "name": "listCombo",
+          "id": "a8dc6a70-253a-4756-af05-e62324a0570f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/provinces/combo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "provinces",
+                "combo"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "c2a637f8-fe15-407b-b40b-cb4453d6e89a"
     }
   ]
 }

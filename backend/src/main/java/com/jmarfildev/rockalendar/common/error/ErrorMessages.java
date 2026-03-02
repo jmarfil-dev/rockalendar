@@ -40,6 +40,7 @@ public final class ErrorMessages {
 
     // Not found 404
     public static final String EVENT_NOT_FOUND = "Event not found";
+    public static final String ARTIST_NOT_FOUND = "Artist not found";
 
     // Conflict 409
     public static final String ARTIST_ALREADY_EXISTS = "Artist already exists";
