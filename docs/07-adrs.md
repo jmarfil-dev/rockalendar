@@ -11,8 +11,9 @@
 - La especificación OpenAPI se genera a partir del código, no se mantiene como fichero manual versionado.
 - El contrato HTTP se versiona únicamente por versión mayor en la URL (`/api/v1/...`).
 
-**Contexto** El proyecto busca:
+**Contexto**
 
+El proyecto busca:
 - Evitar duplicación entre código y documentación.
 - Mantener el contrato siempre alineado con la implementación real.
 - Reducir fricción en un proyecto de tamaño contenido.
@@ -215,6 +216,7 @@ uuid_generate_v5('4b1c3d3a-9f7b-4f7a-8c2e-0d3d9e6f2a11'::uuid, 'rockalendar:prov
 ## ADR-008 - Convención de rutas y namespaces de la API
 
 **Decisión**
+
 La API de *Rockalendar* se organiza en namespaces claros y semánticos, en función del tipo de recurso y del contexto de uso:
 
 - `/api/...` → recursos públicos
@@ -230,31 +232,37 @@ La API de *Rockalendar* se organiza en namespaces claros y semánticos, en funci
   - Interfaces: `ArtistAdminApi`
 
 **Contexto**
+
 El proyecto necesita una estructura de rutas que:
 - Sea fácil de entender para frontend y consumidores de la API.
 - Refleje claramente el contexto de seguridad y autorización.
 - Evite endpoints ambiguos o con múltiples responsabilidades.
 
 **Reglas asociadas**
+
 - El namespace `me` siempre implica autenticación (JWT obligatorio).
 - El namespace `admin` siempre implica autorización elevada (rol administrador o moderador, según el recurso).
 - El namespace público (`/api/...`) no depende de identidad, aunque puede aceptar JWT de forma opcional.
 - Un endpoint no debe mezclar responsabilidades de distintos namespaces.
 
 **Motivación**
+
 - Separar claramente lectura pública, área personal y administración.
 - Facilitar el razonamiento sobre permisos sin inspeccionar implementación.
 - Mantener coherencia entre rutas, interfaces y documentación OpenAPI.
 
 **Alternativas consideradas**
+
 - Un único namespace (`/api/...`) con control de permisos interno.
 - Uso de parámetros o flags para diferenciar contexto (p. ej. `?mine=true`).
 
 **Por qué se descartan**
+
 - Mezclar contextos en un mismo namespace reduce claridad y aumenta errores de autorización.
 - Parámetros de contexto generan contratos ambiguos y difíciles de documentar.
 
 **Consecuencias**
+
 - Las rutas comunican intención y nivel de acceso de forma explícita.
 - El frontend puede razonar fácilmente qué endpoints usar en cada vista.
 - Se reduce el riesgo de exponer operaciones sensibles por error.
@@ -262,10 +270,12 @@ El proyecto necesita una estructura de rutas que:
 ## ADR-009 - Estrategia de consumo de API en frontend (Nuxt 4)
 
 **Contexto**
+
 Rockalendar utiliza páginas públicas donde el SEO es relevante, el SSR aporta valor y se requiere manejo de estados de carga y error.\
 También existen acciones autenticadas (crear, editar, eliminar eventos) y páginas privadas.
 
 **Decisión**
+
 Se adopta la siguiente estrategia:
 - `useFetch` es el mecanismo estándar para lectura de datos en páginas.
   - Página que carga datos para renderizar.
@@ -274,15 +284,19 @@ Se adopta la siguiente estrategia:
   - Lógica en stores o composables sin SSR.
 
 **Alternativas consideradas**
+
 - Usar solo $fetch para todo.
 - Usar solo useFetch para todo.
 
 **Por qué se descartan**
+
 - Usar solo $fetch degrada la integración con SSR y SEO, que son relevantes en páginas públicas.
 - Usar solo useFetch introduce complejidad innecesaria en mutaciones.
 
 **Consecuencias**
+
 - Consistencia clara en el código.
+
 - SSR y SEO correcto en páginas públicas.
 - Separación clara entre lectura de datos (reactiva, declarativa) y mutaciones (imperativas).
 - Escalabilidad limpia a medida que crezca el proyecto.
