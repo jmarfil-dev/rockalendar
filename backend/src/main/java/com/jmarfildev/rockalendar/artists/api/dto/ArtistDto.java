@@ -6,6 +6,4 @@ import java.util.UUID;
  * @author jmarfil
  *
  */
-public record ArtistDto(UUID id,
-                        String name,
-                        String slug) {}
+public record ArtistDto(UUID id, String name) {}

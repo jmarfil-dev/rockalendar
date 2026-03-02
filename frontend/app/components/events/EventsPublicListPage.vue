@@ -47,13 +47,13 @@ const isSearchRoute = computed(() => route.path === "/events");
 
 const hasSearchFilters = computed(() => {
   const q = route.query;
-  const artist = typeof q.artist === "string" ? q.artist.trim() : "";
+  const artistId = typeof q.artistId === "string" ? q.artistId.trim() : "";
   const city = typeof q.city === "string" ? q.city.trim() : "";
   const provinceId = typeof q.provinceId === "string" ? q.provinceId : "";
   const dateFrom = typeof q.dateFrom === "string" ? q.dateFrom : "";
   const dateTo = typeof q.dateTo === "string" ? q.dateTo : "";
   const query = typeof q.query === "string" ? q.query.trim() : "";
-  return !!(artist || city || provinceId || dateFrom || dateTo || query);
+  return !!(artistId || city || provinceId || dateFrom || dateTo || query);
 });
 
 const endpoint = computed(() => (isSearchRoute.value || hasSearchFilters.value ? searchEndpoint : homeEndpoint));
@@ -113,14 +113,14 @@ const { data, pending, error, refresh } = await useFetch<PageResponse<EventPubli
     if (endpoint.value === searchEndpoint) {
       const q = route.query;
 
-      const artist = typeof q.artist === "string" ? q.artist.trim() : "";
+      const artistId = typeof q.artistId === "string" ? q.artistId.trim() : "";
       const city = typeof q.city === "string" ? q.city.trim() : "";
       const provinceId = typeof q.provinceId === "string" ? q.provinceId : "";
       const dateFrom = typeof q.dateFrom === "string" ? q.dateFrom : "";
       const dateTo = typeof q.dateTo === "string" ? q.dateTo : "";
       const free = typeof q.query === "string" ? q.query.trim() : "";
 
-      if (artist) base.artist = artist;
+      if (artistId) base.artistId = artistId;
       if (city) base.city = city;
       if (provinceId) base.provinceId = provinceId;
       if (dateFrom) base.dateFrom = dateFrom;

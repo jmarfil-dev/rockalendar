@@ -1,6 +1,7 @@
 package com.jmarfildev.rockalendar.artists.application;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
+import com.jmarfildev.rockalendar.artists.api.mapper.ArtistMapper;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
+import com.jmarfildev.rockalendar.common.dto.ComboItemDto;
+import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 
 /**
@@ -26,9 +31,11 @@ import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ArtistQueryService {
 
-    private final ArtistRepository artistRepository;
+    private final ArtistRepository repository;
+    private final ArtistMapper mapper;
 
     /**
      * Busca artistas. Normaliza query para buscar por nombre y slug.
@@ -36,20 +43,19 @@ public class ArtistQueryService {
      * @param query texto libre de búsqueda
      * @return lista de artistas con entre 0 y 10 resultados
      */
-    @Transactional(readOnly = true)
-    public List<ArtistDto> searchArtistsAutocomplete(String query) {
+    public List<ComboItemDto> searchArtistsAutocomplete(String query) {
         String qRaw = query == null ? "" : query.trim();
         if (qRaw.isBlank()) {
             return List.of();
         }
 
         String qSlug = SlugNormalizer.of(qRaw);
-
         Pageable top10 = PageRequest.of(0, 10);
 
-        return artistRepository.findForAutocomplete(qRaw, qSlug, top10)
-                               .stream()
-                               .map(a -> new ArtistDto(a.getId(), a.getName(), a.getSlug()))
-                               .toList();
+        return repository.findForAutocomplete(qRaw, qSlug, top10);
+    }
+
+    public ArtistDto getById(UUID id) {
+        return repository.findById(id).map(mapper::toDto).orElseThrow(() -> new NotFoundException(ErrorMessages.ARTIST_NOT_FOUND));
     }
 }

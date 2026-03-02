@@ -43,7 +43,7 @@ const RockalendarPreset = definePreset(Aura, {
 
 export default defineNuxtConfig({
   routeRules: {
-    "/api/**": { proxy: "http://localhost:8080/api/**" }, // ajusta si tu backend no lleva /api
+    "/api/**": { proxy: "http://localhost:8080/api/**" },
   },
   runtimeConfig: {
     public: {
