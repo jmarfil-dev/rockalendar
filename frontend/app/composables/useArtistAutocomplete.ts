@@ -25,13 +25,15 @@ export const useArtistAutocomplete = () => {
 
       loading.value = true;
       try {
-        const { data, error } = await useFetch<Artist[]>("/api/artists", {
-          query: { query }, // ajusta si el back usa otro nombre
+        const res = await $fetch<Artist[]>("/api/artists", {
+          query: { query },
         });
-        if (error.value) throw error.value;
-        const res = data.value ?? [];
-        cache.value[query] = res;
-        suggestions.value = res;
+
+        cache.value[query] = res ?? [];
+        suggestions.value = res ?? [];
+      } catch (err) {
+        console.error("Error loading artists", err);
+        suggestions.value = [];
       } finally {
         loading.value = false;
       }

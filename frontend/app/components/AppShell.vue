@@ -14,7 +14,7 @@ defineProps<{
 <template>
   <div class="min-h-screen flex flex-column">
     <!-- Header -->
-    <header class="surface-0">
+    <header class="surface-0 mt-2">
       <div class="mx-auto w-full max-w-7xl px-3 py-1 flex align-items-center justify-content-between gap-2">
         <NuxtLink to="/" class="no-underline flex align-items-center">
           <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" />
