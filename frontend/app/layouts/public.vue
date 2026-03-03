@@ -1,6 +1,7 @@
 <script setup lang="ts">
 type Artist = { id: string; name: string };
 
+const { t } = useI18n();
 const isSearchOpen = ref(false);
 const route = useRoute();
 
@@ -25,7 +26,7 @@ const isDateRangeInvalid = computed(() => {
 
 const bottomItems = [
   {
-    label: "Buscar",
+    label: t("common.searchV"),
     icon: "pi pi-search",
     text: true,
     action: () => {
@@ -141,7 +142,9 @@ watch(isSearchOpen, async (open) => {
       <form class="flex flex-column gap-4 mt-2" @submit.prevent="runSearch">
         <!-- Artista -->
         <div class="flex flex-column gap-2">
-          <label for="artist" class="text-sm text-color-secondary">Grupo / Artista</label>
+          <label for="artist" class="text-sm text-color-secondary"
+            >{{ t("events.group") }} / {{ t("events.artist") }}</label
+          >
           <AutoComplete
             v-model="selectedArtist"
             inputId="artist"
@@ -150,44 +153,48 @@ watch(isSearchOpen, async (open) => {
             :minLength="2"
             :maxLength="50"
             optionLabel="name"
-            placeholder="Ej. Elektroduendes"
+            :placeholder="`${t('common.example')}. Elektroduendes`"
             inputClass="w-full"
             @complete="(e) => searchArtists(e.query)" />
         </div>
 
         <!-- Ciudad -->
         <div class="flex flex-column gap-2">
-          <label for="city" class="text-sm text-color-secondary">Ciudad</label>
-          <InputText id="city" v-model="searchForm.city" placeholder="Ej. Barcelona" autocomplete="off" />
+          <label for="city" class="text-sm text-color-secondary">{{ t("geo.city") }}</label>
+          <InputText
+            id="city"
+            v-model="searchForm.city"
+            :placeholder="`${t('common.example')}. Barcelona`"
+            autocomplete="off" />
         </div>
 
         <!-- Provincia -->
         <div class="flex flex-column gap-2">
-          <label for="province" class="text-sm text-color-secondary">Provincia</label>
+          <label for="province" class="text-sm text-color-secondary">{{ t("geo.province") }}</label>
           <Dropdown
             v-model="searchForm.provinceId"
             :options="provinceOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Provincia"
+            :placeholder="t('geo.province')"
             showClear
             class="w-full" />
         </div>
 
         <!-- Rango de fechas -->
         <div class="flex flex-column gap-2">
-          <label for="dateFrom" class="text-sm text-color-secondary">Desde</label>
+          <label for="dateFrom" class="text-sm text-color-secondary">{{ t("dates.from") }}</label>
           <DatePicker
             id="dateFrom"
             v-model="searchForm.dateFrom"
             dateFormat="dd/mm/yy"
             showIcon
             iconDisplay="input"
-            placeholder="Desde…" />
+            :placeholder="`${t('dates.from')}...`" />
         </div>
 
         <div class="flex flex-column gap-2">
-          <label for="dateTo" class="text-sm text-color-secondary">Hasta</label>
+          <label for="dateTo" class="text-sm text-color-secondary">{{ t("dates.to") }}</label>
           <DatePicker
             id="dateTo"
             v-model="searchForm.dateTo"
@@ -195,20 +202,29 @@ watch(isSearchOpen, async (open) => {
             dateFormat="dd/mm/yy"
             showIcon
             iconDisplay="input"
-            placeholder="Hasta…" />
+            :placeholder="`${t('dates.to')}...`" />
           <small v-if="isDateRangeInvalid" class="text-red-500">
-            La fecha fin no puede ser anterior a la fecha inicio
+            {{ t("dates.invalidRange") }}
           </small>
         </div>
 
         <!-- Query libre -->
         <div class="flex flex-column gap-2">
-          <label for="query" class="text-sm text-color-secondary">Búsqueda</label>
-          <InputText id="query" v-model="searchForm.query" placeholder="Festival, sala..." autocomplete="off" />
+          <label for="query" class="text-sm text-color-secondary">{{ t("common.searchN") }}</label>
+          <InputText
+            id="query"
+            v-model="searchForm.query"
+            :placeholder="t('events.searchPlaceholder')"
+            autocomplete="off" />
         </div>
 
         <!-- Botón -->
-        <Button type="submit" label="Buscar" icon="pi pi-search" class="w-full" :disabled="isDateRangeInvalid" />
+        <Button
+          type="submit"
+          :label="t('common.searchV')"
+          icon="pi pi-search"
+          class="w-full"
+          :disabled="isDateRangeInvalid" />
       </form>
     </Drawer>
   </AppShell>

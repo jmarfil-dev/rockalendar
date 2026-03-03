@@ -1,0 +1,48 @@
+{
+  "common": {
+    "login": "Login",
+    "bottomNav": "Navegación inferior",
+    "loading": "Cargando…",
+    "retry": "Reintentar",
+    "searchV": "Buscar",
+    "searchN": "Búsqueda",
+    "returnIndex": "Volver al inicio",
+    "example": "Ej.",
+    "details": "Detalles",
+    "noAvail": "No disponible",
+    "anythingWrong": "¿Ves algo incorrecto?",
+    "sendCom": "Enviar comentario"
+  },
+  "events": {
+    "title": "Titulo",
+    "artist": "Artista",
+    "artists": "Artistas",
+    "group": "Grupo",
+    "groups": "Grupos",
+    "description": "Descripción",
+    "noDescription": "No hay descripción disponible para este concierto",
+    "sourceUrl": "Más info (link externo)",
+    "searchPlaceholder": "Festival, sala...",
+    "noResults": "No se encontraron conciertos",
+    "listEvents": "Listado de conciertos",
+    "poster": "Cartel del concierto o festival",
+    "noPoster": "Cartel no disponible"
+  },
+  "moderation": {
+    "sendCom": "Envía un comentario a moderación"
+  },
+  "geo": {
+    "province": "Provincia",
+    "city": "Ciudad",
+    "place": "Lugar"
+  },
+  "dates": {
+    "date": "Fecha",
+    "from": "Desde",
+    "to": "Hasta",
+    "invalidRange": "La fecha fin no puede ser anterior a la fecha inicio"
+  },
+  "pagination": {
+    "sortedBy": "Ordenado por"
+  }
+}

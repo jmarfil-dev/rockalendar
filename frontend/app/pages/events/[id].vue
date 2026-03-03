@@ -1,8 +1,8 @@
 <script setup lang="ts">
 definePageMeta({ layout: "public" });
 
+const { t } = useI18n();
 const route = useRoute();
-const config = useRuntimeConfig();
 
 const id = route.params.id as string;
 
@@ -30,7 +30,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
     <!-- Loading -->
     <div v-if="pending" class="flex align-items-center gap-2">
       <ProgressSpinner style="width: 22px; height: 22px" strokeWidth="6" />
-      <span class="text-color-secondary">Cargando evento…</span>
+      <span class="text-color-secondary">{{ t("common.loading") }}</span>
     </div>
 
     <!-- Content -->
@@ -78,7 +78,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
       </header>
 
       <!-- Poster -->
-      <section aria-label="Cartel" class="w-full">
+      <section :aria-label="t('events.poster')" class="w-full">
         <Card class="border-1 surface-border">
           <template #content>
             <!-- Placeholder -->
@@ -87,7 +87,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
               style="aspect-ratio: 16/9">
               <div class="text-center text-color-secondary">
                 <i class="pi pi-image text-2xl"></i>
-                <div class="mt-2 text-sm">Cartel no disponible</div>
+                <div class="mt-2 text-sm">{{ t("events.noPoster") }}</div>
               </div>
             </div>
           </template>
@@ -102,10 +102,10 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
             <template #content>
               <div class="flex flex-column gap-4">
                 <!-- Artists -->
-                <section v-if="event.artists?.length" aria-label="Artistas">
+                <section v-if="event.artists?.length" :aria-label="`${t('events.groups')} / ${t('events.artists')}`">
                   <div class="flex align-items-center gap-2 mb-2">
                     <i class="pi pi-users text-color-secondary"></i>
-                    <h2 class="m-0 text-xl font-semibold">Artistas</h2>
+                    <h2 class="m-0 text-xl font-semibold">{{ t("events.groups") }} / {{ t("events.artists") }}</h2>
                   </div>
 
                   <div class="flex flex-wrap gap-2">
@@ -114,10 +114,10 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
                 </section>
 
                 <!-- Description -->
-                <section v-if="event.description" aria-label="Descripción">
+                <section v-if="event.description" :aria-label="t('events.description')">
                   <div class="flex align-items-center gap-2 mb-2">
                     <i class="pi pi-align-left text-color-secondary"></i>
-                    <h2 class="m-0 text-xl font-semibold">Descripción</h2>
+                    <h2 class="m-0 text-xl font-semibold">{{ t("events.description") }}</h2>
                   </div>
 
                   <div class="text-color-secondary white-space-pre-line line-height-3">
@@ -132,7 +132,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
                   "
                   severity="info"
                   :closable="false">
-                  No hay más detalles disponibles para este evento.
+                  {{ t("events.noDescription") }}
                 </Message>
               </div>
             </template>
@@ -140,13 +140,13 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
         </div>
 
         <!-- Right: meta -->
-        <aside class="col-12 lg:col-4" aria-label="Detalles del evento">
+        <aside class="col-12 lg:col-4" :aria-label="t('common.details')">
           <div class="flex flex-column gap-3">
             <Card class="border-1 surface-border">
               <template #title>
                 <div class="flex align-items-center gap-2">
                   <i class="pi pi-info-circle"></i>
-                  <h2 class="m-0 text-lg font-semibold">Detalles</h2>
+                  <h2 class="m-0 text-lg font-semibold">{{ t("common.details") }}</h2>
                 </div>
               </template>
 
@@ -155,7 +155,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
                   <div class="flex align-items-start gap-2">
                     <i class="pi pi-calendar text-color-secondary mt-1"></i>
                     <div class="flex flex-column">
-                      <span class="font-medium">Fecha</span>
+                      <span class="font-medium">{{ t("dates.date") }}</span>
                       <span class="text-color-secondary">
                         <time :datetime="event.startDateTime">
                           {{ new Date(event.startDateTime).toLocaleString() }}
@@ -175,7 +175,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
                     v-if="event.venueName || event.cityName || event.provinceName">
                     <i class="pi pi-map-marker text-color-secondary mt-1"></i>
                     <div class="flex flex-column">
-                      <span class="font-medium">Lugar</span>
+                      <span class="font-medium">{{ t("geo.place") }}</span>
                       <span class="text-color-secondary">
                         <span v-if="event.venueName">{{ event.venueName }}</span>
                         <span v-if="event.venueName && (event.cityName || event.provinceName)"> · </span>
@@ -189,7 +189,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
                   <div class="flex align-items-start gap-2" v-if="event.provinceName">
                     <i class="pi pi-compass text-color-secondary mt-1"></i>
                     <div class="flex flex-column">
-                      <span class="font-medium">Provincia</span>
+                      <span class="font-medium">{{ t("geo.province") }}</span>
                       <span class="text-color-secondary">{{ event.provinceName }}</span>
                     </div>
                   </div>
@@ -197,7 +197,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
                   <div class="flex align-items-start gap-2" v-if="event.cityName">
                     <i class="pi pi-building text-color-secondary mt-1"></i>
                     <div class="flex flex-column">
-                      <span class="font-medium">Ciudad</span>
+                      <span class="font-medium">{{ t("geo.city") }}</span>
                       <span class="text-color-secondary">{{ event.cityName }}</span>
                     </div>
                   </div>
@@ -206,7 +206,7 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
 
                   <!-- Más info (externo) -->
                   <div class="flex flex-column gap-1">
-                    <span class="font-medium">Más info (link externo):</span>
+                    <span class="font-medium">{{ t("events.sourceUrl") }}:</span>
                     <span v-if="event.sourceUrl" class="text-sm">
                       <a
                         :href="event.sourceUrl"
@@ -216,26 +216,25 @@ const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${i
                         {{ event.sourceUrl }}
                       </a>
                     </span>
-                    <span v-else class="text-color-secondary text-sm">No disponible</span>
+                    <span v-else class="text-color-secondary text-sm">{{ t("common.noAvail") }}</span>
                   </div>
                 </div>
               </template>
             </Card>
 
-            <!-- Small hint card -->
             <Card class="border-1 surface-border">
               <template #content>
                 <div class="flex flex-column gap-3">
                   <div class="flex align-items-start gap-2">
                     <i class="pi pi-bell text-color-secondary mt-1"></i>
                     <div class="flex flex-column gap-1">
-                      <span class="font-medium">¿Ves algo incorrecto?</span>
-                      <span class="text-color-secondary text-sm"> Envía comentarios a moderación. </span>
+                      <span class="font-medium">{{ t("common.anythingWrong") }}</span>
+                      <span class="text-color-secondary text-sm">{{ t("moderation.sendCom") }}</span>
                     </div>
                   </div>
 
                   <!-- Por ahora no hace nada -->
-                  <Button label="Enviar comentario" icon="pi pi-send" class="w-full" type="button" />
+                  <Button :label="t('common.sendCom')" icon="pi pi-send" class="w-full" type="button" />
                 </div>
               </template>
             </Card>
