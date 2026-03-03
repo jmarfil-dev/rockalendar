@@ -94,7 +94,9 @@ watch(
 
     if (artistId) {
       if (!selectedArtist.value || selectedArtist.value.id !== artistId) {
-        const { data } = await useFetch<Artist>(`/api/artists/${artistId}`);
+        const { data } = await useApiFetch<Artist>(`/api/artists/${artistId}`, {
+          key: `artist-${artistId}`,
+        });
         selectedArtist.value = data.value ?? { id: artistId, name: "" };
       }
     } else {

@@ -20,17 +20,9 @@ type EventPublic = {
   sourceUrl?: string | null;
 };
 
-const {
-  data: event,
-  pending,
-  error,
-} = await useFetch<EventPublic>(`/api/events/${id}`, {
+const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${id}`, {
   key: `event-${id}`,
 });
-
-if (error.value?.statusCode === 404) {
-  throw createError({ statusCode: 404, statusMessage: "Evento no encontrado" });
-}
 </script>
 
 <template>
@@ -40,14 +32,6 @@ if (error.value?.statusCode === 404) {
       <ProgressSpinner style="width: 22px; height: 22px" strokeWidth="6" />
       <span class="text-color-secondary">Cargando evento…</span>
     </div>
-
-    <!-- Error -->
-    <Message v-else-if="error" severity="error" :closable="false" class="w-full">
-      <div class="flex align-items-center gap-2">
-        <i class="pi pi-exclamation-triangle"></i>
-        <span>No se pudo cargar el evento.</span>
-      </div>
-    </Message>
 
     <!-- Content -->
     <div v-else-if="event" class="flex flex-column gap-3 md:gap-4">

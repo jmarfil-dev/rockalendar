@@ -6,7 +6,7 @@ export const useProvinces = () => {
 
   const load = async () => {
     if (loaded.value) return;
-    const { data, error } = await useFetch<Province[]>("/api/provinces/combo", { method: "GET" });
+    const { data, error } = await useFetch<Province[]>("/api/provinces/combo");
     if (error.value) throw error.value;
     provinces.value = data.value ?? [];
     loaded.value = true;
