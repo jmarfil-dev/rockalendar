@@ -9,6 +9,8 @@ defineProps<{
     text?: boolean;
   }[];
 }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -20,7 +22,7 @@ defineProps<{
           <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" />
         </NuxtLink>
 
-        <Button icon="pi pi-user" rounded outlined aria-label="Login" />
+        <Button icon="pi pi-user" rounded outlined :aria-label="t('common.login')" />
       </div>
     </header>
 
@@ -35,7 +37,7 @@ defineProps<{
     <nav
       v-if="bottomItems && bottomItems.length"
       class="surface-900 border-top-1 surface-border fixed bottom-0 left-0 right-0"
-      aria-label="Bottom navigation">
+      :aria-label="t('common.bottomNav')">
       <div class="mx-auto w-full max-w-7xl px-2 py-2 flex justify-content-around">
         <Button
           v-for="item in bottomItems"

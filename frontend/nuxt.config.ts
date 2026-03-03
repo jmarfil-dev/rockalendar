@@ -50,7 +50,7 @@ export default defineNuxtConfig({
       apiBase: "", // Se inyecta del fichero .env
     },
   },
-  modules: ["@primevue/nuxt-module"],
+  modules: ["@primevue/nuxt-module", "@nuxtjs/i18n"],
   css: ["primeicons/primeicons.css", "primeflex/primeflex.css", "~/assets/css/main.css"],
   primevue: {
     options: {
@@ -60,6 +60,21 @@ export default defineNuxtConfig({
           darkModeSelector: ".dark",
         },
       },
+    },
+  },
+  i18n: {
+    strategy: "no_prefix", // No queremos /es/... /en/... por ahora
+    defaultLocale: "en", // Inglés por defecto
+    locales: [
+      { code: "en", language: "en-US", file: "en.json", name: "English" },
+      { code: "es", language: "es-ES", file: "es.json", name: "Español" },
+    ],
+
+    detectBrowserLanguage: {
+      // Detecta navegador (client) o Accept-Language (SSR) y recuerda con cookie
+      useCookie: true,
+      cookieKey: "rockalendar_locale",
+      redirectOn: "root", // recomendado
     },
   },
 });

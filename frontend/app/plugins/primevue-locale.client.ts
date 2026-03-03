@@ -1,6 +1,3 @@
-import { defineNuxtPlugin } from "#app";
-import { usePrimeVue } from "primevue/config";
-
 const LOCALE_OVERRIDES = {
   es: {
     firstDayOfWeek: 1,
@@ -31,21 +28,22 @@ const LOCALE_OVERRIDES = {
 
 type SupportedLocale = keyof typeof LOCALE_OVERRIDES;
 
-function pickLocaleFromBrowser(): SupportedLocale {
-  const lang = (navigator.language || "es").toLowerCase();
-  const base = (lang.split("-")[0] ?? "es") as string;
-
-  return base in LOCALE_OVERRIDES ? (base as SupportedLocale) : "es";
+function pickLocaleFromBrowser(): string {
+  // client-only; si lo usas en SSR, protege con import.meta.client
+  const lang = (navigator.language || "en").toLowerCase();
+  return lang.split("-")[0] || "en";
 }
 
 export default defineNuxtPlugin(() => {
-  const primevue = usePrimeVue();
-  const localeKey = pickLocaleFromBrowser();
+  if (!import.meta.client) return;
 
-  // IMPORTANT: partimos del locale existente (incluye defaults como fileSizeTypes)
-  // y solo sobrescribimos lo necesario.
-  primevue.config.locale = {
-    ...(primevue.config.locale as any),
-    ...LOCALE_OVERRIDES[localeKey],
-  };
+  const primevue = usePrimeVue();
+  const base = pickLocaleFromBrowser();
+
+  if (base === "es") {
+    primevue.config.locale = {
+      ...(primevue.config.locale as any),
+      ...LOCALE_OVERRIDES.es,
+    };
+  }
 });

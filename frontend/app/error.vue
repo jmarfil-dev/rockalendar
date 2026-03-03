@@ -5,6 +5,7 @@ useHead({
   htmlAttrs: { class: "dark" },
 });
 
+const { t } = useI18n();
 const props = defineProps<{
   error: NuxtError;
 }>();
@@ -81,7 +82,7 @@ const goHome = () => clearError({ redirect: "/" });
             </Message>
 
             <div class="flex justify-content-center gap-2">
-              <Button label="Volver al inicio" icon="pi pi-home" @click="goHome" />
+              <Button :label="t('common.returnIndex')" icon="pi pi-home" @click="goHome" />
             </div>
           </div>
         </template>

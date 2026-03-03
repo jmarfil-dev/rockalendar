@@ -1,0 +1,48 @@
+{
+  "common": {
+    "login": "Login",
+    "bottomNav": "Bottom navigation",
+    "loading": "Loading…",
+    "retry": "Retry",
+    "searchV": "Search",
+    "searchN": "Search",
+    "returnIndex": "Return to index",
+    "example": "Ex.",
+    "details": "Details",
+    "noAvail": "Not available",
+    "anythingWrong": "Do you see anything wrong?",
+    "sendCom": "Send comment"
+  },
+  "events": {
+    "title": "Title",
+    "artist": "Artist",
+    "artists": "Artists",
+    "group": "Group",
+    "groups": "Groups",
+    "description": "Description",
+    "noDescription": "No description is available for this concert",
+    "sourceUrl": "More info (external link)",
+    "searchPlaceholder": "Festival, venue...",
+    "noResults": "No concerts found",
+    "listEvents": "List of concerts",
+    "poster": "Concert or festival poster",
+    "noPoster": "Poster not available"
+  },
+  "moderation": {
+    "sendCom": "Send a comment to moderation"
+  },
+  "geo": {
+    "province": "Province",
+    "city": "City",
+    "place": "Place"
+  },
+  "dates": {
+    "date": "Date",
+    "from": "From",
+    "to": "To",
+    "invalidRange": "End date cannot be earlier than start date"
+  },
+  "pagination": {
+    "sortedBy": "Sorted by"
+  }
+}

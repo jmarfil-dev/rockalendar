@@ -28,18 +28,19 @@ type PageResponse<T> = {
 
 type SortOption = { label: string; value: string };
 
+const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
+
 const homeEndpoint = "/api/events/home"; // Por ahora usamos proxy para evitar CORS
 const searchEndpoint = "/api/events";
 
 const sortOptions: SortOption[] = [
-  { label: "Fecha", value: "date,asc" },
-  { label: "Título", value: "title,asc" },
-  { label: "Provincia", value: "province,asc" },
-  { label: "Ciudad", value: "city,asc" },
+  { label: t("dates.date"), value: "date,asc" },
+  { label: t("events.title"), value: "title,asc" },
+  { label: t("geo.province"), value: "province,asc" },
+  { label: t("geo.city"), value: "city,asc" },
 ];
-
-const route = useRoute();
-const router = useRouter();
 
 // Detectar si estamos en modo búsqueda (por ruta /events o por query params de filtros)
 // Nota: esto permite que el componente se use tanto en / como en /events con el mismo comportamiento.
@@ -149,27 +150,20 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
     <!-- Barra superior: ordenar -->
     <header>
       <div class="flex align-items-center justify-content-between w-full">
-        <span class="text-sm text-color-secondary">Ordenado por</span>
+        <span class="text-sm text-color-secondary">{{ t("pagination.sortedBy") }}</span>
         <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" />
       </div>
     </header>
 
     <!-- Results -->
-    <section aria-label="Listado de eventos">
+    <section :aria-label="t('events.listEvents')">
       <!-- Loading -->
       <div v-if="pending" class="flex justify-content-center p-4">
         <ProgressSpinner />
       </div>
 
-      <Message v-else-if="error" severity="error">
-        Error cargando eventos. Revisa que el backend esté levantado y CORS configurado.
-        <div class="mt-2">
-          <button class="p-button p-component p-button-text" @click="refresh()">Reintentar</button>
-        </div>
-      </Message>
-
       <!-- Listado vacío -->
-      <Message v-else-if="events.length === 0" severity="info" :closable="false"> No se encontraron eventos. </Message>
+      <Message v-else-if="events.length === 0" severity="info" :closable="false">{{ t("events.noResults") }}</Message>
 
       <!-- Listado -->
       <div v-else class="grid">
