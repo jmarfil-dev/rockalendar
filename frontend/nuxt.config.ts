@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import Aura from "@primeuix/themes/aura";
 import { definePreset } from "@primeuix/themes";
+// import { RockalendarPreset } from "./app/assets/theme/rockalendar-preset";
 
 const RockalendarPreset = definePreset(Aura, {
   semantic: {
