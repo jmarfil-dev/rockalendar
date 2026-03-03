@@ -277,8 +277,9 @@ También existen acciones autenticadas (crear, editar, eliminar eventos) y pági
 **Decisión**
 
 Se adopta la siguiente estrategia:
-- `useFetch` es el mecanismo estándar para lectura de datos en páginas.
+- `useApiFetch` (wrapper de useFetch + manejo de errores) es el mecanismo estándar para lectura de datos en páginas.
   - Página que carga datos para renderizar.
+  - `useFetch` se usará cuando un error no deba lanzar página de errores (por ejemplo, al cargar un dropdown de provincias).
 - `$fetch` se utilizará exclusivamente para acciones imperativas o mutaciones.
   - Acción iniciada por usuario (submit, delete, etc.) (POST, PUT, DELETE).
   - Lógica en stores o composables sin SSR.

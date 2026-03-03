@@ -3,6 +3,18 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v0.1.0-frontend]
+### Added
+- [FRONT] Base de Vue + Nuxt.
+- [FRONT] Funcionalidad básica.
+- [FRONT] Búsqueda de eventos públicos.
+- [FRONT] Detalle de evento público.
+- [FRONT] Manejo de errores.
+- [BACK] Lista de provincias para combos.
+
+### Changed
+- [BACK] Eventos públicos: modificada función de búsqueda para usar id de artista.
+
 ## [v0.3.0-backend]
 ### Added
 - Registro de usuarios.
@@ -55,9 +67,3 @@ El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 - Flyway: scripts y opciones orientadas a desarrollo.
 - Artistas: creación de artistas y búsqueda/autocompletado para eventos.
 - Eventos: búsqueda pública inicial.
-
-## [Unreleased]
-### Added
-- Eventos: endpoint home.
-- Eventos: proponer evento.
-- Eventos: consultar mis eventos.
