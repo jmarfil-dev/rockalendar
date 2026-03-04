@@ -1,32 +1,6 @@
 <script setup lang="ts">
-import Paginator from "primevue/paginator";
-import Card from "primevue/card";
-import ProgressSpinner from "primevue/progressspinner";
-import Message from "primevue/message";
-
-type EventPublicListItem = {
-  // Mismos campos que EventPublicListItemDto
-  id: string;
-  title: string;
-  startDateTime: string;
-  endDateTime?: string;
-  provinceName: string;
-  cityName: string;
-};
-
-type PageMeta = {
-  size: number;
-  number: number;
-  totalElements: number;
-  totalPages: number;
-};
-
-type PageResponse<T> = {
-  content: T[];
-  page: PageMeta;
-};
-
-type SortOption = { label: string; value: string };
+import type { EventPublicListItem } from "~/types/events";
+import type { PageMeta, PageResponse, SortOption } from "~/types/pagination";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -35,12 +9,12 @@ const router = useRouter();
 const homeEndpoint = "/api/events/home"; // Por ahora usamos proxy para evitar CORS
 const searchEndpoint = "/api/events";
 
-const sortOptions: SortOption[] = [
+const sortOptions = computed(() => [
   { label: t("dates.date"), value: "date,asc" },
   { label: t("events.title"), value: "title,asc" },
   { label: t("geo.province"), value: "province,asc" },
   { label: t("geo.city"), value: "city,asc" },
-];
+]);
 
 // Detectar si estamos en modo búsqueda (por ruta /events o por query params de filtros)
 // Nota: esto permite que el componente se use tanto en / como en /events con el mismo comportamiento.

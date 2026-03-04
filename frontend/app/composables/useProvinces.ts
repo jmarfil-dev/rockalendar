@@ -1,4 +1,4 @@
-type Province = { id: string; name: string }; // ajusta al DTO real
+import type { Province } from "~/types/geo";
 
 export const useProvinces = () => {
   const provinces = useState<Province[]>("provinces", () => []);

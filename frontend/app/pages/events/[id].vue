@@ -1,24 +1,12 @@
 <script setup lang="ts">
+import type { EventPublic } from "~/types/events";
+
 definePageMeta({ layout: "public" });
 
 const { t } = useI18n();
 const route = useRoute();
 
 const id = route.params.id as string;
-
-type EventPublic = {
-  id: string;
-  title: string;
-  description?: string | null;
-  startDateTime: string;
-  endDateTime?: string | null;
-  venueName?: string | null;
-  provinceId?: string | null;
-  provinceName?: string | null;
-  cityName?: string | null;
-  artists?: string[];
-  sourceUrl?: string | null;
-};
 
 const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${id}`, {
   key: `event-${id}`,

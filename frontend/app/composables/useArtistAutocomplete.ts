@@ -1,4 +1,4 @@
-type Artist = { id: string; name: string };
+import type { Artist } from "~/types/artist";
 
 export const useArtistAutocomplete = () => {
   const suggestions = ref<Artist[]>([]);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type Artist = { id: string; name: string };
+import type { Artist } from "~/types/artist";
 
 const { t } = useI18n();
 const isSearchOpen = ref(false);
@@ -24,7 +24,7 @@ const isDateRangeInvalid = computed(() => {
   return !!(dateFrom && dateTo && dateFrom > dateTo);
 });
 
-const bottomItems = [
+const bottomItems = computed(() => [
   {
     label: t("common.searchV"),
     icon: "pi pi-search",
@@ -33,7 +33,7 @@ const bottomItems = [
       isSearchOpen.value = true;
     },
   },
-];
+]);
 
 function toMidnightOffsetString(date: Date): string {
   // "fecha local" a medianoche
@@ -203,9 +203,9 @@ watch(isSearchOpen, async (open) => {
             showIcon
             iconDisplay="input"
             :placeholder="`${t('dates.to')}...`" />
-          <small v-if="isDateRangeInvalid" class="text-red-500">
+          <Message v-show="isDateRangeInvalid" severity="error" variant="simple" size="small">
             {{ t("dates.invalidRange") }}
-          </small>
+          </Message>
         </div>
 
         <!-- Query libre -->
