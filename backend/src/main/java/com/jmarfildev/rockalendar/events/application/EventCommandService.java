@@ -14,7 +14,7 @@ import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.ForbiddenException;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
@@ -98,13 +98,13 @@ public class EventCommandService {
         UUID userId = currentUser.userId();
         EventInputValidate in = validate(req);
 
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
         if (!userId.equals(event.getCreatedByUserId())) {
-            throw new ForbiddenException(ErrorMessages.EVENT_NOT_OWNER);
+            throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
         }
         if (!hasEditableStatus(event.getStatus())) {
-            throw new ConflictException(ErrorMessages.EVENT_NOT_EDITABLE, ErrorMessages.TYPE_409_EVENT_STATE);
+            throw new ConflictException(ErrorConstants.EVENT_NOT_EDITABLE, ErrorConstants.TYPE_409_EVENT_STATE);
         }
 
         event.setTitle(in.title());
@@ -134,10 +134,10 @@ public class EventCommandService {
     public void delete(UUID eventId) {
         UUID userId = currentUser.userId();
 
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
         if (!userId.equals(event.getCreatedByUserId())) {
-            throw new ForbiddenException(ErrorMessages.EVENT_NOT_OWNER);
+            throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
         }
 
         if (event.getStatus() == EventStatus.ERASED) {
@@ -146,11 +146,11 @@ public class EventCommandService {
 
         // TODO: en frontend mensaje de "contactar con administración
         if (event.getStatus() == EventStatus.APPROVED) {
-            throw new ConflictException(ErrorMessages.EVENT_NOT_ERASABLE_APPROVED, ErrorMessages.TYPE_409_EVENT_STATE);
+            throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED, ErrorConstants.TYPE_409_EVENT_STATE);
         }
 
         if (event.getStatus() != EventStatus.PENDING_MODERATION && event.getStatus() != EventStatus.NEEDS_CHANGES) {
-            throw new ConflictException(ErrorMessages.EVENT_NOT_ERASABLE, ErrorMessages.TYPE_409_EVENT_STATE);
+            throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE, ErrorConstants.TYPE_409_EVENT_STATE);
         }
 
         event.setStatus(EventStatus.ERASED);
@@ -172,7 +172,7 @@ public class EventCommandService {
      */
     private EventInputValidate validate(SubmitEventRequest req) {
         if (req.endDateTime() != null && req.endDateTime().isBefore(req.startDateTime())) {
-            throw new BadRequestException(ErrorMessages.INVALID_EVENT_DATE);
+            throw new BadRequestException(ErrorConstants.INVALID_DATE_RANGE);
         }
 
         // Artistas normalizados (descarta blancos tras trim/slug)
@@ -192,7 +192,7 @@ public class EventCommandService {
         }
 
         if (artists.isEmpty()) {
-            throw new BadRequestException(ErrorMessages.ARTIST_REQUIRED);
+            throw new BadRequestException(ErrorConstants.ARTIST_REQUIRED);
         }
 
         var title = req.title().trim();
@@ -203,17 +203,17 @@ public class EventCommandService {
         var venueSlug = SlugNormalizer.of(venueName);
 
         if (citySlug.isBlank()) {
-            throw new BadRequestException(ErrorMessages.CITY_REQUIRED);
+            throw new BadRequestException(ErrorConstants.CITY_REQUIRED);
         }
         if (venueSlug.isBlank()) {
-            throw new BadRequestException(ErrorMessages.VENUE_REQUIRED);
+            throw new BadRequestException(ErrorConstants.VENUE_REQUIRED);
         }
         if (SlugNormalizer.of(title).isBlank()) {
-            throw new BadRequestException(ErrorMessages.TITLE_REQUIRED);
+            throw new BadRequestException(ErrorConstants.TITLE_REQUIRED);
         }
 
         Province province =
-                provinceRepository.findById(req.provinceId()).orElseThrow(() -> new BadRequestException(ErrorMessages.INVALID_PROVINCE));
+                provinceRepository.findById(req.provinceId()).orElseThrow(() -> new BadRequestException(ErrorConstants.INVALID_PROVINCE));
 
         String description = StringUtils.blankToNull(req.description());
         String sourceUrl = StringUtils.blankToNull(req.sourceUrl());

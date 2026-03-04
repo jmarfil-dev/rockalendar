@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
@@ -39,22 +38,22 @@ public class ModerationEventController implements ModerationEventApi {
     }
 
     @Override
-    public EventPrivateDto approve(UUID eventId, @Valid ModerationApproveRequest request) {
+    public EventPrivateDto approve(UUID eventId, ModerationApproveRequest request) {
         return commandService.approve(eventId, request);
     }
 
     @Override
-    public EventPrivateDto reject(UUID eventId, @Valid ModerationArchiveRequest request) {
+    public EventPrivateDto reject(UUID eventId, ModerationArchiveRequest request) {
         return commandService.reject(eventId, request);
     }
 
     @Override
-    public EventPrivateDto hide(UUID eventId, @Valid ModerationArchiveRequest request) {
+    public EventPrivateDto hide(UUID eventId, ModerationArchiveRequest request) {
         return commandService.hide(eventId, request);
     }
 
     @Override
-    public EventPrivateDto requestChanges(UUID eventId, @Valid ModerationArchiveRequest request) {
+    public EventPrivateDto requestChanges(UUID eventId, ModerationArchiveRequest request) {
         return commandService.requestChanges(eventId, request);
     }
 }

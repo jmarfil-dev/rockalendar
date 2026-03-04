@@ -33,54 +33,40 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         var errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .collect(Collectors.toMap(
-                        fe -> fe.getField(),
-                        fe -> fe.getDefaultMessage() == null ? "Invalid value" : fe.getDefaultMessage(),
-                        (a, b) -> a));
+                       .getFieldErrors()
+                       .stream()
+                       .collect(Collectors.toMap(fe -> fe.getField(),
+                                                 fe -> fe.getDefaultMessage() == null ? "Invalid value" : fe.getDefaultMessage(),
+                                                 (a, b) -> a));
         pd.setProperty("errors", errors);
 
-        return ProblemDetailGenericProperties.setGenericProperties(pd, ErrorMessages.VALIDATION_ERROR, "Request validation failed",
-                req.getRequestURI(), ErrorMessages.TYPE_400_VALIDATION);
+        return build(pd, ErrorConstants.TIT_VALIDATION_ERROR, ErrorConstants.REQUEST_VALID_ERROR, req.getRequestURI(),
+                     ErrorConstants.TYPE_400_VALIDATION);
     }
 
-    @ExceptionHandler({
-                        HttpMessageNotReadableException.class,
-                        NoResourceFoundException.class
-    })
+    @ExceptionHandler({ HttpMessageNotReadableException.class, NoResourceFoundException.class })
     public ProblemDetail handleHttpMessageNotReadable(Exception ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        return ProblemDetailGenericProperties.setGenericProperties(pd, ErrorMessages.VALIDATION_ERROR,
-                "Path resource or request body is required",
-                req.getRequestURI(), ErrorMessages.TYPE_400_VALIDATION);
+        return build(pd, ErrorConstants.TIT_VALIDATION_ERROR, ErrorConstants.REQUEST_REQUIRED, req.getRequestURI(),
+                     ErrorConstants.TYPE_400_VALIDATION);
     }
 
-    @ExceptionHandler({
-                        MethodArgumentTypeMismatchException.class,
-                        ConversionFailedException.class
-    })
+    @ExceptionHandler({ MethodArgumentTypeMismatchException.class, ConversionFailedException.class })
     public ProblemDetail handleBadRequest(RuntimeException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         String detail = "Invalid value for request parameter";
 
         if (ex instanceof MethodArgumentTypeMismatchException matme) {
-            detail = detail + " '%s'".formatted(matme.getName());
+            detail += " '%s'".formatted(matme.getName());
             pd.setProperty("parameter", matme.getName());
             if (matme.getRequiredType() != null) {
                 pd.setProperty("expectedType", matme.getRequiredType().getSimpleName());
             }
         }
 
-        return ProblemDetailGenericProperties.setGenericProperties(pd, ErrorMessages.VALIDATION_ERROR, detail,
-                req.getRequestURI(), ErrorMessages.TYPE_400_VALIDATION);
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ProblemDetail handleBadRequest(BadRequestException ex, HttpServletRequest req) {
-        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage(),
-                req.getRequestURI(), ex.getType() != null ? ex.getType() : ErrorMessages.TYPE_400_BAD_REQUEST);
+        pd.setDetail(detail);
+        // code = null para forzar mostrar detail
+        return build(pd, ErrorConstants.TIT_VALIDATION_ERROR, null, req.getRequestURI(), ErrorConstants.TYPE_400_VALIDATION);
     }
 
     /**
@@ -92,29 +78,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(),
-                req.getRequestURI(), ErrorMessages.TYPE_401_UNAUTHORIZED);
+        return build(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ErrorConstants.INVALID_CREDENTIALS, req.getRequestURI(),
+                     ErrorConstants.TYPE_401_UNAUTHORIZED);
     }
 
-    @ExceptionHandler(ForbiddenException.class)
-    public ProblemDetail handleForbidden(ForbiddenException ex, HttpServletRequest req) {
-        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-        return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage(),
-                req.getRequestURI(), ErrorMessages.TYPE_403_FORBIDDEN);
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    public ProblemDetail handleNotFound(NotFoundException ex, HttpServletRequest req) {
-        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(),
-                req.getRequestURI(), ErrorMessages.TYPE_404_NOT_FOUND);
-    }
-
-    @ExceptionHandler(ConflictException.class)
-    public ProblemDetail handleConflict(ConflictException ex, HttpServletRequest req) {
-        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-        return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.CONFLICT.getReasonPhrase(), ex.getMessage(),
-                req.getRequestURI(), ex.getType() != null ? ex.getType() : ErrorMessages.TYPE_409_CONFLICT);
+    @ExceptionHandler(ApiException.class)
+    public ProblemDetail handleApiException(ApiException ex, HttpServletRequest req) {
+        ProblemDetail pd = ProblemDetail.forStatus(ex.getStatus());
+        return build(pd, ex.getStatus().getReasonPhrase(), ex.getCode(), req.getRequestURI(), ex.getType());
     }
 
     /**
@@ -146,7 +117,11 @@ public class GlobalExceptionHandler {
 
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         pd.setProperty("errorId", errorId);
-        return ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                "Unexpected server error", req.getRequestURI(), "internal-error");
+        return build(pd, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), ErrorConstants.SERVER, req.getRequestURI(),
+                     ErrorConstants.TYPE_500_SERVER);
+    }
+
+    private static ProblemDetail build(ProblemDetail pd, String title, String code, String instance, String type) {
+        return ProblemDetailGenericProperties.setGenericProperties(pd, title, code, instance, type);
     }
 }

@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
@@ -71,7 +71,7 @@ public class ModerationCommandService {
     private EventPrivateDto archive(UUID eventId, String requestReason, ActionType action, EventStatus status) {
         String reason = StringUtils.blankToNull(requestReason);
         if (reason == null) {
-            throw new BadRequestException(ErrorMessages.REASON_REQUIRED, ErrorMessages.TYPE_400_VALIDATION);
+            throw new BadRequestException(ErrorConstants.REASON_REQUIRED, ErrorConstants.TYPE_400_VALIDATION);
         }
         return moderate(eventId, action, reason, (event, moderatorId, now, msg) -> {
             event.setStatus(status);
@@ -94,13 +94,13 @@ public class ModerationCommandService {
         OffsetDateTime now = OffsetDateTime.now();
         log.info("moderation action={} eventId={} moderatorId={}", actionType.name(), eventId, moderatorId);
 
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
         if (event.getStatus() != EventStatus.PENDING_MODERATION) {
-            throw new ConflictException(ErrorMessages.EVENT_NOT_PENDING, ErrorMessages.TYPE_409_MODERATION_STATE);
+            throw new ConflictException(ErrorConstants.EVENT_NOT_PENDING, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
         if (moderatorId.equals(event.getCreatedByUserId())) {
-            throw new ConflictException(ErrorMessages.MOERATOR_OWN, ErrorMessages.TYPE_409_MODERATION_STATE);
+            throw new ConflictException(ErrorConstants.MOERATOR_OWN, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
 
         mutation.apply(event, moderatorId, now, message);
@@ -119,7 +119,7 @@ public class ModerationCommandService {
         catch (ObjectOptimisticLockingFailureException
                 | OptimisticLockException
                 | StaleObjectStateException e) {
-            throw new ConflictException(ErrorMessages.EVENT_ALREADY_MOD, ErrorMessages.TYPE_409_MODERATION_STATE);
+            throw new ConflictException(ErrorConstants.EVENT_ALREADY_MOD, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
     }
 }

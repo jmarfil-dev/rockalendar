@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 
 import com.jmarfildev.rockalendar.common.Constants;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
@@ -45,7 +45,7 @@ public class ModerationQueryServiceTest extends AbstractPostgresTest {
     void listPending_pageSizeTooLarge_throws() {
         assertThatThrownBy(() -> service.listPending(PageRequest.of(0, Constants.maxPageSize + 1)))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
+                .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
     }
 
     // Este test parece redundante con los de contrato pero aquí además comprueba que el evento se mappea
@@ -77,7 +77,7 @@ public class ModerationQueryServiceTest extends AbstractPostgresTest {
     void listArchived_pageSizeTooLarge_throws() {
         assertThatThrownBy(() -> service.listArchived(PageRequest.of(0, Constants.maxPageSize + 1)))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
+                .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
     }
 
     // Este test parece redundante con los de contrato pero aquí además comprueba que el evento se mappea

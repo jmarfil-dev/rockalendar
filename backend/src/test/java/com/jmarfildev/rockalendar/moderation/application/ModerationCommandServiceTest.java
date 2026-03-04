@@ -29,7 +29,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.jmarfildev.rockalendar.common.error.ConflictException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.domain.Event;
@@ -267,7 +267,7 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
 
             Throwable err = errors.get(0);
             assertThat(err).isInstanceOf(ConflictException.class);
-            assertThat(err.getMessage()).isEqualTo(ErrorMessages.EVENT_ALREADY_MOD);
+            assertThat(err.getMessage()).isEqualTo(ErrorConstants.EVENT_ALREADY_MOD);
         }
         finally {
             pool.shutdownNow();

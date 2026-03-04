@@ -19,7 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
@@ -65,7 +65,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.listHome(pageable))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
+                .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
     }
 
     @Test
@@ -117,7 +117,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
                 Optional.empty(),
                 PageRequest.of(0, 20)))
                         .isInstanceOf(BadRequestException.class)
-                        .hasMessage(ErrorMessages.INVALID_DATE_RANGE);
+                        .hasMessage(ErrorConstants.INVALID_DATE_RANGE);
     }
 
     @Test
@@ -132,7 +132,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
                 Optional.empty(),
                 PageRequest.of(0, 10_000)))
                         .isInstanceOf(BadRequestException.class)
-                        .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
+                        .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
     }
 
     @Test
@@ -214,7 +214,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         assertThat(dto.id()).isEqualTo(approved.getId());
         assertThatThrownBy(() -> service.getPublicById(pending.getId()))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_FOUND);
+                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
     }
 
     @Test
@@ -224,7 +224,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.getPublicById(missing))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_FOUND);
+                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
     }
 
     /*
@@ -236,7 +236,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     void listMine_pageSizeTooLarge_throws() {
         assertThatThrownBy(() -> service.listMine(MeEventTabEnum.ALL, PageRequest.of(0, 10_000)))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.PAGE_SIZE_TOO_LARGE);
+                .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
     }
 
     @Test

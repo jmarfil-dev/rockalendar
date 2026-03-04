@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.common.CommonValidations;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
@@ -82,7 +82,7 @@ public class EventQueryService {
                                                      Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         if (dateFrom.isPresent() && dateTo.isPresent() && dateFrom.get().isAfter(dateTo.get())) {
-            throw new BadRequestException(ErrorMessages.INVALID_DATE_RANGE);
+            throw new BadRequestException(ErrorConstants.INVALID_DATE_RANGE);
         }
 
         String q = query.map(String::trim).orElse("");
@@ -122,7 +122,7 @@ public class EventQueryService {
     public EventPublicDto getPublicById(UUID id) {
         return repository.findByIdAndStatus(id, EventStatus.APPROVED)
                          .map(mapper::toPublicDto)
-                         .orElseThrow(() -> new NotFoundException(ErrorMessages.EVENT_NOT_FOUND));
+                         .orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
     }
 
     public Page<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {

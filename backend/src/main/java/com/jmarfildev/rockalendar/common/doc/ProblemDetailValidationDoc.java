@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record ProblemDetailValidationDoc(String type,
                                          String title,
                                          Integer status,
+                                         String code,
                                          String detail,
                                          String instance,
                                          OffsetDateTime timestamp,

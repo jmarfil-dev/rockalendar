@@ -19,7 +19,7 @@ import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.ForbiddenException;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
@@ -82,7 +82,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.propose(req))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.INVALID_EVENT_DATE);
+                                                      .hasMessage(ErrorConstants.INVALID_DATE_RANGE);
     }
 
     @Test
@@ -101,7 +101,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.propose(req))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.ARTIST_REQUIRED);
+                .hasMessage(ErrorConstants.ARTIST_REQUIRED);
     }
 
     @Test
@@ -120,7 +120,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.propose(req))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.CITY_REQUIRED);
+                .hasMessage(ErrorConstants.CITY_REQUIRED);
     }
 
     @Test
@@ -139,7 +139,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.propose(req))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.VENUE_REQUIRED);
+                .hasMessage(ErrorConstants.VENUE_REQUIRED);
     }
 
     @Test
@@ -158,7 +158,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.propose(req))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.TITLE_REQUIRED);
+                .hasMessage(ErrorConstants.TITLE_REQUIRED);
     }
 
     @Test
@@ -179,7 +179,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.propose(req))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorMessages.INVALID_PROVINCE);
+                .hasMessage(ErrorConstants.INVALID_PROVINCE);
     }
 
     @Test
@@ -327,7 +327,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.update(UUID.fromString("cccccccc-0000-0000-0000-000000000099"), req))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_FOUND);
+                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
     }
 
     @Test
@@ -348,7 +348,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.update(event.getId(), req))
                 .isInstanceOf(ForbiddenException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_OWNER);
+                .hasMessage(ErrorConstants.EVENT_NOT_OWNER);
     }
 
     @Test
@@ -368,7 +368,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.update(event.getId(), req))
                 .isInstanceOf(ConflictException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_EDITABLE);
+                .hasMessage(ErrorConstants.EVENT_NOT_EDITABLE);
     }
 
     @Test
@@ -398,7 +398,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     void delete_missingEvent_throws() {
         assertThatThrownBy(() -> service.delete(UUID.fromString("cccccccc-0000-0000-0000-000000000099")))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_FOUND);
+                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
     }
 
     @Test
@@ -409,7 +409,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.delete(event.getId()))
                 .isInstanceOf(ForbiddenException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_OWNER);
+                .hasMessage(ErrorConstants.EVENT_NOT_OWNER);
     }
 
     @Test
@@ -419,7 +419,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.delete(event.getId()))
                 .isInstanceOf(ConflictException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_ERASABLE);
+                .hasMessage(ErrorConstants.EVENT_NOT_ERASABLE);
     }
 
     @Test
@@ -429,6 +429,6 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThatThrownBy(() -> service.delete(event.getId()))
                 .isInstanceOf(ConflictException.class)
-                .hasMessage(ErrorMessages.EVENT_NOT_ERASABLE_APPROVED);
+                .hasMessage(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED);
     }
 }

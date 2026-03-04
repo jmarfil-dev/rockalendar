@@ -12,6 +12,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record ProblemDetailDoc(String type,
                                String title,
                                Integer status,
-                               String detail,
+                               String code,
                                @Schema(description = "URI del recurso que causó el error (si aplica)") String instance,
                                OffsetDateTime timestamp) {}

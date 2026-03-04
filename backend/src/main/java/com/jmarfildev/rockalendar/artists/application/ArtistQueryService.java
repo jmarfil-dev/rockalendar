@@ -14,7 +14,7 @@ import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
 import com.jmarfildev.rockalendar.artists.api.mapper.ArtistMapper;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.dto.ComboItemDto;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 
@@ -56,6 +56,6 @@ public class ArtistQueryService {
     }
 
     public ArtistDto getById(UUID id) {
-        return repository.findById(id).map(mapper::toDto).orElseThrow(() -> new NotFoundException(ErrorMessages.ARTIST_NOT_FOUND));
+        return repository.findById(id).map(mapper::toDto).orElseThrow(() -> new NotFoundException(ErrorConstants.ARTIST_NOT_FOUND));
     }
 }
