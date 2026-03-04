@@ -105,7 +105,7 @@ async function onSubmit() {
             </ul>
           </div>
 
-          <Message v-show="isPasswordValid" severity="error" variant="simple" size="small">
+          <Message v-show="!isPasswordValid" severity="error" variant="simple" size="small">
             {{ t("auth.pw.hint") }}
           </Message>
         </div>

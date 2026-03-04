@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from "primevue/button";
+import type { AppLocale, LocaleOption } from "~/types/languages";
 
 defineProps<{
   bottomItems?: {
@@ -10,7 +10,25 @@ defineProps<{
   }[];
 }>();
 
-const { t } = useI18n();
+const { t, locale, setLocale } = useI18n();
+const auth = useAuth();
+
+const localeOptions: LocaleOption[] = [
+  { value: "en", label: "English", flagSrc: "/flags/gb.svg" },
+  { value: "es", label: "Español", flagSrc: "/flags/es.svg" },
+];
+
+const currentLocale = computed<AppLocale>({
+  get: () => (locale.value as AppLocale) ?? "en",
+  set: (val) => setLocale(val),
+});
+
+const optionByValue = (val: AppLocale) => localeOptions.find((o) => o.value === val)!;
+
+const onUserClick = () => {
+  if (auth.isAuthenticated.value) return navigateTo("/me/events");
+  return navigateTo("/login");
+};
 </script>
 
 <template>
@@ -22,7 +40,47 @@ const { t } = useI18n();
           <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" />
         </NuxtLink>
 
-        <Button icon="pi pi-user" rounded outlined :aria-label="t('common.login')" />
+        <Select
+          v-model="currentLocale"
+          :options="localeOptions"
+          optionLabel="label"
+          optionValue="value"
+          class="w-4rem"
+          :aria-label="t('common.changeLanguage')">
+          <!-- Cerrado: solo bandera -->
+          <template #value="slotProps">
+            <div class="flex align-items-center justify-content-center w-full">
+              <img
+                v-if="slotProps.value"
+                :src="optionByValue(slotProps.value).flagSrc"
+                :alt="optionByValue(slotProps.value).label"
+                :title="optionByValue(slotProps.value).label"
+                width="18"
+                height="12"
+                style="display: block" />
+            </div>
+          </template>
+
+          <!-- Abierto: bandera + texto -->
+          <template #option="slotProps">
+            <div class="flex align-items-center gap-2">
+              <img
+                :src="slotProps.option.flagSrc"
+                :alt="slotProps.option.label"
+                width="18"
+                height="12"
+                style="display: block" />
+              <span>{{ slotProps.option.label }}</span>
+            </div>
+          </template>
+        </Select>
+
+        <Button
+          icon="pi pi-user"
+          rounded
+          outlined
+          :aria-label="auth.isAuthenticated ? t('user.myAccount') : t('auth.login')"
+          @click="onUserClick" />
       </div>
     </header>
 
