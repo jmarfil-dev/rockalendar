@@ -1,6 +1,6 @@
 {
   "common": {
-    "login": "Login",
+    "changeLanguage": "Cambiar idioma",
     "bottomNav": "Navegación inferior",
     "loading": "Cargando…",
     "retry": "Reintentar",
@@ -28,6 +28,27 @@
     "poster": "Cartel del concierto o festival",
     "noPoster": "Cartel no disponible"
   },
+  "auth": {
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "goLogin": "Ya tengo cuenta",
+    "goRegister": "Crear cuenta",
+    "pw": {
+      "title": "La contraseña debe incluir:",
+      "length": "Al menos 8 caracteres",
+      "lower": "Una letra minúscula",
+      "upper": "Una letra mayúscula",
+      "number": "Un número",
+      "symbol": "Un símbolo",
+      "hint": "Usa una contraseña más robusta para continuar",
+      "invalid": "La contraseña no es válida"
+    }
+  },
+  "user": {
+    "email": "Email",
+    "password": "Contraseña",
+    "myAccount": "Cuenta de usario"
+  },
   "moderation": {
     "sendCom": "Envía un comentario a moderación"
   },
@@ -44,5 +65,60 @@
   },
   "pagination": {
     "sortedBy": "Ordenado por"
+  },
+  "error": {
+    "registerFailed": "No se pudo registrar",
+    "genericTitle": "Se ha roto una cuerda de la guitarra...",
+    "unknown": "Error desconocido",
+    "400": {
+      "genericValidation": "Error de validación",
+      "reqValidError": "Ha fallado al validar la petición",
+      "reqRequired": "Los recursos de petición son obligatorios",
+      "cityRequired": "Ciudad es obligatorio",
+      "venueRequired": "Recinto es obligatorio",
+      "titleRequired": "Título es obligatorio",
+      "artistRequired": "Al menos un artista es obligatorio",
+      "reasonRequired": "Razón es obligatorio",
+      "invalidProvince": "Provincia no válida",
+      "invalidDateRange": "Rango de fecha no válido: dateFrom debe ser <= dateTo",
+      "pageSizeTooLarge": "Tamaño de página excede el límite máximo",
+      "valid": {
+        "patternPassword": "La contraseña debe tener al menos una mayuscula, una minúscula, un número y un símbolo",
+        "sizePassword": "La contraseña debe tener entre 8 y 72 caracteres",
+        "sizeMax": "El tamaño del campo excede el límite",
+        "sizeListEmpty": "La lista no puede estar vacía",
+        "notBlank": "El campo no puede estar en blanco",
+        "notNull": "El campo no puede estar vacío",
+        "email": "Debe ser un email válido",
+        "url": "Debe ser una url correcta"
+      }
+    },
+    "401": {
+      "message": "Debes iniciar sesión para acceder",
+      "invalidCredentials": "Email o contraseña incorrectos"
+    },
+    "403": {
+      "message": "No tienes permiso para acceder",
+      "eventNotOwner": "El concierto no está creado por el mismo usuario"
+    },
+    "404": {
+      "message": "La página que buscas no existe",
+      "eventNotFound": "Concierto no encontrado",
+      "artistNotFound": "Artista no encontrado"
+    },
+    "409": {
+      "message": "La operación entra en conflicto con el estado actual",
+      "artistExists": "El artista ya existe",
+      "emailExists": "El email ya existe",
+      "eventNotPending": "El concierto no está pendiente de moderación",
+      "moderatorOwn": "Un moderador no puede aprobar su propio concierto",
+      "eventAlreadyMod": "El concierto fue modificado por otro moderador",
+      "eventNotEditable": "El concierto no tiene un estado modificable",
+      "eventNotErasable": "El concierto no tiene un estado eliminable",
+      "eventNotErasableAppr": "Los conciertos aprobados no pueden eliminarse"
+    },
+    "500": {
+      "server": "Error inesperado del servidor"
+    }
   }
 }

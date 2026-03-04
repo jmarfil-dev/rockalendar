@@ -1,0 +1,118 @@
+<script setup lang="ts">
+import type { LoginRequest } from "~/types/auth";
+
+definePageMeta({ layout: "minimal" });
+
+const { t } = useI18n();
+const auth = useAuth();
+
+const form = reactive<LoginRequest>({
+  email: "",
+  password: "",
+});
+const loading = ref(false);
+const errorMsg = ref<string | null>(null);
+const fieldErrors = ref<Record<string, string>>({});
+
+const passwordChecks = computed(() => {
+  const pw = form.password || "";
+  return [
+    { ok: pw.length >= 8, key: "auth.pw.length" },
+    { ok: /[a-z]/.test(pw), key: "auth.pw.lower" },
+    { ok: /[A-Z]/.test(pw), key: "auth.pw.upper" },
+    { ok: /\d/.test(pw), key: "auth.pw.number" },
+    { ok: /[^A-Za-z\d]/.test(pw), key: "auth.pw.symbol" },
+  ] as const;
+});
+
+const isPasswordValid = computed(() => passwordChecks.value.every((x) => x.ok));
+
+function resetErrors() {
+  errorMsg.value = null;
+  fieldErrors.value = {};
+}
+
+async function onSubmit() {
+  if (!isPasswordValid.value) {
+    errorMsg.value = t("auth.pw.invalid");
+    return;
+  }
+
+  resetErrors();
+  loading.value = true;
+  try {
+    const res = await auth.register(form);
+
+    if (!res.ok) {
+      applyFormErrors(res.pd, t, errorMsg, fieldErrors);
+      return;
+    }
+
+    await navigateTo("/me");
+  } finally {
+    loading.value = false;
+  }
+}
+</script>
+
+<template>
+  <Card class="border-1 surface-border">
+    <template #title>
+      <h1 class="m-0 text-2xl font-semibold">{{ t("auth.register") }}</h1>
+    </template>
+
+    <template #content>
+      <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
+
+      <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
+        <div class="flex flex-column gap-2">
+          <label for="email" class="text-sm text-color-secondary">{{ t("user.email") }}</label>
+          <InputText
+            id="email"
+            v-model="form.email"
+            inputmode="email"
+            autocomplete="email"
+            :invalid="!!fieldErrors.email" />
+          <Message v-show="fieldErrors.email" severity="error" variant="simple" size="small">
+            {{ t("fieldErrors.email") }}
+          </Message>
+        </div>
+
+        <!-- Password -->
+        <div class="flex flex-column gap-2">
+          <label for="password" class="text-sm text-color-secondary">{{ t("user.password") }}</label>
+          <Password
+            id="password"
+            v-model="form.password"
+            toggleMask
+            :feedback="false"
+            autocomplete="new-password"
+            required
+            :invalid="!!fieldErrors.password" />
+          <Message v-show="fieldErrors.password" severity="error" variant="simple" size="small">
+            {{ t("fieldErrors.password") }}
+          </Message>
+
+          <!-- Checklist -->
+          <div class="border-1 surface-border border-round-lg p-2">
+            <div class="text-sm text-color-secondary mb-2">{{ t("auth.pw.title") }}</div>
+
+            <ul class="m-0 p-0 list-none flex flex-column gap-1">
+              <li v-for="c in passwordChecks" :key="c.key" class="flex align-items-center gap-2">
+                <i :class="c.ok ? 'pi pi-check-circle text-green-500' : 'pi pi-circle text-color-secondary'"></i>
+                <span :class="c.ok ? '' : 'text-color-secondary'">{{ t(c.key) }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <Message v-show="isPasswordValid" severity="error" variant="simple" size="small">
+            {{ t("auth.pw.hint") }}
+          </Message>
+        </div>
+
+        <Button type="submit" :label="t('auth.register')" icon="pi pi-user-plus" :loading="loading" />
+        <NuxtLink to="/login" class="text-sm">{{ t("auth.goLogin") }}</NuxtLink>
+      </form>
+    </template>
+  </Card>
+</template>
