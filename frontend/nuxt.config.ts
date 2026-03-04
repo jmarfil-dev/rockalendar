@@ -64,17 +64,17 @@ export default defineNuxtConfig({
   },
   i18n: {
     strategy: "no_prefix", // No queremos /es/... /en/... por ahora
-    defaultLocale: "en", // Inglés por defecto
     locales: [
       { code: "en", language: "en-US", file: "en.json", name: "English" },
       { code: "es", language: "es-ES", file: "es.json", name: "Español" },
     ],
-
+    defaultLocale: "en", // Inglés por defecto
     detectBrowserLanguage: {
       // Detecta navegador (client) o Accept-Language (SSR) y recuerda con cookie
       useCookie: true,
       cookieKey: "rockalendar_locale",
       redirectOn: "root", // recomendado
+      fallbackLocale: "en",
     },
   },
 });

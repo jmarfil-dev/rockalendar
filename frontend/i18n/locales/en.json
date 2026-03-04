@@ -1,6 +1,6 @@
 {
   "common": {
-    "login": "Login",
+    "changeLanguage": "Change language",
     "bottomNav": "Bottom navigation",
     "loading": "Loading…",
     "retry": "Retry",
@@ -28,6 +28,27 @@
     "poster": "Concert or festival poster",
     "noPoster": "Poster not available"
   },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "goLogin": "I already have an account",
+    "goRegister": "Create account",
+    "pw": {
+      "title": "Password must include:",
+      "length": "At least 8 characters",
+      "lower": "One lowercase letter",
+      "upper": "One uppercase letter",
+      "number": "One number",
+      "symbol": "One symbol",
+      "hint": "Use a stronger password to continue",
+      "invalid": "Invalid password"
+    }
+  },
+  "user": {
+    "email": "Email",
+    "password": "Password",
+    "myAccount": "User account"
+  },
   "moderation": {
     "sendCom": "Send a comment to moderation"
   },
@@ -44,5 +65,61 @@
   },
   "pagination": {
     "sortedBy": "Sorted by"
+  },
+  "error": {
+    "loginFailed": "",
+    "registerFailed": "Could not register",
+    "genericTitle": "A guitar string has broken...",
+    "unknown": "Unknown error",
+    "400": {
+      "genericValidation": "Validation error",
+      "reqValidError": "Request validation failed",
+      "reqRequired": "Path resource and request body is required",
+      "cityRequired": "City is required",
+      "venueRequired": "Venue is required",
+      "titleRequired": "Title is required",
+      "artistRequired": "At least one artist is required",
+      "reasonRequired": "Reason is required",
+      "invalidProvince": "Invalid provinceId",
+      "invalidDateRange": "Invalid date range: dateFrom must be <= dateTo",
+      "pageSizeTooLarge": "Page size exceeds the maximum allowed limit",
+      "valid": {
+        "patternPassword": "Password must contain upper, lower, number and symbol",
+        "sizePassword": "Password must be between 8 and 72 characters",
+        "sizeMax": "Field size exceeds the limit",
+        "sizeListEmpty": "List cannot be empty",
+        "notBlank": "Field cannot be blank",
+        "notNull": "ield cannot be empty",
+        "email": "It must be a valid email address",
+        "url": "It must be a valid URL"
+      }
+    },
+    "401": {
+      "message": "You must log in to access this page",
+      "invalidCredentials": "Invalid email or password"
+    },
+    "403": {
+      "message": "You do not have permission to access this page",
+      "eventNotOwner": "Concert is not created by the same user"
+    },
+    "404": {
+      "message": "The page you are looking for does not exist",
+      "eventNotFound": "Concert not found",
+      "artistNotFound": "Artist not found"
+    },
+    "409": {
+      "message": "The requested operation conflicts with the current state",
+      "artistExists": "Artist already exists",
+      "emailExists": "email already exists",
+      "eventNotPending": "Concert is not pending moderation",
+      "moderatorOwn": "Moderator cannot approve own concert",
+      "eventAlreadyMod": "Concert was modified by another moderator",
+      "eventNotEditable": "Concert does not have an editable state",
+      "eventNotErasable": "Concert does not have an erasable state",
+      "eventNotErasableAppr": "Approved concerts cannot be deleted"
+    },
+    "500": {
+      "server": "Unexpected server error"
+    }
   }
 }
