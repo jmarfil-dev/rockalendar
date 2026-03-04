@@ -1,26 +1,19 @@
 package com.jmarfildev.rockalendar.common.error;
 
-import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author jmarfil
  *
  */
-@Getter
-public class ConflictException extends RuntimeException {
+public class ConflictException extends ApiException {
     private static final long serialVersionUID = 1L;
-    private String type;
 
-    public ConflictException(String message) {
-        super(message);
+    public ConflictException(String code) {
+        super(HttpStatus.CONFLICT, code, ErrorConstants.TYPE_409_CONFLICT);
     }
 
-    public ConflictException(String message, String type) {
-        super(message);
-        this.type = type;
-    }
-
-    public ConflictException(String message, Throwable cause) {
-        super(message, cause);
+    public ConflictException(String code, String type) {
+        super(HttpStatus.CONFLICT, code, type);
     }
 }

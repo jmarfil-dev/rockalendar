@@ -24,7 +24,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 
 /**
@@ -97,7 +97,7 @@ public class SecurityConfig {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
             ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(),
                                                                 "Authentication is required to access this resource",
-                                                                request.getRequestURI(), ErrorMessages.TYPE_401_UNAUTHORIZED);
+                                                                request.getRequestURI(), ErrorConstants.TYPE_401_UNAUTHORIZED);
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
@@ -110,7 +110,7 @@ public class SecurityConfig {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
             ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(),
                                                                 "You don't have permission to access this resource",
-                                                                request.getRequestURI(), ErrorMessages.TYPE_403_FORBIDDEN);
+                                                                request.getRequestURI(), ErrorConstants.TYPE_403_FORBIDDEN);
 
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);

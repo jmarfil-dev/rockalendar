@@ -31,6 +31,7 @@ public interface AuthApi {
     @Operation(summary = "Login de usuario", description = "Autentica un usuario usando email y password, y devuelve un token JWT")
     @ApiResponse(responseCode = "200", description = "Login correcto",
             content = @Content(schema = @Schema(implementation = AuthTokenResponse.class)))
+    @ApiBadRequest
     @ApiUnauthorized
     AuthTokenResponse login(@Parameter(description = "Credenciales email y password",
             required = true) @Valid @RequestBody LoginRequest request);

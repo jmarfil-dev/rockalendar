@@ -11,7 +11,7 @@ import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 
@@ -39,11 +39,11 @@ public class ArtistCommandService {
         String slug = SlugNormalizer.of(displayName);
 
         if (slug.isBlank()) {
-            throw new BadRequestException(ErrorMessages.ARTIST_REQUIRED);
+            throw new BadRequestException(ErrorConstants.ARTIST_REQUIRED);
         }
 
         if (artistRepository.existsBySlug(slug)) {
-            throw new ConflictException(ErrorMessages.ARTIST_ALREADY_EXISTS);
+            throw new ConflictException(ErrorConstants.ARTIST_ALREADY_EXISTS);
         }
 
         return artistRepository.save(Artist.builder()

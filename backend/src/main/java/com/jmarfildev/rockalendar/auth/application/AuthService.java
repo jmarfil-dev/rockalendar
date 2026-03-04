@@ -18,7 +18,7 @@ import com.jmarfildev.rockalendar.auth.api.dto.AuthTokenResponse;
 import com.jmarfildev.rockalendar.auth.api.dto.LoginRequest;
 import com.jmarfildev.rockalendar.auth.api.dto.RegisterRequest;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.users.domain.User;
 import com.jmarfildev.rockalendar.users.domain.UserRole;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
@@ -43,11 +43,11 @@ public class AuthService {
                     .authenticate(new UsernamePasswordAuthenticationToken(request.email().trim().toLowerCase(), request.password()));
         }
         catch (AuthenticationException e) {
-            throw new BadCredentialsException(ErrorMessages.INVALID_CREDENTIALS);
+            throw new BadCredentialsException(ErrorConstants.INVALID_CREDENTIALS);
         }
 
         var user = userRepository.findByEmail(auth.getName())
-                .orElseThrow(() -> new BadCredentialsException(ErrorMessages.INVALID_CREDENTIALS));
+                .orElseThrow(() -> new BadCredentialsException(ErrorConstants.INVALID_CREDENTIALS));
 
         var authorities = auth.getAuthorities().stream().map(a -> a.getAuthority()).toList();
 
@@ -68,7 +68,7 @@ public class AuthService {
             userRepository.saveAndFlush(user); // flush para detectar unique de email aquí
         }
         catch (DataIntegrityViolationException ex) {
-            throw new ConflictException(ErrorMessages.EMAIL_ALREADY_EXISTS);
+            throw new ConflictException(ErrorConstants.EMAIL_ALREADY_EXISTS);
         }
 
         var token = jwtTokenService.createToken(user, List.of(user.getRole()));

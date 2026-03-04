@@ -36,7 +36,7 @@ import com.jmarfildev.rockalendar.auth.api.dto.LoginRequest;
 import com.jmarfildev.rockalendar.auth.api.dto.RegisterRequest;
 import com.jmarfildev.rockalendar.auth.application.JwtTokenService.LoginToken;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
-import com.jmarfildev.rockalendar.common.error.ErrorMessages;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.users.domain.User;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
@@ -104,7 +104,7 @@ class AuthServiceTest {
 
         assertThatThrownBy(() -> service.login(req))
                 .isInstanceOf(BadCredentialsException.class)
-                .hasMessage(ErrorMessages.INVALID_CREDENTIALS);
+                .hasMessage(ErrorConstants.INVALID_CREDENTIALS);
         verifyNoInteractions(userRepository);
         verifyNoInteractions(jwtTokenService);
     }
@@ -125,7 +125,7 @@ class AuthServiceTest {
 
         assertThatThrownBy(() -> service.login(req))
                 .isInstanceOf(BadCredentialsException.class)
-                .hasMessage(ErrorMessages.INVALID_CREDENTIALS);
+                .hasMessage(ErrorConstants.INVALID_CREDENTIALS);
         verifyNoInteractions(jwtTokenService);
     }
 
