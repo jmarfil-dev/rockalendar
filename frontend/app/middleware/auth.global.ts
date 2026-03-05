@@ -1,8 +1,42 @@
-export default defineNuxtRouteMiddleware((to) => {
-  const { isAuthenticated } = useAuth();
+import type { Rule } from "~/types/user-roles";
 
-  const protectedPaths = ["/me"];
-  if (protectedPaths.some((p) => to.path.startsWith(p)) && !isAuthenticated.value) {
-    return navigateTo("/login");
+const RULES: Rule[] = [
+  { prefix: "/me", auth: true },
+  { prefix: "/moderation", auth: true, anyOfRoles: ["ROLE_MODERATOR", "ROLE_ADMIN"] },
+  { prefix: "/admin", auth: true, anyOfRoles: ["ROLE_ADMIN"] },
+];
+
+function matchRule(path: string): Rule | null {
+  const matches = RULES.filter((r) => path === r.prefix || path.startsWith(r.prefix + "/")).sort(
+    (a, b) => b.prefix.length - a.prefix.length,
+  );
+  return matches[0] ?? null;
+}
+
+/**
+ * Aplica reglas de middleware
+ */
+export default defineNuxtRouteMiddleware((to) => {
+  const auth = useAuth();
+  if (to.path === "/login" && auth.isAuthenticated.value) {
+    // Si ruta es login y ya está autenticado, redir a página privada o ruta original
+    const redirect = typeof to.query.redirect === "string" ? to.query.redirect : "/me/events";
+    return navigateTo(redirect);
+  }
+
+  const rule = matchRule(to.path);
+  if (!rule) return; // Si la ruta no tiene regla, acceso libre
+
+  if (rule.auth && !auth.isAuthenticated.value) {
+    // Si hay regla y no hay auth, redir a login
+    return navigateTo({
+      path: "/login",
+      query: { redirect: to.fullPath },
+    });
+  }
+
+  if (rule.anyOfRoles && !rule.anyOfRoles.some((r) => auth.roles.value.includes(r))) {
+    // Si la ruta tiene regla + rol y no se cumple el rol, error forbidden
+    return navigateTo("/error/forbidden", { replace: true });
   }
 });

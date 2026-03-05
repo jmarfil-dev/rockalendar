@@ -4,7 +4,9 @@ export const useArtistAutocomplete = () => {
   const suggestions = ref<Artist[]>([]);
   const loading = ref(false);
 
+  // cache de autocomplete (global, pero creado en contexto Nuxt)
   const cache = useState<Record<string, Artist[]>>("artistAcCache", () => ({}));
+
   let t: ReturnType<typeof setTimeout> | null = null;
 
   const search = (q: string) => {
@@ -29,8 +31,9 @@ export const useArtistAutocomplete = () => {
           query: { query },
         });
 
-        cache.value[query] = res ?? [];
-        suggestions.value = res ?? [];
+        const list = res ?? [];
+        cache.value[query] = list;
+        suggestions.value = list;
       } catch (err) {
         console.error("Error loading artists", err);
         suggestions.value = [];
@@ -42,3 +45,18 @@ export const useArtistAutocomplete = () => {
 
   return { suggestions, loading, search };
 };
+
+export async function fetchArtistById(id: string): Promise<Artist | null> {
+  // cache por id (global, pero creado en contexto Nuxt)
+  const artistCache = useState<Record<string, Artist>>("artistCache", () => ({}));
+
+  if (artistCache.value[id]) return artistCache.value[id];
+
+  try {
+    const a = await $fetch<Artist>(`/api/artists/${id}`);
+    artistCache.value[id] = a;
+    return a;
+  } catch {
+    return null;
+  }
+}

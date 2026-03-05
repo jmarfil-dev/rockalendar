@@ -3,7 +3,7 @@ import type { LoginRequest } from "~/types/auth";
 
 definePageMeta({ layout: "minimal" });
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 const auth = useAuth();
 
 const form = reactive<LoginRequest>({
@@ -30,6 +30,10 @@ const isPasswordValid = computed(() => passwordChecks.value.every((x) => x.ok));
 function resetErrors() {
   errorMsg.value = null;
   fieldErrors.value = {};
+}
+
+function tr(key: string) {
+  return te(key) ? t(key) : key;
 }
 
 async function onSubmit() {
@@ -74,7 +78,7 @@ async function onSubmit() {
             autocomplete="email"
             :invalid="!!fieldErrors.email" />
           <Message v-show="fieldErrors.email" severity="error" variant="simple" size="small">
-            {{ t("fieldErrors.email") }}
+            {{ tr("fieldErrors.email") }}
           </Message>
         </div>
 
@@ -90,7 +94,7 @@ async function onSubmit() {
             required
             :invalid="!!fieldErrors.password" />
           <Message v-show="fieldErrors.password" severity="error" variant="simple" size="small">
-            {{ t("fieldErrors.password") }}
+            {{ tr("fieldErrors.password") }}
           </Message>
 
           <!-- Checklist -->
@@ -111,8 +115,13 @@ async function onSubmit() {
         </div>
 
         <Button type="submit" :label="t('auth.register')" icon="pi pi-user-plus" :loading="loading" />
-        <NuxtLink to="/login" class="text-sm">{{ t("auth.goLogin") }}</NuxtLink>
       </form>
+      <Divider class="my-1" />
+      <p class="text-sm text-surface-500">
+        <NuxtLink to="/login" class="font-medium underline">
+          {{ t("auth.goLogin") }}
+        </NuxtLink>
+      </p>
     </template>
   </Card>
 </template>

@@ -2,7 +2,7 @@
   "common": {
     "changeLanguage": "Cambiar idioma",
     "bottomNav": "Navegación inferior",
-    "loading": "Cargando…",
+    "loading": "Sigue sigue sigue sigue sigue ¡siguelo!",
     "retry": "Reintentar",
     "searchV": "Buscar",
     "searchN": "Búsqueda",
@@ -20,19 +20,21 @@
     "group": "Grupo",
     "groups": "Grupos",
     "description": "Descripción",
-    "noDescription": "No hay descripción disponible para este concierto",
+    "noDescription": "Hay poco Rock 'n' Roll (No hay descripción disponible)",
     "sourceUrl": "Más info (link externo)",
-    "searchPlaceholder": "Festival, sala...",
-    "noResults": "No se encontraron conciertos",
+    "searchPlaceholder": "Festival, grupo, antro...",
+    "noResults": "¡Buscas! Nunca hallas ¡Nada!",
     "listEvents": "Listado de conciertos",
     "poster": "Cartel del concierto o festival",
     "noPoster": "Cartel no disponible"
   },
   "auth": {
     "login": "Iniciar sesión",
+    "loginButton": "¡Baila Pogo!",
     "register": "Registrarse",
-    "goLogin": "Ya tengo cuenta",
+    "goLogin": "Montar jaleo en la calle🎶 (ya tengo cuenta)",
     "goRegister": "Crear cuenta",
+    "noAccount": "Sin vicio no puedo estar🤘",
     "pw": {
       "title": "La contraseña debe incluir:",
       "length": "Al menos 8 caracteres",
@@ -47,7 +49,7 @@
   "user": {
     "email": "Email",
     "password": "Contraseña",
-    "myAccount": "Cuenta de usario"
+    "myAccount": "Cuenta de usuario"
   },
   "moderation": {
     "sendCom": "Envía un comentario a moderación"
@@ -71,9 +73,9 @@
     "genericTitle": "Se ha roto una cuerda de la guitarra...",
     "unknown": "Error desconocido",
     "400": {
-      "genericValidation": "Error de validación",
+      "genericValidation": "Así no, tronco",
       "reqValidError": "Ha fallado al validar la petición",
-      "reqRequired": "Los recursos de petición son obligatorios",
+      "reqRequired": "¡Hazte otra vez la cresta!",
       "cityRequired": "Ciudad es obligatorio",
       "venueRequired": "Recinto es obligatorio",
       "titleRequired": "Título es obligatorio",
@@ -98,7 +100,7 @@
       "invalidCredentials": "Email o contraseña incorrectos"
     },
     "403": {
-      "message": "No tienes permiso para acceder",
+      "message": "No tienes permiso para acceder a esta página",
       "eventNotOwner": "El concierto no está creado por el mismo usuario"
     },
     "404": {

@@ -3,8 +3,9 @@ import type { LoginRequest } from "~/types/auth";
 
 definePageMeta({ layout: "minimal" });
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 const auth = useAuth();
+const route = useRoute();
 
 const form = reactive<LoginRequest>({
   email: "",
@@ -19,6 +20,10 @@ function resetErrors() {
   fieldErrors.value = {};
 }
 
+function tr(key: string) {
+  return te(key) ? t(key) : key;
+}
+
 async function onSubmit() {
   resetErrors();
   loading.value = true;
@@ -30,7 +35,8 @@ async function onSubmit() {
       return;
     }
 
-    await navigateTo("/me");
+    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/";
+    await navigateTo(redirect);
   } finally {
     loading.value = false;
   }
@@ -58,7 +64,7 @@ async function onSubmit() {
             required
             :invalid="!!fieldErrors.email" />
           <Message v-show="fieldErrors.email" severity="error" variant="simple" size="small">
-            {{ t("fieldErrors.email") }}
+            {{ tr("fieldErrors.email") }}
           </Message>
         </div>
 
@@ -73,13 +79,20 @@ async function onSubmit() {
             required
             :invalid="!!fieldErrors.password" />
           <Message v-show="fieldErrors.password" severity="error" variant="simple" size="small">
-            {{ t("fieldErrors.password") }}
+            {{ tr("fieldErrors.password") }}
           </Message>
         </div>
 
-        <Button type="submit" :label="t('auth.login')" icon="pi pi-sign-in" :loading="loading" />
-        <NuxtLink to="/register" class="text-sm">{{ t("auth.goRegister") }}</NuxtLink>
+        <Button type="submit" :label="t('auth.loginButton')" icon="pi pi-sign-in" :loading="loading" />
       </form>
+
+      <Divider class="my-1" />
+      <p class="text-sm text-surface-500">
+        {{ t("auth.noAccount") }}
+        <NuxtLink to="/register" class="font-medium underline">
+          {{ t("auth.goRegister") }}
+        </NuxtLink>
+      </p>
     </template>
   </Card>
 </template>

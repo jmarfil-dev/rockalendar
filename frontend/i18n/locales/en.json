@@ -30,9 +30,11 @@
   },
   "auth": {
     "login": "Login",
+    "loginButton": "Pogo!",
     "register": "Register",
     "goLogin": "I already have an account",
     "goRegister": "Create account",
+    "noAccount": "Don't have an account yet?",
     "pw": {
       "title": "Password must include:",
       "length": "At least 8 characters",
@@ -67,7 +69,6 @@
     "sortedBy": "Sorted by"
   },
   "error": {
-    "loginFailed": "",
     "registerFailed": "Could not register",
     "genericTitle": "A guitar string has broken...",
     "unknown": "Unknown error",
