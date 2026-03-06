@@ -1,3 +1,5 @@
+import { ROUTES } from "~/constants/routes";
+
 export default defineNuxtPlugin(() => {
   const auth = useAuth();
 
@@ -10,7 +12,7 @@ export default defineNuxtPlugin(() => {
       auth.token.value = null;
       auth.expiresAtMs.value = null;
 
-      navigateTo("/login");
+      navigateTo(ROUTES.login);
     }
   });
 });

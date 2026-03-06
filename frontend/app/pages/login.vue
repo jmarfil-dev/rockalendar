@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ROUTES } from "~/constants/routes";
 import type { LoginRequest } from "~/types/auth";
 
 definePageMeta({ layout: "minimal" });
@@ -35,7 +36,7 @@ async function onSubmit() {
       return;
     }
 
-    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/";
+    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : ROUTES.home;
     await navigateTo(redirect);
   } finally {
     loading.value = false;
@@ -89,7 +90,7 @@ async function onSubmit() {
       <Divider class="my-1" />
       <p class="text-sm text-surface-500">
         {{ t("auth.noAccount") }}
-        <NuxtLink to="/register" class="font-medium underline">
+        <NuxtLink :to="ROUTES.register" class="font-medium underline">
           {{ t("auth.goRegister") }}
         </NuxtLink>
       </p>

@@ -1,3 +1,4 @@
+import { ROUTES } from "~/constants/routes";
 import type { Artist } from "~/types/artist";
 
 function toMidnightOffsetString(date: Date): string {
@@ -77,7 +78,7 @@ export function useSearchDrawer() {
     isOpen.value = false;
 
     navigateTo({
-      path: "/events",
+      path: ROUTES.events,
       query: nextQuery,
     });
   }

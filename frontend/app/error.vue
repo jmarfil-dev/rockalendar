@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ROUTES } from "~/constants/routes";
 import type { NuxtError } from "#app";
 import type { ProblemDetail } from "~/types/api";
 
@@ -46,7 +47,7 @@ const message = computed(() => {
   return t("error.unknown");
 });
 
-const goHome = () => clearError({ redirect: "/" });
+const goHome = () => clearError({ redirect: ROUTES.home });
 </script>
 
 <template>
@@ -55,7 +56,7 @@ const goHome = () => clearError({ redirect: "/" });
     <!-- Header -->
     <header class="surface-0 mt-2">
       <div class="mx-auto w-full max-w-7xl px-3 py-1 flex align-items-center justify-content-between gap-2">
-        <NuxtLink to="/" class="no-underline flex align-items-center">
+        <NuxtLink :to="ROUTES.home" class="no-underline flex align-items-center">
           <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" />
         </NuxtLink>
       </div>

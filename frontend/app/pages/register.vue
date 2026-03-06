@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ROUTES } from "~/constants/routes";
 import type { LoginRequest } from "~/types/auth";
 
 definePageMeta({ layout: "minimal" });
@@ -52,7 +53,7 @@ async function onSubmit() {
       return;
     }
 
-    await navigateTo("/me");
+    await navigateTo(ROUTES.me);
   } finally {
     loading.value = false;
   }
@@ -118,7 +119,7 @@ async function onSubmit() {
       </form>
       <Divider class="my-1" />
       <p class="text-sm text-surface-500">
-        <NuxtLink to="/login" class="font-medium underline">
+        <NuxtLink :to="ROUTES.login" class="font-medium underline">
           {{ t("auth.goLogin") }}
         </NuxtLink>
       </p>

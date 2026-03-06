@@ -1,4 +1,5 @@
 import type { Province } from "~/types/geo";
+import { ROUTES } from "~/constants/routes";
 
 export const useProvinces = () => {
   const provinces = useState<Province[]>("provinces", () => []);
@@ -10,7 +11,7 @@ export const useProvinces = () => {
 
     loading.value = true;
     try {
-      const data = await $fetch<Province[]>("/api/provinces/combo");
+      const data = await $fetch<Province[]>(ROUTES.apiProvincesCombo);
       provinces.value = data ?? [];
       loaded.value = true;
     } finally {

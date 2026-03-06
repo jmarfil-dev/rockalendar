@@ -1,7 +1,3 @@
-import type { AuthTokenResponse, LoginRequest } from "~/types/auth";
-import type { ApiResult } from "~/types/api";
-import type { Role } from "~/types/user-roles";
-import { decodeJwtPayload, extractRoles } from "~/utils/jwt";
 import {
   broadcastAuthEvent,
   parseExpiresAt,
@@ -9,6 +5,11 @@ import {
   writeAuthToStorage,
   readAuthFromStorage,
 } from "~/utils/authStorage";
+import { ROUTES } from "~/constants/routes";
+import type { AuthTokenResponse, LoginRequest } from "~/types/auth";
+import type { ApiResult } from "~/types/api";
+import type { Role } from "~/types/user-roles";
+import { decodeJwtPayload, extractRoles } from "~/utils/jwt";
 
 export function useAuth() {
   // Estado global, compartido en toda la app
@@ -26,7 +27,7 @@ export function useAuth() {
 
     return {
       sub: typeof p.sub === "string" ? p.sub : null,
-      username:
+      email:
         // Si en el futuro ponemos username o similar, agregarlo aquí
         (typeof p.email === "string" && p.email) || null,
     };
@@ -107,11 +108,11 @@ export function useAuth() {
   async function logout() {
     clearSession();
     broadcastAuthEvent("logout");
-    await navigateTo("/");
+    await navigateTo(ROUTES.home);
   }
 
   async function login(req: LoginRequest): Promise<ApiResult<AuthTokenResponse>> {
-    const res = await fetchPublicResult<AuthTokenResponse>("/api/auth/login", {
+    const res = await fetchPublicResult<AuthTokenResponse>(ROUTES.apiLogin, {
       method: "POST",
       body: req,
     });
@@ -121,7 +122,7 @@ export function useAuth() {
   }
 
   async function register(req: LoginRequest): Promise<ApiResult<AuthTokenResponse>> {
-    const res = await fetchPublicResult<AuthTokenResponse>("/api/auth/register", {
+    const res = await fetchPublicResult<AuthTokenResponse>(ROUTES.apiRegister, {
       method: "POST",
       body: req,
     });

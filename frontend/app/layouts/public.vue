@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ROUTES } from "~/constants/routes";
+
 const { t } = useI18n();
 const auth = useAuth();
 const router = useRouter();
@@ -20,14 +22,14 @@ const bottomItems = computed(() => {
       id: "propose",
       label: t("common.proposeV"),
       icon: "pi pi-plus",
-      action: () => router.push("/me/events/propose"),
+      action: () => router.push(ROUTES.meEventPropose),
     });
 
     items.push({
       id: "me",
       label: t("common.myAreaV"),
       icon: "pi pi-user",
-      action: () => router.push("/me"),
+      action: () => router.push(ROUTES.me),
     });
   }
 

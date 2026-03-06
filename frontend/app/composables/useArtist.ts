@@ -1,3 +1,4 @@
+import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 import type { Artist } from "~/types/artist";
 
 export const useArtistAutocomplete = () => {
@@ -27,7 +28,7 @@ export const useArtistAutocomplete = () => {
 
       loading.value = true;
       try {
-        const res = await $fetch<Artist[]>("/api/artists", {
+        const res = await $fetch<Artist[]>(ROUTES.apiArtists, {
           query: { query },
         });
 
@@ -53,7 +54,7 @@ export async function fetchArtistById(id: string): Promise<Artist | null> {
   if (artistCache.value[id]) return artistCache.value[id];
 
   try {
-    const a = await $fetch<Artist>(`/api/artists/${id}`);
+    const a = await $fetch<Artist>(ROUTE_PATH.apiArtistDetail(id));
     artistCache.value[id] = a;
     return a;
   } catch {

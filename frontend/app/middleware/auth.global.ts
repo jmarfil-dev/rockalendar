@@ -1,9 +1,10 @@
+import { ROUTES } from "~/constants/routes";
 import type { Rule } from "~/types/user-roles";
 
 const RULES: Rule[] = [
-  { prefix: "/me", auth: true },
-  { prefix: "/moderation", auth: true, anyOfRoles: ["ROLE_MODERATOR", "ROLE_ADMIN"] },
-  { prefix: "/admin", auth: true, anyOfRoles: ["ROLE_ADMIN"] },
+  { prefix: ROUTES.me, auth: true },
+  { prefix: ROUTES.moderation, auth: true, anyOfRoles: ["ROLE_MODERATOR", "ROLE_ADMIN"] },
+  { prefix: ROUTES.admin, auth: true, anyOfRoles: ["ROLE_ADMIN"] },
 ];
 
 function matchRule(path: string): Rule | null {
@@ -18,9 +19,9 @@ function matchRule(path: string): Rule | null {
  */
 export default defineNuxtRouteMiddleware((to) => {
   const auth = useAuth();
-  if (to.path === "/login" && auth.isAuthenticated.value) {
+  if (to.path === ROUTES.login && auth.isAuthenticated.value) {
     // Si ruta es login y ya está autenticado, redir a página privada o ruta original
-    const redirect = typeof to.query.redirect === "string" ? to.query.redirect : "/me/events";
+    const redirect = typeof to.query.redirect === "string" ? to.query.redirect : ROUTES.meEvents;
     return navigateTo(redirect);
   }
 
@@ -30,13 +31,13 @@ export default defineNuxtRouteMiddleware((to) => {
   if (rule.auth && !auth.isAuthenticated.value) {
     // Si hay regla y no hay auth, redir a login
     return navigateTo({
-      path: "/login",
+      path: ROUTES.login,
       query: { redirect: to.fullPath },
     });
   }
 
   if (rule.anyOfRoles && !rule.anyOfRoles.some((r) => auth.roles.value.includes(r))) {
     // Si la ruta tiene regla + rol y no se cumple el rol, error forbidden
-    return navigateTo("/error/forbidden", { replace: true });
+    return navigateTo(ROUTES.errorForbidden, { replace: true });
   }
 });
