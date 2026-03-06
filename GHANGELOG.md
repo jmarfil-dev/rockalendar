@@ -3,13 +3,22 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v0.2.0-frontend]
+### Added
+- [FRONT] Manejo de errores.
+- [FRONT] Internacionalización i18n con selección de idioma.
+- [FRONT] Login, sesión y logout.
+
+### Changed
+- [FRONT] Refactorización: types y rutas en ficheros externos, cambios en layouts y shell.
+- [BACK] Cambiar mensajes literales de excepciones por códigos i18n.
+
 ## [v0.1.0-frontend]
 ### Added
 - [FRONT] Base de Vue + Nuxt.
 - [FRONT] Funcionalidad básica.
 - [FRONT] Búsqueda de eventos públicos.
 - [FRONT] Detalle de evento público.
-- [FRONT] Manejo de errores.
 - [BACK] Lista de provincias para combos.
 
 ### Changed
