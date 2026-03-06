@@ -35,6 +35,7 @@
     "goLogin": "Montar jaleo en la calle🎶 (ya tengo cuenta)",
     "goRegister": "Crear cuenta",
     "noAccount": "Sin vicio no puedo estar🤘",
+    "logout": "Salgo a la calle para no pensar",
     "pw": {
       "title": "La contraseña debe incluir:",
       "length": "Al menos 8 caracteres",
@@ -49,7 +50,8 @@
   "user": {
     "email": "Email",
     "password": "Contraseña",
-    "myAccount": "Cuenta de usuario"
+    "myAccount": "Cuenta de usuario",
+    "settings": "Configuración"
   },
   "moderation": {
     "sendCom": "Envía un comentario a moderación"

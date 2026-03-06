@@ -1,20 +1,35 @@
 <script setup lang="ts">
+import { ROUTES } from "~/constants/routes";
 import type { AppLocale, LocaleOption } from "~/types/languages";
 import type { BottomItem } from "~/types/components";
 
+// ------- Props -------
 const props = defineProps<{
   bottomItems?: BottomItem[];
 }>();
 
 const { t, locale, setLocale } = useI18n();
-const auth = useAuth();
+const { isAuthenticated, user } = useAuth();
 const route = useRoute();
 
+// ------- Header -------
 const localeOptions: LocaleOption[] = [
   { value: "en", label: "English", flagSrc: "/flags/gb.svg" },
   { value: "es", label: "Español", flagSrc: "/flags/es.svg" },
 ];
 
+const optionByValue = (val: AppLocale) => localeOptions.find((o) => o.value === val)!;
+
+const currentLocale = computed<AppLocale>({
+  get: () => (locale.value as AppLocale) ?? "en",
+  set: (val) => setLocale(val),
+});
+
+const onUserClick = () => {
+  openUserDrawer();
+};
+
+// ------- Navbar -------
 const bottomById = computed(() => {
   const m = new Map<string, BottomItem>();
   for (const it of props.bottomItems ?? []) m.set(it.id, it);
@@ -26,17 +41,17 @@ const searchItem = computed(() => bottomById.value.get("search") ?? null);
 const meItem = computed(() => bottomById.value.get("me") ?? null);
 // const moderationItem = computed(() => bottomById.value.get("moderation") ?? null);
 
-const currentLocale = computed<AppLocale>({
-  get: () => (locale.value as AppLocale) ?? "en",
-  set: (val) => setLocale(val),
-});
+function isActive(section: "search" | "propose" | "me") {
+  const path = route.path;
 
-const optionByValue = (val: AppLocale) => localeOptions.find((o) => o.value === val)!;
+  if (section === "search") return path.startsWith(ROUTES.events);
+  if (section === "propose") return path.startsWith(ROUTES.meEventPropose);
+  if (section === "me") return path.startsWith(ROUTES.me);
 
-const onUserClick = () => {
-  return navigateTo("/login");
-};
+  return false;
+}
 
+// ------- Search Drawer (derecha) -------
 const {
   isOpen: isSearchOpen,
   close: closeSearch,
@@ -50,15 +65,31 @@ const {
   searchArtists,
 } = useSearchDrawer();
 
-function isActive(section: "search" | "propose" | "me") {
-  const path = route.path;
+// ------- User Drawer (izquierda) -------
+const { isOpen: isUserDrawerOpen, open: openUserDrawer, close: closeUserDrawer } = useUserDrawer();
 
-  if (section === "search") return path.startsWith("/events");
-  if (section === "propose") return path.startsWith("/me/events/propose");
-  if (section === "me") return path.startsWith("/me");
+const goToLogin = async () => {
+  closeUserDrawer();
+  await navigateTo(ROUTES.login);
+};
 
-  return false;
-}
+const goToRegister = async () => {
+  closeUserDrawer();
+  await navigateTo(ROUTES.register);
+};
+
+const goToMyArea = async () => {
+  closeUserDrawer();
+  await navigateTo(ROUTES.me);
+};
+
+const onSettingsClick = () => {
+  closeUserDrawer();
+};
+
+const onLogoutClick = () => {
+  closeUserDrawer();
+};
 </script>
 
 <template>
@@ -66,7 +97,7 @@ function isActive(section: "search" | "propose" | "me") {
     <!-- Header -->
     <header class="surface-0 mt-2">
       <div class="mx-auto w-full max-w-7xl px-3 py-1 flex align-items-center justify-content-between gap-2">
-        <NuxtLink to="/" class="no-underline flex align-items-center">
+        <NuxtLink :to="ROUTES.home" class="no-underline flex align-items-center">
           <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" />
         </NuxtLink>
 
@@ -109,7 +140,7 @@ function isActive(section: "search" | "propose" | "me") {
           icon="pi pi-user"
           rounded
           outlined
-          :aria-label="auth.isAuthenticated ? t('user.myAccount') : t('auth.login')"
+          :aria-label="isAuthenticated ? t('user.myAccount') : t('auth.login')"
           @click="onUserClick" />
       </div>
     </header>
@@ -159,100 +190,154 @@ function isActive(section: "search" | "propose" | "me") {
       </div>
     </nav>
 
-    <!-- Search sidebar (GLOBAL) -->
+    <!-- User drawer (derecha) -->
+    <Drawer v-model:visible="isUserDrawerOpen" position="right" :style="{ width: '340px' }" @hide="closeUserDrawer">
+      <aside class="flex flex-column h-full">
+        <header class="flex align-items-center gap-3 mb-3">
+          <i class="pi pi-user text-2xl" />
+          <div v-if="isAuthenticated && user" class="font-medium">
+            {{ user.email }}
+          </div>
+        </header>
+
+        <Divider class="my-2" />
+
+        <section class="flex flex-column gap-2">
+          <template v-if="!isAuthenticated">
+            <Button
+              :label="t('auth.login')"
+              icon="pi pi-sign-in"
+              text
+              class="justify-content-start"
+              @click="goToLogin" />
+            <Button
+              :label="t('auth.goRegister')"
+              icon="pi pi-user-plus"
+              text
+              class="justify-content-start"
+              @click="goToRegister" />
+          </template>
+
+          <template v-else>
+            <Button
+              :label="t('user.myAccount')"
+              icon="pi pi-user"
+              text
+              class="justify-content-start"
+              @click="goToMyArea" />
+            <Button
+              :label="t('user.settings')"
+              icon="pi pi-cog"
+              text
+              class="justify-content-start"
+              @click="onSettingsClick" />
+            <Button
+              :label="t('auth.logout')"
+              icon="pi pi-sign-out"
+              text
+              class="justify-content-start"
+              @click="onLogoutClick" />
+          </template>
+        </section>
+      </aside>
+    </Drawer>
+
+    <!-- Search sidebar (Izquiera) -->
     <Drawer
       v-model:visible="isSearchOpen"
-      position="right"
+      position="left"
       header="Let's Rock!!"
       :style="{ width: '340px' }"
       @hide="closeSearch">
-      <form class="flex flex-column gap-4 mt-2" @submit.prevent="runSearch">
-        <!-- Artista -->
-        <div class="flex flex-column gap-2">
-          <label for="artist" class="text-sm text-color-secondary"
-            >{{ t("events.group") }} / {{ t("events.artist") }}</label
-          >
-          <AutoComplete
-            v-model="selectedArtist"
-            inputId="artist"
-            :suggestions="artistSuggestions"
-            :loading="artistLoading"
-            :minLength="2"
-            :maxLength="50"
-            optionLabel="name"
-            :placeholder="`${t('common.example')}. Elektroduendes`"
-            inputClass="w-full"
-            @complete="(e) => searchArtists(e.query)" />
-        </div>
+      <section class="flex flex-column gap-4 mt-2">
+        <form class="flex flex-column gap-4 mt-2" @submit.prevent="runSearch">
+          <!-- Artista -->
+          <div class="flex flex-column gap-2">
+            <label for="artist" class="text-sm text-color-secondary"
+              >{{ t("events.group") }} / {{ t("events.artist") }}</label
+            >
+            <AutoComplete
+              v-model="selectedArtist"
+              inputId="artist"
+              :suggestions="artistSuggestions"
+              :loading="artistLoading"
+              :minLength="2"
+              :maxLength="50"
+              optionLabel="name"
+              :placeholder="`${t('common.example')}. Elektroduendes`"
+              inputClass="w-full"
+              @complete="(e) => searchArtists(e.query)" />
+          </div>
 
-        <!-- Ciudad -->
-        <div class="flex flex-column gap-2">
-          <label for="city" class="text-sm text-color-secondary">{{ t("geo.city") }}</label>
-          <InputText
-            id="city"
-            v-model="searchForm.city"
-            :placeholder="`${t('common.example')}. Barcelona`"
-            autocomplete="off" />
-        </div>
+          <!-- Ciudad -->
+          <div class="flex flex-column gap-2">
+            <label for="city" class="text-sm text-color-secondary">{{ t("geo.city") }}</label>
+            <InputText
+              id="city"
+              v-model="searchForm.city"
+              :placeholder="`${t('common.example')}. Barcelona`"
+              autocomplete="off" />
+          </div>
 
-        <!-- Provincia -->
-        <div class="flex flex-column gap-2">
-          <label for="province" class="text-sm text-color-secondary">{{ t("geo.province") }}</label>
-          <Select
-            v-model="searchForm.provinceId"
-            :options="provinceOptions"
-            optionLabel="label"
-            optionValue="value"
-            :placeholder="t('geo.province')"
-            showClear
-            class="w-full" />
-        </div>
+          <!-- Provincia -->
+          <div class="flex flex-column gap-2">
+            <label for="province" class="text-sm text-color-secondary">{{ t("geo.province") }}</label>
+            <Select
+              v-model="searchForm.provinceId"
+              :options="provinceOptions"
+              optionLabel="label"
+              optionValue="value"
+              :placeholder="t('geo.province')"
+              showClear
+              class="w-full" />
+          </div>
 
-        <!-- Rango de fechas -->
-        <div class="flex flex-column gap-2">
-          <label for="dateFrom" class="text-sm text-color-secondary">{{ t("dates.from") }}</label>
-          <DatePicker
-            id="dateFrom"
-            v-model="searchForm.dateFrom"
-            dateFormat="dd/mm/yy"
-            showIcon
-            iconDisplay="input"
-            :placeholder="`${t('dates.from')}...`" />
-        </div>
+          <!-- Rango de fechas -->
+          <div class="flex flex-column gap-2">
+            <label for="dateFrom" class="text-sm text-color-secondary">{{ t("dates.from") }}</label>
+            <DatePicker
+              id="dateFrom"
+              v-model="searchForm.dateFrom"
+              dateFormat="dd/mm/yy"
+              showIcon
+              iconDisplay="input"
+              :placeholder="`${t('dates.from')}...`" />
+          </div>
 
-        <div class="flex flex-column gap-2">
-          <label for="dateTo" class="text-sm text-color-secondary">{{ t("dates.to") }}</label>
-          <DatePicker
-            id="dateTo"
-            v-model="searchForm.dateTo"
-            :minDate="searchForm.dateFrom ?? undefined"
-            dateFormat="dd/mm/yy"
-            showIcon
-            iconDisplay="input"
-            :placeholder="`${t('dates.to')}...`" />
-          <Message v-show="isDateRangeInvalid" severity="error" variant="simple" size="small">
-            {{ t("dates.invalidRange") }}
-          </Message>
-        </div>
+          <div class="flex flex-column gap-2">
+            <label for="dateTo" class="text-sm text-color-secondary">{{ t("dates.to") }}</label>
+            <DatePicker
+              id="dateTo"
+              v-model="searchForm.dateTo"
+              :minDate="searchForm.dateFrom ?? undefined"
+              dateFormat="dd/mm/yy"
+              showIcon
+              iconDisplay="input"
+              :placeholder="`${t('dates.to')}...`" />
+            <Message v-show="isDateRangeInvalid" severity="error" variant="simple" size="small">
+              {{ t("dates.invalidRange") }}
+            </Message>
+          </div>
 
-        <!-- Query libre -->
-        <div class="flex flex-column gap-2">
-          <label for="query" class="text-sm text-color-secondary">{{ t("common.searchN") }}</label>
-          <InputText
-            id="query"
-            v-model="searchForm.query"
-            :placeholder="t('events.searchPlaceholder')"
-            autocomplete="off" />
-        </div>
+          <!-- Query libre -->
+          <div class="flex flex-column gap-2">
+            <label for="query" class="text-sm text-color-secondary">{{ t("common.searchN") }}</label>
+            <InputText
+              id="query"
+              v-model="searchForm.query"
+              :placeholder="t('events.searchPlaceholder')"
+              autocomplete="off" />
+          </div>
 
-        <!-- Botón -->
-        <Button
-          type="submit"
-          :label="t('common.searchV')"
-          icon="pi pi-search"
-          class="w-full"
-          :disabled="isDateRangeInvalid" />
-      </form>
+          <!-- Botón -->
+          <Button
+            type="submit"
+            :label="t('common.searchV')"
+            icon="pi pi-search"
+            class="w-full"
+            :disabled="isDateRangeInvalid" />
+        </form>
+      </section>
     </Drawer>
   </div>
 </template>

@@ -35,6 +35,7 @@
     "goLogin": "I already have an account",
     "goRegister": "Create account",
     "noAccount": "Don't have an account yet?",
+    "logout": "Logout",
     "pw": {
       "title": "Password must include:",
       "length": "At least 8 characters",
@@ -49,7 +50,8 @@
   "user": {
     "email": "Email",
     "password": "Password",
-    "myAccount": "User account"
+    "myAccount": "User account",
+    "settings": "Settings"
   },
   "moderation": {
     "sendCom": "Send a comment to moderation"
