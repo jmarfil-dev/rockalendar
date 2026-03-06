@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ROUTE_PATH } from "~/constants/routes";
 import type { EventPublic } from "~/types/events";
 
 definePageMeta({ layout: "public" });
@@ -8,7 +9,7 @@ const route = useRoute();
 
 const id = route.params.id as string;
 
-const { data: event, pending } = await useApiFetch<EventPublic>(`/api/events/${id}`, {
+const { data: event, pending } = await useApiFetch<EventPublic>(ROUTE_PATH.apiEventDetail(id), {
   key: `event-${id}`,
 });
 </script>

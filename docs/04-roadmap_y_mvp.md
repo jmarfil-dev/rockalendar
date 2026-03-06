@@ -183,6 +183,8 @@ Incluye:
 
 - Refresh token
 - Logout
+- Recuperar contraseña
+- Añadir rate limiting + captcha tras varios intentos para evitar accesos por fuerza bruta
 
 ### Frontend v0.5 - Otras funcionalidades
 

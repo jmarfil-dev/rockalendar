@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 import type { EventPublicListItem } from "~/types/events";
-import type { PageMeta, PageResponse, SortOption } from "~/types/pagination";
+import type { PageResponse } from "~/types/pagination";
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
-const homeEndpoint = "/api/events/home"; // Por ahora usamos proxy para evitar CORS
-const searchEndpoint = "/api/events";
+const homeEndpoint = ROUTES.apiHome; // Por ahora usamos proxy para evitar CORS
+const searchEndpoint = ROUTES.apiEvents;
 
 const sortOptions = computed(() => [
   { label: t("dates.date"), value: "date,asc" },
@@ -18,7 +19,7 @@ const sortOptions = computed(() => [
 
 // Detectar si estamos en modo búsqueda (por ruta /events o por query params de filtros)
 // Nota: esto permite que el componente se use tanto en / como en /events con el mismo comportamiento.
-const isSearchRoute = computed(() => route.path === "/events");
+const isSearchRoute = computed(() => route.path === ROUTES.events);
 
 const hasSearchFilters = computed(() => {
   const q = route.query;
@@ -74,7 +75,7 @@ const first = computed<number>({
 });
 
 // Fetch
-const { data, pending, error, refresh } = await useApiFetch<PageResponse<EventPublicListItem>>(endpoint, {
+const { data, pending, error } = await useApiFetch<PageResponse<EventPublicListItem>>(endpoint, {
   query: computed(() => {
     // Params comunes
     const base: Record<string, any> = {
@@ -146,9 +147,9 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
             class="h-full border-1 surface-50 surface-border cursor-pointer"
             role="link"
             tabindex="0"
-            @click="navigateTo(`/events/${ev.id}`)"
-            @keydown.enter.prevent="navigateTo(`/events/${ev.id}`)"
-            @keydown.space.prevent="navigateTo(`/events/${ev.id}`)">
+            @click="navigateTo(ROUTE_PATH.eventDetail(ev.id))"
+            @keydown.enter.prevent="navigateTo(ROUTE_PATH.eventDetail(ev.id))"
+            @keydown.space.prevent="navigateTo(ROUTE_PATH.eventDetail(ev.id))">
             <template #title>
               <span class="text-color-primary">{{ ev.title }}</span>
             </template>
