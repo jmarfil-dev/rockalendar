@@ -327,6 +327,30 @@ public class TestDataFactory {
                 "Soziedad Alkoholika");
     }
 
+    public Event needsChangesEvent(String title,
+                                   Province province,
+                                   String city,
+                                   String venue,
+                                   OffsetDateTime start,
+                                   String createdByUserId,
+                                   OffsetDateTime submittedAt,
+                                   String... artistNames) {
+        return saveEvent(title, province, city, venue, start, EventStatus.NEEDS_CHANGES, createdByUserId,
+                         submittedAt, TestConstants.MOCK_MODERATOR_ID, TestDates.yesterday(), artistNames);
+    }
+
+    public Event needsChangesMadridAgainstYou() {
+        return needsChangesEvent(
+                "%s en %s (cambios)".formatted(TestConstants.MOCK_ARTIST_NAME_AY, TestConstants.MADRID),
+                madrid(),
+                TestConstants.MADRID,
+                "Sala Copérnico",
+                TestDates.madrid().plusDays(2),
+                TestConstants.MOCK_USER_ID,
+                TestDates.yesterday(),
+                TestConstants.MOCK_ARTIST_NAME_AY);
+    }
+
     public Event canceledBarcelonaManifa() {
         return canceledEvent(
                 "Manifa en %s".formatted(TestConstants.BARCELONA),

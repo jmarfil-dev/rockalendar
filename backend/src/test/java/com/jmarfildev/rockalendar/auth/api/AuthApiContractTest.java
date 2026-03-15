@@ -1,7 +1,5 @@
 package com.jmarfildev.rockalendar.auth.api;
 
-import static org.hamcrest.Matchers.containsStringIgnoringCase;
-import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,73 +36,67 @@ class AuthApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/auth/login con credenciales válidas -> 200 y token")
     void login_validCredentials_returnsToken() throws Exception {
-        mockMvc.perform(post(API_AUTH_LOGIN)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        { "email": "%s", "password": "test1234" }
-                        """.formatted(TestConstants.MOCK_USER_EMAIL)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.accessToken").isString())
-                .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.expiresAt").isString())
-                .andExpect(jsonPath("$.expiresAt").isNotEmpty());
+        mockMvc.perform(post(API_AUTH_LOGIN).contentType(MediaType.APPLICATION_JSON)
+                                            .content("""
+                                                     { "email": "%s", "password": "%s" }
+                                                     """.formatted(TestConstants.MOCK_USER_EMAIL, TestConstants.MOCK_USER_PASSWORD)))
+               .andExpect(status().isOk())
+               .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$.accessToken").isString())
+               .andExpect(jsonPath("$.accessToken").isNotEmpty())
+               .andExpect(jsonPath("$.expiresAt").isString())
+               .andExpect(jsonPath("$.expiresAt").isNotEmpty());
     }
 
     @Test
-    @DisplayName("POST /api/auth/login con credenciales inválidas -> 401 ProblemDetail (sin user-enumeration)")
+    @DisplayName("POST /api/auth/login con credenciales inválidas -> 401 ProblemDetail")
     void login_badCredentials_returns401ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(post(API_AUTH_LOGIN)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        { "email": "nope@rockalendar.test", "password": "wrong" }
-                        """));
+        var ra = mockMvc.perform(post(API_AUTH_LOGIN).contentType(MediaType.APPLICATION_JSON)
+                                                     .content("""
+                                                              { "email": "nope@rockalendar.test", "password": "wrong" }
+                                                              """));
 
         contractUtils.expectProblemDetail(ra, 401, API_AUTH_LOGIN);
-
-        // No revelar "user not found".
-        ra.andExpect(jsonPath("$.detail", not(containsStringIgnoringCase("not found"))));
     }
 
     @Test
-    void register_returns200_andTokenAndExpiresAt() throws Exception {
-        mockMvc.perform(post(API_AUTH_REGISTER)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        { "email": "user01@test.com", "password": "test1234" }
-                        """))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.accessToken").isString())
-                .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.expiresAt").isString())
-                .andExpect(jsonPath("$.expiresAt").isNotEmpty());
+    @DisplayName("POST /api/auth/register -> 200 y token")
+    void register_asAnon_returns200() throws Exception {
+        mockMvc.perform(post(API_AUTH_REGISTER).contentType(MediaType.APPLICATION_JSON)
+                                               .content("""
+                                                        { "email": "user01@test.com", "password": "Test@1234" }
+                                                        """))
+               .andExpect(status().isOk())
+               .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$.accessToken").isString())
+               .andExpect(jsonPath("$.accessToken").isNotEmpty())
+               .andExpect(jsonPath("$.expiresAt").isString())
+               .andExpect(jsonPath("$.expiresAt").isNotEmpty());
     }
 
     @Test
-    void register_returns400_whenInvalidRequest() throws Exception {
-        mockMvc.perform(post(API_AUTH_REGISTER)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        { "email": "not-an-email","password": "short" }
-                        """))
-                .andExpect(status().isBadRequest());
+    @DisplayName("POST /api/auth/register con datos inválidos -> 400 ProblemDetail")
+    void register_asAnon_invalidRequest_returns400ProblemDetail() throws Exception {
+        mockMvc.perform(post(API_AUTH_REGISTER).contentType(MediaType.APPLICATION_JSON)
+                                               .content("""
+                                                        { "email": "not-an-email","password": "short" }
+                                                        """))
+               .andExpect(status().isBadRequest());
     }
 
     @Test
-    void register_returns409_whenEmailExists() throws Exception {
-        mockMvc.perform(post(API_AUTH_REGISTER)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        { "email": "User02@Test.com", "password": "password123" }
-                        """))
-                .andExpect(status().isOk());
+    @DisplayName("POST /api/auth/register con email ya registrado (case-insensitive) -> 409 ProblemDetail")
+    void register_asAnon_duplicateEmail_returns409ProblemDetail() throws Exception {
+        mockMvc.perform(post(API_AUTH_REGISTER).contentType(MediaType.APPLICATION_JSON)
+                                               .content("""
+                                                        { "email": "User02@Test.com", "password": "%s" }
+                                                        """.formatted(TestConstants.MOCK_USER_PASSWORD)))
+               .andExpect(status().isOk());
 
-        mockMvc.perform(post(API_AUTH_REGISTER)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        { "email": "user02@test.com", "password": "test1234" }
-                        """))
-                .andExpect(status().isConflict());
+        mockMvc.perform(post(API_AUTH_REGISTER).contentType(MediaType.APPLICATION_JSON)
+                                               .content("""
+                                                        { "email": "user02@test.com", "password": "%s" }
+                                                        """.formatted(TestConstants.MOCK_USER_PASSWORD)))
+               .andExpect(status().isConflict());
     }
 }

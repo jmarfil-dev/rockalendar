@@ -40,14 +40,14 @@ class AuthUserDetailsServiceTest extends AbstractPostgresTest {
 
     @Test
     @DisplayName("loadUserByUsername: si no existe -> UsernameNotFoundException")
-    void loadUser_notFound() {
+    void loadUserByUsername_notFound_throws() {
         assertThatThrownBy(() -> service.loadUserByUsername("missing@test.com"))
                 .isInstanceOf(UsernameNotFoundException.class);
     }
 
     @Test
-    @DisplayName("loadUserByUsername: mapea correctamente el role a authority")
-    void loadUser_mapsRoleToAuthority() {
+    @DisplayName("loadUserByUsername: ok -> mapea role a authority correctamente")
+    void loadUserByUsername_ok_mapsRoleToAuthority() {
         userRepository.save(User.builder()
                 .email("user@test.com")
                 .passwordHash("{noop}pw")

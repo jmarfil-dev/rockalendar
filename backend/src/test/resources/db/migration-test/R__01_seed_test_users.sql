@@ -20,7 +20,7 @@ VALUES
   (
     'aaaaaaaa-0000-0000-0000-000000000003',
     'user@rockalendar.local',
-    '$2a$10$PdHjxglteAXRNln8TXtwRO3/5x/GSdptWktsoZpYZGeWiNDAQYgUe', -- test1234
+    '$2a$10$9xbPeHEmXmhpo3GjPWNsHujR6X88wBDVLmmR3vmsPxmFogJR5q2nC', -- Test@1234
     'USER',
     10
   )
