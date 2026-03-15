@@ -6,6 +6,8 @@
     "retry": "Reintentar",
     "searchV": "Buscar",
     "searchN": "Búsqueda",
+    "proposeV": "Proponer",
+    "myAreaV": "Mi área",
     "returnIndex": "Volver al inicio",
     "example": "Ej.",
     "details": "Detalles",
@@ -46,6 +48,13 @@
       "hint": "Usa una contraseña más robusta para continuar",
       "invalid": "La contraseña no es válida"
     }
+  },
+  "me": {
+    "title": "Mi área",
+    "agenda": "Agenda",
+    "agendaDesc": "Conciertos a los que vas o te interesan",
+    "myEvents": "Mis conciertos",
+    "myEventsDesc": "Conciertos que has propuesto"
   },
   "user": {
     "email": "Email",
