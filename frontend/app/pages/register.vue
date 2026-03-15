@@ -1,19 +1,11 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
-import type { LoginRequest } from "~/types/auth";
 
 definePageMeta({ layout: "minimal" });
 
-const { t, te } = useI18n();
+const { t } = useI18n();
 const auth = useAuth();
-
-const form = reactive<LoginRequest>({
-  email: "",
-  password: "",
-});
-const loading = ref(false);
-const errorMsg = ref<string | null>(null);
-const fieldErrors = ref<Record<string, string>>({});
+const { form, loading, errorMsg, fieldErrors, resetErrors, tr } = useAuthForm();
 
 const passwordChecks = computed(() => {
   const pw = form.password || "";
@@ -27,15 +19,6 @@ const passwordChecks = computed(() => {
 });
 
 const isPasswordValid = computed(() => passwordChecks.value.every((x) => x.ok));
-
-function resetErrors() {
-  errorMsg.value = null;
-  fieldErrors.value = {};
-}
-
-function tr(key: string) {
-  return te(key) ? t(key) : key;
-}
 
 async function onSubmit() {
   if (!isPasswordValid.value) {
@@ -70,20 +53,8 @@ async function onSubmit() {
       <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
 
       <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
-        <div class="flex flex-column gap-2">
-          <label for="email" class="text-sm text-color-secondary">{{ t("user.email") }}</label>
-          <InputText
-            id="email"
-            v-model="form.email"
-            inputmode="email"
-            autocomplete="email"
-            :invalid="!!fieldErrors.email" />
-          <Message v-show="fieldErrors.email" severity="error" variant="simple" size="small">
-            {{ tr("fieldErrors.email") }}
-          </Message>
-        </div>
+        <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" />
 
-        <!-- Password -->
         <div class="flex flex-column gap-2">
           <label for="password" class="text-sm text-color-secondary">{{ t("user.password") }}</label>
           <Password
@@ -98,7 +69,7 @@ async function onSubmit() {
             {{ tr("fieldErrors.password") }}
           </Message>
 
-          <!-- Checklist -->
+          <!-- Checklist de requisitos de contraseña -->
           <div class="border-1 surface-border border-round-lg p-2">
             <div class="text-sm text-color-secondary mb-2">{{ t("auth.pw.title") }}</div>
 
@@ -117,6 +88,7 @@ async function onSubmit() {
 
         <Button type="submit" :label="t('auth.register')" icon="pi pi-user-plus" :loading="loading" />
       </form>
+
       <Divider class="my-1" />
       <p class="text-sm text-surface-500">
         <NuxtLink :to="ROUTES.login" class="font-medium underline">
