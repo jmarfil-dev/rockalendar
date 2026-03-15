@@ -54,11 +54,14 @@ public final class ErrorConstants {
     public static final String ARTIST_ALREADY_EXISTS = "error.409.artistExists";
     public static final String EMAIL_ALREADY_EXISTS = "error.409.emailExists";
     public static final String EVENT_NOT_PENDING = "error.409.eventNotPending";
-    public static final String MOERATOR_OWN = "error.409.moderatorOwn";
+    public static final String MODERATOR_OWN = "error.409.moderatorOwn";
     public static final String EVENT_ALREADY_MOD = "error.409.eventAlreadyMod";
     public static final String EVENT_NOT_EDITABLE = "error.409.eventNotEditable";
     public static final String EVENT_NOT_ERASABLE = "error.409.eventNotErasable";
     public static final String EVENT_NOT_ERASABLE_APPROVED = "error.409.eventNotErasableAppr";
+
+    // Conflict 409 genérico (constraint de BD no capturada explícitamente)
+    public static final String DB_CONSTRAINT = "error.409.dbConstraint";
 
     // Server Error 500
     public static final String SERVER = "error.500.server";

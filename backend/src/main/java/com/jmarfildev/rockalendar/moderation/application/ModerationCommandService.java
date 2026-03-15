@@ -100,7 +100,7 @@ public class ModerationCommandService {
             throw new ConflictException(ErrorConstants.EVENT_NOT_PENDING, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
         if (moderatorId.equals(event.getCreatedByUserId())) {
-            throw new ConflictException(ErrorConstants.MOERATOR_OWN, ErrorConstants.TYPE_409_MODERATION_STATE);
+            throw new ConflictException(ErrorConstants.MODERATOR_OWN, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
 
         mutation.apply(event, moderatorId, now, message);

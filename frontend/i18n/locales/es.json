@@ -119,7 +119,8 @@
       "eventAlreadyMod": "El concierto fue modificado por otro moderador",
       "eventNotEditable": "El concierto no tiene un estado modificable",
       "eventNotErasable": "El concierto no tiene un estado eliminable",
-      "eventNotErasableAppr": "Los conciertos aprobados no pueden eliminarse"
+      "eventNotErasableAppr": "Los conciertos aprobados no pueden eliminarse",
+      "dbConstraint": "Restricción de BD violada"
     },
     "500": {
       "server": "Error inesperado del servidor"
