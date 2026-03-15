@@ -159,12 +159,12 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
                 <div>
                   <i class="pi pi-calendar mr-2"></i>
                   <time :datetime="ev.startDateTime">
-                    {{ new Date(ev.startDateTime).toLocaleString() }}
+                    {{ formatEventDate(ev.startDateTime) }}
                   </time>
                   <span v-if="ev.endDateTime">
                     &nbsp;>>&nbsp;
                     <time :datetime="ev.endDateTime">
-                      {{ new Date(ev.endDateTime).toLocaleString() }}
+                      {{ formatEventDate(ev.endDateTime) }}
                     </time>
                   </span>
                 </div>

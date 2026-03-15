@@ -1,19 +1,35 @@
 import type { ApiResult, ProblemDetail } from "~/types/api";
 
-function extractProblemDetail(err: any): { status: number; pd: ProblemDetail | null } {
-  const status = err?.response?.status ?? 500;
-  const pd = (err?.response?._data ?? null) as ProblemDetail | null;
+type FetchOptions = NonNullable<Parameters<typeof $fetch>[1]>;
+
+// Forma del error que devuelve ofetch / Nuxt al fallar una petición HTTP
+type RawFetchError = {
+  response?: {
+    status?: number;
+    _data?: unknown;
+  };
+  status?: number;
+  statusCode?: number;
+  statusText?: string;
+  statusMessage?: string;
+  data?: unknown;
+};
+
+function extractProblemDetail(err: unknown): { status: number; pd: ProblemDetail | null } {
+  const e = err as RawFetchError;
+  const status = e?.response?.status ?? 500;
+  const pd = (e?.response?._data ?? null) as ProblemDetail | null;
   return { status, pd };
 }
 
 /**
  * Llamadas a API pública como /login o /register, sin token auth
  */
-export async function fetchPublicResult<T>(url: string, options: any = {}): Promise<ApiResult<T>> {
+export async function fetchPublicResult<T>(url: string, options: FetchOptions = {}): Promise<ApiResult<T>> {
   try {
     const data = await $fetch<T>(url, { ...options });
     return { ok: true, data };
-  } catch (err: any) {
+  } catch (err: unknown) {
     const { status, pd } = extractProblemDetail(err);
     return { ok: false, status, pd, raw: err };
   }
@@ -22,7 +38,7 @@ export async function fetchPublicResult<T>(url: string, options: any = {}): Prom
 /**
  * Llamadas a API con autenticación necesaria
  */
-export async function fetchAuthResult<T>(url: string, options: any = {}): Promise<ApiResult<T>> {
+export async function fetchAuthResult<T>(url: string, options: FetchOptions = {}): Promise<ApiResult<T>> {
   const auth = useAuth();
 
   try {
@@ -34,7 +50,7 @@ export async function fetchAuthResult<T>(url: string, options: any = {}): Promis
       },
     });
     return { ok: true, data };
-  } catch (err: any) {
+  } catch (err: unknown) {
     const { status, pd } = extractProblemDetail(err);
 
     if (status === 401) {
@@ -52,12 +68,12 @@ export async function useApiFetch<ResT = unknown, ReqT = ResT>(
   const result = await useFetch<ResT, ReqT>(request, opts);
 
   if (result.error.value) {
-    const anyErr = result.error.value as any;
+    const fetchErr = result.error.value as RawFetchError;
 
     throw createError({
-      status: anyErr?.status ?? anyErr?.statusCode ?? 500, // Nuxt 4 usa status
-      statusText: anyErr?.statusText ?? anyErr?.statusMessage ?? "Request failed",
-      data: anyErr?.data, // ProblemDetail del backend
+      status: fetchErr?.status ?? fetchErr?.statusCode ?? 500, // Nuxt 4 usa status
+      statusText: fetchErr?.statusText ?? fetchErr?.statusMessage ?? "Request failed",
+      data: fetchErr?.data, // ProblemDetail del backend
     });
   }
 

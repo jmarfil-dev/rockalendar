@@ -47,12 +47,12 @@ const { data: event, pending } = await useApiFetch<EventPublic>(ROUTE_PATH.apiEv
               <i class="pi pi-calendar"></i>
               <span>
                 <time :datetime="event.startDateTime">
-                  {{ new Date(event.startDateTime).toLocaleString() }}
+                  {{ formatEventDate(event.startDateTime) }}
                 </time>
                 <span v-if="event.endDateTime">
                   <span class="mx-2">→</span>
                   <time :datetime="event.endDateTime">
-                    {{ new Date(event.endDateTime).toLocaleString() }}
+                    {{ formatEventDate(event.endDateTime) }}
                   </time>
                 </span>
               </span>
@@ -147,12 +147,12 @@ const { data: event, pending } = await useApiFetch<EventPublic>(ROUTE_PATH.apiEv
                       <span class="font-medium">{{ t("dates.date") }}</span>
                       <span class="text-color-secondary">
                         <time :datetime="event.startDateTime">
-                          {{ new Date(event.startDateTime).toLocaleString() }}
+                          {{ formatEventDate(event.startDateTime) }}
                         </time>
                         <span v-if="event.endDateTime">
                           <span class="mx-2">→</span>
                           <time :datetime="event.endDateTime">
-                            {{ new Date(event.endDateTime).toLocaleString() }}
+                            {{ formatEventDate(event.endDateTime) }}
                           </time>
                         </span>
                       </span>
