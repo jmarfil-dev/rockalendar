@@ -10,6 +10,10 @@ export const useArtistAutocomplete = () => {
 
   let t: ReturnType<typeof setTimeout> | null = null;
 
+  onUnmounted(() => {
+    if (t) clearTimeout(t);
+  });
+
   const search = (q: string) => {
     const query = q.trim();
     if (t) clearTimeout(t);

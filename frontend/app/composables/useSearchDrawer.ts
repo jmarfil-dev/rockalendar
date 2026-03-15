@@ -1,4 +1,5 @@
 import { ROUTES } from "~/constants/routes";
+import type { LocationQuery } from "vue-router";
 import type { Artist } from "~/types/artist";
 
 function toMidnightOffsetString(date: Date): string {
@@ -12,7 +13,7 @@ function toMidnightOffsetString(date: Date): string {
   return `${y}-${m}-${d}T00:00:00Z`;
 }
 
-function getQueryString(q: any, key: string): string {
+function getQueryString(q: LocationQuery, key: string): string {
   const v = q[key];
   if (typeof v === "string") return v;
   if (Array.isArray(v)) return typeof v[0] === "string" ? v[0] : "";
@@ -62,7 +63,7 @@ export function useSearchDrawer() {
   function runSearch() {
     if (isDateRangeInvalid.value) return;
 
-    const nextQuery: Record<string, any> = { ...route.query };
+    const nextQuery: Record<string, string | undefined> = { ...route.query } as Record<string, string | undefined>;
 
     // Al buscar, volvemos a page 0
     nextQuery.page = "0";
