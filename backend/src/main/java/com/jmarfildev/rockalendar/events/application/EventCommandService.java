@@ -5,9 +5,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
@@ -186,7 +187,7 @@ public class EventCommandService {
             }
 
             var artist = artistRepository.findBySlug(slug)
-                                         .orElseGet(() -> artistRepository.save(Artist.builder().name(displayName).slug(slug).build()));
+                                         .orElseGet(() -> saveArtistOrFetch(displayName, slug));
 
             artists.add(artist);
         }
@@ -222,6 +223,23 @@ public class EventCommandService {
 
         return new EventInputValidate(title, description, req.startDateTime(), req.endDateTime(), province, cityName, citySlug, venueName,
                                       venueSlug, sourceUrl, artists);
+    }
+
+    /**
+     * Condición de carrera: si dos eventos se proponen a la vez con el mismo artista nuevo,
+     * uno de los save() falla con DataIntegrityViolationException → reutilizamos el que ganó
+     *
+     * @param displayName
+     * @param slug
+     * @return
+     */
+    private Artist saveArtistOrFetch(String displayName, String slug) {
+        try {
+            return artistRepository.saveAndFlush(Artist.builder().name(displayName).slug(slug).build());
+        } catch (DataIntegrityViolationException ex) {
+            return artistRepository.findBySlug(slug)
+                    .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));
+        }
     }
 
     private boolean hasEditableStatus(EventStatus status) {

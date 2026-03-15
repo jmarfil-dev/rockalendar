@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.core.convert.ConversionFailedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -101,6 +102,19 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ex.getBody();
         pd.setProperty("timestamp", OffsetDateTime.now());
         return pd;
+    }
+
+    /**
+     * Captura violaciones de constraints de BD no convertidas explícitamente en ConflictException.
+     * Devuelve 409 en lugar de 500 para que el frontend pueda distinguirlo de un error de servidor.
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest req) {
+        log.warn("DataIntegrityViolationException on {} {}: {}", req.getMethod(), req.getRequestURI(),
+                 ex.getMostSpecificCause().getMessage());
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        return build(pd, HttpStatus.CONFLICT.getReasonPhrase(), ErrorConstants.DB_CONSTRAINT, req.getRequestURI(),
+                     ErrorConstants.TYPE_409_CONFLICT);
     }
 
     /**

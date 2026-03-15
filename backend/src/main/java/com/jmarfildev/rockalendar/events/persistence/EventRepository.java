@@ -40,7 +40,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                 )
                 FROM Event e
                 JOIN e.province p
-                WHERE e.status = 'APPROVED'
+                WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
                     AND (
                         (e.endDateTime IS NOT NULL AND e.endDateTime >= CURRENT_TIMESTAMP)
                             OR (e.endDateTime IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
@@ -86,8 +86,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                 WHERE e.createdByUserId = :userId
                 ORDER BY
                   CASE
-                    WHEN e.status = 'NEEDS_CHANGES' THEN 0
-                    WHEN e.status = 'PENDING_MODERATION' THEN 1
+                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.NEEDS_CHANGES THEN 0
+                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION THEN 1
                     ELSE 2
                   END ASC,
                   e.status ASC,

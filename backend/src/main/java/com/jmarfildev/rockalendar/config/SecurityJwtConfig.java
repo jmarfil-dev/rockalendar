@@ -25,15 +25,22 @@ public class SecurityJwtConfig {
 
     @Bean
     JwtDecoder jwtDecoder(@Value("${security.jwt.secret}") String secret) {
-        SecretKey key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(key)
-                .macAlgorithm(MacAlgorithm.HS256)
-                .build();
+        SecretKey key = buildKey(secret);
+        return NimbusJwtDecoder.withSecretKey(key).macAlgorithm(MacAlgorithm.HS256).build();
     }
 
     @Bean
     JwtEncoder jwtEncoder(@Value("${security.jwt.secret}") String secret) {
-        SecretKey key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        SecretKey key = buildKey(secret);
         return new NimbusJwtEncoder(new ImmutableSecret<>(key));
+    }
+
+    // HS256 requiere al menos 256 bits (32 bytes)
+    private SecretKey buildKey(String secret) {
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 32) {
+            throw new IllegalStateException("security.jwt.secret debe tener al menos 32 caracteres (256 bits) para HS256");
+        }
+        return new SecretKeySpec(keyBytes, "HmacSHA256");
     }
 }

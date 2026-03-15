@@ -2,7 +2,9 @@ package com.jmarfildev.rockalendar.artists.application;
 
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +35,7 @@ public class ArtistCommandService {
     private final ArtistRepository artistRepository;
     private final CurrentUser currentUser;
 
+    @Transactional
     public Artist createArtist(CreateArtistRequest req) {
         UUID userId = currentUser.userId();
         String displayName = req.name().trim();
@@ -46,10 +49,15 @@ public class ArtistCommandService {
             throw new ConflictException(ErrorConstants.ARTIST_ALREADY_EXISTS);
         }
 
-        return artistRepository.save(Artist.builder()
-                .name(displayName)
-                .slug(slug)
-                .createdByUserId(userId)
-                .build());
+        try {
+            return artistRepository.saveAndFlush(Artist.builder()
+                    .name(displayName)
+                    .slug(slug)
+                    .createdByUserId(userId)
+                    .build());
+        } catch (DataIntegrityViolationException ex) {
+            // Se lanza si otro hilo crea el mismo slug entre el existsBySlug y el save
+            throw new ConflictException(ErrorConstants.ARTIST_ALREADY_EXISTS);
+        }
     }
 }

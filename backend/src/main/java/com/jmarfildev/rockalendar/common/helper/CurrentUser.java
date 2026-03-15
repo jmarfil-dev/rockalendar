@@ -16,8 +16,11 @@ public class CurrentUser {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth instanceof JwtAuthenticationToken jwtAuth) {
             var sub = jwtAuth.getToken().getSubject();
+            if (sub == null) {
+                throw new IllegalStateException("JWT subject is null");
+            }
             return UUID.fromString(sub);
         }
-        throw new IllegalStateException("Missing JWT subject");
+        throw new IllegalStateException("No JWT authentication in security context");
     }
 }

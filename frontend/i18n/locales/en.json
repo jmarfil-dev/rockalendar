@@ -119,7 +119,8 @@
       "eventAlreadyMod": "Concert was modified by another moderator",
       "eventNotEditable": "Concert does not have an editable state",
       "eventNotErasable": "Concert does not have an erasable state",
-      "eventNotErasableAppr": "Approved concerts cannot be deleted"
+      "eventNotErasableAppr": "Approved concerts cannot be deleted",
+      "dbConstraint": "Violated DB Contraint"
     },
     "500": {
       "server": "Unexpected server error"
