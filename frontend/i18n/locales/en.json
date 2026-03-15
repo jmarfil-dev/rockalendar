@@ -6,6 +6,8 @@
     "retry": "Retry",
     "searchV": "Search",
     "searchN": "Search",
+    "proposeV": "Propose",
+    "myAreaV": "My area",
     "returnIndex": "Return to index",
     "example": "Ex.",
     "details": "Details",
@@ -46,6 +48,13 @@
       "hint": "Use a stronger password to continue",
       "invalid": "Invalid password"
     }
+  },
+  "me": {
+    "title": "My area",
+    "agenda": "Schedule",
+    "agendaDesc": "Concerts you're going to or interested in",
+    "myEvents": "My concerts",
+    "myEventsDesc": "Concerts you have proposed"
   },
   "user": {
     "email": "Email",
