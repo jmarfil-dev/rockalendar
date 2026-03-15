@@ -1,4 +1,5 @@
 import type { Role } from "~/types/user-roles";
+import type { JwtPayload } from "~/types/auth";
 
 /**
  * Decodifica el base64 extraído de la url.
@@ -43,7 +44,7 @@ function base64UrlDecode(input: string): string {
 /**
  * Devuelve el payload JSON del JWT, o null si el token es inválido.
  */
-export function decodeJwtPayload(token: string): any | null {
+export function decodeJwtPayload(token: string): JwtPayload | null {
   try {
     // Un JWT debe tener 3 partes
     const parts = token.split(".");
@@ -63,7 +64,7 @@ export function decodeJwtPayload(token: string): any | null {
  * Lee claim "roles" como array de strings.
  * Devuelve sólo strings válidos.
  */
-export function extractRoles(payload: any | null): Role[] {
+export function extractRoles(payload: JwtPayload | null): Role[] {
   if (!payload || typeof payload !== "object") return [];
 
   const roles = payload.roles;
@@ -76,7 +77,7 @@ export function extractRoles(payload: any | null): Role[] {
 /**
  * Lee claim estándar "exp" (segundos UNIX) y lo convierte a ms.
  */
-export function extractExpiresAtMs(payload: any | null): number | null {
+export function extractExpiresAtMs(payload: JwtPayload | null): number | null {
   const exp = payload?.exp;
   if (typeof exp === "number" && Number.isFinite(exp)) {
     return exp * 1000;
