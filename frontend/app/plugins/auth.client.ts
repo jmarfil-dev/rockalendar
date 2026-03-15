@@ -8,7 +8,8 @@ export default defineNuxtPlugin(() => {
   window.addEventListener("storage", (event) => {
     if (event.key !== "rk:auth:event") return;
 
-    if (event.newValue === "logout") {
+    const parsed = JSON.parse(event.newValue ?? "{}");
+    if (parsed.type === "logout") {
       auth.token.value = null;
       auth.expiresAtMs.value = null;
 

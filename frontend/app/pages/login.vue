@@ -1,29 +1,12 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
-import type { LoginRequest } from "~/types/auth";
 
 definePageMeta({ layout: "minimal" });
 
-const { t, te } = useI18n();
+const { t } = useI18n();
 const auth = useAuth();
 const route = useRoute();
-
-const form = reactive<LoginRequest>({
-  email: "",
-  password: "",
-});
-const loading = ref(false);
-const errorMsg = ref<string | null>(null);
-const fieldErrors = ref<Record<string, string>>({});
-
-function resetErrors() {
-  errorMsg.value = null;
-  fieldErrors.value = {};
-}
-
-function tr(key: string) {
-  return te(key) ? t(key) : key;
-}
+const { form, loading, errorMsg, fieldErrors, resetErrors, tr } = useAuthForm();
 
 async function onSubmit() {
   resetErrors();
@@ -54,20 +37,7 @@ async function onSubmit() {
       <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
 
       <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
-        <div class="flex flex-column gap-2">
-          <label for="email" class="text-sm text-color-secondary">{{ t("user.email") }}</label>
-          <InputText
-            id="email"
-            v-model="form.email"
-            type="email"
-            inputmode="email"
-            autocomplete="email"
-            required
-            :invalid="!!fieldErrors.email" />
-          <Message v-show="fieldErrors.email" severity="error" variant="simple" size="small">
-            {{ tr("fieldErrors.email") }}
-          </Message>
-        </div>
+        <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" required />
 
         <div class="flex flex-column gap-2">
           <label for="password" class="text-sm text-color-secondary">{{ t("user.password") }}</label>
@@ -76,7 +46,7 @@ async function onSubmit() {
             v-model="form.password"
             toggleMask
             :feedback="false"
-            autocomplete="new-password"
+            autocomplete="current-password"
             required
             :invalid="!!fieldErrors.password" />
           <Message v-show="fieldErrors.password" severity="error" variant="simple" size="small">
