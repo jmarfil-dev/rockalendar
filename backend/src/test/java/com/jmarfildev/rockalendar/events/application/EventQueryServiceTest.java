@@ -23,8 +23,10 @@ import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
+import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
@@ -69,8 +71,8 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("listHome: ignora sort del pageable y devuelve 200 con Page")
-    void listHome_ignoresSort_returnsPageWithoutPassed() {
+    @DisplayName("listHome: ignora sort del pageable y ordena resultados por fecha")
+    void listHome_ignoresExternalSort_ordersResultsByDate() {
         factory.approvedMadridAgainstYou(); // Fecha futura primera
         factory.approvedBarcelonaBoikot(); // Fecha futura segunda
 
@@ -89,8 +91,8 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("listHome: devuelve 200 con Page vacío")
-    void listHome_returnsPageWithoutPassed() {
+    @DisplayName("listHome: filtra eventos pasados -> devuelve Page vacío")
+    void listHome_filtersPastEvents() {
         factory.approvedValenciaPast(); // Fecha pasada
 
         var page = service.listHome(PageRequest.of(0, 20));
@@ -154,8 +156,8 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("searchPublic: query en blanco -> filtra artist (artists.id)")
-    void searchPublic_filtersByCityAndArtistSlug_exact() {
+    @DisplayName("searchPublic: query en blanco -> filtra por artistId y devuelve solo su evento")
+    void searchPublic_filterByArtistId_returnsMatchingEvent() {
         factory.approvedBarcelonaBoikot();
         factory.approvedMadridAgainstYou();
 
@@ -204,8 +206,8 @@ class EventQueryServiceTest extends AbstractPostgresTest {
      */
 
     @Test
-    @DisplayName("getPublicById: devuelve solo si APPROVED")
-    void getPublicById_onlyApproved() {
+    @DisplayName("getPublicById: solo eventos APPROVED son visibles (PENDING -> NotFoundException)")
+    void getPublicById_onlyApprovedEventsVisible() {
         var approved = factory.approvedBarcelonaBoikot();
         var pending = factory.pendingValenciaLosDeMarras();
 
@@ -240,8 +242,55 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("listMine: futuros primero (los pasados al final)")
-    void listMine_futureFirst() {
+    @DisplayName("listMine: tab CHANGES -> solo eventos NEEDS_CHANGES del usuario")
+    void listMine_tabChanges_returnsOnlyNeedsChangesEvents() {
+        factory.needsChangesMadridAgainstYou();
+        factory.approvedMadridAgainstYou();
+        factory.pendingMadridAgainstYou();
+
+        when(currentUser.userId()).thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
+
+        var page = service.listMine(MeEventTabEnum.CHANGES, PageRequest.of(0, 10));
+
+        assertThat(page.getContent()).singleElement()
+                .satisfies(e -> assertThat(e.status()).isEqualTo(EventStatus.NEEDS_CHANGES));
+    }
+
+    @Test
+    @DisplayName("listMine: tab PENDING -> solo eventos PENDING_MODERATION del usuario")
+    void listMine_tabPending_returnsOnlyPendingEvents() {
+        factory.pendingMadridAgainstYou();
+        factory.approvedMadridAgainstYou();
+        factory.needsChangesMadridAgainstYou();
+
+        when(currentUser.userId()).thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
+
+        var page = service.listMine(MeEventTabEnum.PENDING, PageRequest.of(0, 10));
+
+        assertThat(page.getContent()).singleElement()
+                .satisfies(e -> assertThat(e.status()).isEqualTo(EventStatus.PENDING_MODERATION));
+    }
+
+    @Test
+    @DisplayName("listMine: tab OTHERS -> excluye NEEDS_CHANGES y PENDING_MODERATION")
+    void listMine_tabOthers_excludesChangesAndPending() {
+        factory.approvedMadridAgainstYou();
+        factory.approvedBarcelonaBoikot();
+        factory.pendingMadridAgainstYou();
+        factory.needsChangesMadridAgainstYou();
+
+        when(currentUser.userId()).thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
+
+        var page = service.listMine(MeEventTabEnum.OTHERS, PageRequest.of(0, 10));
+
+        assertThat(page.getContent()).hasSize(2)
+                .extracting(EventPrivateListItemDto::status)
+                .containsOnly(EventStatus.APPROVED);
+    }
+
+    @Test
+    @DisplayName("listMine: futuros primero, pasados al final")
+    void listMine_ordersWithFutureFirst() {
         factory.approvedBarcelonaBoikot();
         factory.approvedMadridAgainstYou();
         factory.approvedValenciaPast();

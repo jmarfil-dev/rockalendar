@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.jmarfildev.rockalendar.artists.api.mapper.ArtistMapperImpl;
 import com.jmarfildev.rockalendar.artists.application.ArtistQueryService;
 import com.jmarfildev.rockalendar.common.dto.ComboItemDto;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
@@ -23,7 +24,7 @@ import com.jmarfildev.rockalendar.support.TestDataFactory;
  *
  */
 @DataJpaTest
-@Import({ ArtistQueryService.class, DatabaseCleaner.class, TestDataFactory.class })
+@Import({ ArtistQueryService.class, DatabaseCleaner.class, TestDataFactory.class, ArtistMapperImpl.class })
 class ArtistQueryServiceTest extends AbstractPostgresTest {
 
     @Autowired
@@ -53,8 +54,8 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("searchArtistsAutocomplete: encuentra por slug normalizado (ska-p -> ska p)")
-    void autocomplete_matchesBySlug() {
+    @DisplayName("searchArtistsAutocomplete: busca por slug normalizado (ska-p -> ska p) -> devuelve coincidencia")
+    void autocomplete_normalizedSlugInput_returnsMatch() {
         factory.artist(MOCK_ARTIST_NAME_SKAP);
 
         var result = service.searchArtistsAutocomplete("ska-p");
@@ -63,8 +64,8 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("searchArtistsAutocomplete: máximo 10 resultados")
-    void autocomplete_limitsToTop10() {
+    @DisplayName("searchArtistsAutocomplete: muchos resultados -> máximo 10")
+    void autocomplete_manyResults_limitsToTop10() {
         // Crea 25 artistas en base de datos
         String[] names = IntStream.range(0, 25)
                 .mapToObj(i -> "Artist " + i)
@@ -78,8 +79,8 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("searchArtistsAutocomplete: no revienta con mayúsculas/minúsculas")
-    void autocomplete_isCaseInsensitive() {
+    @DisplayName("searchArtistsAutocomplete: mayúsculas y minúsculas devuelven el mismo resultado")
+    void autocomplete_caseInsensitive_returnsMatch() {
         factory.artist(MOCK_ARTIST_NAME_SKAP);
 
         var resultUpper = service.searchArtistsAutocomplete("SKA");
@@ -90,8 +91,8 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("searchArtistsAutocomplete: query en blanco -> devuelve vacío (o lanza) según contrato")
-    void autocomplete_blankQuery_behavior() {
+    @DisplayName("searchArtistsAutocomplete: query en blanco -> devuelve lista vacía")
+    void autocomplete_blankQuery_returnsEmpty() {
         var result = service.searchArtistsAutocomplete("   ");
 
         assertThat(result).isEmpty();

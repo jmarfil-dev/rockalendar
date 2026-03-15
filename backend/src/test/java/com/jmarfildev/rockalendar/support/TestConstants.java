@@ -23,6 +23,7 @@ public final class TestConstants {
     public static final String MOCK_MODERATOR_EMAIL = "moderator@rockalendar.local";
     public static final String MOCK_USER_ID = "aaaaaaaa-0000-0000-0000-000000000003";
     public static final String MOCK_USER_EMAIL = "user@rockalendar.local";
+    public static final String MOCK_USER_PASSWORD = "Test@1234";
 
     // Coinciden con un usuario del script R__seed_test_events
     public static final String MOCK_EVENT_ID_APPROVED = "cccccccc-0000-0000-0000-000000000001";

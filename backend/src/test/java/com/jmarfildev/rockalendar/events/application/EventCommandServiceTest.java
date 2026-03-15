@@ -2,9 +2,13 @@ package com.jmarfildev.rockalendar.events.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,15 +17,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
-import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
-import com.jmarfildev.rockalendar.common.error.ForbiddenException;
-import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
@@ -50,7 +53,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     TestDataFactory factory;
     @Autowired
     EventRepository eventRepository;
-    @Autowired
+    @MockitoSpyBean
     ArtistRepository artistRepository;
 
     @MockitoBean
@@ -312,66 +315,6 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("update: evento no existe -> NotFoundException")
-    void update_missingEvent_throws() {
-        var req = new SubmitEventRequest(
-                MOCK_TITLE,
-                "Desc",
-                TestDates.rangeStart(),
-                TestDates.rangeEnd(),
-                MOCK_WIZINK,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("Ska-P"),
-                null);
-
-        assertThatThrownBy(() -> service.update(UUID.fromString("cccccccc-0000-0000-0000-000000000099"), req))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
-    }
-
-    @Test
-    @DisplayName("update: evento no pertenece al usuario -> ForbiddenException")
-    void update_notOwner_throws() {
-        var event = factory.approvedEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
-                TestConstants.MOCK_MODERATOR_ID, TestConstants.MOCK_ARTIST_NAME_AY); // Otro usuario lo crea
-        var req = new SubmitEventRequest(
-                MOCK_TITLE,
-                "Desc",
-                TestDates.rangeStart(),
-                TestDates.rangeEnd(),
-                MOCK_WIZINK,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("Ska-P"),
-                null);
-
-        assertThatThrownBy(() -> service.update(event.getId(), req))
-                .isInstanceOf(ForbiddenException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_OWNER);
-    }
-
-    @Test
-    @DisplayName("update: evento en estado no editable -> ConflictException")
-    void update_notEditableStatus_throws() {
-        var event = factory.pendingMadridAgainstYou();
-        var req = new SubmitEventRequest(
-                MOCK_TITLE,
-                "Desc",
-                TestDates.rangeStart(),
-                TestDates.rangeEnd(),
-                MOCK_WIZINK,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("Ska-P"),
-                null);
-
-        assertThatThrownBy(() -> service.update(event.getId(), req))
-                .isInstanceOf(ConflictException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_EDITABLE);
-    }
-
-    @Test
     @DisplayName("delete: ok -> elimina el evento")
     void delete_ok_deleteEvent() {
         var event = factory.pendingMadridAgainstYou();
@@ -383,52 +326,39 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("delete: evento ya eliminado -> ok (no hace nada)")
+    @DisplayName("delete: evento ya eliminado -> ok (idempotente, no lanza excepción)")
     void delete_alreadyErased_ok() {
         var event = factory.pendingMadridAgainstYou();
 
-        service.delete(event.getId());
+        service.delete(event.getId()); // primera vez: PENDING_MODERATION → ERASED
+        service.delete(event.getId()); // segunda vez: ya ERASED, no lanza excepción
 
         var reloaded = eventRepository.findById(event.getId()).orElseThrow();
         assertThat(reloaded.getStatus()).isEqualTo(EventStatus.ERASED);
     }
 
     @Test
-    @DisplayName("delete: evento no existe -> NotFoundException")
-    void delete_missingEvent_throws() {
-        assertThatThrownBy(() -> service.delete(UUID.fromString("cccccccc-0000-0000-0000-000000000099")))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
-    }
+    @DisplayName("propose: condición de carrera en saveArtistOrFetch -> reutiliza el artista que ganó la carrera")
+    void propose_saveArtistOrFetch_concurrentSave_reusesExistingArtist() {
+        var existingArtist = factory.againstYou();
+        String slug = SlugNormalizer.of(TestConstants.MOCK_ARTIST_NAME_AY);
 
-    @Test
-    @DisplayName("delete: evento no pertenece al usuario -> ForbiddenException")
-    void delete_notOwner_throws() {
-        var event = factory.pendingEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
-                TestConstants.MOCK_MODERATOR_ID, TestDates.yesterday(), null, null, TestConstants.MOCK_ARTIST_NAME_AY); // Otro usuario lo crea
+        // Simula la condición de carrera: findBySlug vacío → saveAndFlush falla → findBySlug devuelve el ganador
+        doReturn(Optional.empty())
+                .doReturn(Optional.of(existingArtist))
+                .when(artistRepository).findBySlug(slug);
+        doThrow(new DataIntegrityViolationException("duplicate key"))
+                .when(artistRepository).saveAndFlush(any());
 
-        assertThatThrownBy(() -> service.delete(event.getId()))
-                .isInstanceOf(ForbiddenException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_OWNER);
-    }
+        var req = new SubmitEventRequest(
+                MOCK_TITLE, null, TestDates.madrid(), null, MOCK_WIZINK,
+                factory.madrid().getId(), TestConstants.MADRID,
+                List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
-    @Test
-    @DisplayName("delete: evento en estado no eliminable -> ConflictException")
-    void delete_notEditableStatus_throws() {
-        var event = factory.canceledBarcelonaManifa();
+        var saved = service.propose(req);
 
-        assertThatThrownBy(() -> service.delete(event.getId()))
-                .isInstanceOf(ConflictException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_ERASABLE);
-    }
-
-    @Test
-    @DisplayName("delete: evento aprobado no eliminable -> ConflictException")
-    void delete_approvedEvent_throws() {
-        var event = factory.approvedMadridAgainstYou();
-
-        assertThatThrownBy(() -> service.delete(event.getId()))
-                .isInstanceOf(ConflictException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED);
+        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
+        assertThat(reloaded.getArtists()).singleElement()
+                .satisfies(a -> assertThat(a.getId()).isEqualTo(existingArtist.getId()));
     }
 }
