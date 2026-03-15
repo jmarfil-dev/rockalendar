@@ -561,7 +561,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"title\": \"Concierto de prueba en Sevilla\",\n    \"description\": \"Evento creado desde curl\",\n    \"startDateTime\": \"2026-06-22T21:30:00Z\",\n    \"venueName\": \"Sala Custom\",\n    \"provinceId\": \"c74b11af-8d7f-50d1-b39b-4b10f1eb1b4f\",\n    \"cityName\": \"Sevilla\",\n    \"artists\": [\n        \"Grupo Demo\"\n    ],\n    \"sourceUrl\": \"https://example.com\"\n}"
+                  "raw": "{\n    \"title\": \"Concierto de prueba en fhfhlgflkljk\",\n    \"description\": \"Evento creado desde curl\",\n    \"startDateTime\": \"2026-06-30T21:30:00Z\",\n    \"venueName\": \"Sala Custom\",\n    \"provinceId\": \"c74b11af-8d7f-50d1-b39b-4b10f1eb1b4f\",\n    \"cityName\": \"Zamopra\",\n    \"artists\": [\n        \"Grupo Demo\"\n    ],\n    \"sourceUrl\": \"https://example.com\"\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/events",
