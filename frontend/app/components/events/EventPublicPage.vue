@@ -10,12 +10,7 @@ const router = useRouter();
 const homeEndpoint = ROUTES.apiHome; // Por ahora usamos proxy para evitar CORS
 const searchEndpoint = ROUTES.apiEvents;
 
-const sortOptions = computed(() => [
-  { label: t("dates.date"), value: "date,asc" },
-  { label: t("events.title"), value: "title,asc" },
-  { label: t("geo.province"), value: "province,asc" },
-  { label: t("geo.city"), value: "city,asc" },
-]);
+const sortOptions = useSortOptions(["date", "title", "province", "city"]);
 
 // Detectar si estamos en modo búsqueda (por ruta /events o por query params de filtros)
 // Nota: esto permite que el componente se use tanto en / como en /events con el mismo comportamiento.
@@ -59,7 +54,7 @@ const size = computed<number>({
 });
 
 const sort = computed<string>({
-  get: () => (typeof route.query.sort === "string" ? route.query.sort : "date,asc"),
+  get: () => (typeof route.query.sort === "string" ? route.query.sort : "date"),
   set: (v) => {
     // Al cambiar orden, volvemos a page 0
     router.replace({ query: { ...route.query, sort: v, page: "0" } });
@@ -181,8 +176,11 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
     </section>
 
     <!-- Paginación -->
-    <div v-if="!pending && !error && total > 0" class="border-1 border-round-xl p-2">
-      <Paginator :first="first" :rows="size" :totalRecords="total" :rowsPerPageOptions="[20, 50, 100]" @page="onPage" />
-    </div>
+    <AppPaginator
+      v-if="!pending && !error && total > 0"
+      :first="first"
+      :rows="size"
+      :totalRecords="total"
+      @page="onPage" />
   </article>
 </template>
