@@ -10,7 +10,6 @@ const props = defineProps<{
 
 const { t, locale, setLocale } = useI18n();
 const { isAuthenticated, user } = useAuth();
-const route = useRoute();
 
 // ------- Header -------
 const localeOptions: LocaleOption[] = [
@@ -40,16 +39,6 @@ const proposeItem = computed(() => bottomById.value.get("propose") ?? null);
 const searchItem = computed(() => bottomById.value.get("search") ?? null);
 const meItem = computed(() => bottomById.value.get("me") ?? null);
 // const moderationItem = computed(() => bottomById.value.get("moderation") ?? null);
-
-function isActive(section: "search" | "propose" | "me") {
-  const path = route.path;
-
-  if (section === "search") return path.startsWith(ROUTES.events);
-  if (section === "propose") return path.startsWith(ROUTES.meEventPropose);
-  if (section === "me") return path.startsWith(ROUTES.me);
-
-  return false;
-}
 
 // ------- Search Drawer (derecha) -------
 const {
@@ -163,7 +152,7 @@ const onLogoutClick = () => {
           :key="proposeItem.id"
           :icon="proposeItem.icon"
           size="large"
-          :text="!isActive('propose')"
+          text
           rounded
           :aria-label="proposeItem.label"
           @click="proposeItem.action" />
@@ -173,7 +162,7 @@ const onLogoutClick = () => {
           :key="searchItem.id"
           :icon="searchItem.icon"
           size="large"
-          :text="!isActive('search')"
+          text
           rounded
           :aria-label="searchItem.label"
           @click="searchItem.action" />
@@ -183,7 +172,7 @@ const onLogoutClick = () => {
           :key="meItem.id"
           :icon="meItem.icon"
           size="large"
-          :text="!isActive('me')"
+          text
           rounded
           :aria-label="meItem.label"
           @click="meItem.action" />
@@ -289,6 +278,7 @@ const onLogoutClick = () => {
               optionValue="value"
               :placeholder="t('geo.province')"
               showClear
+              filter
               class="w-full" />
           </div>
 

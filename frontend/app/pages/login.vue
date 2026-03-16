@@ -28,11 +28,15 @@ async function onSubmit() {
 </script>
 
 <template>
-  <Card class="border-1 surface-border">
-    <template #title>
-      <h1 class="m-0 text-2xl font-semibold">{{ t("auth.login") }}</h1>
-    </template>
+  <div class="flex flex-column gap-4">
+    <div class="flex align-items-center gap-3">
+      <NuxtLink :to="ROUTES.home" class="text-color-secondary">
+        <i class="pi pi-arrow-left" />
+      </NuxtLink>
+      <h1 class="text-2xl font-bold m-0">{{ t("auth.login") }}</h1>
+    </div>
 
+    <Card class="border-1 surface-border">
     <template #content>
       <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
 
@@ -66,4 +70,5 @@ async function onSubmit() {
       </p>
     </template>
   </Card>
+  </div>
 </template>
