@@ -45,3 +45,18 @@ export type EventPublic = {
   artists: string[];
   sourceUrl?: string | null;
 };
+
+export type EventPrivateDto = {
+  id: string;
+  title: string;
+  startDateTime: string;
+  venueName: string;
+  provinceId: string;
+  provinceName: string;
+  cityName: string;
+  artists: string[];
+  sourceUrl?: string | null;
+  status: EventStatus;
+  moderationMessage?: string | null;
+  createdAt: string;
+};

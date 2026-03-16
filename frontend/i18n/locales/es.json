@@ -77,7 +77,27 @@
     "deleteEvent": "Eliminar",
     "deleteConfirm": "¿Seguro que quieres eliminar este concierto?",
     "deleteOk": "Sí, eliminar",
-    "deleteCancel": "Cancelar"
+    "deleteCancel": "Cancelar",
+    "propose": {
+      "title": "Proponer concierto",
+      "venueName": "Recinto",
+      "startDate": "Fecha y hora de inicio",
+      "endDate": "Fecha y hora de fin (opcional)",
+      "addArtist": "Añadir artista",
+      "removeArtist": "Eliminar artista",
+      "artistPlaceholder": "Artista",
+      "artistSelectorPlaceholder": "Añade artistas (escribe y pulsa Enter)",
+      "submit": "Proponer",
+      "cancel": "Cancelar",
+      "titlePlaceholder": "Nombre del concierto o festival",
+      "descriptionPlaceholder": "Descripción del concierto...",
+      "venuePlaceholder": "El garito...",
+      "cityPlaceholder": "Madrid, Barcelona...",
+      "sourceUrlPlaceholder": "https://...",
+      "successTitle": "¡Concierto propuesto!",
+      "successMsg": "Tu propuesta se ha enviado correctamente y queda pendiente de moderación. En cuanto sea revisada te avisaremos.",
+      "successOk": "Ver mis conciertos"
+    }
   },
   "user": {
     "email": "Email",

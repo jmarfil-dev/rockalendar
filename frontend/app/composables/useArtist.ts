@@ -51,6 +51,11 @@ export const useArtistAutocomplete = () => {
   return { suggestions, loading, search };
 };
 
+export const clearArtistAutocompleteCache = () => {
+  const cache = useState<Record<string, Artist[]>>("artistAcCache", () => ({}));
+  cache.value = {};
+};
+
 export async function fetchArtistById(id: string): Promise<Artist | null> {
   // cache por id (global, pero creado en contexto Nuxt)
   const artistCache = useState<Record<string, Artist>>("artistCache", () => ({}));
