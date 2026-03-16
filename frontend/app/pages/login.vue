@@ -19,7 +19,7 @@ async function onSubmit() {
       return;
     }
 
-    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : ROUTES.home;
+    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : ROUTES.me;
     await navigateTo(redirect);
   } finally {
     loading.value = false;
