@@ -64,8 +64,8 @@ public interface MeEventApi {
                                                              - OTHERS: eventos en estados distintos a NEEDS_CHANGES y PENDING_MODERATION, ordenación por pageable.
                                                              - ALL (pestaña por defecto): todos los eventos, ordenación por defecto que ignora sort en pageable.
 
-                                                             La ordenación por pageable permite direcciones asc y desc, y los campos title, date (fecha de inicio),
-                                                             province y city. Ignora cualquier valor distinto.
+                                                             La ordenación por pageable permite direcciones asc y desc, y los campos title, date (fecha de submit),
+                                                             province y city, y en OTHERS, además, status. Ignora cualquier valor distinto.
                                                              """)
     @ApiResponse(responseCode = "200",
                  description = "Listado de eventos del usuario",

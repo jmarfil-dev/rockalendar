@@ -86,9 +86,10 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                 WHERE e.createdByUserId = :userId
                 ORDER BY
                   CASE
-                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.NEEDS_CHANGES THEN 0
-                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION THEN 1
-                    ELSE 2
+                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.NEEDS_CHANGES THEN 0
+                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION THEN 1
+                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED THEN 2
+                   ELSE 3
                   END ASC,
                   e.status ASC,
                   CASE WHEN e.startDateTime >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END ASC,
