@@ -28,7 +28,8 @@
     "noResults": "¡Buscas! Nunca hallas ¡Nada!",
     "listEvents": "Listado de conciertos",
     "poster": "Cartel del concierto o festival",
-    "noPoster": "Cartel no disponible"
+    "noPoster": "Cartel no disponible",
+    "status": "Estado"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -54,7 +55,29 @@
     "agenda": "Agenda",
     "agendaDesc": "Conciertos a los que vas o te interesan",
     "myEvents": "Mis conciertos",
-    "myEventsDesc": "Conciertos que has propuesto"
+    "myEventsDesc": "Conciertos que has propuesto",
+    "tabs": {
+      "PENDING": "Pendientes",
+      "CHANGES": "Requiere cambios",
+      "OTHERS": "Resto",
+      "ALL": "Todos"
+    },
+    "eventStatus": {
+      "PENDING_MODERATION": "Pendiente",
+      "APPROVED": "Aprobado",
+      "REJECTED": "Rechazado",
+      "NEEDS_CHANGES": "Necesita cambios",
+      "DRAFT": "Borrador",
+      "HIDDEN": "Oculto",
+      "CANCELED": "Cancelado",
+      "ERASED": "Eliminado"
+    },
+    "submittedAt": "Enviado",
+    "noEvents": "No tienes conciertos en esta pestaña",
+    "deleteEvent": "Eliminar",
+    "deleteConfirm": "¿Seguro que quieres eliminar este concierto?",
+    "deleteOk": "Sí, eliminar",
+    "deleteCancel": "Cancelar"
   },
   "user": {
     "email": "Email",
