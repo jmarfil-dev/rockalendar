@@ -26,7 +26,7 @@ export const useProposeEvent = () => {
   const artistsError = computed(() => {
     const keys = Object.keys(fieldErrors.value);
     const key = keys.find((k) => k === "artists" || k.startsWith("artists["));
-    return key ? t(fieldErrors.value[key]) : null;
+    return key ? t(fieldErrors.value[key]!) : null;
   });
 
   function resetErrors() {

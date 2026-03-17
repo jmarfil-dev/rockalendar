@@ -18,7 +18,7 @@ function tr(key: string) {
     <InputText
       id="email"
       :modelValue="modelValue"
-      @update:modelValue="$emit('update:modelValue', $event)"
+      @update:modelValue="$emit('update:modelValue', $event ?? '')"
       type="email"
       inputmode="email"
       autocomplete="email"

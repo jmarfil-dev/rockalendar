@@ -138,39 +138,35 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
       <!-- Listado -->
       <div v-else class="grid">
         <div v-for="ev in events" :key="ev.id" class="col-12 md:col-6 lg:col-4">
-          <Card
-            class="h-full border-1 surface-50 surface-border cursor-pointer"
-            role="link"
-            tabindex="0"
-            @click="navigateTo(ROUTE_PATH.eventDetail(ev.id))"
-            @keydown.enter.prevent="navigateTo(ROUTE_PATH.eventDetail(ev.id))"
-            @keydown.space.prevent="navigateTo(ROUTE_PATH.eventDetail(ev.id))">
-            <template #title>
-              <span class="text-color-primary">{{ ev.title }}</span>
-            </template>
+          <NuxtLink :to="ROUTE_PATH.eventDetail(ev.id)" class="no-underline">
+            <Card class="h-full border-1 surface-50 surface-border cursor-pointer hover:surface-100 transition-colors transition-duration-150">
+              <template #title>
+                <span class="text-color-primary">{{ ev.title }}</span>
+              </template>
 
-            <template #content>
-              <div class="text-color-secondary text-sm flex flex-column gap-2">
-                <div>
-                  <i class="pi pi-calendar mr-2"></i>
-                  <time :datetime="ev.startDateTime">
-                    {{ formatEventDate(ev.startDateTime) }}
-                  </time>
-                  <span v-if="ev.endDateTime">
-                    &nbsp;>>&nbsp;
-                    <time :datetime="ev.endDateTime">
-                      {{ formatEventDate(ev.endDateTime) }}
+              <template #content>
+                <div class="text-color-secondary text-sm flex flex-column gap-2">
+                  <div>
+                    <i class="pi pi-calendar mr-2" />
+                    <time :datetime="ev.startDateTime">
+                      {{ formatEventDate(ev.startDateTime) }}
                     </time>
-                  </span>
-                </div>
+                    <template v-if="ev.endDateTime">
+                      &nbsp;>>&nbsp;
+                      <time :datetime="ev.endDateTime">
+                        {{ formatEventDate(ev.endDateTime) }}
+                      </time>
+                    </template>
+                  </div>
 
-                <div>
-                  <i class="pi pi-compass mr-2"></i>
-                  {{ ev.cityName }}<span v-if="ev.cityName && ev.provinceName">, </span>{{ ev.provinceName }}
+                  <div>
+                    <i class="pi pi-compass mr-2" />
+                    {{ ev.cityName }}<span v-if="ev.cityName && ev.provinceName">, </span>{{ ev.provinceName }}
+                  </div>
                 </div>
-              </div>
-            </template>
-          </Card>
+              </template>
+            </Card>
+          </NuxtLink>
         </div>
       </div>
     </section>
