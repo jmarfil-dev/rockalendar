@@ -12,7 +12,9 @@ import com.jmarfildev.rockalendar.events.domain.EventStatus;
  */
 public record EventPrivateDto(UUID id,
                               String title,
+                              String description,
                               OffsetDateTime startDateTime,
+                              OffsetDateTime endDateTime,
                               String venueName,
                               UUID provinceId,
                               String provinceName,
@@ -21,4 +23,5 @@ public record EventPrivateDto(UUID id,
                               String sourceUrl,
                               EventStatus status,
                               String moderationMessage,
-                              OffsetDateTime createdAt) {}
+                              OffsetDateTime createdAt,
+                              OffsetDateTime submittedAt) {}

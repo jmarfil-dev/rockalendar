@@ -26,6 +26,10 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @EntityGraph(attributePaths = { "province", "artists" })
     Optional<Event> findByIdAndStatus(UUID id, EventStatus status);
 
+    // Sobreescribe findById de JpaRepository para cargar province y artists con JOIN FETCH
+    @EntityGraph(attributePaths = { "province", "artists" })
+    Optional<Event> findById(UUID id);
+
     @EntityGraph(attributePaths = { "province", "artists" })
     Optional<Event> findByTitleAndStatus(String title, EventStatus status);
 

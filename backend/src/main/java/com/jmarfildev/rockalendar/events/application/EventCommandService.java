@@ -118,6 +118,7 @@ public class EventCommandService {
         event.setVenueName(in.venueName());
         event.setVenueSlug(in.venueSlug());
         event.setSourceUrl(in.sourceUrl());
+        event.setModerationMessage(null);
 
         // Borrar lista anterior y poner nueva
         event.getArtists().clear();

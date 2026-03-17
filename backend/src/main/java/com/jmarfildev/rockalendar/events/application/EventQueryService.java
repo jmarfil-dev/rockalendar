@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import com.jmarfildev.rockalendar.common.CommonValidations;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
+import com.jmarfildev.rockalendar.common.error.ForbiddenException;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
@@ -26,10 +27,12 @@ import com.jmarfildev.rockalendar.common.helper.SortUtils;
 import com.jmarfildev.rockalendar.common.helper.SortUtils.SortChoice;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.config.PublicSearchProperties;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
+import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventPublicSearchProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
@@ -140,6 +143,15 @@ public class EventQueryService {
 
             case ALL -> repository.listMineAllPriorityFutureFirst(userId, pageable);
         };
+    }
+
+    public EventPrivateDto getMine(UUID eventId) {
+        UUID userId = currentUser.userId();
+        Event event = repository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
+        if (!userId.equals(event.getCreatedByUserId())) {
+            throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
+        }
+        return mapper.toPrivateDto(event);
     }
 
     private boolean hasMultipleTokens(String q) {

@@ -74,6 +74,17 @@ public interface MeEventApi {
     Page<EventPrivateListItemDto> listMine(@Parameter(description = "Nombre de la pestaña") @RequestParam(defaultValue = "ALL") MeEventTabEnum tab,
                                            @Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 
+    @GetMapping("/me/events/{eventId}")
+    @Operation(summary = "Obtener detalle de un evento propio",
+               description = "Devuelve el detalle completo de un evento del usuario autenticado.")
+    @ApiResponse(responseCode = "200", description = "Detalle del evento")
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    EventPrivateDto getMyEvent(@Parameter(description = "ID del evento",
+                                          example = "cccccccc-0000-0000-0000-000000000001",
+                                          required = true) @PathVariable UUID eventId);
+
     @PutMapping("/me/events/{eventId}")
     @Operation(summary = "Actualizar un evento propio",
                description = "Permite editar un evento del usuario en estados editables (DRAFT/NEEDS_CHANGES/APPROVED). "
