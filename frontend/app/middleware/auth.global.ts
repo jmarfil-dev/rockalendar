@@ -15,9 +15,13 @@ function matchRule(path: string): Rule | null {
 }
 
 /**
- * Aplica reglas de middleware
+ * Aplica reglas de middleware.
+ * Solo se ejecuta en cliente: la autenticación es client-side (localStorage),
+ * por lo que el servidor nunca puede conocer el estado real del usuario.
  */
 export default defineNuxtRouteMiddleware((to) => {
+  if (import.meta.server) return;
+
   const auth = useAuth();
   if (to.path === ROUTES.login && auth.isAuthenticated.value) {
     // Si ruta es login y ya está autenticado, redir a página privada o ruta original

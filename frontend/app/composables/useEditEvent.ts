@@ -19,7 +19,6 @@ export const useEditEvent = (eventId: string) => {
   });
 
   const loading = ref(true);
-  const loadError = ref<string | null>(null);
   const submitting = ref(false);
   const errorMsg = ref<string | null>(null);
   const fieldErrors = ref<Record<string, string>>({});
@@ -48,9 +47,9 @@ export const useEditEvent = (eventId: string) => {
     loading.value = false;
     if (res.ok) {
       fillForm(res.data);
-    } else {
-      loadError.value = res.pd?.detail ?? t("error.unknown");
+      return null;
     }
+    return res;
   }
 
   function resetErrors() {
@@ -92,5 +91,5 @@ export const useEditEvent = (eventId: string) => {
     }
   }
 
-  return { form, loading, loadError, submitting, errorMsg, fieldErrors, artistsError, load, submit };
+  return { form, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit };
 };

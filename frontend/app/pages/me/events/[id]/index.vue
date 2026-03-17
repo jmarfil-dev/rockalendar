@@ -11,7 +11,6 @@ const id = route.params.id as string;
 
 const event = ref<EventPrivateDto | null>(null);
 const loading = ref(true);
-const loadError = ref<string | null>(null);
 
 const deleteDialogVisible = ref(false);
 const deleting = ref(false);
@@ -40,7 +39,7 @@ onMounted(async () => {
   if (res.ok) {
     event.value = res.data;
   } else {
-    loadError.value = res.pd?.detail ?? t("error.unknown");
+    showError({ statusCode: res.status, data: res.pd });
   }
 });
 
@@ -72,9 +71,6 @@ async function onDelete() {
     <div v-if="loading" class="flex align-items-center gap-2 py-6 justify-content-center">
       <ProgressSpinner style="width: 2rem; height: 2rem" />
     </div>
-
-    <!-- Error de carga -->
-    <Message v-else-if="loadError" severity="error" :closable="false">{{ loadError }}</Message>
 
     <!-- Contenido -->
     <template v-else-if="event">

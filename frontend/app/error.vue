@@ -47,7 +47,7 @@ const message = computed(() => {
   return t("error.unknown");
 });
 
-const goHome = () => clearError({ redirect: ROUTES.home });
+const goBack = () => clearError({ redirect: window.history.state?.back ?? ROUTES.home });
 </script>
 
 <template>
@@ -80,7 +80,7 @@ const goHome = () => clearError({ redirect: ROUTES.home });
                 </Message>
 
                 <div class="flex justify-content-center gap-2">
-                  <Button :label="t('common.returnIndex')" icon="pi pi-home" @click="goHome" />
+                  <Button :label="t('common.back')" icon="pi pi-arrow-left" @click="goBack" />
                 </div>
               </div>
             </template>

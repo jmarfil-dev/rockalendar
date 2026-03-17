@@ -18,7 +18,7 @@ export function pdToFormErrors(pd: ProblemDetail | null, t: (key: string) => str
 
   // Si hay errores en campos ignoramos detail y message
   if (Object.keys(fields).length == 0) {
-    if (pd.code) message = t(pd.code);
+    if (pd.code) message = t(pd.code); // pd.code ya es la ruta i18n completa (ej: "error.409.moderatorOwn")
     else if (pd.detail) message = pd.detail;
     else message = t("error.unknown");
   }
