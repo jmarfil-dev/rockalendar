@@ -51,7 +51,7 @@ export const useProposeEvent = () => {
     };
 
     try {
-      const res = await fetchAuthResult<EventPrivateDto>(ROUTES.apiEvents, {
+      const res = await fetchAuthResult<EventPrivateDto>(ROUTES.apiMeEvents, {
         method: "POST",
         body,
       });

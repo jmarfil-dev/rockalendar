@@ -114,7 +114,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                    FROM search_public_events(
                      :q, :minSim, :ftsW, :trgmW,
                      :dateFrom, :dateTo,
-                     :provinceId, :citySlug, :artistSlug
+                     :provinceId, :citySlug, :artistId
                    ) s
                    JOIN events e ON e.id = s.event_id
                    JOIN provinces p ON p.id = e.province_id
@@ -140,7 +140,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                      FROM search_public_events(
                                        :q, :minSim, :ftsW, :trgmW,
                                        :dateFrom, :dateTo,
-                                       :provinceId, :citySlug, :artistSlug
+                                       :provinceId, :citySlug, :artistId
                                      ) s
                                      """, nativeQuery = true)
     Page<EventPublicSearchProjection> searchPublicEvents(@Param("q") String q,
@@ -151,7 +151,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                          @Param("dateTo") OffsetDateTime dateTo,
                                                          @Param("provinceId") UUID provinceId,
                                                          @Param("citySlug") String citySlug,
-                                                         @Param("artistSlug") UUID artistId,
+                                                         @Param("artistId") UUID artistId,
                                                          @Param("sortKey") String sortKey,
                                                          @Param("sortDir") String sortDir,
                                                          Pageable pageable);
@@ -168,7 +168,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                    FROM search_public_events_fallback(
                      :q, :minSim, :ftsW, :trgmW,
                      :dateFrom, :dateTo,
-                     :provinceId, :citySlug, :artistSlug
+                     :provinceId, :citySlug, :artistId
                    ) s
                    JOIN events e ON e.id = s.event_id
                    JOIN provinces p ON p.id = e.province_id
@@ -192,7 +192,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                      FROM search_public_events_fallback(
                                        :q, :minSim, :ftsW, :trgmW,
                                        :dateFrom, :dateTo,
-                                       :provinceId, :citySlug, :artistSlug
+                                       :provinceId, :citySlug, :artistId
                                      ) s
                                      """, nativeQuery = true)
     Page<EventPublicSearchProjection> searchPublicEventsFallback(@Param("q") String q,
@@ -203,7 +203,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                                  @Param("dateTo") OffsetDateTime dateTo,
                                                                  @Param("provinceId") UUID provinceId,
                                                                  @Param("citySlug") String citySlug,
-                                                                 @Param("artistSlug") UUID artistId,
+                                                                 @Param("artistId") UUID artistId,
                                                                  @Param("sortKey") String sortKey,
                                                                  @Param("sortDir") String sortDir,
                                                                  Pageable pageable);
