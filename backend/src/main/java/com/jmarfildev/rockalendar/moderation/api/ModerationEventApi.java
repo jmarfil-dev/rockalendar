@@ -46,13 +46,24 @@ public interface ModerationEventApi {
      * Query endpoints
      */
 
+    @GetMapping("/{eventId}")
+    @Operation(summary = "Obtener detalle de un evento para moderación",
+               description = "Devuelve el detalle completo de cualquier evento, independientemente de su estado.")
+    @ApiResponse(responseCode = "200", description = "Detalle del evento")
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    EventPrivateDto getForModeration(@Parameter(description = "ID del evento",
+                                                example = "cccccccc-0000-0000-0000-000000000001",
+                                                required = true) @PathVariable UUID eventId);
+
     @GetMapping("/pending")
     @Operation(summary = "Listar eventos pendientes de moderación",
                description = """
                              Devuelve eventos en estado PENDING_MODERATION. Listado ligero para revisión.
 
-                             La ordenación por pageable permite direcciones asc y desc, y los campos title, submitted (fecha de submit)
-                             y created (fecha de creación). Ignora cualquier valor distinto.
+                             La ordenación por pageable permite direcciones asc y desc, y los campos title y submitted (fecha de submit).
+                             Ignora cualquier valor distinto.
                              """)
     @ApiResponse(responseCode = "200",
                  description = "Listado paginado de eventos pendientes",
@@ -67,7 +78,7 @@ public interface ModerationEventApi {
                              Devuelve eventos en estado REJECTED, HIDDEN o CANCELED. Incluye estado y último mensaje de moderación.
 
                              La ordenación por pageable permite direcciones asc y desc, y los campos title, status,
-                             moderated (fecha de moderación) y created (fecha de creación). Ignora cualquier valor distinto.
+                             y moderated (fecha de moderación). Ignora cualquier valor distinto.
                              """)
     @ApiResponse(responseCode = "200",
                  description = "Listado paginado de eventos archivados",

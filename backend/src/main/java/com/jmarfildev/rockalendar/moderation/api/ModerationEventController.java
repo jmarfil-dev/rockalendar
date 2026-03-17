@@ -28,6 +28,11 @@ public class ModerationEventController implements ModerationEventApi {
     private final ModerationCommandService commandService;
 
     @Override
+    public EventPrivateDto getForModeration(UUID eventId) {
+        return queryService.getForModeration(eventId);
+    }
+
+    @Override
     public Page<ModerationPendingListItemDto> listPending(Pageable pageable) {
         return queryService.listPending(pageable);
     }
