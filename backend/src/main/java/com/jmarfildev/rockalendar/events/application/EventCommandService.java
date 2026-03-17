@@ -64,7 +64,7 @@ public class EventCommandService {
     @Transactional
     public EventPrivateDto propose(SubmitEventRequest req) {
         UUID userId = currentUser.userId();
-        EventInputValidate in = validate(req);
+        EventInputValidate in = validate(req, userId);
 
         var event = Event.builder()
                          .title(in.title)
@@ -97,7 +97,7 @@ public class EventCommandService {
     @Transactional
     public EventPrivateDto update(UUID eventId, SubmitEventRequest req) {
         UUID userId = currentUser.userId();
-        EventInputValidate in = validate(req);
+        EventInputValidate in = validate(req, userId);
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
@@ -118,6 +118,7 @@ public class EventCommandService {
         event.setVenueName(in.venueName());
         event.setVenueSlug(in.venueSlug());
         event.setSourceUrl(in.sourceUrl());
+        event.setModerationMessage(null);
 
         // Borrar lista anterior y poner nueva
         event.getArtists().clear();
@@ -171,7 +172,7 @@ public class EventCommandService {
      * @param req request con los datos del evento
      * @return un record con los datos validados
      */
-    private EventInputValidate validate(SubmitEventRequest req) {
+    private EventInputValidate validate(SubmitEventRequest req, UUID userId) {
         if (req.endDateTime() != null && req.endDateTime().isBefore(req.startDateTime())) {
             throw new BadRequestException(ErrorConstants.INVALID_DATE_RANGE);
         }
@@ -187,7 +188,7 @@ public class EventCommandService {
             }
 
             var artist = artistRepository.findBySlug(slug)
-                                         .orElseGet(() -> saveArtistOrFetch(displayName, slug));
+                                         .orElseGet(() -> saveArtistOrFetch(displayName, slug, userId));
 
             artists.add(artist);
         }
@@ -233,9 +234,9 @@ public class EventCommandService {
      * @param slug
      * @return
      */
-    private Artist saveArtistOrFetch(String displayName, String slug) {
+    private Artist saveArtistOrFetch(String displayName, String slug, UUID userId) {
         try {
-            return artistRepository.saveAndFlush(Artist.builder().name(displayName).slug(slug).build());
+            return artistRepository.saveAndFlush(Artist.builder().name(displayName).slug(slug).createdByUserId(userId).build());
         } catch (DataIntegrityViolationException ex) {
             return artistRepository.findBySlug(slug)
                     .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));

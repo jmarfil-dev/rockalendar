@@ -26,6 +26,10 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @EntityGraph(attributePaths = { "province", "artists" })
     Optional<Event> findByIdAndStatus(UUID id, EventStatus status);
 
+    // Sobreescribe findById de JpaRepository para cargar province y artists con JOIN FETCH
+    @EntityGraph(attributePaths = { "province", "artists" })
+    Optional<Event> findById(UUID id);
+
     @EntityGraph(attributePaths = { "province", "artists" })
     Optional<Event> findByTitleAndStatus(String title, EventStatus status);
 
@@ -86,9 +90,10 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                 WHERE e.createdByUserId = :userId
                 ORDER BY
                   CASE
-                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.NEEDS_CHANGES THEN 0
-                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION THEN 1
-                    ELSE 2
+                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.NEEDS_CHANGES THEN 0
+                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION THEN 1
+                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED THEN 2
+                   ELSE 3
                   END ASC,
                   e.status ASC,
                   CASE WHEN e.startDateTime >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END ASC,

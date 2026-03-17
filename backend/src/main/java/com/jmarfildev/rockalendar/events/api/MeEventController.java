@@ -32,6 +32,11 @@ public class MeEventController implements MeEventApi {
     }
 
     @Override
+    public EventPrivateDto getMyEvent(UUID eventId) {
+        return queryService.getMine(eventId);
+    }
+
+    @Override
     public Page<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {
         return queryService.listMine(tab, pageable);
     }

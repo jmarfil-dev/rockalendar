@@ -10,12 +10,7 @@ const router = useRouter();
 const homeEndpoint = ROUTES.apiHome; // Por ahora usamos proxy para evitar CORS
 const searchEndpoint = ROUTES.apiEvents;
 
-const sortOptions = computed(() => [
-  { label: t("dates.date"), value: "date,asc" },
-  { label: t("events.title"), value: "title,asc" },
-  { label: t("geo.province"), value: "province,asc" },
-  { label: t("geo.city"), value: "city,asc" },
-]);
+const sortOptions = useSortOptions(["date", "title", "province", "city"]);
 
 // Detectar si estamos en modo búsqueda (por ruta /events o por query params de filtros)
 // Nota: esto permite que el componente se use tanto en / como en /events con el mismo comportamiento.
@@ -59,7 +54,7 @@ const size = computed<number>({
 });
 
 const sort = computed<string>({
-  get: () => (typeof route.query.sort === "string" ? route.query.sort : "date,asc"),
+  get: () => (typeof route.query.sort === "string" ? route.query.sort : "date"),
   set: (v) => {
     // Al cambiar orden, volvemos a page 0
     router.replace({ query: { ...route.query, sort: v, page: "0" } });
@@ -143,46 +138,45 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
       <!-- Listado -->
       <div v-else class="grid">
         <div v-for="ev in events" :key="ev.id" class="col-12 md:col-6 lg:col-4">
-          <Card
-            class="h-full border-1 surface-50 surface-border cursor-pointer"
-            role="link"
-            tabindex="0"
-            @click="navigateTo(ROUTE_PATH.eventDetail(ev.id))"
-            @keydown.enter.prevent="navigateTo(ROUTE_PATH.eventDetail(ev.id))"
-            @keydown.space.prevent="navigateTo(ROUTE_PATH.eventDetail(ev.id))">
-            <template #title>
-              <span class="text-color-primary">{{ ev.title }}</span>
-            </template>
+          <NuxtLink :to="ROUTE_PATH.eventDetail(ev.id)" class="no-underline">
+            <Card class="h-full border-1 surface-50 surface-border cursor-pointer hover:surface-100 transition-colors transition-duration-150">
+              <template #title>
+                <span class="text-color-primary">{{ ev.title }}</span>
+              </template>
 
-            <template #content>
-              <div class="text-color-secondary text-sm flex flex-column gap-2">
-                <div>
-                  <i class="pi pi-calendar mr-2"></i>
-                  <time :datetime="ev.startDateTime">
-                    {{ formatEventDate(ev.startDateTime) }}
-                  </time>
-                  <span v-if="ev.endDateTime">
-                    &nbsp;>>&nbsp;
-                    <time :datetime="ev.endDateTime">
-                      {{ formatEventDate(ev.endDateTime) }}
+              <template #content>
+                <div class="text-color-secondary text-sm flex flex-column gap-2">
+                  <div>
+                    <i class="pi pi-calendar mr-2" />
+                    <time :datetime="ev.startDateTime">
+                      {{ formatEventDate(ev.startDateTime) }}
                     </time>
-                  </span>
-                </div>
+                    <template v-if="ev.endDateTime">
+                      &nbsp;>>&nbsp;
+                      <time :datetime="ev.endDateTime">
+                        {{ formatEventDate(ev.endDateTime) }}
+                      </time>
+                    </template>
+                  </div>
 
-                <div>
-                  <i class="pi pi-compass mr-2"></i>
-                  {{ ev.cityName }}<span v-if="ev.cityName && ev.provinceName">, </span>{{ ev.provinceName }}
+                  <div>
+                    <i class="pi pi-compass mr-2" />
+                    {{ ev.cityName }}<span v-if="ev.cityName && ev.provinceName">, </span>{{ ev.provinceName }}
+                  </div>
                 </div>
-              </div>
-            </template>
-          </Card>
+              </template>
+            </Card>
+          </NuxtLink>
         </div>
       </div>
     </section>
 
     <!-- Paginación -->
-    <div v-if="!pending && !error && total > 0" class="border-1 border-round-xl p-2">
-      <Paginator :first="first" :rows="size" :totalRecords="total" :rowsPerPageOptions="[20, 50, 100]" @page="onPage" />
-    </div>
+    <AppPaginator
+      v-if="!pending && !error && total > 0"
+      :first="first"
+      :rows="size"
+      :totalRecords="total"
+      @page="onPage" />
   </article>
 </template>

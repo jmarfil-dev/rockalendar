@@ -64,8 +64,8 @@ public interface MeEventApi {
                                                              - OTHERS: eventos en estados distintos a NEEDS_CHANGES y PENDING_MODERATION, ordenación por pageable.
                                                              - ALL (pestaña por defecto): todos los eventos, ordenación por defecto que ignora sort en pageable.
 
-                                                             La ordenación por pageable permite direcciones asc y desc, y los campos title, date (fecha de inicio),
-                                                             province y city. Ignora cualquier valor distinto.
+                                                             La ordenación por pageable permite direcciones asc y desc, y los campos title, date (fecha de submit),
+                                                             province y city, y en OTHERS, además, status. Ignora cualquier valor distinto.
                                                              """)
     @ApiResponse(responseCode = "200",
                  description = "Listado de eventos del usuario",
@@ -73,6 +73,17 @@ public interface MeEventApi {
     @ApiUnauthorized
     Page<EventPrivateListItemDto> listMine(@Parameter(description = "Nombre de la pestaña") @RequestParam(defaultValue = "ALL") MeEventTabEnum tab,
                                            @Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
+
+    @GetMapping("/me/events/{eventId}")
+    @Operation(summary = "Obtener detalle de un evento propio",
+               description = "Devuelve el detalle completo de un evento del usuario autenticado.")
+    @ApiResponse(responseCode = "200", description = "Detalle del evento")
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    EventPrivateDto getMyEvent(@Parameter(description = "ID del evento",
+                                          example = "cccccccc-0000-0000-0000-000000000001",
+                                          required = true) @PathVariable UUID eventId);
 
     @PutMapping("/me/events/{eventId}")
     @Operation(summary = "Actualizar un evento propio",

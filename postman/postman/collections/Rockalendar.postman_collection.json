@@ -677,7 +677,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/me/events?tab=OTHERS&sort=city,desc",
+                  "raw": "{{baseUrl}}/api/me/events?tab=OTHERS&sort=status,asc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -694,7 +694,7 @@
                     },
                     {
                       "key": "sort",
-                      "value": "city,desc",
+                      "value": "status,asc",
                       "uuid": "7643092f-db72-456c-91c7-48de6a6a5161"
                     }
                   ]
