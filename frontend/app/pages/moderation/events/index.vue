@@ -14,13 +14,13 @@ const TABS = MODERATION_TABS;
 const activeTab = ref<ModerationTab>("PENDING");
 const currentPage = ref(0);
 const pageSize = ref(20);
-const sort = ref("submittedAt");
+const sort = ref("submitted");
 
 const total = computed(() => pageMeta.value?.totalElements ?? 0);
 const first = computed(() => currentPage.value * pageSize.value);
 
-const sortOptionsPending = useSortOptions(["title", "submittedAt"]);
-const sortOptionsArchived = useSortOptions(["title", "status", "moderatedAt"]);
+const sortOptionsPending = useSortOptions(["title", "submitted"]);
+const sortOptionsArchived = useSortOptions(["title", "status", "moderated"]);
 const sortOptions = computed(() => (activeTab.value === "PENDING" ? sortOptionsPending.value : sortOptionsArchived.value));
 
 async function load() {
@@ -30,7 +30,7 @@ async function load() {
 function onTabChange(tab: ModerationTab) {
   activeTab.value = tab;
   currentPage.value = 0;
-  sort.value = tab === "PENDING" ? "submittedAt" : "moderatedAt";
+  sort.value = tab === "PENDING" ? "submitted" : "moderated";
 }
 
 function onPageChange(e: { page: number; rows: number }) {

@@ -54,7 +54,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("""
                 SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.createdAt
+                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
                 )
                 FROM Event e
                 JOIN e.province p
@@ -65,7 +65,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("""
                 SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.createdAt
+                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
                 )
                 FROM Event e
                 JOIN e.province p
@@ -83,7 +83,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
      */
     @Query("""
                 SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.createdAt
+                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
                 )
                 FROM Event e
                 JOIN e.province p
