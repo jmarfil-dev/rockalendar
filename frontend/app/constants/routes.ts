@@ -10,6 +10,8 @@ export const ROUTES = {
   meEventPropose: "/me/events/propose",
 
   moderation: "/moderation",
+  moderationEvents: "/moderation/events",
+
   admin: "/admin",
 
   errorForbidden: "/error/forbidden",
@@ -22,6 +24,10 @@ export const ROUTES = {
   apiArtists: "/api/artists",
   apiProvincesCombo: "/api/provinces/combo",
   apiMeEvents: "/api/me/events",
+
+  apiModerationEvents: "/api/moderation/events",
+  apiModerationPending: "/api/moderation/events/pending",
+  apiModerationArchived: "/api/moderation/events/archived",
 } as const;
 
 export const ROUTE_PATH = {
@@ -31,4 +37,10 @@ export const ROUTE_PATH = {
   apiArtistDetail: (id: string) => `${ROUTES.apiArtists}/${id}`,
   meEventDetail: (id: string) => `${ROUTES.meEvents}/${id}`,
   apiMeEventDetail: (id: string) => `${ROUTES.apiMeEvents}/${id}`,
+  moderationEventDetail: (id: string) => `${ROUTES.moderationEvents}/${id}`,
+  apiModerationEventDetail: (id: string) => `${ROUTES.apiModerationEvents}/${id}`,
+  apiModerationApprove: (id: string) => `${ROUTES.apiModerationEvents}/${id}/approve`,
+  apiModerationReject: (id: string) => `${ROUTES.apiModerationEvents}/${id}/reject`,
+  apiModerationHide: (id: string) => `${ROUTES.apiModerationEvents}/${id}/hide`,
+  apiModerationRequestChanges: (id: string) => `${ROUTES.apiModerationEvents}/${id}/request-changes`,
 } as const;

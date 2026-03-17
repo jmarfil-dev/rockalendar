@@ -31,6 +31,15 @@ const bottomItems = computed(() => {
       icon: "pi pi-user",
       action: () => router.push(ROUTES.me),
     });
+
+    if (auth.isModerator.value) {
+      items.push({
+        id: "moderation",
+        label: t("common.moderationV"),
+        icon: "pi pi-clipboard",
+        action: () => router.push(ROUTES.moderation),
+      });
+    }
   }
 
   return items;

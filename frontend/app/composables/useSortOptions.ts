@@ -4,6 +4,8 @@ const SORT_FIELD_I18N_KEY = {
   province: "geo.province",
   city: "geo.city",
   status: "events.status",
+  submittedAt: "me.submittedAt",
+  moderatedAt: "moderation.moderatedAt",
 } as const;
 
 export type SortField = keyof typeof SORT_FIELD_I18N_KEY;
