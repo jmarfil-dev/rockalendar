@@ -73,11 +73,21 @@
       "ERASED": "Deleted"
     },
     "submittedAt": "Submitted",
+    "createdAt": "Created",
+    "editEvent": "Edit concert",
     "noEvents": "No concerts in this tab",
     "deleteEvent": "Delete",
     "deleteConfirm": "Are you sure you want to delete this concert?",
     "deleteOk": "Yes, delete",
     "deleteCancel": "Cancel",
+    "edit": {
+      "title": "Edit concert",
+      "submit": "Save changes",
+      "cancel": "Cancel",
+      "successTitle": "Concert updated!",
+      "successMsg": "The concert has been updated and is now pending moderation again.",
+      "successOk": "View detail"
+    },
     "propose": {
       "title": "Propose a concert",
       "venueName": "Venue",

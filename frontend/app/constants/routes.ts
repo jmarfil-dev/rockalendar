@@ -29,5 +29,6 @@ export const ROUTE_PATH = {
   apiEventDetail: (id: string) => `${ROUTES.apiEvents}/${id}`,
   artistDetail: (id: string) => `${ROUTES.apiArtists}/${id}`,
   apiArtistDetail: (id: string) => `${ROUTES.apiArtists}/${id}`,
+  meEventDetail: (id: string) => `${ROUTES.meEvents}/${id}`,
   apiMeEventDetail: (id: string) => `${ROUTES.apiMeEvents}/${id}`,
 } as const;

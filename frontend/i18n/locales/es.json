@@ -27,6 +27,7 @@
     "searchPlaceholder": "Festival, grupo, antro...",
     "noResults": "¡Buscas! Nunca hallas ¡Nada!",
     "listEvents": "Listado de conciertos",
+    "searchConcerts": "Buscar conciertos",
     "poster": "Cartel del concierto o festival",
     "noPoster": "Cartel no disponible",
     "status": "Estado"
@@ -73,11 +74,21 @@
       "ERASED": "Eliminado"
     },
     "submittedAt": "Enviado",
+    "createdAt": "Creado",
+    "editEvent": "Editar concierto",
     "noEvents": "No tienes conciertos en esta pestaña",
     "deleteEvent": "Eliminar",
     "deleteConfirm": "¿Seguro que quieres eliminar este concierto?",
     "deleteOk": "Sí, eliminar",
     "deleteCancel": "Cancelar",
+    "edit": {
+      "title": "Editar concierto",
+      "submit": "Guardar cambios",
+      "cancel": "Cancelar",
+      "successTitle": "¡Concierto actualizado!",
+      "successMsg": "El concierto ha sido actualizado y vuelve a estar pendiente de moderación.",
+      "successOk": "Ver detalle"
+    },
     "propose": {
       "title": "Proponer concierto",
       "venueName": "Recinto",

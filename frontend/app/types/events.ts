@@ -49,7 +49,9 @@ export type EventPublic = {
 export type EventPrivateDto = {
   id: string;
   title: string;
+  description?: string | null;
   startDateTime: string;
+  endDateTime?: string | null;
   venueName: string;
   provinceId: string;
   provinceName: string;
@@ -59,4 +61,5 @@ export type EventPrivateDto = {
   status: EventStatus;
   moderationMessage?: string | null;
   createdAt: string;
+  submittedAt: string;
 };

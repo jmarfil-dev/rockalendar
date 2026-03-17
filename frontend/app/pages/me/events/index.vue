@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ME_EVENT_TABS } from "~/types/events";
 import type { MeEventTab, EventStatus } from "~/types/events";
+import { ROUTE_PATH } from "~/constants/routes";
 
 definePageMeta({ layout: "private", ssr: false });
 
@@ -94,7 +95,8 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
           <!-- Lista de eventos -->
           <div v-else class="grid">
             <div v-for="event in events" :key="event.id" class="col-12 md:col-6">
-              <Card class="h-full border-1 surface-50 surface-border">
+              <NuxtLink :to="ROUTE_PATH.meEventDetail(event.id)" class="no-underline">
+              <Card class="h-full border-1 surface-50 surface-border cursor-pointer hover:surface-100 transition-colors transition-duration-150">
                 <template #title>
                   <div class="flex align-items-start justify-content-between gap-3">
                     <span>{{ event.title }}</span>
@@ -125,6 +127,7 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
                   </div>
                 </template>
               </Card>
+              </NuxtLink>
             </div>
           </div>
 

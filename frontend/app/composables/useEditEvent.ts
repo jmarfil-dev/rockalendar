@@ -1,0 +1,96 @@
+import type { EventPrivateDto } from "~/types/events";
+import type { ArtistChip } from "~/types/artist";
+import { ROUTE_PATH } from "~/constants/routes";
+import { applyFormErrors } from "~/utils/formErrors";
+
+export const useEditEvent = (eventId: string) => {
+  const { t } = useI18n();
+
+  const form = reactive({
+    title: "",
+    description: "",
+    startDateTime: null as Date | null,
+    endDateTime: null as Date | null,
+    venueName: "",
+    provinceId: null as string | null,
+    cityName: "",
+    artists: [] as ArtistChip[],
+    sourceUrl: "",
+  });
+
+  const loading = ref(true);
+  const loadError = ref<string | null>(null);
+  const submitting = ref(false);
+  const errorMsg = ref<string | null>(null);
+  const fieldErrors = ref<Record<string, string>>({});
+
+  const artistsError = computed(() => {
+    const keys = Object.keys(fieldErrors.value);
+    const key = keys.find((k) => k === "artists" || k.startsWith("artists["));
+    return key ? t(fieldErrors.value[key]!) : null;
+  });
+
+  function fillForm(event: EventPrivateDto) {
+    form.title = event.title;
+    form.description = event.description ?? "";
+    form.startDateTime = new Date(event.startDateTime);
+    form.endDateTime = event.endDateTime ? new Date(event.endDateTime) : null;
+    form.venueName = event.venueName;
+    form.provinceId = event.provinceId;
+    form.cityName = event.cityName;
+    form.artists = event.artists.map((name) => ({ name }));
+    form.sourceUrl = event.sourceUrl ?? "";
+  }
+
+  async function load() {
+    loading.value = true;
+    const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiMeEventDetail(eventId));
+    loading.value = false;
+    if (res.ok) {
+      fillForm(res.data);
+    } else {
+      loadError.value = res.pd?.detail ?? t("error.unknown");
+    }
+  }
+
+  function resetErrors() {
+    errorMsg.value = null;
+    fieldErrors.value = {};
+  }
+
+  async function submit(): Promise<EventPrivateDto | null> {
+    submitting.value = true;
+    resetErrors();
+
+    const body = {
+      title: form.title,
+      description: form.description || undefined,
+      startDateTime: form.startDateTime?.toISOString(),
+      endDateTime: form.endDateTime?.toISOString() || undefined,
+      venueName: form.venueName,
+      provinceId: form.provinceId,
+      cityName: form.cityName,
+      artists: form.artists.map((a) => a.name),
+      sourceUrl: form.sourceUrl || undefined,
+    };
+
+    try {
+      const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiMeEventDetail(eventId), {
+        method: "PUT",
+        body,
+      });
+
+      if (res.ok) {
+        clearArtistAutocompleteCache();
+        return res.data;
+      }
+
+      applyFormErrors(res.pd, t, errorMsg, fieldErrors);
+      return null;
+    } finally {
+      submitting.value = false;
+    }
+  }
+
+  return { form, loading, loadError, submitting, errorMsg, fieldErrors, artistsError, load, submit };
+};
