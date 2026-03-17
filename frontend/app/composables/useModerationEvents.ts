@@ -10,12 +10,6 @@ export function useModerationEvents() {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  function extractError(res: { pd: { detail?: string; code?: string } | null }): string {
-    if (res.pd?.detail) return res.pd.detail;
-    if (res.pd?.code) return t(res.pd.code); // pd.code ya es la ruta i18n completa
-    return t("error.unknown");
-  }
-
   async function fetchEvents(tab: ModerationTab, page = 0, size = 20, sort?: string) {
     loading.value = true;
     error.value = null;
@@ -36,7 +30,7 @@ export function useModerationEvents() {
         pendingEvents.value = res.data.content;
         pageMeta.value = res.data.page;
       } else {
-        error.value = extractError(res);
+        error.value = extractApiError(res, t);
       }
     } else {
       const res = await fetchAuthResult<PageResponse<ModerationArchivedListItem>>(url);
@@ -45,7 +39,7 @@ export function useModerationEvents() {
         archivedEvents.value = res.data.content;
         pageMeta.value = res.data.page;
       } else {
-        error.value = extractError(res);
+        error.value = extractApiError(res, t);
       }
     }
   }

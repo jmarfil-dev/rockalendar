@@ -78,6 +78,7 @@
     "createdAt": "Created",
     "editEvent": "Edit concert",
     "noEvents": "No concerts in this tab",
+    "allTabNote": "Automatically sorted by priority: pending changes first, then moderation, then the rest.",
     "deleteEvent": "Delete",
     "deleteConfirm": "Are you sure you want to delete this concert?",
     "deleteOk": "Yes, delete",
@@ -177,7 +178,7 @@
         "sizeMax": "Field size exceeds the limit",
         "sizeListEmpty": "List cannot be empty",
         "notBlank": "Field cannot be blank",
-        "notNull": "ield cannot be empty",
+        "notNull": "Field cannot be empty",
         "email": "It must be a valid email address",
         "url": "It must be a valid URL"
       }

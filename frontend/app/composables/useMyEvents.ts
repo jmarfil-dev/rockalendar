@@ -10,12 +10,6 @@ export function useMyEvents() {
   const deleting = ref<string | null>(null);
   const error = ref<string | null>(null);
 
-  function extractError(res: { pd: { detail?: string; code?: string } | null }): string {
-    if (res.pd?.detail) return res.pd.detail;
-    if (res.pd?.code) return t(res.pd.code); // pd.code ya es la ruta i18n completa
-    return t("error.unknown");
-  }
-
   async function fetchEvents(tab: MeEventTab, page = 0, size = 20, sort?: string) {
     loading.value = true;
     error.value = null;
@@ -33,14 +27,16 @@ export function useMyEvents() {
       events.value = res.data.content;
       pageMeta.value = res.data.page;
     } else {
-      error.value = extractError(res);
+      error.value = extractApiError(res, t);
     }
   }
 
   async function deleteEvent(id: string): Promise<boolean> {
     deleting.value = id;
+    error.value = null;
     const res = await fetchAuthResult<void>(ROUTE_PATH.apiMeEventDetail(id), { method: "DELETE" });
     deleting.value = null;
+    if (!res.ok) error.value = extractApiError(res, t);
     return res.ok;
   }
 

@@ -8,5 +8,5 @@ public enum ActionType {
     APPROVE,
     REJECT,
     HIDE,
-    COMMENT;
+    REQUEST_CHANGES;
 }

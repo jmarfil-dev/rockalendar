@@ -40,7 +40,7 @@ import com.jmarfildev.rockalendar.events.application.MeEventTabEnum;
  * @author jmarfil
  *
  */
-@RequestMapping("/api")
+@RequestMapping("/api/me")
 @Tag(name = "Mis Eventos", description = "Gestión de eventos de usuario autenticado")
 @SecurityRequirement(name = "bearerAuth")
 public interface MeEventApi {
@@ -55,7 +55,7 @@ public interface MeEventApi {
     EventPrivateDto propose(@Parameter(description = "Datos del evento a proponer",
                                        required = true) @Valid @RequestBody SubmitEventRequest request);
 
-    @GetMapping("/me/events")
+    @GetMapping("/events")
     @Operation(summary = "Listar mis eventos", description = """
                                                              Devuelve los eventos creados por el usuario autenticado.
                                                              Tiene 4 pestañas posibles:
@@ -74,7 +74,7 @@ public interface MeEventApi {
     Page<EventPrivateListItemDto> listMine(@Parameter(description = "Nombre de la pestaña") @RequestParam(defaultValue = "ALL") MeEventTabEnum tab,
                                            @Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 
-    @GetMapping("/me/events/{eventId}")
+    @GetMapping("/events/{eventId}")
     @Operation(summary = "Obtener detalle de un evento propio",
                description = "Devuelve el detalle completo de un evento del usuario autenticado.")
     @ApiResponse(responseCode = "200", description = "Detalle del evento")
@@ -85,7 +85,7 @@ public interface MeEventApi {
                                           example = "cccccccc-0000-0000-0000-000000000001",
                                           required = true) @PathVariable UUID eventId);
 
-    @PutMapping("/me/events/{eventId}")
+    @PutMapping("/events/{eventId}")
     @Operation(summary = "Actualizar un evento propio",
                description = "Permite editar un evento del usuario en estados editables (DRAFT/NEEDS_CHANGES/APPROVED). "
                        + "Al actualizarlo, pasa a PENDING_MODERATION y se actualiza submittedAt.")
@@ -101,7 +101,7 @@ public interface MeEventApi {
                            @Parameter(description = "Datos nuevos del evento",
                                       required = true) @Valid @RequestBody SubmitEventRequest request);
 
-    @DeleteMapping("/me/events/{eventId}")
+    @DeleteMapping("/events/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Eliminar (retirar) un evento propio",
                description = "Cambia el estado del evento a ERASED. Solo permitido en PENDING_MODERATION y NEEDS_CHANGES. "

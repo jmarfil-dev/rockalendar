@@ -65,7 +65,7 @@ public class ModerationCommandService {
 
     @Transactional
     public EventPrivateDto requestChanges(UUID eventId, ModerationArchiveRequest request) {
-        return archive(eventId, request.reason(), ActionType.COMMENT, EventStatus.NEEDS_CHANGES);
+        return archive(eventId, request.reason(), ActionType.REQUEST_CHANGES, EventStatus.NEEDS_CHANGES);
     }
 
     private EventPrivateDto archive(UUID eventId, String requestReason, ActionType action, EventStatus status) {

@@ -96,7 +96,7 @@ public class SecurityConfig {
         return (request, response, authException) -> {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
             ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                                                                "Authentication is required to access this resource",
+                                                                ErrorConstants.AUTH_REQUIRED,
                                                                 request.getRequestURI(), ErrorConstants.TYPE_401_UNAUTHORIZED);
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -109,7 +109,7 @@ public class SecurityConfig {
         return (request, response, accessDeniedException) -> {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
             ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(),
-                                                                "You don't have permission to access this resource",
+                                                                ErrorConstants.ACCESS_DENIED,
                                                                 request.getRequestURI(), ErrorConstants.TYPE_403_FORBIDDEN);
 
             response.setStatus(HttpStatus.FORBIDDEN.value());
