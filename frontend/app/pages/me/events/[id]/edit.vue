@@ -9,7 +9,7 @@ const route = useRoute();
 const id = route.params.id as string;
 
 const { load: loadProvinces, options: provinceOptions, loading: provincesLoading } = useProvinces();
-const { form, loading, loadError, submitting, errorMsg, fieldErrors, artistsError, load, submit } = useEditEvent(id);
+const { form, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit } = useEditEvent(id);
 
 const isDateRangeInvalid = computed(
   () => !!form.startDateTime && !!form.endDateTime && form.endDateTime < form.startDateTime,
@@ -18,7 +18,10 @@ const isDateRangeInvalid = computed(
 const showSuccessDialog = ref(false);
 
 onMounted(async () => {
-  await Promise.all([load(), loadProvinces()]);
+  const [loadRes] = await Promise.all([load(), loadProvinces()]);
+  if (loadRes) {
+    showError({ statusCode: loadRes.status, data: loadRes.pd });
+  }
 });
 
 async function onSubmit() {
@@ -47,9 +50,6 @@ async function onSuccessClose() {
     <div v-if="loading" class="flex align-items-center gap-2 py-6 justify-content-center">
       <ProgressSpinner style="width: 2rem; height: 2rem" />
     </div>
-
-    <!-- Error de carga -->
-    <Message v-else-if="loadError" severity="error" :closable="false">{{ loadError }}</Message>
 
     <!-- Formulario -->
     <Card v-else class="border-1 surface-border">

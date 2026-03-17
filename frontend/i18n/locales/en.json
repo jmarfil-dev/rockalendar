@@ -8,7 +8,9 @@
     "searchN": "Search",
     "proposeV": "Propose",
     "myAreaV": "My area",
+    "moderationV": "Moderation",
     "returnIndex": "Return to index",
+    "back": "Go back",
     "example": "Ex.",
     "details": "Details",
     "noAvail": "Not available",
@@ -116,6 +118,27 @@
     "settings": "Settings"
   },
   "moderation": {
+    "title": "Moderation",
+    "hub": {
+      "events": "Concerts",
+      "eventsDesc": "Review pending concerts and moderation archive"
+    },
+    "tabs": {
+      "PENDING": "Pending",
+      "ARCHIVED": "Archived"
+    },
+    "noEvents": "No concerts in this tab",
+    "moderatedAt": "Moderated",
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "requestChanges": "Request changes",
+      "hide": "Hide",
+      "commentLabel": "Comment for the author (optional)",
+      "reasonLabel": "Reason (required)",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
     "sendCom": "Send a comment to moderation"
   },
   "geo": {

@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import type { EventStatus } from "~/types/events";
-import type { EventPrivateDto } from "~/types/events";
+import type { EventStatus, EventPrivateDto } from "~/types/events";
 import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 
-definePageMeta({ layout: "private", ssr: false });
+definePageMeta({ layout: "moderation", ssr: false });
 
 const { t } = useI18n();
 const route = useRoute();
 const id = route.params.id as string;
 
+// --- Carga del evento ---
 const event = ref<EventPrivateDto | null>(null);
 const loading = ref(true);
-
-const deleteDialogVisible = ref(false);
-const deleting = ref(false);
-const deleteError = ref<string | null>(null);
 
 const STATUS_SEVERITY: Record<EventStatus, string> = {
   PENDING_MODERATION: "warn",
@@ -27,14 +23,10 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
   ERASED: "danger",
 };
 
-const EDITABLE_STATUSES: EventStatus[] = ["DRAFT", "NEEDS_CHANGES", "APPROVED"];
-const DELETABLE_STATUSES: EventStatus[] = ["PENDING_MODERATION", "NEEDS_CHANGES"];
-
-const canEdit = computed(() => (event.value ? EDITABLE_STATUSES.includes(event.value.status) : false));
-const canDelete = computed(() => (event.value ? DELETABLE_STATUSES.includes(event.value.status) : false));
+const canModerate = computed(() => event.value?.status === "PENDING_MODERATION");
 
 onMounted(async () => {
-  const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiMeEventDetail(id));
+  const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiModerationEventDetail(id));
   loading.value = false;
   if (res.ok) {
     event.value = res.data;
@@ -43,16 +35,48 @@ onMounted(async () => {
   }
 });
 
-async function onDelete() {
-  deleting.value = true;
-  deleteError.value = null;
-  const res = await fetchAuthResult<void>(ROUTE_PATH.apiMeEventDetail(id), { method: "DELETE" });
-  deleting.value = false;
-  if (res.ok) {
-    await navigateTo(ROUTES.meEvents);
-  } else {
-    deleteDialogVisible.value = false;
-    deleteError.value = res.pd?.detail ?? t("error.unknown");
+// --- Acciones de moderación ---
+type ActionType = "approve" | "reject" | "hide" | "requestChanges";
+
+const { loading: actionLoading, error: actionError, approve, reject, hide, requestChanges } = useModerationActions();
+
+const dialogVisible = ref(false);
+const currentAction = ref<ActionType | null>(null);
+const dialogText = ref("");
+
+const dialogTitle = computed(() => {
+  if (!currentAction.value) return "";
+  return t(`moderation.actions.${currentAction.value}`);
+});
+
+const isCommentOptional = computed(() => currentAction.value === "approve");
+
+function openDialog(action: ActionType) {
+  currentAction.value = action;
+  dialogText.value = "";
+  actionError.value = null;
+  dialogVisible.value = true;
+}
+
+async function onConfirm() {
+  if (!currentAction.value) return;
+
+  let ok = false;
+  const text = dialogText.value.trim();
+
+  if (currentAction.value === "approve") {
+    ok = await approve(id, text || undefined);
+  } else if (currentAction.value === "reject") {
+    ok = await reject(id, text);
+  } else if (currentAction.value === "hide") {
+    ok = await hide(id, text);
+  } else if (currentAction.value === "requestChanges") {
+    ok = await requestChanges(id, text);
+  }
+
+  if (ok) {
+    dialogVisible.value = false;
+    await navigateTo(ROUTES.moderationEvents);
   }
 }
 </script>
@@ -61,10 +85,10 @@ async function onDelete() {
   <article class="flex flex-column gap-4">
     <!-- Cabecera -->
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.meEvents" class="text-color-secondary">
+      <NuxtLink :to="ROUTES.moderationEvents" class="text-color-secondary">
         <i class="pi pi-arrow-left" />
       </NuxtLink>
-      <h1 class="text-2xl font-bold m-0">{{ t("me.myEvents") }}</h1>
+      <h1 class="text-2xl font-bold m-0">{{ t("moderation.hub.events") }}</h1>
     </div>
 
     <!-- Cargando -->
@@ -105,13 +129,13 @@ async function onDelete() {
 
       <Divider class="my-1" />
 
-      <!-- Mensaje de moderación -->
+      <!-- Mensaje de moderación previo -->
       <Message v-if="event.moderationMessage" severity="warn" :closable="false">
         {{ event.moderationMessage }}
       </Message>
 
-      <!-- Error de borrado -->
-      <Message v-if="deleteError" severity="error" :closable="false">{{ deleteError }}</Message>
+      <!-- Error de acción -->
+      <Message v-if="actionError" severity="error" :closable="false">{{ actionError }}</Message>
 
       <!-- Grid principal -->
       <div class="grid">
@@ -230,26 +254,41 @@ async function onDelete() {
               </template>
             </Card>
 
-            <!-- Acciones -->
-            <Card class="border-1 surface-border">
+            <!-- Acciones de moderación (solo para PENDING_MODERATION) -->
+            <Card v-if="canModerate" class="border-1 surface-border">
               <template #content>
                 <div class="flex flex-column gap-2">
                   <Button
-                    :label="t('me.editEvent')"
-                    icon="pi pi-pencil"
+                    :label="t('moderation.actions.approve')"
+                    icon="pi pi-check"
+                    severity="success"
                     class="w-full"
-                    :disabled="!canEdit"
                     type="button"
-                    @click="navigateTo(`${ROUTE_PATH.meEventDetail(id)}/edit`)" />
+                    @click="openDialog('approve')" />
                   <Button
-                    :label="t('me.deleteEvent')"
-                    icon="pi pi-trash"
+                    :label="t('moderation.actions.requestChanges')"
+                    icon="pi pi-replay"
+                    severity="warn"
+                    outlined
+                    class="w-full"
+                    type="button"
+                    @click="openDialog('requestChanges')" />
+                  <Button
+                    :label="t('moderation.actions.reject')"
+                    icon="pi pi-times"
                     severity="danger"
                     outlined
                     class="w-full"
-                    :disabled="!canDelete"
                     type="button"
-                    @click="deleteDialogVisible = true" />
+                    @click="openDialog('reject')" />
+                  <Button
+                    :label="t('moderation.actions.hide')"
+                    icon="pi pi-eye-slash"
+                    severity="secondary"
+                    outlined
+                    class="w-full"
+                    type="button"
+                    @click="openDialog('hide')" />
                 </div>
               </template>
             </Card>
@@ -259,12 +298,36 @@ async function onDelete() {
     </template>
   </article>
 
-  <!-- Diálogo de confirmación de borrado -->
-  <Dialog v-model:visible="deleteDialogVisible" :header="t('me.deleteEvent')" modal :style="{ width: '22rem' }">
-    <p class="m-0 text-color-secondary">{{ t("me.deleteConfirm") }}</p>
+  <!-- Diálogo de acción de moderación -->
+  <Dialog
+    v-model:visible="dialogVisible"
+    :header="dialogTitle"
+    modal
+    :style="{ width: '26rem' }">
+    <div class="flex flex-column gap-3">
+      <label for="action-text" class="text-sm text-color-secondary">
+        {{ isCommentOptional ? t("moderation.actions.commentLabel") : t("moderation.actions.reasonLabel") }}
+      </label>
+      <Textarea
+        id="action-text"
+        v-model="dialogText"
+        rows="4"
+        :maxlength="500"
+        class="w-full"
+        autofocus />
+      <Message v-if="actionError" severity="error" :closable="false" class="mt-1">{{ actionError }}</Message>
+    </div>
     <template #footer>
-      <Button :label="t('me.deleteCancel')" severity="secondary" outlined @click="deleteDialogVisible = false" />
-      <Button :label="t('me.deleteOk')" severity="danger" icon="pi pi-trash" :loading="deleting" @click="onDelete" />
+      <Button
+        :label="t('moderation.actions.cancel')"
+        severity="secondary"
+        outlined
+        @click="dialogVisible = false" />
+      <Button
+        :label="t('moderation.actions.confirm')"
+        :loading="actionLoading"
+        :disabled="!isCommentOptional && !dialogText.trim()"
+        @click="onConfirm" />
     </template>
   </Dialog>
 </template>

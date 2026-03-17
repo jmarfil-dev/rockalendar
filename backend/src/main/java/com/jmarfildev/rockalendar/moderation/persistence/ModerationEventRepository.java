@@ -22,7 +22,7 @@ public interface ModerationEventRepository extends Repository<Event, UUID> {
                e.id, e.title, e.submittedAt
            )
            FROM Event e
-           WHERE e.status = 'PENDING_MODERATION'
+           WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION
            """)
     Page<ModerationPendingListItemDto> findPending(Pageable pageable);
 
@@ -31,7 +31,11 @@ public interface ModerationEventRepository extends Repository<Event, UUID> {
                e.id, e.title, e.status, e.moderationMessage, e.moderatedAt
            )
            FROM Event e
-           WHERE e.status IN ('REJECTED', 'HIDDEN', 'CANCELED')
+           WHERE e.status IN (
+               com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED,
+               com.jmarfildev.rockalendar.events.domain.EventStatus.HIDDEN,
+               com.jmarfildev.rockalendar.events.domain.EventStatus.CANCELED
+           )
            """)
     Page<ModerationArchivedListItemDto> findArchived(Pageable pageable);
 }

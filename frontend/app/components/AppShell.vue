@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const { t, locale, setLocale } = useI18n();
-const { isAuthenticated, user } = useAuth();
+const { isAuthenticated, user, logout } = useAuth();
 
 // ------- Header -------
 const localeOptions: LocaleOption[] = [
@@ -38,7 +38,7 @@ const bottomById = computed(() => {
 const proposeItem = computed(() => bottomById.value.get("propose") ?? null);
 const searchItem = computed(() => bottomById.value.get("search") ?? null);
 const meItem = computed(() => bottomById.value.get("me") ?? null);
-// const moderationItem = computed(() => bottomById.value.get("moderation") ?? null);
+const moderationItem = computed(() => bottomById.value.get("moderation") ?? null);
 
 // ------- Search Drawer (derecha) -------
 const {
@@ -76,8 +76,9 @@ const onSettingsClick = () => {
   closeUserDrawer();
 };
 
-const onLogoutClick = () => {
+const onLogoutClick = async () => {
   closeUserDrawer();
+  await logout();
 };
 </script>
 
@@ -176,6 +177,16 @@ const onLogoutClick = () => {
           rounded
           :aria-label="meItem.label"
           @click="meItem.action" />
+
+        <Button
+          v-if="moderationItem"
+          :key="moderationItem.id"
+          :icon="moderationItem.icon"
+          size="large"
+          text
+          rounded
+          :aria-label="moderationItem.label"
+          @click="moderationItem.action" />
       </div>
     </nav>
 

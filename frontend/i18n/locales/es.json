@@ -8,7 +8,9 @@
     "searchN": "Búsqueda",
     "proposeV": "Proponer",
     "myAreaV": "Mi área",
+    "moderationV": "Moderación",
     "returnIndex": "Volver al inicio",
+    "back": "Volver",
     "example": "Ej.",
     "details": "Detalles",
     "noAvail": "No disponible",
@@ -117,6 +119,27 @@
     "settings": "Configuración"
   },
   "moderation": {
+    "title": "Moderación",
+    "hub": {
+      "events": "Moderar conciertos",
+      "eventsDesc": "Revisar conciertos pendientes de moderación y archivados"
+    },
+    "tabs": {
+      "PENDING": "Pendientes",
+      "ARCHIVED": "Archivados"
+    },
+    "noEvents": "No hay conciertos en esta pestaña",
+    "moderatedAt": "Moderado",
+    "actions": {
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "requestChanges": "Solicitar cambios",
+      "hide": "Ocultar",
+      "commentLabel": "Comentario para el autor (opcional)",
+      "reasonLabel": "Motivo (obligatorio)",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    },
     "sendCom": "Envía un comentario a moderación"
   },
   "geo": {
@@ -178,7 +201,7 @@
       "artistExists": "El artista ya existe",
       "emailExists": "El email ya existe",
       "eventNotPending": "El concierto no está pendiente de moderación",
-      "moderatorOwn": "Un moderador no puede aprobar su propio concierto",
+      "moderatorOwn": "No puedes moderar tu propio concierto",
       "eventAlreadyMod": "El concierto fue modificado por otro moderador",
       "eventNotEditable": "El concierto no tiene un estado modificable",
       "eventNotErasable": "El concierto no tiene un estado eliminable",
