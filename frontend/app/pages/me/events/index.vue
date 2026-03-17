@@ -11,10 +11,11 @@ const { events, pageMeta, loading, error, fetchEvents } = useMyEvents();
 
 const TABS = ME_EVENT_TABS;
 
-const activeTab = ref<MeEventTab>("PENDING");
+const activeTab = ref<MeEventTab>("CHANGES");
 const currentPage = ref(0);
 const pageSize = ref(20);
 const sort = ref("date");
+const initialized = ref(false);
 
 const total = computed(() => pageMeta.value?.totalElements ?? 0);
 const first = computed(() => currentPage.value * pageSize.value);
@@ -44,6 +45,21 @@ function onPageChange(e: { page: number; rows: number }) {
   }
 }
 
+// Carga inicial: muestra la primera pestaña con contenido (CHANGES → PENDING → OTHERS)
+onMounted(async () => {
+  for (const tab of ["CHANGES", "PENDING", "OTHERS"] as MeEventTab[]) {
+    activeTab.value = tab;
+    await fetchEvents(tab, 0, pageSize.value, sort.value);
+    if (events.value.length > 0) break;
+  }
+  initialized.value = true;
+});
+
+// El watcher solo actúa tras la carga inicial para no interferir con ella
+watch([activeTab, currentPage, pageSize, sort], () => {
+  if (initialized.value) load();
+});
+
 const STATUS_SEVERITY: Record<EventStatus, string> = {
   PENDING_MODERATION: "warn",
   APPROVED: "success",
@@ -54,8 +70,6 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
   CANCELED: "danger",
   ERASED: "danger",
 };
-
-watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
 </script>
 
 <template>
@@ -76,6 +90,7 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
             <span class="text-sm text-color-secondary">{{ t("pagination.sortedBy") }}</span>
             <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" />
           </div>
+          <p v-else class="text-sm text-color-secondary mb-3">{{ t("me.allTabNote") }}</p>
 
           <!-- Estado de carga -->
           <div v-if="loading" class="flex justify-content-center py-6">

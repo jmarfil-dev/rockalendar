@@ -79,6 +79,7 @@
     "createdAt": "Creado",
     "editEvent": "Editar concierto",
     "noEvents": "No tienes conciertos en esta pestaña",
+    "allTabNote": "Ordenación automática por prioridad: cambios pendientes primero, luego moderación, luego resto.",
     "deleteEvent": "Eliminar",
     "deleteConfirm": "¿Seguro que quieres eliminar este concierto?",
     "deleteOk": "Sí, eliminar",

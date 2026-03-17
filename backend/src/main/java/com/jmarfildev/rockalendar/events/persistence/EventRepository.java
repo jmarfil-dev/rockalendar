@@ -30,9 +30,6 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @EntityGraph(attributePaths = { "province", "artists" })
     Optional<Event> findById(UUID id);
 
-    @EntityGraph(attributePaths = { "province", "artists" })
-    Optional<Event> findByTitleAndStatus(String title, EventStatus status);
-
     @Query("""
                 SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto(
                     e.id,

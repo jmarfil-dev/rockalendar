@@ -41,9 +41,11 @@ public final class ErrorConstants {
     public static final String VALID_SIZE_PASSWORD = "error.400.valid.sizePassword";
 
     // Unauthorized 401
+    public static final String AUTH_REQUIRED = "error.401.message";
     public static final String INVALID_CREDENTIALS = "error.401.invalidCredentials";
 
     // Forbidden 403
+    public static final String ACCESS_DENIED = "error.403.message";
     public static final String EVENT_NOT_OWNER = "error.403.eventNotOwner";
 
     // Not found 404
