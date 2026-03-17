@@ -18,7 +18,7 @@
     "sendCom": "Enviar comentario"
   },
   "events": {
-    "title": "Titulo",
+    "title": "Título",
     "artist": "Artista",
     "artists": "Artistas",
     "group": "Grupo",

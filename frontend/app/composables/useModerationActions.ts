@@ -6,12 +6,6 @@ export function useModerationActions() {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  function extractError(res: { pd: { detail?: string; code?: string } | null }): string {
-    if (res.pd?.detail) return res.pd.detail;
-    if (res.pd?.code) return t(res.pd.code); // pd.code ya es la ruta i18n completa
-    return t("error.unknown");
-  }
-
   async function approve(eventId: string, comment?: string): Promise<boolean> {
     loading.value = true;
     error.value = null;
@@ -21,7 +15,7 @@ export function useModerationActions() {
       body,
     });
     loading.value = false;
-    if (!res.ok) error.value = extractError(res);
+    if (!res.ok) error.value = extractApiError(res, t);
     return res.ok;
   }
 
@@ -34,7 +28,7 @@ export function useModerationActions() {
       body,
     });
     loading.value = false;
-    if (!res.ok) error.value = extractError(res);
+    if (!res.ok) error.value = extractApiError(res, t);
     return res.ok;
   }
 
@@ -47,7 +41,7 @@ export function useModerationActions() {
       body,
     });
     loading.value = false;
-    if (!res.ok) error.value = extractError(res);
+    if (!res.ok) error.value = extractApiError(res, t);
     return res.ok;
   }
 
@@ -60,7 +54,7 @@ export function useModerationActions() {
       body,
     });
     loading.value = false;
-    if (!res.ok) error.value = extractError(res);
+    if (!res.ok) error.value = extractApiError(res, t);
     return res.ok;
   }
 

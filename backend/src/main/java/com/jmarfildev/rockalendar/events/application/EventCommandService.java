@@ -161,7 +161,7 @@ public class EventCommandService {
     /**
      * Valida los datos comunes para proponer o actualizar un evento.
      * <ul>
-     * <li> Rengo de fechas correcto </li>
+     * <li> Rango de fechas correcto </li>
      * <li> Nombre de artistas correctos tras normalizar </li>
      * <li> Título obligatorio </li>
      * <li> Ciudad obligatoria </li>

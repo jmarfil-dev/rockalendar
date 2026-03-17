@@ -156,6 +156,6 @@ public class EventQueryService {
 
     private boolean hasMultipleTokens(String q) {
         String trimmed = StringUtils.blankToNull(q);
-        return trimmed == null ? false : trimmed.split("\\s+").length >= 2;
+        return trimmed != null && trimmed.split("\\s+").length >= 2;
     }
 }
