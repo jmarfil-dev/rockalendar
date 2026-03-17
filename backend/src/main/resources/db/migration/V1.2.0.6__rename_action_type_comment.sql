@@ -8,9 +8,9 @@
 
 ALTER TABLE moderation_actions ALTER COLUMN action_type TYPE varchar(20);
 
-UPDATE moderation_actions SET action_type = 'REQUEST_CHANGES' WHERE action_type = 'COMMENT';
-
 ALTER TABLE moderation_actions DROP CONSTRAINT chk_moderation_action;
+
+UPDATE moderation_actions SET action_type = 'REQUEST_CHANGES' WHERE action_type = 'COMMENT';
 
 ALTER TABLE moderation_actions ADD CONSTRAINT chk_moderation_action CHECK (
     action_type = ANY (ARRAY[
