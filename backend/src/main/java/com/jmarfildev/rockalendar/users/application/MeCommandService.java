@@ -10,6 +10,7 @@ import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.users.api.dto.MeDto;
+import com.jmarfildev.rockalendar.users.api.mapper.UserMapper;
 import com.jmarfildev.rockalendar.users.domain.User;
 import com.jmarfildev.rockalendar.users.domain.UserRole;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
@@ -25,7 +26,7 @@ public class MeCommandService {
     private final UserRepository userRepository;
     private final CurrentUser currentUser;
     private final PromotionEligibilityService eligibilityService;
-    private final MeQueryService meQueryService;
+    private final UserMapper userMapper;
 
     @Transactional
     public MeDto requestPromotion() {
@@ -39,6 +40,7 @@ public class MeCommandService {
         user.setRole(UserRole.MODERATOR.name());
         log.info("user promoted to MODERATOR userId={}", userId);
 
-        return meQueryService.getMe();
+        // El usuario ya es MODERATOR: promotionEligible es siempre false
+        return userMapper.toMeDto(user, false);
     }
 }

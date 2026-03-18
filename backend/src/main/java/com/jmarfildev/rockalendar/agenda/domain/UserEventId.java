@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class UserEventId implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;
