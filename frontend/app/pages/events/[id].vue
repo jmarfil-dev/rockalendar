@@ -1,14 +1,33 @@
 <script setup lang="ts">
 import { ROUTES, ROUTE_PATH } from "~/constants/routes";
-import type { EventPublic } from "~/types/events";
+import type { EventPublic, InteractionStatus } from "~/types/events";
 
 definePageMeta({ layout: "public" });
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const { isAuthenticated } = useAuth();
 
 const id = route.params.id as string;
+
+const { saving, getInteraction, setInteraction, removeInteraction, fetchAgenda } = useAgenda();
+
+const currentInteraction = computed(() => getInteraction(id));
+
+async function onToggleInteraction(target: InteractionStatus) {
+  if (currentInteraction.value === target) {
+    await removeInteraction(id);
+  } else {
+    await setInteraction(id, target);
+  }
+}
+
+onMounted(async () => {
+  if (isAuthenticated.value) {
+    await fetchAgenda();
+  }
+});
 
 function goBack() {
   const prev = window.history.state?.back as string | undefined;
@@ -185,6 +204,36 @@ function mapsUrl(e: EventPublic): string {
                       </a>
                     </div>
                   </div>
+                </div>
+              </template>
+            </Card>
+
+            <!-- Botones de agenda (solo para usuarios autenticados) -->
+            <Card v-if="isAuthenticated" class="border-1 surface-border">
+              <template #title>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-calendar" />
+                  <h3 class="m-0 text-base font-semibold">{{ t("me.agenda") }}</h3>
+                </div>
+              </template>
+              <template #content>
+                <div class="flex gap-2">
+                  <Button
+                    :label="t('me.agenda.interested')"
+                    :icon="currentInteraction === 'INTERESTED' ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                    :severity="currentInteraction === 'INTERESTED' ? 'primary' : 'secondary'"
+                    :loading="saving === id"
+                    class="flex-1"
+                    type="button"
+                    @click="onToggleInteraction('INTERESTED')" />
+                  <Button
+                    :label="t('me.agenda.going')"
+                    :icon="currentInteraction === 'GOING' ? 'pi pi-check-circle' : 'pi pi-circle'"
+                    :severity="currentInteraction === 'GOING' ? 'primary' : 'secondary'"
+                    :loading="saving === id"
+                    class="flex-1"
+                    type="button"
+                    @click="onToggleInteraction('GOING')" />
                 </div>
               </template>
             </Card>

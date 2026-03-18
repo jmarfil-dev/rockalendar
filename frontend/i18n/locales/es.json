@@ -59,6 +59,15 @@
     "title": "Mi área",
     "agenda": "Agenda",
     "agendaDesc": "Conciertos a los que vas o te interesan",
+    "agenda": {
+      "noItems": "No tienes conciertos en tu agenda",
+      "interested": "Me interesa",
+      "going": "Asistiré",
+      "status": {
+        "INTERESTED": "Me interesa",
+        "GOING": "Asistiré"
+      }
+    },
     "myEvents": "Mis conciertos",
     "myEventsDesc": "Conciertos que has propuesto",
     "tabs": {
@@ -162,6 +171,7 @@
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "me": "Mi área",
+    "meAgenda": "Mi agenda",
     "meEvents": "Mis conciertos",
     "mePropose": "Proponer concierto",
     "meEdit": "Editar concierto",
@@ -223,6 +233,7 @@
       "eventNotEditable": "El concierto no tiene un estado modificable",
       "eventNotErasable": "El concierto no tiene un estado eliminable",
       "eventNotErasableAppr": "Los conciertos aprobados no pueden eliminarse",
+      "agendaEventNotAvailable": "Solo puedes añadir a la agenda conciertos aprobados",
       "dbConstraint": "Restricción de BD violada"
     },
     "500": {

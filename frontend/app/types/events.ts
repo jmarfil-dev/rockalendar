@@ -81,6 +81,24 @@ export type ModerationArchivedListItem = {
   moderatedAt: string;
 };
 
+export type InteractionStatus = "INTERESTED" | "GOING";
+
+export type AgendaItem = {
+  eventId: string;
+  title: string;
+  startDateTime: string;
+  endDateTime?: string | null;
+  venueName: string;
+  cityName: string;
+  provinceName: string;
+  status: InteractionStatus;
+  createdAt: string;
+};
+
+export type SetInteractionRequest = {
+  status: InteractionStatus;
+};
+
 export type ModerationApproveRequest = {
   comment?: string;
 };
