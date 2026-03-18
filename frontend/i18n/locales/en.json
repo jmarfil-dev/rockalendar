@@ -57,6 +57,15 @@
   "me": {
     "title": "My area",
     "agendaDesc": "Concerts you're going to or interested in",
+    "promotion": {
+      "title": "You can become a moderator",
+      "desc": "You've earned enough trust on the platform. If you'd like to help moderate content, request a promotion.",
+      "cta": "Request moderator role",
+      "successTitle": "Congratulations!",
+      "successDetail": "You are now a moderator. Log out and back in to activate your new permissions.",
+      "errorTitle": "Not possible right now",
+      "errorDetail": "You don't meet the requirements at this time."
+    },
     "agenda": {
       "title": "Schedule",
       "noItems": "Your schedule is empty",

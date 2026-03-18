@@ -2,6 +2,7 @@ package com.jmarfildev.rockalendar.events.persistence;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -204,4 +205,63 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                                  @Param("sortKey") String sortKey,
                                                                  @Param("sortDir") String sortDir,
                                                                  Pageable pageable);
+
+    // --- Queries para comprobación de elegibilidad de ascenso ---
+
+    /**
+     * Devuelve venue slugs donde el usuario supera el límite de eventos en el período reciente.
+     * Un resultado no vacío indica que el usuario no es elegible.
+     */
+    @Query("""
+                SELECT e.venueSlug
+                FROM Event e
+                WHERE e.createdByUserId = :userId
+                  AND e.createdAt >= :since
+                  AND e.status NOT IN :excluded
+                GROUP BY e.venueSlug
+                HAVING COUNT(e) > :limit
+            """)
+    List<String> findVenuesExceedingRecentLimit(UUID userId, OffsetDateTime since, Collection<EventStatus> excluded, long limit);
+
+    /**
+     * Devuelve artist IDs donde el usuario supera el límite de eventos en el período reciente.
+     */
+    @Query("""
+                SELECT a.id
+                FROM Event e
+                JOIN e.artists a
+                WHERE e.createdByUserId = :userId
+                  AND e.createdAt >= :since
+                  AND e.status NOT IN :excluded
+                GROUP BY a.id
+                HAVING COUNT(e) > :limit
+            """)
+    List<UUID> findArtistsExceedingRecentLimit(UUID userId, OffsetDateTime since, Collection<EventStatus> excluded, long limit);
+
+    /**
+     * Devuelve venue slugs donde el usuario supera el límite total de eventos.
+     */
+    @Query("""
+                SELECT e.venueSlug
+                FROM Event e
+                WHERE e.createdByUserId = :userId
+                  AND e.status NOT IN :excluded
+                GROUP BY e.venueSlug
+                HAVING COUNT(e) > :limit
+            """)
+    List<String> findVenuesExceedingTotalLimit(UUID userId, Collection<EventStatus> excluded, long limit);
+
+    /**
+     * Devuelve artist IDs donde el usuario supera el límite total de eventos.
+     */
+    @Query("""
+                SELECT a.id
+                FROM Event e
+                JOIN e.artists a
+                WHERE e.createdByUserId = :userId
+                  AND e.status NOT IN :excluded
+                GROUP BY a.id
+                HAVING COUNT(e) > :limit
+            """)
+    List<UUID> findArtistsExceedingTotalLimit(UUID userId, Collection<EventStatus> excluded, long limit);
 }

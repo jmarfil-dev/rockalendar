@@ -6,6 +6,9 @@ definePageMeta({ layout: "private", ssr: false });
 const { t } = useI18n();
 useHead({ title: () => t("page.me") });
 const router = useRouter();
+
+const { me, promoting, fetchMe, requestPromotion } = useMe();
+onMounted(fetchMe);
 </script>
 
 <template>
@@ -52,6 +55,22 @@ const router = useRouter();
           </template>
         </Card>
       </div>
+    </div>
+
+    <div v-if="me?.promotionEligible" class="col-12">
+      <Message severity="info" :closable="false" class="m-0">
+        <div class="flex flex-column sm:flex-row align-items-start sm:align-items-center justify-content-between gap-3">
+          <div class="flex flex-column gap-1">
+            <span class="font-semibold">{{ t("me.promotion.title") }}</span>
+            <span class="text-sm">{{ t("me.promotion.desc") }}</span>
+          </div>
+          <Button
+            :label="t('me.promotion.cta')"
+            icon="pi pi-arrow-up"
+            :loading="promoting"
+            @click="requestPromotion" />
+        </div>
+      </Message>
     </div>
   </div>
 </template>

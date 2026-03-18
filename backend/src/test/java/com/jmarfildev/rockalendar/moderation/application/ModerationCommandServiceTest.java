@@ -64,8 +64,6 @@ class ModerationCommandServiceTest extends AbstractPostgresTest {
     @MockitoBean
     CurrentUser currentUser;
 
-    private final String MOCK_REASON = "Mock Reason to archive event";
-
     @BeforeEach
     void cleanDb() {
         cleaner.truncateMutableTables();

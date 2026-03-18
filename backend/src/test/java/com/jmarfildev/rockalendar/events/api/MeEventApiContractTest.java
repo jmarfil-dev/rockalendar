@@ -40,7 +40,6 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     MockMvc mockMvc;
 
     private final String API_ME_EVENTS = "/api/me/events";
-    private final String API_EVENTS = "/api/events";
 
     @Test
     @DisplayName("GET /api/me/events sin auth -> 401 ProblemDetail")

@@ -12,7 +12,6 @@ Estas implementaciones tienen prioridad sobre las demás.
 
 ### Backend
 
-- Wrapper `CurrentUser` para centralizar autenticación y acceso al usuario actual.
 - Base común para búsquedas, filtros y mapas.
 - Reemplazar `Page<T>` por un DTO propio de paginación: `PageResponse`:
   - Control total del contrato JSON
@@ -70,12 +69,27 @@ Cuándo hacerlo:
 - Detalle de artista.
 - Imágenes (cartel del evento).
 
-## Moderación automática y calidad
+## Administración
 
-- Reachazo automático de eventos mediante blacklist:
-  - Palabras clave para el título
-  - Combinación de fecha + ciudad (ejemplo: primero de abril + Villarobledo = Viñarock)
-- Gestión de blacklist por administradores.
+- Panel de administrador.
+- Cambiar el ascenso a moderador. Ahora se modifica el rol automáticamente, pero lo que tiene que hacer es enviar un mensaje a la bandeja de admin.
+- Gestión de perfiles:
+  - Ascender a moderador
+  - Banear moderador
+  - Ascender a admin
+
+## Moderación
+
+- Bandeja de mensajes??
+
+**Sistema disciplinario de moderadores**
+
+- Tabla moderator_warnings (id, user_id, assigned_by, reason, created_at): warnings asignados manualmente por admin.
+- Campo suspended_until (timestamp nullable) en users: lógica de suspensión incremental (5 días → 20 días → indefinida).
+- Ban permanente tras 3 suspensiones.
+- Detección de sesgo (>50% decisiones sobre mismo usuario/sala/grupo en 30 días).
+- Rehabilitación manual por admin.
+- Reportes de eventos mal moderados → bandeja de admin (cuando exista panel).
 
 ## Funciones sociales (base)
 

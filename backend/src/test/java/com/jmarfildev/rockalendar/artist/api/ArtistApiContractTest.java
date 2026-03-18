@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
+import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
 
@@ -36,6 +38,13 @@ class ArtistApiContractTest extends AbstractPostgresTest {
     ContractApiTestUtils contractUtils;
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    DatabaseCleaner cleaner;
+
+    @BeforeEach
+    void setup() {
+        cleaner.truncateMutableTables();
+    }
 
     private final String API_MODERATION_ARTIST = "/api/moderation/artists";
     private final String API_ARTISTS = "/api/artists";

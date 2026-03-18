@@ -28,6 +28,7 @@ import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.domain.ActionType;
 import com.jmarfildev.rockalendar.moderation.domain.ModerationAction;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationActionRepository;
+import com.jmarfildev.rockalendar.users.application.TrustScoreService;
 
 /**
  * @author jmarfil
@@ -41,6 +42,7 @@ public class ModerationCommandService {
     private final ModerationActionRepository moderationActionRepository;
     private final EventMapper eventMapper;
     private final CurrentUser currentUser;
+    private final TrustScoreService trustScoreService;
 
     @Transactional
     public EventPrivateDto approve(UUID eventId, ModerationApproveRequest request) {
@@ -81,6 +83,15 @@ public class ModerationCommandService {
         });
     }
 
+    private void applyTrustScore(ActionType actionType, UUID creatorId, UUID eventId) {
+        if (actionType == ActionType.APPROVE) {
+            trustScoreService.onApprove(creatorId, eventId);
+        } else if (actionType == ActionType.REJECT) {
+            trustScoreService.onReject(creatorId, eventId);
+        }
+        // REQUEST_CHANGES y HIDE no modifican el trust score
+    }
+
     @FunctionalInterface
     private interface EventModerationMutation {
         void apply(Event event, UUID moderatorId, OffsetDateTime now, String message);
@@ -114,6 +125,7 @@ public class ModerationCommandService {
 
         try {
             moderationActionRepository.saveAndFlush(action);
+            applyTrustScore(actionType, event.getCreatedByUserId(), eventId);
             return eventMapper.toPrivateDto(event);
         }
         catch (ObjectOptimisticLockingFailureException

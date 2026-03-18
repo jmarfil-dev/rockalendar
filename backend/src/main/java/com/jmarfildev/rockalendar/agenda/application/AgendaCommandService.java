@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.agenda.api.dto.AgendaItemDto;
+import com.jmarfildev.rockalendar.agenda.api.mapper.AgendaMapper;
 import com.jmarfildev.rockalendar.agenda.domain.InteractionStatus;
 import com.jmarfildev.rockalendar.agenda.domain.UserEvent;
 import com.jmarfildev.rockalendar.agenda.domain.UserEventId;
@@ -32,6 +33,7 @@ public class AgendaCommandService {
     private final UserEventRepository userEventRepository;
     private final EventRepository eventRepository;
     private final CurrentUser currentUser;
+    private final AgendaMapper agendaMapper;
 
     /**
      * Crea o actualiza la interacción del usuario con un evento (INTERESTED / GOING).
@@ -63,16 +65,7 @@ public class AgendaCommandService {
         UserEvent saved = userEventRepository.save(userEvent);
         log.info("agenda upsert userId={} eventId={} status={}", userId, eventId, status);
 
-        return new AgendaItemDto(
-                event.getId(),
-                event.getTitle(),
-                event.getStartDateTime(),
-                event.getEndDateTime(),
-                event.getVenueName(),
-                event.getCityName(),
-                event.getProvince().getName(),
-                saved.getStatus(),
-                saved.getCreatedAt());
+        return agendaMapper.toDto(event, saved);
     }
 
     /**

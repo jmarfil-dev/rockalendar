@@ -23,6 +23,8 @@ export const ROUTES = {
   apiEvents: "/api/events",
   apiArtists: "/api/artists",
   apiProvincesCombo: "/api/provinces/combo",
+  apiMe: "/api/me",
+  apiMePromotionRequest: "/api/me/promotion-request",
   apiMeEvents: "/api/me/events",
   apiMeAgenda: "/api/me/agenda",
 

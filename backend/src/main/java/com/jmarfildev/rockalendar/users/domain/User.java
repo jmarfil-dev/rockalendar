@@ -42,6 +42,9 @@ public class User {
     @Column(name = "trust_score", nullable = false)
     private int trustScore;
 
+    @Column(nullable = false)
+    private boolean banned;
+
     @Column(name = "preferred_language")
     private String preferredLanguage;
 

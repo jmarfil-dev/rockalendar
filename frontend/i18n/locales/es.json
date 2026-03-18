@@ -58,6 +58,15 @@
   "me": {
     "title": "Mi área",
     "agendaDesc": "Conciertos a los que vas o te interesan",
+    "promotion": {
+      "title": "Puedes ser moderador/a",
+      "desc": "Has ganado suficiente confianza en la plataforma. Si quieres contribuir moderando contenido, solicita el ascenso.",
+      "cta": "Solicitar ser moderador/a",
+      "successTitle": "¡Enhorabuena!",
+      "successDetail": "Ya eres moderador/a. Cierra sesión y vuelve a entrar para activar tus nuevos permisos.",
+      "errorTitle": "No ha sido posible",
+      "errorDetail": "No cumples los requisitos en este momento."
+    },
     "agenda": {
       "title": "Agenda",
       "noItems": "No tienes conciertos en tu agenda",
