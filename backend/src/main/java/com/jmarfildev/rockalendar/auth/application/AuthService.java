@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.auth.api.dto.AuthTokenResponse;
 import com.jmarfildev.rockalendar.auth.api.dto.LoginRequest;
@@ -27,6 +28,7 @@ import com.jmarfildev.rockalendar.users.persistence.UserRepository;
  * @author jmarfil
  *
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -72,6 +74,7 @@ public class AuthService {
         }
 
         var token = jwtTokenService.createToken(user, List.of(user.getRole()));
+        log.info("user registered userId={}", user.getId());
         return new AuthTokenResponse(token.token(), token.expiresAt());
     }
 }
