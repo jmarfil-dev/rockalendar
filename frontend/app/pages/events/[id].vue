@@ -1,18 +1,44 @@
 <script setup lang="ts">
 import { ROUTES, ROUTE_PATH } from "~/constants/routes";
-import type { EventPublic } from "~/types/events";
+import type { EventPublic, InteractionStatus } from "~/types/events";
 
 definePageMeta({ layout: "public" });
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const { isAuthenticated } = useAuth();
 
 const id = route.params.id as string;
 
+const { saving, getInteraction, setInteraction, removeInteraction, fetchAgenda } = useAgenda();
+
+const currentInteraction = computed(() => getInteraction(id));
+
+const removeDialogVisible = ref(false);
+
+function onToggleInteraction(target: InteractionStatus) {
+  if (currentInteraction.value === target) {
+    removeDialogVisible.value = true;
+  } else {
+    setInteraction(id, target);
+  }
+}
+
+async function confirmRemove() {
+  await removeInteraction(id);
+  removeDialogVisible.value = false;
+}
+
+onMounted(async () => {
+  if (isAuthenticated.value) {
+    await fetchAgenda();
+  }
+});
+
 function goBack() {
   const prev = window.history.state?.back as string | undefined;
-  if (prev?.startsWith(ROUTES.events)) {
+  if (prev?.startsWith(ROUTES.events) || prev?.startsWith(ROUTES.meAgenda)) {
     router.back();
   } else {
     navigateTo(ROUTES.events);
@@ -189,6 +215,36 @@ function mapsUrl(e: EventPublic): string {
               </template>
             </Card>
 
+            <!-- Botones de agenda (solo para usuarios autenticados) -->
+            <Card v-if="isAuthenticated" class="border-1 surface-border">
+              <template #title>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-calendar" />
+                  <h3 class="m-0 text-base font-semibold">{{ t("me.agenda.title") }}</h3>
+                </div>
+              </template>
+              <template #content>
+                <div class="flex gap-2">
+                  <Button
+                    :label="t('me.agenda.interested')"
+                    :icon="currentInteraction === 'INTERESTED' ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                    :severity="currentInteraction === 'INTERESTED' ? 'primary' : 'secondary'"
+                    :loading="saving === id"
+                    class="flex-1"
+                    type="button"
+                    @click="onToggleInteraction('INTERESTED')" />
+                  <Button
+                    :label="t('me.agenda.going')"
+                    :icon="currentInteraction === 'GOING' ? 'pi pi-check-circle' : 'pi pi-circle'"
+                    :severity="currentInteraction === 'GOING' ? 'primary' : 'secondary'"
+                    :loading="saving === id"
+                    class="flex-1"
+                    type="button"
+                    @click="onToggleInteraction('GOING')" />
+                </div>
+              </template>
+            </Card>
+
             <Card class="border-1 surface-border">
               <template #content>
                 <div class="flex flex-column gap-3">
@@ -209,4 +265,12 @@ function mapsUrl(e: EventPublic): string {
       </div>
     </div>
   </article>
+
+  <Dialog v-model:visible="removeDialogVisible" :header="t('me.agenda.title')" modal :style="{ width: '22rem' }">
+    <p class="m-0 text-color-secondary">{{ t("me.agenda.removeConfirm") }}</p>
+    <template #footer>
+      <Button :label="t('me.agenda.removeCancel')" severity="secondary" outlined @click="removeDialogVisible = false" />
+      <Button :label="t('me.agenda.removeOk')" severity="danger" icon="pi pi-trash" :loading="saving === id" @click="confirmRemove" />
+    </template>
+  </Dialog>
 </template>

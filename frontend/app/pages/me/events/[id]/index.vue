@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EventStatus } from "~/types/events";
+import type { EventStatus, InteractionStatus } from "~/types/events";
 import type { EventPrivateDto } from "~/types/events";
 import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 
@@ -8,6 +8,24 @@ definePageMeta({ layout: "private", ssr: false });
 const { t } = useI18n();
 const route = useRoute();
 const id = route.params.id as string;
+
+const { saving: agendaSaving, getInteraction, setInteraction, removeInteraction, fetchAgenda } = useAgenda();
+const currentInteraction = computed(() => getInteraction(id));
+
+const agendaRemoveDialogVisible = ref(false);
+
+function onToggleInteraction(target: InteractionStatus) {
+  if (currentInteraction.value === target) {
+    agendaRemoveDialogVisible.value = true;
+  } else {
+    setInteraction(id, target);
+  }
+}
+
+async function confirmAgendaRemove() {
+  await removeInteraction(id);
+  agendaRemoveDialogVisible.value = false;
+}
 
 const event = ref<EventPrivateDto | null>(null);
 useHead({ title: () => event.value?.title ?? t("page.meEvents") });
@@ -39,6 +57,9 @@ onMounted(async () => {
   loading.value = false;
   if (res.ok) {
     event.value = res.data;
+    if (res.data.status === "APPROVED") {
+      fetchAgenda();
+    }
   } else {
     showError({ statusCode: res.status, data: res.pd });
   }
@@ -255,11 +276,50 @@ async function onDelete() {
                 </div>
               </template>
             </Card>
+
+            <!-- Agenda (solo cuando está aprobado) -->
+            <Card v-if="event.status === 'APPROVED'" class="border-1 surface-border">
+              <template #title>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-calendar" />
+                  <h3 class="m-0 text-base font-semibold">{{ t("me.agenda.title") }}</h3>
+                </div>
+              </template>
+              <template #content>
+                <div class="flex gap-2">
+                  <Button
+                    :label="t('me.agenda.interested')"
+                    :icon="currentInteraction === 'INTERESTED' ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                    :severity="currentInteraction === 'INTERESTED' ? 'primary' : 'secondary'"
+                    :loading="agendaSaving === id"
+                    class="flex-1"
+                    type="button"
+                    @click="onToggleInteraction('INTERESTED')" />
+                  <Button
+                    :label="t('me.agenda.going')"
+                    :icon="currentInteraction === 'GOING' ? 'pi pi-check-circle' : 'pi pi-circle'"
+                    :severity="currentInteraction === 'GOING' ? 'primary' : 'secondary'"
+                    :loading="agendaSaving === id"
+                    class="flex-1"
+                    type="button"
+                    @click="onToggleInteraction('GOING')" />
+                </div>
+              </template>
+            </Card>
           </div>
         </aside>
       </div>
     </template>
   </article>
+
+  <!-- Diálogo de confirmación de quitar de agenda -->
+  <Dialog v-model:visible="agendaRemoveDialogVisible" :header="t('me.agenda.title')" modal :style="{ width: '22rem' }">
+    <p class="m-0 text-color-secondary">{{ t("me.agenda.removeConfirm") }}</p>
+    <template #footer>
+      <Button :label="t('me.agenda.removeCancel')" severity="secondary" outlined @click="agendaRemoveDialogVisible = false" />
+      <Button :label="t('me.agenda.removeOk')" severity="danger" icon="pi pi-trash" :loading="!!agendaSaving" @click="confirmAgendaRemove" />
+    </template>
+  </Dialog>
 
   <!-- Diálogo de confirmación de borrado -->
   <Dialog v-model:visible="deleteDialogVisible" :header="t('me.deleteEvent')" modal :style="{ width: '22rem' }">

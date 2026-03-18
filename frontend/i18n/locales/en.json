@@ -56,8 +56,20 @@
   },
   "me": {
     "title": "My area",
-    "agenda": "Schedule",
     "agendaDesc": "Concerts you're going to or interested in",
+    "agenda": {
+      "title": "Schedule",
+      "noItems": "Your schedule is empty",
+      "interested": "Interested",
+      "going": "Going",
+      "status": {
+        "INTERESTED": "Interested",
+        "GOING": "Going"
+      },
+      "removeConfirm": "Do you want to remove this concert from your schedule?",
+      "removeOk": "Yes, remove",
+      "removeCancel": "Cancel"
+    },
     "myEvents": "My concerts",
     "myEventsDesc": "Concerts you have proposed",
     "tabs": {
@@ -161,6 +173,7 @@
     "login": "Login",
     "register": "Register",
     "me": "My area",
+    "meAgenda": "My schedule",
     "meEvents": "My concerts",
     "mePropose": "Propose a concert",
     "meEdit": "Edit concert",
@@ -222,7 +235,8 @@
       "eventNotEditable": "Concert does not have an editable state",
       "eventNotErasable": "Concert does not have an erasable state",
       "eventNotErasableAppr": "Approved concerts cannot be deleted",
-      "dbConstraint": "Violated DB Contraint"
+      "agendaEventNotAvailable": "You can only add approved concerts to your schedule",
+      "dbConstraint": "Violated DB Constraint"
     },
     "500": {
       "server": "Unexpected server error"

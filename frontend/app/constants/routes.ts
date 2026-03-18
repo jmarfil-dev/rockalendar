@@ -24,6 +24,7 @@ export const ROUTES = {
   apiArtists: "/api/artists",
   apiProvincesCombo: "/api/provinces/combo",
   apiMeEvents: "/api/me/events",
+  apiMeAgenda: "/api/me/agenda",
 
   apiModerationEvents: "/api/moderation/events",
   apiModerationPending: "/api/moderation/events/pending",
@@ -41,4 +42,5 @@ export const ROUTE_PATH = {
   apiModerationReject: (id: string) => `${ROUTES.apiModerationEvents}/${id}/reject`,
   apiModerationHide: (id: string) => `${ROUTES.apiModerationEvents}/${id}/hide`,
   apiModerationRequestChanges: (id: string) => `${ROUTES.apiModerationEvents}/${id}/request-changes`,
+  apiMeAgendaItem: (id: string) => `${ROUTES.apiMeAgenda}/${id}`,
 } as const;

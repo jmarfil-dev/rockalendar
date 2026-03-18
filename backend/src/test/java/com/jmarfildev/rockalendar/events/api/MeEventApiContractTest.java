@@ -58,11 +58,11 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST /api/events con auth -> 201 EventPrivateDto con status PENDING_MODERATION")
+    @DisplayName("POST /api/me/events con auth -> 201 EventPrivateDto con status PENDING_MODERATION")
     void propose_asUser_returns201WithPendingEvent() throws Exception {
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        mockMvc.perform(post(API_EVENTS)
+        mockMvc.perform(post(API_ME_EVENTS)
                 .with(contractUtils.authJwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
@@ -74,29 +74,29 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST /api/events sin auth -> 401 ProblemDetail")
+    @DisplayName("POST /api/me/events sin auth -> 401 ProblemDetail")
     void propose_asAnon_returns401ProblemDetail() throws Exception {
         String artists = "[%s]".formatted(TestConstants.MOCK_ARTIST_NAME_AY);
         var body = eventBody(factory.sevilla().getId().toString(), artists);
 
-        var ra = mockMvc.perform(post(API_EVENTS)
+        var ra = mockMvc.perform(post(API_ME_EVENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body));
 
-        contractUtils.expectProblemDetail(ra, 401, API_EVENTS);
+        contractUtils.expectProblemDetail(ra, 401, API_ME_EVENTS);
     }
 
     @Test
-    @DisplayName("POST /api/events con auth pero artists vacío -> 400 ProblemDetail")
+    @DisplayName("POST /api/me/events con auth pero artists vacío -> 400 ProblemDetail")
     void propose_asUser_emptyArtists_returns400ProblemDetail() throws Exception {
         var body = eventBody(factory.sevilla().getId().toString(), "[]");
 
-        var ra = mockMvc.perform(post(API_EVENTS)
+        var ra = mockMvc.perform(post(API_ME_EVENTS)
                 .with(contractUtils.authJwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body));
 
-        contractUtils.expectProblemDetail(ra, 400, API_EVENTS);
+        contractUtils.expectProblemDetail(ra, 400, API_ME_EVENTS);
     }
 
     @Test

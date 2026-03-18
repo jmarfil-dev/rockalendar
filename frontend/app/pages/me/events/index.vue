@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ME_EVENT_TABS } from "~/types/events";
 import type { MeEventTab, EventStatus } from "~/types/events";
-import { ROUTE_PATH } from "~/constants/routes";
+import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 
 definePageMeta({ layout: "private", ssr: false });
 
@@ -75,7 +75,12 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
 
 <template>
   <div class="flex flex-column gap-4">
-    <h1 class="text-2xl font-bold m-0">{{ t("me.myEvents") }}</h1>
+    <div class="flex align-items-center gap-3">
+      <NuxtLink :to="ROUTES.me" class="text-color-secondary" :aria-label="t('common.back')">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
+      </NuxtLink>
+      <h1 class="text-2xl font-bold m-0">{{ t("me.myEvents") }}</h1>
+    </div>
 
     <Tabs :value="activeTab" @update:value="(v) => onTabChange(v as MeEventTab)">
       <TabList>
