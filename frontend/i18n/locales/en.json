@@ -11,6 +11,8 @@
     "moderationV": "Moderation",
     "returnIndex": "Return to index",
     "back": "Go back",
+    "skipToContent": "Skip to content",
+    "required": "required",
     "example": "Ex.",
     "details": "Details",
     "noAvail": "Not available",
@@ -152,6 +154,20 @@
     "from": "From",
     "to": "To",
     "invalidRange": "End date cannot be earlier than start date"
+  },
+  "page": {
+    "home": "Home",
+    "events": "Concerts",
+    "login": "Login",
+    "register": "Register",
+    "me": "My area",
+    "meEvents": "My concerts",
+    "mePropose": "Propose a concert",
+    "meEdit": "Edit concert",
+    "moderation": "Moderation",
+    "moderationEvents": "Moderate concerts",
+    "admin": "Administration",
+    "forbidden": "Access denied"
   },
   "pagination": {
     "sortedBy": "Sorted by"

@@ -68,19 +68,21 @@ function onWrapperKeydown(e: KeyboardEvent) {
 
 <template>
   <div class="flex flex-column gap-2">
-    <label class="text-sm text-color-secondary">
-      {{ t("events.artists") }} <span class="text-red-500">*</span>
+    <label for="artists-input" class="text-sm text-color-secondary">
+      {{ t("events.artists") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
     </label>
 
     <div class="flex gap-2 align-items-center" @keydown="onWrapperKeydown">
       <AutoComplete
         v-model="inputValue"
+        inputId="artists-input"
         :suggestions="suggestions"
         option-label="name"
         :disabled="atLimit"
         :invalid="!!fieldError"
         :placeholder="atLimit ? '' : t('me.propose.artistSelectorPlaceholder')"
         class="flex-1"
+        aria-describedby="artists-error"
         @complete="search($event.query)"
         @item-select="onItemSelect" />
       <Button
@@ -89,6 +91,7 @@ function onWrapperKeydown(e: KeyboardEvent) {
         severity="secondary"
         outlined
         :disabled="!canAdd"
+        :aria-label="t('me.propose.addArtist')"
         @click="onAddCurrentText" />
     </div>
 
@@ -96,7 +99,7 @@ function onWrapperKeydown(e: KeyboardEvent) {
       <Chip v-for="(chip, i) in modelValue" :key="chipKeys[i]" :label="chip.name" removable @remove="removeChip(i)" />
     </div>
 
-    <Message v-show="fieldError" severity="error" variant="simple" size="small">
+    <Message id="artists-error" v-show="fieldError" severity="error" variant="simple" size="small">
       {{ tr(fieldError!) }}
     </Message>
   </div>

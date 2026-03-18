@@ -6,6 +6,7 @@ import { ROUTE_PATH } from "~/constants/routes";
 definePageMeta({ layout: "private", ssr: false });
 
 const { t } = useI18n();
+useHead({ title: () => t("page.meEvents") });
 
 const { events, pageMeta, loading, error, fetchEvents } = useMyEvents();
 
@@ -88,13 +89,14 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
           <!-- Ordenación (no disponible en ALL) -->
           <div v-if="showSort" class="flex align-items-center justify-content-between mb-3">
             <span class="text-sm text-color-secondary">{{ t("pagination.sortedBy") }}</span>
-            <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" />
+            <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" :pt="{ label: { 'aria-label': t('pagination.sortedBy') } }" />
           </div>
           <p v-else class="text-sm text-color-secondary mb-3">{{ t("me.allTabNote") }}</p>
 
           <!-- Estado de carga -->
-          <div v-if="loading" class="flex justify-content-center py-6">
+          <div v-if="loading" role="status" class="flex justify-content-center py-6">
             <ProgressSpinner style="width: 2rem; height: 2rem" />
+            <span class="sr-only">{{ t('common.loading') }}</span>
           </div>
 
           <!-- Error -->

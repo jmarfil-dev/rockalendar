@@ -22,21 +22,24 @@ function goBack() {
 const { data: event, pending } = await useApiFetch<EventPublic>(ROUTE_PATH.apiEventDetail(id), {
   key: `event-${id}`,
 });
+
+useHead({ title: () => event.value?.title ?? t("page.events") });
 </script>
 
 <template>
   <article class="p-3 md:p-4 lg:p-5 flex flex-column gap-4">
     <!-- Cabecera de navegación -->
     <div class="flex align-items-center gap-3">
-      <button type="button" class="p-0 border-none bg-transparent cursor-pointer text-color-secondary" @click="goBack">
-        <i class="pi pi-arrow-left" />
+      <button type="button" class="p-0 border-none bg-transparent cursor-pointer text-color-secondary" :aria-label="t('common.back')" @click="goBack">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
       </button>
       <h1 class="text-2xl font-bold m-0">{{ t("events.listEvents") }}</h1>
     </div>
 
     <!-- Loading -->
-    <div v-if="pending" class="flex justify-content-center py-6">
+    <div v-if="pending" role="status" class="flex justify-content-center py-6">
       <ProgressSpinner style="width: 2rem; height: 2rem" />
+      <span class="sr-only">{{ t('common.loading') }}</span>
     </div>
 
     <!-- Contenido -->

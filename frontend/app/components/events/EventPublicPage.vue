@@ -121,15 +121,16 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
     <header>
       <div class="flex align-items-center justify-content-between w-full">
         <span class="text-sm text-color-secondary">{{ t("pagination.sortedBy") }}</span>
-        <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" />
+        <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" :pt="{ label: { 'aria-label': t('pagination.sortedBy') } }" />
       </div>
     </header>
 
     <!-- Results -->
     <section :aria-label="t('events.listEvents')">
       <!-- Loading -->
-      <div v-if="pending" class="flex justify-content-center p-4">
+      <div v-if="pending" role="status" class="flex justify-content-center p-4">
         <ProgressSpinner />
+        <span class="sr-only">{{ t('common.loading') }}</span>
       </div>
 
       <!-- Listado vacío -->

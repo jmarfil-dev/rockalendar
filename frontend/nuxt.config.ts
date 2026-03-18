@@ -36,12 +36,36 @@ const RockalendarPreset = definePreset(Aura, {
         formField: {
           background: "{surface.800}",
         },
+        // zinc.300 (#d4d4d8) en lugar de zinc.400 (#a1a1aa) — mejora contraste
+        // sobre fondos que se aclaran en hover de Card
+        text: {
+          mutedColor: "{surface.300}",
+          hoverMutedColor: "{surface.200}",
+        },
+      },
+    },
+  },
+  components: {
+    message: {
+      colorScheme: {
+        dark: {
+          // blue.300/red.300 en lugar de blue.400/red.400 — mayor contraste sobre fondos coloreados
+          info: { color: "{blue.300}" },
+          error: { color: "{red.300}" },
+          warn: { color: "{yellow.200}" },
+          success: { color: "{green.300}" },
+        },
       },
     },
   },
 });
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      titleTemplate: "%s — Rockalendar",
+    },
+  },
   routeRules: {
     "/api/**": { proxy: "http://localhost:8080/api/**" },
   },

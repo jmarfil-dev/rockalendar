@@ -6,6 +6,7 @@ import { ROUTE_PATH } from "~/constants/routes";
 definePageMeta({ layout: "moderation", ssr: false });
 
 const { t } = useI18n();
+useHead({ title: () => t("page.moderationEvents") });
 
 const { pendingEvents, archivedEvents, pageMeta, loading, error, fetchEvents } = useModerationEvents();
 
@@ -72,12 +73,13 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
           <!-- Ordenación -->
           <div class="flex align-items-center justify-content-between mb-3">
             <span class="text-sm text-color-secondary">{{ t("pagination.sortedBy") }}</span>
-            <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" />
+            <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" :pt="{ label: { 'aria-label': t('pagination.sortedBy') } }" />
           </div>
 
           <!-- Estado de carga -->
-          <div v-if="loading" class="flex justify-content-center py-6">
+          <div v-if="loading" role="status" class="flex justify-content-center py-6">
             <ProgressSpinner style="width: 2rem; height: 2rem" />
+            <span class="sr-only">{{ t('common.loading') }}</span>
           </div>
 
           <!-- Error -->

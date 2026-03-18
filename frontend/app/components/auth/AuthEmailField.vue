@@ -3,6 +3,7 @@ defineProps<{
   modelValue: string;
   fieldError?: string;
   required?: boolean;
+  showRequired?: boolean;
 }>();
 defineEmits<{ "update:modelValue": [value: string] }>();
 
@@ -14,7 +15,12 @@ function tr(key: string) {
 
 <template>
   <div class="flex flex-column gap-2">
-    <label for="email" class="text-sm text-color-secondary">{{ t("user.email") }}</label>
+    <label for="email" class="text-sm text-color-secondary">
+      {{ t("user.email") }}
+      <template v-if="showRequired">
+        <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+      </template>
+    </label>
     <InputText
       id="email"
       :modelValue="modelValue"
@@ -23,8 +29,9 @@ function tr(key: string) {
       inputmode="email"
       autocomplete="email"
       :required="required"
-      :invalid="!!fieldError" />
-    <Message v-show="fieldError" severity="error" variant="simple" size="small">
+      :invalid="!!fieldError"
+      aria-describedby="email-error" />
+    <Message id="email-error" v-show="fieldError" severity="error" variant="simple" size="small">
       {{ tr("fieldErrors.email") }}
     </Message>
   </div>

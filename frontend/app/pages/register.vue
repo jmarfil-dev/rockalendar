@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
 
+// PrimeVue añade aria-expanded al <input> del componente Password, lo cual no es válido en inputs.
+// Como usamos :feedback="false" no hay panel que expandir, así que lo eliminamos tras cada render.
+const vFixPasswordAria = {
+  mounted: (el: HTMLElement) => el.querySelector("input")?.removeAttribute("aria-expanded"),
+  updated: (el: HTMLElement) => el.querySelector("input")?.removeAttribute("aria-expanded"),
+};
+
 definePageMeta({ layout: "minimal" });
 
 const { t } = useI18n();
+useHead({ title: () => t("page.register") });
 const auth = useAuth();
 const { form, loading, errorMsg, fieldErrors, resetErrors, tr } = useAuthForm();
 
@@ -46,8 +54,8 @@ async function onSubmit() {
 <template>
   <div class="flex flex-column gap-4">
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.login" class="text-color-secondary">
-        <i class="pi pi-arrow-left" />
+      <NuxtLink :to="ROUTES.login" class="text-color-secondary" :aria-label="t('common.back')">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
       </NuxtLink>
       <h1 class="text-2xl font-bold m-0">{{ t("auth.register") }}</h1>
     </div>
@@ -57,24 +65,29 @@ async function onSubmit() {
       <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
 
       <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
-        <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" />
+        <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" showRequired />
 
         <div class="flex flex-column gap-2">
-          <label for="password" class="text-sm text-color-secondary">{{ t("user.password") }}</label>
+          <label for="password" class="text-sm text-color-secondary">
+            {{ t("user.password") }}
+            <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+          </label>
           <Password
-            id="password"
+            v-fix-password-aria
+            inputId="password"
             v-model="form.password"
             toggleMask
             :feedback="false"
             autocomplete="new-password"
             required
-            :invalid="!!fieldErrors.password" />
-          <Message v-show="fieldErrors.password" severity="error" variant="simple" size="small">
+            :invalid="!!fieldErrors.password"
+            :pt="{ input: { 'aria-describedby': 'pw-requirements register-password-error pw-hint' } }" />
+          <Message id="register-password-error" v-show="fieldErrors.password" severity="error" variant="simple" size="small">
             {{ tr("fieldErrors.password") }}
           </Message>
 
           <!-- Checklist de requisitos de contraseña -->
-          <div class="border-1 surface-border border-round-lg p-2">
+          <div id="pw-requirements" class="border-1 surface-border border-round-lg p-2">
             <div class="text-sm text-color-secondary mb-2">{{ t("auth.pw.title") }}</div>
 
             <ul class="m-0 p-0 list-none flex flex-column gap-1">
@@ -85,7 +98,7 @@ async function onSubmit() {
             </ul>
           </div>
 
-          <Message v-show="!isPasswordValid" severity="error" variant="simple" size="small">
+          <Message id="pw-hint" v-show="!isPasswordValid" severity="error" variant="simple" size="small">
             {{ t("auth.pw.hint") }}
           </Message>
         </div>
