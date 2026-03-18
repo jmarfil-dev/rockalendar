@@ -52,6 +52,15 @@ public class TrustScoreService {
         applyDelta(userId, eventId, delta);
     }
 
+    /**
+     * Aplica la penalización máxima (-30) cuando el rechazo se produce automáticamente
+     * al detectar la tercera solicitud de cambios. Debe usarse en lugar de onReject()
+     * para este caso concreto, ya que en ese momento solo hay 2 REQUEST_CHANGES en BD.
+     */
+    public void onRejectAfterThirdChange(UUID userId, UUID eventId) {
+        applyDelta(userId, eventId, DELTA_REJECTED_AFTER_MANY_CHANGES);
+    }
+
     private void applyDelta(UUID userId, UUID eventId, int delta) {
         userRepository.findById(userId).ifPresent(user -> {
             int newScore = user.getTrustScore() + delta;

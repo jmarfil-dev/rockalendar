@@ -206,6 +206,19 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                                  @Param("sortDir") String sortDir,
                                                                  Pageable pageable);
 
+    // --- Queries para moderación automática ---
+
+    /**
+     * Cuenta los eventos rechazados de un usuario desde una fecha dada (para anti-spam).
+     */
+    @Query("SELECT COUNT(e) FROM Event e WHERE e.createdByUserId = :userId AND e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED AND e.moderatedAt >= :since")
+    long countRejectedByUserSince(@Param("userId") UUID userId, @Param("since") OffsetDateTime since);
+
+    /**
+     * Devuelve eventos en estado FLAGGED cuyo updatedAt es anterior al umbral (para el scheduler de rechazo).
+     */
+    List<Event> findByStatusAndUpdatedAtBefore(EventStatus status, OffsetDateTime threshold);
+
     // --- Queries para comprobación de elegibilidad de ascenso ---
 
     /**
