@@ -27,7 +27,7 @@ public class ContractApiTestUtils {
      * Auth
      */
 
-    private JwtRequestPostProcessor authJwt(String uuid, String email, String role) {
+    public JwtRequestPostProcessor authJwt(String uuid, String email, String role) {
         return jwt().authorities(new SimpleGrantedAuthority(role))
                     .jwt(j -> j.subject(uuid).claim("email", email).claim("roles", List.of(role)));
     }

@@ -51,6 +51,7 @@ public final class ErrorConstants {
     // Not found 404
     public static final String EVENT_NOT_FOUND = "error.404.eventNotFound";
     public static final String ARTIST_NOT_FOUND = "error.404.artistNotFound";
+    public static final String USER_NOT_FOUND = "error.404.userNotFound";
 
     // Conflict 409
     public static final String ARTIST_ALREADY_EXISTS = "error.409.artistExists";
@@ -61,8 +62,8 @@ public final class ErrorConstants {
     public static final String EVENT_NOT_EDITABLE = "error.409.eventNotEditable";
     public static final String EVENT_NOT_ERASABLE = "error.409.eventNotErasable";
     public static final String EVENT_NOT_ERASABLE_APPROVED = "error.409.eventNotErasableAppr";
-
     public static final String AGENDA_EVENT_NOT_AVAILABLE = "error.409.agendaEventNotAvailable";
+    public static final String PROMOTION_NOT_ELIGIBLE = "error.409.promotionNotEligible";
 
     // Conflict 409 genérico (constraint de BD no capturada explícitamente)
     public static final String DB_CONSTRAINT = "error.409.dbConstraint";

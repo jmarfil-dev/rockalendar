@@ -18,6 +18,11 @@ import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
+import com.jmarfildev.rockalendar.users.domain.User;
+import com.jmarfildev.rockalendar.users.domain.UserRole;
+import com.jmarfildev.rockalendar.users.persistence.UserRepository;
+
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @author jmarfil
@@ -30,13 +35,45 @@ public class TestDataFactory {
     private final ProvinceRepository provinceRepository;
     private final ArtistRepository artistRepository;
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
+    private final JdbcTemplate jdbc;
 
     public TestDataFactory(ProvinceRepository provinceRepository,
                            ArtistRepository artistRepository,
-                           EventRepository eventRepository) {
+                           EventRepository eventRepository,
+                           UserRepository userRepository,
+                           JdbcTemplate jdbc) {
         this.provinceRepository = provinceRepository;
         this.artistRepository = artistRepository;
         this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
+        this.jdbc = jdbc;
+    }
+
+    /**
+     * Simula la re-envío de un evento tras solicitar cambios: vuelve a PENDING_MODERATION.
+     * Útil en tests que necesitan encadenar varias rondas de moderación.
+     */
+    public void resubmitEvent(UUID eventId) {
+        jdbc.update("UPDATE events SET status = 'PENDING_MODERATION', version = version + 1 WHERE id = ?", eventId);
+    }
+
+    /*
+     * Users
+     */
+
+    /**
+     * Crea un usuario con trust_score y created_at personalizados para tests de elegibilidad.
+     * No corresponde a ninguno de los usuarios seed; se limpia con truncateMutableTables.
+     */
+    public User userWithScore(String email, int trustScore, OffsetDateTime createdAt) {
+        User user = new User();
+        user.setEmail(email);
+        user.setPasswordHash("{noop}test");
+        user.setRole(UserRole.USER.name());
+        user.setTrustScore(trustScore);
+        user.setCreatedAt(createdAt);
+        return userRepository.save(user);
     }
 
     /*
