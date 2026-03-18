@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
@@ -44,6 +45,7 @@ import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
  *
  * @author jmarfil
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventCommandService {
@@ -83,7 +85,9 @@ public class EventCommandService {
                          .artists(in.artists)
                          .build();
 
-        return mapper.toPrivateDto(eventRepository.save(event));
+        var saved = eventRepository.save(event);
+        log.info("event proposed eventId={} userId={}", saved.getId(), userId);
+        return mapper.toPrivateDto(saved);
     }
 
     /**
@@ -129,6 +133,7 @@ public class EventCommandService {
         event.setSubmittedAt(OffsetDateTime.now());
 
         // No hace falta save() porque al ser un evento administrado por JPA (viene de un find()) se actualiza al terminar la transacción.
+        log.info("event updated eventId={} userId={}", eventId, userId);
         return mapper.toPrivateDto(event);
     }
 
@@ -156,6 +161,7 @@ public class EventCommandService {
         }
 
         event.setStatus(EventStatus.ERASED);
+        log.info("event deleted eventId={} userId={}", eventId, userId);
     }
 
     /**
@@ -238,6 +244,7 @@ public class EventCommandService {
         try {
             return artistRepository.saveAndFlush(Artist.builder().name(displayName).slug(slug).createdByUserId(userId).build());
         } catch (DataIntegrityViolationException ex) {
+            log.warn("artist race condition resolved slug={}", slug);
             return artistRepository.findBySlug(slug)
                     .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));
         }

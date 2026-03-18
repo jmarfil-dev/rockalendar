@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.artists.api.dto.CreateArtistRequest;
 import com.jmarfildev.rockalendar.artists.domain.Artist;
@@ -28,6 +29,7 @@ import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
  * @author jmarfil
  *
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArtistCommandService {
@@ -50,11 +52,13 @@ public class ArtistCommandService {
         }
 
         try {
-            return artistRepository.saveAndFlush(Artist.builder()
+            var artist = artistRepository.saveAndFlush(Artist.builder()
                     .name(displayName)
                     .slug(slug)
                     .createdByUserId(userId)
                     .build());
+            log.info("artist created artistId={} slug={}", artist.getId(), slug);
+            return artist;
         } catch (DataIntegrityViolationException ex) {
             // Se lanza si otro hilo crea el mismo slug entre el existsBySlug y el save
             throw new ConflictException(ErrorConstants.ARTIST_ALREADY_EXISTS);

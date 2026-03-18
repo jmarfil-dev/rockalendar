@@ -24,6 +24,11 @@ const { data: event, pending } = await useApiFetch<EventPublic>(ROUTE_PATH.apiEv
 });
 
 useHead({ title: () => event.value?.title ?? t("page.events") });
+
+function mapsUrl(e: EventPublic): string {
+  const parts = [e.venueName, e.cityName, e.provinceName].filter(Boolean);
+  return `https://www.google.com/maps/search/${encodeURIComponent(parts.join(" "))}`;
+}
 </script>
 
 <template>
@@ -51,7 +56,7 @@ useHead({ title: () => event.value?.title ?? t("page.events") });
         <div class="flex align-items-center gap-2 text-color-secondary">
           <i class="pi pi-map-marker" />
           <span>
-            <span v-if="event.venueName">{{ event.venueName }}</span>
+            <a v-if="event.venueName" :href="mapsUrl(event)" target="_blank" rel="noopener noreferrer" class="text-color-secondary underline">{{ event.venueName }}</a>
             <span v-if="event.venueName && (event.cityName || event.provinceName)"> · </span>
             <span v-if="event.cityName">{{ event.cityName }}</span>
             <span v-if="event.cityName && event.provinceName">, </span>
@@ -157,8 +162,8 @@ useHead({ title: () => event.value?.title ?? t("page.events") });
                     <i class="pi pi-map-marker text-color-secondary mt-1" />
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("geo.place") }}</span>
-                      <span class="text-color-secondary">
-                        <span v-if="event.venueName">{{ event.venueName }}</span>
+                      <span>
+                        <a v-if="event.venueName" :href="mapsUrl(event)" target="_blank" rel="noopener noreferrer" class="text-color-secondary underline">{{ event.venueName }}</a>
                         <span v-if="event.venueName && (event.cityName || event.provinceName)"> · </span>
                         <span v-if="event.cityName">{{ event.cityName }}</span>
                         <span v-if="event.cityName && event.provinceName">, </span>
