@@ -3,6 +3,35 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v0.3.0-frontend]
+### Added
+- [FRONT] Layout privado y hub `/me` con cards de agenda y mis conciertos.
+- [FRONT] Página `/me/events` con pestañas, ordenación y paginación.
+- [FRONT] Formulario para proponer concierto con selector de artistas.
+- [FRONT] Detalle y edición de evento propio en `/me/events`.
+- [FRONT] Sección de moderación completa (`/moderation`).
+- [FRONT] Accesibilidad WCAG AA en toda la app.
+- [FRONT] Link a Google Maps en el recinto del detalle de evento.
+- [BACK] Endpoint `GET /me/events/{id}` con `EventPrivateDto` completo.
+- [BACK] Endpoint `GET /moderation/events/{id}`.
+- [BACK] Indexación de nombres de artistas en búsqueda de texto libre.
+- [BACK] Logs mínimos en servicios de escritura (`@Slf4j`).
+
+### Changed
+- [FRONT] Extraer utilidad `formatEventDate` y usarla en las vistas.
+- [FRONT] Extraer composable `useAuthForm` y componente `AuthEmailField`.
+- [FRONT] `AppPaginator` extraído como componente; `useSortOptions` en página pública de eventos.
+- [BACK] Mover `propose` a `/api/me/events`, renombrar `COMMENT` → `REQUEST_CHANGES` y `artistSlug` → `artistId`.
+- [BACK] Refactorización de suite de tests; nuevos tests de `ArtistCommandService`.
+
+### Fixed
+- [FRONT] Logout, flash SSR en auth y manejo de errores de carga.
+- [BACK] Race condition en creación de artistas concurrentes.
+- [BACK] Validar longitud mínima de JWT secret y mejorar manejo de errores de auth.
+- [BACK] Propagar `userId` al crear artistas nuevos desde propuesta de evento.
+- [BACK] Queries de mis eventos (`submittedAt`) y claves de sort en panel de moderación.
+- [BACK] Orden de operaciones en migración `V1.2.0.6`.
+
 ## [v0.2.0-frontend]
 ### Added
 - [FRONT] Manejo de errores.
