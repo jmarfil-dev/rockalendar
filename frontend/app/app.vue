@@ -1,6 +1,11 @@
 <script setup lang="ts">
+const localeHead = useLocaleHead();
+
 useHead({
-  htmlAttrs: { class: "dark" },
+  htmlAttrs: {
+    class: "dark",
+    lang: computed(() => localeHead.value.htmlAttrs?.lang ?? "es"),
+  },
 });
 </script>
 

@@ -11,6 +11,8 @@
     "moderationV": "Moderación",
     "returnIndex": "Volver al inicio",
     "back": "Volver",
+    "skipToContent": "Saltar al contenido",
+    "required": "obligatorio",
     "example": "Ej.",
     "details": "Detalles",
     "noAvail": "No disponible",
@@ -153,6 +155,20 @@
     "from": "Desde",
     "to": "Hasta",
     "invalidRange": "La fecha fin no puede ser anterior a la fecha inicio"
+  },
+  "page": {
+    "home": "Inicio",
+    "events": "Conciertos",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "me": "Mi área",
+    "meEvents": "Mis conciertos",
+    "mePropose": "Proponer concierto",
+    "meEdit": "Editar concierto",
+    "moderation": "Moderación",
+    "moderationEvents": "Moderar conciertos",
+    "admin": "Administración",
+    "forbidden": "Acceso denegado"
   },
   "pagination": {
     "sortedBy": "Ordenado por"

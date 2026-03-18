@@ -10,6 +10,7 @@ const id = route.params.id as string;
 
 // --- Carga del evento ---
 const event = ref<EventPrivateDto | null>(null);
+useHead({ title: () => event.value?.title ?? t("page.moderationEvents") });
 const loading = ref(true);
 
 const STATUS_SEVERITY: Record<EventStatus, string> = {
@@ -85,15 +86,16 @@ async function onConfirm() {
   <article class="flex flex-column gap-4">
     <!-- Cabecera -->
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.moderationEvents" class="text-color-secondary">
-        <i class="pi pi-arrow-left" />
+      <NuxtLink :to="ROUTES.moderationEvents" class="text-color-secondary" :aria-label="t('common.back')">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
       </NuxtLink>
       <h1 class="text-2xl font-bold m-0">{{ t("moderation.hub.events") }}</h1>
     </div>
 
     <!-- Cargando -->
-    <div v-if="loading" class="flex align-items-center gap-2 py-6 justify-content-center">
+    <div v-if="loading" role="status" class="flex align-items-center gap-2 py-6 justify-content-center">
       <ProgressSpinner style="width: 2rem; height: 2rem" />
+      <span class="sr-only">{{ t('common.loading') }}</span>
     </div>
 
     <!-- Contenido -->
@@ -103,7 +105,7 @@ async function onConfirm() {
         <div class="flex flex-column gap-1">
           <h2 class="m-0 text-2xl font-semibold line-height-2">{{ event.title }}</h2>
           <div class="flex align-items-center gap-2 text-color-secondary text-sm">
-            <i class="pi pi-map-marker" />
+            <i class="pi pi-map-marker" aria-hidden="true" />
             <span>
               <span v-if="event.venueName">{{ event.venueName }}</span>
               <span v-if="event.venueName && (event.cityName || event.provinceName)"> · </span>
@@ -113,7 +115,7 @@ async function onConfirm() {
             </span>
           </div>
           <div class="flex align-items-center gap-2 text-color-secondary text-sm">
-            <i class="pi pi-calendar" />
+            <i class="pi pi-calendar" aria-hidden="true" />
             <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime) }}</time>
             <template v-if="event.endDateTime">
               <span>→</span>
@@ -147,7 +149,7 @@ async function onConfirm() {
                 <!-- Artistas -->
                 <section v-if="event.artists?.length" :aria-label="`${t('events.groups')} / ${t('events.artists')}`">
                   <div class="flex align-items-center gap-2 mb-2">
-                    <i class="pi pi-users text-color-secondary" />
+                    <i class="pi pi-users text-color-secondary" aria-hidden="true" />
                     <h3 class="m-0 text-lg font-semibold">{{ t("events.groups") }} / {{ t("events.artists") }}</h3>
                   </div>
                   <div class="flex flex-wrap gap-2">
@@ -158,7 +160,7 @@ async function onConfirm() {
                 <!-- Descripción -->
                 <section v-if="event.description" :aria-label="t('events.description')">
                   <div class="flex align-items-center gap-2 mb-2">
-                    <i class="pi pi-align-left text-color-secondary" />
+                    <i class="pi pi-align-left text-color-secondary" aria-hidden="true" />
                     <h3 class="m-0 text-lg font-semibold">{{ t("events.description") }}</h3>
                   </div>
                   <div class="text-color-secondary white-space-pre-line line-height-3">
@@ -181,14 +183,14 @@ async function onConfirm() {
             <Card class="border-1 surface-border">
               <template #title>
                 <div class="flex align-items-center gap-2">
-                  <i class="pi pi-info-circle" />
+                  <i class="pi pi-info-circle" aria-hidden="true" />
                   <h3 class="m-0 text-base font-semibold">{{ t("common.details") }}</h3>
                 </div>
               </template>
               <template #content>
                 <div class="flex flex-column gap-3 text-sm">
                   <div class="flex align-items-start gap-2">
-                    <i class="pi pi-calendar text-color-secondary mt-1" />
+                    <i class="pi pi-calendar text-color-secondary mt-1" aria-hidden="true" />
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("dates.date") }}</span>
                       <span class="text-color-secondary">
@@ -202,7 +204,7 @@ async function onConfirm() {
                   </div>
 
                   <div class="flex align-items-start gap-2">
-                    <i class="pi pi-map-marker text-color-secondary mt-1" />
+                    <i class="pi pi-map-marker text-color-secondary mt-1" aria-hidden="true" />
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("geo.place") }}</span>
                       <span class="text-color-secondary">
@@ -216,7 +218,7 @@ async function onConfirm() {
                   </div>
 
                   <div v-if="event.sourceUrl" class="flex align-items-start gap-2">
-                    <i class="pi pi-link text-color-secondary mt-1" />
+                    <i class="pi pi-link text-color-secondary mt-1" aria-hidden="true" />
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("events.sourceUrl") }}</span>
                       <a
@@ -232,7 +234,7 @@ async function onConfirm() {
                   <Divider class="my-1" />
 
                   <div class="flex align-items-start gap-2">
-                    <i class="pi pi-clock text-color-secondary mt-1" />
+                    <i class="pi pi-clock text-color-secondary mt-1" aria-hidden="true" />
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("me.submittedAt") }}</span>
                       <span class="text-color-secondary">
@@ -242,7 +244,7 @@ async function onConfirm() {
                   </div>
 
                   <div class="flex align-items-start gap-2">
-                    <i class="pi pi-history text-color-secondary mt-1" />
+                    <i class="pi pi-history text-color-secondary mt-1" aria-hidden="true" />
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("me.createdAt") }}</span>
                       <span class="text-color-secondary">
@@ -314,8 +316,10 @@ async function onConfirm() {
         rows="4"
         :maxlength="500"
         class="w-full"
-        autofocus />
-      <Message v-if="actionError" severity="error" :closable="false" class="mt-1">{{ actionError }}</Message>
+        autofocus
+        :aria-required="!isCommentOptional"
+        aria-describedby="action-error" />
+      <Message id="action-error" v-if="actionError" severity="error" :closable="false" class="mt-1">{{ actionError }}</Message>
     </div>
     <template #footer>
       <Button

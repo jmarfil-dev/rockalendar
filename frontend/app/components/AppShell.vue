@@ -84,6 +84,9 @@ const onLogoutClick = async () => {
 
 <template>
   <div class="min-h-screen flex flex-column">
+    <!-- Skip link: visible solo al recibir foco (usuarios de teclado) -->
+    <a href="#main-content" class="skip-link">{{ t('common.skipToContent') }}</a>
+
     <!-- Header -->
     <header class="surface-0 mt-2">
       <div class="mx-auto w-full max-w-7xl px-3 py-1 flex align-items-center justify-content-between gap-2">
@@ -136,7 +139,7 @@ const onLogoutClick = async () => {
     </header>
 
     <!-- Body -->
-    <main class="flex-1 surface-0 mb-5">
+    <main id="main-content" class="flex-1 surface-0 mb-5">
       <div class="mx-auto w-full max-w-7xl px-3 py-4">
         <slot />
       </div>
@@ -281,8 +284,9 @@ const onLogoutClick = async () => {
 
           <!-- Provincia -->
           <div class="flex flex-column gap-2">
-            <label for="province" class="text-sm text-color-secondary">{{ t("geo.province") }}</label>
+            <label for="search-province" class="text-sm text-color-secondary">{{ t("geo.province") }}</label>
             <Select
+              inputId="search-province"
               v-model="searchForm.provinceId"
               :options="provinceOptions"
               optionLabel="label"
@@ -290,14 +294,15 @@ const onLogoutClick = async () => {
               :placeholder="t('geo.province')"
               showClear
               filter
-              class="w-full" />
+              class="w-full"
+              :pt="{ label: { 'aria-label': t('geo.province') } }" />
           </div>
 
           <!-- Rango de fechas -->
           <div class="flex flex-column gap-2">
             <label for="dateFrom" class="text-sm text-color-secondary">{{ t("dates.from") }}</label>
             <DatePicker
-              id="dateFrom"
+              inputId="dateFrom"
               v-model="searchForm.dateFrom"
               dateFormat="dd/mm/yy"
               showIcon
@@ -308,7 +313,7 @@ const onLogoutClick = async () => {
           <div class="flex flex-column gap-2">
             <label for="dateTo" class="text-sm text-color-secondary">{{ t("dates.to") }}</label>
             <DatePicker
-              id="dateTo"
+              inputId="dateTo"
               v-model="searchForm.dateTo"
               :minDate="searchForm.dateFrom ?? undefined"
               dateFormat="dd/mm/yy"

@@ -3,8 +3,13 @@ import { ROUTES } from "~/constants/routes";
 import type { NuxtError } from "#app";
 import type { ProblemDetail } from "~/types/api";
 
+const localeHead = useLocaleHead();
+
 useHead({
-  htmlAttrs: { class: "dark" },
+  htmlAttrs: {
+    class: "dark",
+    lang: computed(() => localeHead.value.htmlAttrs?.lang ?? "es"),
+  },
 });
 
 const { t, te } = useI18n();
@@ -67,7 +72,7 @@ const goBack = () => clearError({ redirect: window.history.state?.back ?? ROUTES
       <div class="mx-auto w-full max-w-7xl px-3 py-4">
         <header>
           <h1 id="error-name" class="flex flex-wrap justify-content-between mx-5">
-            <span><i class="pi pi-exclamation-circle"></i></span><span>{{ heading }}</span>
+            <span><i class="pi pi-exclamation-circle" aria-hidden="true"></i></span><span>{{ heading }}</span>
             <span>{{ status }}</span>
           </h1>
         </header>

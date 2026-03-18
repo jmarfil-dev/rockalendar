@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
 
+// PrimeVue añade aria-expanded al <input> del componente Password, lo cual no es válido en inputs.
+// Como usamos :feedback="false" no hay panel que expandir, así que lo eliminamos tras cada render.
+const vFixPasswordAria = {
+  mounted: (el: HTMLElement) => el.querySelector("input")?.removeAttribute("aria-expanded"),
+  updated: (el: HTMLElement) => el.querySelector("input")?.removeAttribute("aria-expanded"),
+};
+
 definePageMeta({ layout: "minimal" });
 
 const { t } = useI18n();
+useHead({ title: () => t("page.login") });
 const auth = useAuth();
 const route = useRoute();
 const { form, loading, errorMsg, fieldErrors, resetErrors, tr } = useAuthForm();
@@ -30,8 +38,8 @@ async function onSubmit() {
 <template>
   <div class="flex flex-column gap-4">
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.home" class="text-color-secondary">
-        <i class="pi pi-arrow-left" />
+      <NuxtLink :to="ROUTES.home" class="text-color-secondary" :aria-label="t('common.back')">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
       </NuxtLink>
       <h1 class="text-2xl font-bold m-0">{{ t("auth.login") }}</h1>
     </div>
@@ -46,14 +54,16 @@ async function onSubmit() {
         <div class="flex flex-column gap-2">
           <label for="password" class="text-sm text-color-secondary">{{ t("user.password") }}</label>
           <Password
-            id="password"
+            v-fix-password-aria
+            inputId="password"
             v-model="form.password"
             toggleMask
             :feedback="false"
             autocomplete="current-password"
             required
-            :invalid="!!fieldErrors.password" />
-          <Message v-show="fieldErrors.password" severity="error" variant="simple" size="small">
+            :invalid="!!fieldErrors.password"
+            :pt="{ input: { 'aria-describedby': 'login-password-error' } }" />
+          <Message id="login-password-error" v-show="fieldErrors.password" severity="error" variant="simple" size="small">
             {{ tr("fieldErrors.password") }}
           </Message>
         </div>

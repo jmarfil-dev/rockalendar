@@ -4,6 +4,7 @@ import { ROUTES } from "~/constants/routes";
 definePageMeta({ layout: "private", ssr: false });
 
 const { t } = useI18n();
+useHead({ title: () => t("page.me") });
 const router = useRouter();
 </script>
 

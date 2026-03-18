@@ -5,6 +5,7 @@ import ArtistSelector from "~/components/events/ArtistSelector.vue";
 definePageMeta({ layout: "private", ssr: false });
 
 const { t } = useI18n();
+useHead({ title: () => t("page.meEdit") });
 const route = useRoute();
 const id = route.params.id as string;
 
@@ -40,15 +41,16 @@ async function onSuccessClose() {
 <template>
   <div class="flex flex-column gap-4">
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTE_PATH.meEventDetail(id)" class="text-color-secondary">
-        <i class="pi pi-arrow-left" />
+      <NuxtLink :to="ROUTE_PATH.meEventDetail(id)" class="text-color-secondary" :aria-label="t('common.back')">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
       </NuxtLink>
       <h1 class="text-2xl font-bold m-0">{{ t("me.edit.title") }}</h1>
     </div>
 
     <!-- Cargando -->
-    <div v-if="loading" class="flex align-items-center gap-2 py-6 justify-content-center">
+    <div v-if="loading" role="status" class="flex align-items-center gap-2 py-6 justify-content-center">
       <ProgressSpinner style="width: 2rem; height: 2rem" />
+      <span class="sr-only">{{ t('common.loading') }}</span>
     </div>
 
     <!-- Formulario -->
@@ -60,7 +62,7 @@ async function onSuccessClose() {
           <!-- Título -->
           <div class="flex flex-column gap-2">
             <label for="title" class="text-sm text-color-secondary">
-              {{ t("events.title") }} <span class="text-red-500">*</span>
+              {{ t("events.title") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
             </label>
             <InputText
               id="title"
@@ -94,10 +96,10 @@ async function onSuccessClose() {
           <div class="grid">
             <div class="col-12 md:col-6 flex flex-column gap-2">
               <label for="startDateTime" class="text-sm text-color-secondary">
-                {{ t("me.propose.startDate") }} <span class="text-red-500">*</span>
+                {{ t("me.propose.startDate") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
               <DatePicker
-                id="startDateTime"
+                inputId="startDateTime"
                 v-model="form.startDateTime"
                 showTime
                 hourFormat="24"
@@ -115,7 +117,7 @@ async function onSuccessClose() {
             <div class="col-12 md:col-6 flex flex-column gap-2">
               <label for="endDateTime" class="text-sm text-color-secondary">{{ t("me.propose.endDate") }}</label>
               <DatePicker
-                id="endDateTime"
+                inputId="endDateTime"
                 v-model="form.endDateTime"
                 showTime
                 hourFormat="24"
@@ -137,7 +139,7 @@ async function onSuccessClose() {
           <!-- Recinto -->
           <div class="flex flex-column gap-2">
             <label for="venueName" class="text-sm text-color-secondary">
-              {{ t("me.propose.venueName") }} <span class="text-red-500">*</span>
+              {{ t("me.propose.venueName") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
             </label>
             <InputText
               id="venueName"
@@ -155,10 +157,10 @@ async function onSuccessClose() {
           <div class="grid">
             <div class="col-12 md:col-6 flex flex-column gap-2">
               <label for="provinceId" class="text-sm text-color-secondary">
-                {{ t("geo.province") }} <span class="text-red-500">*</span>
+                {{ t("geo.province") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
               <Select
-                id="provinceId"
+                inputId="provinceId"
                 v-model="form.provinceId"
                 :options="provinceOptions"
                 optionLabel="label"
@@ -166,7 +168,8 @@ async function onSuccessClose() {
                 :loading="provincesLoading"
                 :invalid="!!fieldErrors['provinceId']"
                 filter
-                required />
+                required
+                :pt="{ label: { 'aria-label': t('geo.province'), 'aria-describedby': 'province-error' } }" />
               <Message v-if="fieldErrors['provinceId']" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["provinceId"]) }}
               </Message>
@@ -174,7 +177,7 @@ async function onSuccessClose() {
 
             <div class="col-12 md:col-6 flex flex-column gap-2">
               <label for="cityName" class="text-sm text-color-secondary">
-                {{ t("geo.city") }} <span class="text-red-500">*</span>
+                {{ t("geo.city") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
               <InputText
                 id="cityName"

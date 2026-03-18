@@ -4,6 +4,7 @@ import { ROUTES } from "~/constants/routes";
 definePageMeta({ layout: "moderation", ssr: false });
 
 const { t } = useI18n();
+useHead({ title: () => t("page.moderation") });
 const router = useRouter();
 </script>
 

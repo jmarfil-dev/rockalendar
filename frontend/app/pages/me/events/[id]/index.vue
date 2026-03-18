@@ -10,6 +10,7 @@ const route = useRoute();
 const id = route.params.id as string;
 
 const event = ref<EventPrivateDto | null>(null);
+useHead({ title: () => event.value?.title ?? t("page.meEvents") });
 const loading = ref(true);
 
 const deleteDialogVisible = ref(false);
@@ -61,15 +62,16 @@ async function onDelete() {
   <article class="flex flex-column gap-4">
     <!-- Cabecera -->
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.meEvents" class="text-color-secondary">
-        <i class="pi pi-arrow-left" />
+      <NuxtLink :to="ROUTES.meEvents" class="text-color-secondary" :aria-label="t('common.back')">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
       </NuxtLink>
       <h1 class="text-2xl font-bold m-0">{{ t("me.myEvents") }}</h1>
     </div>
 
     <!-- Cargando -->
-    <div v-if="loading" class="flex align-items-center gap-2 py-6 justify-content-center">
+    <div v-if="loading" role="status" class="flex align-items-center gap-2 py-6 justify-content-center">
       <ProgressSpinner style="width: 2rem; height: 2rem" />
+      <span class="sr-only">{{ t('common.loading') }}</span>
     </div>
 
     <!-- Contenido -->
