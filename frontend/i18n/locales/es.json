@@ -57,16 +57,19 @@
   },
   "me": {
     "title": "Mi área",
-    "agenda": "Agenda",
     "agendaDesc": "Conciertos a los que vas o te interesan",
     "agenda": {
+      "title": "Agenda",
       "noItems": "No tienes conciertos en tu agenda",
       "interested": "Me interesa",
       "going": "Asistiré",
       "status": {
         "INTERESTED": "Me interesa",
         "GOING": "Asistiré"
-      }
+      },
+      "removeConfirm": "¿Quieres quitar este concierto de tu agenda?",
+      "removeOk": "Sí, quitar",
+      "removeCancel": "Cancelar"
     },
     "myEvents": "Mis conciertos",
     "myEventsDesc": "Conciertos que has propuesto",

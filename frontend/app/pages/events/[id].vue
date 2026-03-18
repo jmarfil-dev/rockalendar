@@ -15,12 +15,19 @@ const { saving, getInteraction, setInteraction, removeInteraction, fetchAgenda }
 
 const currentInteraction = computed(() => getInteraction(id));
 
-async function onToggleInteraction(target: InteractionStatus) {
+const removeDialogVisible = ref(false);
+
+function onToggleInteraction(target: InteractionStatus) {
   if (currentInteraction.value === target) {
-    await removeInteraction(id);
+    removeDialogVisible.value = true;
   } else {
-    await setInteraction(id, target);
+    setInteraction(id, target);
   }
+}
+
+async function confirmRemove() {
+  await removeInteraction(id);
+  removeDialogVisible.value = false;
 }
 
 onMounted(async () => {
@@ -31,7 +38,7 @@ onMounted(async () => {
 
 function goBack() {
   const prev = window.history.state?.back as string | undefined;
-  if (prev?.startsWith(ROUTES.events)) {
+  if (prev?.startsWith(ROUTES.events) || prev?.startsWith(ROUTES.meAgenda)) {
     router.back();
   } else {
     navigateTo(ROUTES.events);
@@ -213,7 +220,7 @@ function mapsUrl(e: EventPublic): string {
               <template #title>
                 <div class="flex align-items-center gap-2">
                   <i class="pi pi-calendar" />
-                  <h3 class="m-0 text-base font-semibold">{{ t("me.agenda") }}</h3>
+                  <h3 class="m-0 text-base font-semibold">{{ t("me.agenda.title") }}</h3>
                 </div>
               </template>
               <template #content>
@@ -258,4 +265,12 @@ function mapsUrl(e: EventPublic): string {
       </div>
     </div>
   </article>
+
+  <Dialog v-model:visible="removeDialogVisible" :header="t('me.agenda.title')" modal :style="{ width: '22rem' }">
+    <p class="m-0 text-color-secondary">{{ t("me.agenda.removeConfirm") }}</p>
+    <template #footer>
+      <Button :label="t('me.agenda.removeCancel')" severity="secondary" outlined @click="removeDialogVisible = false" />
+      <Button :label="t('me.agenda.removeOk')" severity="danger" icon="pi pi-trash" :loading="saving === id" @click="confirmRemove" />
+    </template>
+  </Dialog>
 </template>

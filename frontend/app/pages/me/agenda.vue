@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { InteractionStatus } from "~/types/events";
-import { ROUTE_PATH } from "~/constants/routes";
+import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 
 definePageMeta({ layout: "private", ssr: false });
 
@@ -14,12 +14,29 @@ const STATUS_SEVERITY: Record<InteractionStatus, string> = {
   GOING: "success",
 };
 
-async function onToggle(eventId: string, currentStatus: InteractionStatus, target: InteractionStatus) {
+const removeDialogVisible = ref(false);
+const pendingRemoveId = ref<string | null>(null);
+
+function onToggle(eventId: string, currentStatus: InteractionStatus, target: InteractionStatus) {
   if (currentStatus === target) {
-    await removeInteraction(eventId);
+    pendingRemoveId.value = eventId;
+    removeDialogVisible.value = true;
   } else {
-    await setInteraction(eventId, target);
+    setInteraction(eventId, target);
   }
+}
+
+async function confirmRemove() {
+  if (pendingRemoveId.value) {
+    await removeInteraction(pendingRemoveId.value);
+  }
+  removeDialogVisible.value = false;
+  pendingRemoveId.value = null;
+}
+
+function cancelRemove() {
+  removeDialogVisible.value = false;
+  pendingRemoveId.value = null;
 }
 
 onMounted(fetchAgenda);
@@ -27,7 +44,12 @@ onMounted(fetchAgenda);
 
 <template>
   <div class="flex flex-column gap-4">
-    <h1 class="text-2xl font-bold m-0">{{ t("me.agenda") }}</h1>
+    <div class="flex align-items-center gap-3">
+      <NuxtLink :to="ROUTES.me" class="text-color-secondary" :aria-label="t('common.back')">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
+      </NuxtLink>
+      <h1 class="text-2xl font-bold m-0">{{ t("me.agenda.title") }}</h1>
+    </div>
 
     <!-- Estado de carga -->
     <div v-if="loading" role="status" class="flex justify-content-center py-6">
@@ -100,4 +122,12 @@ onMounted(fetchAgenda);
       </div>
     </div>
   </div>
+
+  <Dialog v-model:visible="removeDialogVisible" :header="t('me.agenda.title')" modal :style="{ width: '22rem' }">
+    <p class="m-0 text-color-secondary">{{ t("me.agenda.removeConfirm") }}</p>
+    <template #footer>
+      <Button :label="t('me.agenda.removeCancel')" severity="secondary" outlined @click="cancelRemove" />
+      <Button :label="t('me.agenda.removeOk')" severity="danger" icon="pi pi-trash" :loading="!!saving" @click="confirmRemove" />
+    </template>
+  </Dialog>
 </template>

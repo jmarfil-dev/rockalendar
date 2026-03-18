@@ -24,7 +24,7 @@ const router = useRouter();
           <template #title>
             <div class="flex align-items-center gap-3">
               <i class="pi pi-calendar text-3xl text-primary" />
-              <span>{{ t("me.agenda") }}</span>
+              <span>{{ t("me.agenda.title") }}</span>
             </div>
           </template>
           <template #content>

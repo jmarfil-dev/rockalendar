@@ -56,16 +56,19 @@
   },
   "me": {
     "title": "My area",
-    "agenda": "Schedule",
     "agendaDesc": "Concerts you're going to or interested in",
     "agenda": {
+      "title": "Schedule",
       "noItems": "Your schedule is empty",
       "interested": "Interested",
       "going": "Going",
       "status": {
         "INTERESTED": "Interested",
         "GOING": "Going"
-      }
+      },
+      "removeConfirm": "Do you want to remove this concert from your schedule?",
+      "removeOk": "Yes, remove",
+      "removeCancel": "Cancel"
     },
     "myEvents": "My concerts",
     "myEventsDesc": "Concerts you have proposed",
