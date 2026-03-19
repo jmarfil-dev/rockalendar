@@ -12,6 +12,8 @@ const id = route.params.id as string;
 const { load: loadProvinces, options: provinceOptions, loading: provincesLoading } = useProvinces();
 const { form, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit } = useEditEvent(id);
 
+const today = new Date();
+
 const isDateRangeInvalid = computed(
   () => !!form.startDateTime && !!form.endDateTime && form.endDateTime < form.startDateTime,
 );
@@ -104,6 +106,7 @@ async function onSuccessClose() {
                 showTime
                 hourFormat="24"
                 dateFormat="dd/mm/yy"
+                :minDate="today"
                 :invalid="!!fieldErrors['startDateTime']"
                 :manualInput="false"
                 showIcon

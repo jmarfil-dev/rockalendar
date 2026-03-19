@@ -9,6 +9,8 @@ useHead({ title: () => t("page.mePropose") });
 const { load: loadProvinces, options: provinceOptions, loading: provincesLoading } = useProvinces();
 const { form, submitting, errorMsg, fieldErrors, artistsError, submit } = useProposeEvent();
 
+const today = new Date();
+
 const isDateRangeInvalid = computed(
   () => !!form.startDateTime && !!form.endDateTime && form.endDateTime < form.startDateTime,
 );
@@ -91,6 +93,7 @@ async function onSuccessClose() {
                 showTime
                 hourFormat="24"
                 dateFormat="dd/mm/yy"
+                :minDate="today"
                 :invalid="!!fieldErrors['startDateTime']"
                 :manualInput="false"
                 showIcon
