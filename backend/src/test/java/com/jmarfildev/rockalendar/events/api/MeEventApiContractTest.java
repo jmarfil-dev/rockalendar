@@ -67,9 +67,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
                 .content(body))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.status").value(EventStatus.PENDING_MODERATION.name()))
-                .andExpect(jsonPath("$.title").isNotEmpty());
+                .andExpect(jsonPath("$.event.id").isNotEmpty())
+                .andExpect(jsonPath("$.event.status").value(EventStatus.PENDING_MODERATION.name()))
+                .andExpect(jsonPath("$.event.title").isNotEmpty());
     }
 
     @Test

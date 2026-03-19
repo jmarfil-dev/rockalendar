@@ -89,6 +89,9 @@ public class Event {
     @Column(name = "moderation_message", columnDefinition = "text")
     private String moderationMessage;
 
+    @Column(name = "possible_duplicate_of")
+    private UUID possibleDuplicateOf;
+
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 

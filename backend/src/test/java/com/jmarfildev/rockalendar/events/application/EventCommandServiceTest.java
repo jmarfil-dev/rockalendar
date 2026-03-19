@@ -203,7 +203,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
 
         assertThat(reloaded.getStatus()).isEqualTo(EventStatus.PENDING_MODERATION);
         assertThat(reloaded.getCreatedByUserId()).isEqualTo(UUID.fromString(TestConstants.MOCK_USER_ID));
@@ -238,7 +238,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
 
         assertThat(artistRepository.count()).isEqualTo(before); // No crece count porque no vuelve a crear mismo artista
         assertThat(reloaded.getArtists()).singleElement().satisfies(a -> assertThat(a.getId()).isEqualTo(existing.getId()));
@@ -260,7 +260,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
         assertThat(reloaded.getArtists())
                 .extracting(Artist::getSlug)
                 .containsExactly("ska p", "boikot");
@@ -284,7 +284,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
         assertThat(reloaded.getDescription()).isNull();
         assertThat(reloaded.getSourceUrl()).isNull();
     }
@@ -359,7 +359,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var saved = service.propose(req);
 
-        var reloaded = eventRepository.findById(saved.id()).orElseThrow();
+        var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
         assertThat(reloaded.getArtists()).singleElement()
                 .satisfies(a -> assertThat(a.getId()).isEqualTo(existingArtist.getId()));
     }

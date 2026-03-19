@@ -19,7 +19,7 @@ public interface ModerationEventRepository extends Repository<Event, UUID> {
 
     @Query("""
            SELECT new com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto(
-               e.id, e.title, e.submittedAt
+               e.id, e.title, e.submittedAt, e.possibleDuplicateOf
            )
            FROM Event e
            WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION
