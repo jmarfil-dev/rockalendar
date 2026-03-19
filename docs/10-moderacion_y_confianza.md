@@ -61,11 +61,7 @@ Si alguno de los artistas del evento figura en la blacklist de artistas, el even
 
 - La blacklist de artistas también está en base de datos.
 
-#### c) Trust score por debajo del umbral mínimo
-
-Si el `trust_score` del usuario proponente está por debajo de un umbral configurable (almacenado en BD), el evento se marca como `FLAGGED` automáticamente.
-
-#### d) Ráfaga de propuestas rechazadas (anti-spam)
+#### c) Ráfaga de propuestas rechazadas (anti-spam)
 
 Si el usuario tiene N eventos rechazados en los últimos X días (ambos valores configurables en BD), el evento se marca como `FLAGGED`.
 
@@ -103,7 +99,6 @@ Almacena parámetros configurables del sistema de moderación automática.
 
 | Clave                           | Descripción                                                    |
 |---------------------------------|----------------------------------------------------------------|
-| `min_trust_score`               | Trust score mínimo para proponer eventos                       |
 | `spam_rejection_count`          | Nº de rechazos en ventana de tiempo para activar anti-spam     |
 | `spam_window_days`              | Ventana de tiempo del anti-spam (en días)                      |
 | `flagged_rejection_delay_hours` | Horas que un evento permanece en `FLAGGED` antes de rechazarse |

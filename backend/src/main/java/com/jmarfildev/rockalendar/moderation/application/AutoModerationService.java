@@ -21,7 +21,6 @@ import com.jmarfildev.rockalendar.moderation.domain.ModerationRuleType;
 import com.jmarfildev.rockalendar.moderation.persistence.AutoModerationLogRepository;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationConfigRepository;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationRuleRepository;
-import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 
 /**
  * Servicio de moderación automática.
@@ -38,12 +37,11 @@ public class AutoModerationService {
     private final ModerationRuleRepository ruleRepository;
     private final ModerationConfigRepository configRepository;
     private final AutoModerationLogRepository logRepository;
-    private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
     /**
      * Evalúa si el evento debe ser marcado automáticamente.
-     * El orden de comprobación es: trust score → anti-spam → blacklist.
+     * El orden de comprobación es: anti-spam → blacklist.
      *
      * @param title       título del evento
      * @param description descripción del evento (puede ser null)
@@ -52,19 +50,8 @@ public class AutoModerationService {
      * @return PASS si el evento puede pasar a moderación humana, FLAG con el motivo en caso contrario
      */
     public AutoModerationResult evaluate(String title, String description, Set<Artist> artists, UUID userId) {
-        int minTrustScore     = getConfigInt("min_trust_score",        -50);
-        int spamCount         = getConfigInt("spam_rejection_count",    5);
-        int spamWindowDays    = getConfigInt("spam_window_days",        30);
-
-        // Comprobar trust score mínimo
-        var userResult = userRepository.findById(userId);
-        if (userResult.isPresent()) {
-            int score = userResult.get().getTrustScore();
-            if (score < minTrustScore) {
-                log.info("auto-moderation TRUST_SCORE userId={} score={}", userId, score);
-                return AutoModerationResult.flag(ModerationRuleType.TRUST_SCORE, null, String.valueOf(score));
-            }
-        }
+        int spamCount      = getConfigInt("spam_rejection_count", 5);
+        int spamWindowDays = getConfigInt("spam_window_days",     30);
 
         // Comprobar anti-spam
         OffsetDateTime spamSince = OffsetDateTime.now().minusDays(spamWindowDays);
@@ -93,7 +80,8 @@ public class AutoModerationService {
                             log.info("auto-moderation REGEX ruleId={} pattern={}", rule.getId(), rule.getValue());
                             return AutoModerationResult.flag(ModerationRuleType.REGEX, rule.getId(), rule.getValue());
                         }
-                    } catch (PatternSyntaxException e) {
+                    }
+                    catch (PatternSyntaxException e) {
                         log.warn("auto-moderation invalid regex ruleId={} pattern={}", rule.getId(), rule.getValue());
                     }
                 }
@@ -129,15 +117,14 @@ public class AutoModerationService {
     }
 
     private int getConfigInt(String key, int defaultValue) {
-        return configRepository.findByKey(key)
-                               .map(c -> {
-                                   try {
-                                       return Integer.parseInt(c.getValue());
-                                   } catch (NumberFormatException e) {
-                                       log.warn("moderation config invalid int key={} value={}", key, c.getValue());
-                                       return defaultValue;
-                                   }
-                               })
-                               .orElse(defaultValue);
+        return configRepository.findByKey(key).map(c -> {
+            try {
+                return Integer.parseInt(c.getValue());
+            }
+            catch (NumberFormatException e) {
+                log.warn("moderation config invalid int key={} value={}", key, c.getValue());
+                return defaultValue;
+            }
+        }).orElse(defaultValue);
     }
 }

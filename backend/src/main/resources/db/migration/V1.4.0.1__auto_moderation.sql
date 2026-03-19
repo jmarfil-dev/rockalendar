@@ -59,10 +59,9 @@ CREATE TABLE moderation_config (
 );
 
 INSERT INTO moderation_config (key, value, description) VALUES
-    ('min_trust_score',               '-50', 'Trust score mínimo para proponer eventos. Por debajo → flag automático.'),
-    ('spam_rejection_count',          '5',   'Nº de rechazos en ventana de tiempo para activar anti-spam.'),
-    ('spam_window_days',              '30',  'Ventana de tiempo en días para el conteo anti-spam.'),
-    ('flagged_rejection_delay_hours', '24',  'Horas que un evento permanece FLAGGED antes de ser rechazado automáticamente.');
+    ('spam_rejection_count',          '5',  'Nº de rechazos en ventana de tiempo para activar anti-spam.'),
+    ('spam_window_days',              '30', 'Ventana de tiempo en días para el conteo anti-spam.'),
+    ('flagged_rejection_delay_hours', '12', 'Horas que un evento permanece FLAGGED antes de ser rechazado automáticamente.');
 
 
 -- 4. Log de moderación automática (separado de moderation_actions, que es para acciones humanas)

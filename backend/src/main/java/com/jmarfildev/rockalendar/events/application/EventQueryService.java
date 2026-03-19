@@ -109,8 +109,8 @@ public class EventQueryService {
         SortChoice sort = SortUtils.toSqlSortChoice(pageable, SEARCH_SORT_ALLOW, SEARCH_SORT_ALIASES, defaultKey, defaultDir);
         Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        Page<EventPublicSearchProjection> results = repository.searchPublicEvents(q, minSim, ftsW, trgmW, from, to, provId, citySlug,
-                                                                                  artId, sort.sortKey(), sort.sortDir(), pageOnly);
+        Page<EventPublicSearchProjection> results = repository.searchPublicEvents(q, minSim, ftsW, trgmW, from, to, provId, citySlug, artId,
+                                                                                  sort.sortKey(), sort.sortDir(), pageOnly);
 
         // Si no hay resultados y la query tiene más de dos palabras se intenta la segunda consulta
         if (hasMultipleTokens(q) && results.isEmpty()) {
@@ -134,11 +134,14 @@ public class EventQueryService {
         Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                                                    SortUtils.toJpaSort(pageable, MINE_SORT_ALLOW, DEFAULT_SORT_JPA, "id"));
         return switch (tab) {
-            case CHANGES -> repository.listMineByStatus(userId, EventStatus.NEEDS_CHANGES, pageableWithSort);
+            case CHANGES -> repository.listMineByStatuses(userId, List.of(EventStatus.NEEDS_CHANGES), pageableWithSort);
 
-            case PENDING -> repository.listMineByStatus(userId, EventStatus.PENDING_MODERATION, pageableWithSort);
+            // FLAGGED es un estado interno — el usuario lo ve como pendiente
+            case PENDING -> repository.listMineByStatuses(userId, List.of(EventStatus.PENDING_MODERATION, EventStatus.FLAGGED),
+                                                          pageableWithSort);
 
-            case OTHERS -> repository.listMineExcludingStatuses(userId, List.of(EventStatus.NEEDS_CHANGES, EventStatus.PENDING_MODERATION),
+            case OTHERS -> repository.listMineExcludingStatuses(userId, List.of(EventStatus.NEEDS_CHANGES, EventStatus.PENDING_MODERATION,
+                                                                                EventStatus.FLAGGED),
                                                                 pageableWithSort);
 
             case ALL -> repository.listMineAllPriorityFutureFirst(userId, pageable);

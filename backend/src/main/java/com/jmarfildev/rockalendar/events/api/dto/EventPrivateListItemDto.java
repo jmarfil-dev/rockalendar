@@ -16,4 +16,12 @@ public record EventPrivateListItemDto(UUID id,
                                       String cityName,
                                       EventStatus status,
                                       String moderationMessage,
-                                      OffsetDateTime submittedAt) {}
+                                      OffsetDateTime submittedAt) {
+
+    // FLAGGED es un estado interno: el usuario lo ve como PENDING_MODERATION
+    public EventPrivateListItemDto {
+        if (status == EventStatus.FLAGGED) {
+            status = EventStatus.PENDING_MODERATION;
+        }
+    }
+}

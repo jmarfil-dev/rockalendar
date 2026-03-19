@@ -33,7 +33,7 @@ public class EventAutoRejectionScheduler {
     private final EventRepository eventRepository;
     private final ModerationConfigRepository configRepository;
 
-    @Scheduled(fixedDelay = 3_600_000) // cada hora
+    @Scheduled(fixedDelay = 21_600_000) // cada 6 horas
     @Transactional
     public void rejectFlaggedEvents() {
         int delayHours = getConfigInt("flagged_rejection_delay_hours", DEFAULT_DELAY_HOURS);
