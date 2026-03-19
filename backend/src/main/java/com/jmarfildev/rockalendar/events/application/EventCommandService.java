@@ -261,7 +261,7 @@ public class EventCommandService {
         } catch (DataIntegrityViolationException ex) {
             log.warn("artist race condition resolved slug={}", slug);
             return artistRepository.findBySlug(slug)
-                    .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));
+                                   .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));
         }
     }
 

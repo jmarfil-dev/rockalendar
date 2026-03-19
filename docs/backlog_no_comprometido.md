@@ -63,6 +63,7 @@ Cuándo hacerlo:
 - Pensar qué hacer con un evento `REJECTED` para que no se vuelva a intentar crear.
 - Estado `REQUEST_CANCEL` para solicitar cancelación de evento.
   - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED` o `PENDING_MODERATION`.
+- Enviar correcciones sobre un evento aprobado. El flujo sería: usuario reporta corrección → va al sistema de moderación como cualquier otra acción → el evento del promotor aparece marcado con "hay observaciones" en su panel.
 
 ## Artistas y contenido de eventos
 
@@ -83,13 +84,16 @@ Cuándo hacerlo:
 - Bandeja de mensajes??
 
 **Sistema disciplinario de moderadores**
-
 - Tabla moderator_warnings (id, user_id, assigned_by, reason, created_at): warnings asignados manualmente por admin.
 - Campo suspended_until (timestamp nullable) en users: lógica de suspensión incremental (5 días → 20 días → indefinida).
 - Ban permanente tras 3 suspensiones.
 - Detección de sesgo (>50% decisiones sobre mismo usuario/sala/grupo en 30 días).
 - Rehabilitación manual por admin.
 - Reportes de eventos mal moderados → bandeja de admin (cuando exista panel).
+
+**Automoderación**
+- Si un artista tiene X eventos rechazados por blacklist (no por otros motivos), el sistema sugerirá añadirlo a la blacklist de artistas.
+- Si el sistema anti-spam no se queda corto, agregar regla: auto rechazo eventos propuestos por usuarios con trust_score igual al redflag para ascender a moderador (actualmente -200).
 
 ## Funciones sociales (base)
 

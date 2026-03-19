@@ -131,7 +131,7 @@
       "cityPlaceholder": "Madrid, Barcelona...",
       "sourceUrlPlaceholder": "https://...",
       "successTitle": "Concert proposed!",
-      "successMsg": "Your proposal has been submitted and is now pending moderation. We will let you know once it has been reviewed.",
+      "successMsg": "Your proposal has been submitted and is now pending moderation.",
       "successOk": "View my concerts"
     }
   },
@@ -218,7 +218,8 @@
         "notBlank": "Field cannot be blank",
         "notNull": "Field cannot be empty",
         "email": "It must be a valid email address",
-        "url": "It must be a valid URL"
+        "url": "It must be a valid URL",
+        "futureDate": "It must be a future date"
       }
     },
     "401": {
