@@ -132,7 +132,9 @@
       "sourceUrlPlaceholder": "https://...",
       "successTitle": "Concert proposed!",
       "successMsg": "Your proposal has been submitted and is now pending moderation.",
-      "successOk": "View my concerts"
+      "successOk": "View my concerts",
+      "duplicateWarning": "We detected a similar event already submitted or published: \"{title}\". Moderators will review it.",
+      "duplicateLink": "View existing event"
     }
   },
   "user": {
@@ -143,6 +145,7 @@
   },
   "moderation": {
     "title": "Moderation",
+    "possibleDuplicate": "Possible duplicate",
     "hub": {
       "events": "Concerts",
       "eventsDesc": "Review pending concerts and moderation archive"
