@@ -67,6 +67,17 @@ public class ModerationCommandService {
 
     @Transactional
     public EventPrivateDto requestChanges(UUID eventId, ModerationArchiveRequest request) {
+        long priorChanges = moderationActionRepository.countByEventIdAndAction(eventId, ActionType.REQUEST_CHANGES);
+        if (priorChanges >= 2) {
+            // Tercera solicitud: rechazo automático con penalización máxima
+            String reason = "Rechazado automáticamente tras tres solicitudes de cambios.";
+            return moderate(eventId, ActionType.AUTO_REJECT, reason, (event, moderatorId, now, msg) -> {
+                event.setStatus(EventStatus.REJECTED);
+                event.setModeratedByUserId(moderatorId);
+                event.setModeratedAt(now);
+                event.setModerationMessage(msg);
+            });
+        }
         return archive(eventId, request.reason(), ActionType.REQUEST_CHANGES, EventStatus.NEEDS_CHANGES);
     }
 
@@ -88,6 +99,8 @@ public class ModerationCommandService {
             trustScoreService.onApprove(creatorId, eventId);
         } else if (actionType == ActionType.REJECT) {
             trustScoreService.onReject(creatorId, eventId);
+        } else if (actionType == ActionType.AUTO_REJECT) {
+            trustScoreService.onRejectAfterThirdChange(creatorId, eventId);
         }
         // REQUEST_CHANGES y HIDE no modifican el trust score
     }

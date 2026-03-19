@@ -30,6 +30,7 @@ import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
+import com.jmarfildev.rockalendar.moderation.application.AutoModerationService;
 
 /**
  *
@@ -55,6 +56,7 @@ public class EventCommandService {
     private final ProvinceRepository provinceRepository;
     private final EventMapper mapper;
     private final CurrentUser currentUser;
+    private final AutoModerationService autoModerationService;
 
     /**
      * Propone un evento que queda en estado PENDING_MODERATION si todos los datos se validan correctamente.
@@ -68,6 +70,9 @@ public class EventCommandService {
         UUID userId = currentUser.userId();
         EventInputValidate in = validate(req, userId);
 
+        var modResult = autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
+        EventStatus initialStatus = modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION;
+
         var event = Event.builder()
                          .title(in.title)
                          .description(in.description)
@@ -79,14 +84,19 @@ public class EventCommandService {
                          .venueName(in.venueName)
                          .venueSlug(in.venueSlug)
                          .sourceUrl(in.sourceUrl)
-                         .status(EventStatus.PENDING_MODERATION)
+                         .status(initialStatus)
                          .createdByUserId(userId)
                          .submittedAt(OffsetDateTime.now())
                          .artists(in.artists)
                          .build();
 
         var saved = eventRepository.save(event);
-        log.info("event proposed eventId={} userId={}", saved.getId(), userId);
+
+        if (modResult.flagged()) {
+            autoModerationService.logFlag(saved.getId(), modResult);
+        }
+
+        log.info("event proposed eventId={} userId={} status={}", saved.getId(), userId, initialStatus);
         return mapper.toPrivateDto(saved);
     }
 
@@ -128,12 +138,17 @@ public class EventCommandService {
         event.getArtists().clear();
         event.getArtists().addAll(in.artists());
 
-        // Reenviar a moderación
-        event.setStatus(EventStatus.PENDING_MODERATION);
+        // Reenviar a moderación (con comprobación de moderación automática)
+        var modResult = autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
+        event.setStatus(modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION);
         event.setSubmittedAt(OffsetDateTime.now());
 
+        if (modResult.flagged()) {
+            autoModerationService.logFlag(eventId, modResult);
+        }
+
         // No hace falta save() porque al ser un evento administrado por JPA (viene de un find()) se actualiza al terminar la transacción.
-        log.info("event updated eventId={} userId={}", eventId, userId);
+        log.info("event updated eventId={} userId={} status={}", eventId, userId, event.getStatus());
         return mapper.toPrivateDto(event);
     }
 
@@ -246,7 +261,7 @@ public class EventCommandService {
         } catch (DataIntegrityViolationException ex) {
             log.warn("artist race condition resolved slug={}", slug);
             return artistRepository.findBySlug(slug)
-                    .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));
+                                   .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));
         }
     }
 

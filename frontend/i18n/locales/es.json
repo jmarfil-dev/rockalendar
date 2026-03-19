@@ -132,7 +132,7 @@
       "cityPlaceholder": "Madrid, Barcelona...",
       "sourceUrlPlaceholder": "https://...",
       "successTitle": "¡Concierto propuesto!",
-      "successMsg": "Tu propuesta se ha enviado correctamente y queda pendiente de moderación. En cuanto sea revisada te avisaremos.",
+      "successMsg": "Tu propuesta se ha enviado correctamente y queda pendiente de moderación.",
       "successOk": "Ver mis conciertos"
     }
   },
@@ -219,7 +219,8 @@
         "notBlank": "El campo no puede estar en blanco",
         "notNull": "El campo no puede estar vacío",
         "email": "Debe ser un email válido",
-        "url": "Debe ser una url correcta"
+        "url": "Debe ser una url correcta",
+        "futureDate": "Debe ser una fecha futura"
       }
     },
     "401": {

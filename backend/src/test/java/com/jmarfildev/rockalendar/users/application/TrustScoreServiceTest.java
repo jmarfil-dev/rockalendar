@@ -87,18 +87,19 @@ class TrustScoreServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("reject tras 3 solicitudes de cambios -> -30 al creador")
-    void reject_afterThreeRequestChanges_subtracksThirty() {
+    @DisplayName("requestChanges tercera vez -> auto-rechazo y -30 al creador")
+    void requestChanges_thirdTime_autoRejectsSubtractsThirty() {
         Event event = factory.pendingMadridAgainstYou();
         int scoreBefore = scoreOf(TestConstants.MOCK_USER_ID);
 
-        // 3 rondas de REQUEST_CHANGES antes del rechazo
-        for (int i = 0; i < 3; i++) {
-            moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio " + i));
-            factory.resubmitEvent(event.getId());
-        }
+        // Primera y segunda rondas: REQUEST_CHANGES normal, sin penalización
+        moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio 0"));
+        factory.resubmitEvent(event.getId());
+        moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio 1"));
+        factory.resubmitEvent(event.getId());
 
-        moderationService.reject(event.getId(), new ModerationArchiveRequest("sigue sin cumplir"));
+        // Tercera vez: rechazo automático con penalización máxima
+        moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio 2"));
 
         assertThat(scoreOf(TestConstants.MOCK_USER_ID)).isEqualTo(scoreBefore + TrustScoreService.DELTA_REJECTED_AFTER_MANY_CHANGES);
     }

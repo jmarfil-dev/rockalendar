@@ -32,6 +32,7 @@ import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapperImpl;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
+import com.jmarfildev.rockalendar.moderation.application.AutoModerationService;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
@@ -42,7 +43,8 @@ import com.jmarfildev.rockalendar.support.TestDates;
  *
  */
 @DataJpaTest
-@Import({ EventCommandService.class, DatabaseCleaner.class, TestDataFactory.class, EventMapperImpl.class })
+@Import({ EventCommandService.class, DatabaseCleaner.class, TestDataFactory.class, EventMapperImpl.class,
+        AutoModerationService.class })
 class EventCommandServiceTest extends AbstractPostgresTest {
 
     @Autowired

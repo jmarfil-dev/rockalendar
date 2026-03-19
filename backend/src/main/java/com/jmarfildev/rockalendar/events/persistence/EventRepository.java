@@ -57,9 +57,9 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                 FROM Event e
                 JOIN e.province p
                 WHERE e.createdByUserId = :userId
-                  AND e.status = :status
+                  AND e.status IN :statuses
             """)
-    Page<EventPrivateListItemDto> listMineByStatus(UUID userId, EventStatus status, Pageable pageable);
+    Page<EventPrivateListItemDto> listMineByStatuses(UUID userId, Collection<EventStatus> statuses, Pageable pageable);
 
     @Query("""
                 SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
@@ -90,6 +90,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                   CASE
                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.NEEDS_CHANGES THEN 0
                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION THEN 1
+                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.FLAGGED THEN 1
                    WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED THEN 2
                    ELSE 3
                   END ASC,
@@ -205,6 +206,19 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                                  @Param("sortKey") String sortKey,
                                                                  @Param("sortDir") String sortDir,
                                                                  Pageable pageable);
+
+    // --- Queries para moderación automática ---
+
+    /**
+     * Cuenta los eventos rechazados de un usuario desde una fecha dada (para anti-spam).
+     */
+    @Query("SELECT COUNT(e) FROM Event e WHERE e.createdByUserId = :userId AND e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED AND e.moderatedAt >= :since")
+    long countRejectedByUserSince(@Param("userId") UUID userId, @Param("since") OffsetDateTime since);
+
+    /**
+     * Devuelve eventos en estado FLAGGED cuyo updatedAt es anterior al umbral (para el scheduler de rechazo).
+     */
+    List<Event> findByStatusAndUpdatedAtBefore(EventStatus status, OffsetDateTime threshold);
 
     // --- Queries para comprobación de elegibilidad de ascenso ---
 

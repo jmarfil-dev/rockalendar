@@ -2,7 +2,7 @@
 
 Este documento lista TODOS los índices (excluyendo PKs), su propósito, y qué consultas típicas los aprovechan.
 
-> Fuente: inventario hasta Flyway V1.2.0.2__moderation_actions.sql.
+> Fuente: inventario hasta Flyway V1.4.0.1__auto_moderation.sql.
 
 ## Tabla: artists
 
@@ -102,3 +102,21 @@ Este documento lista TODOS los índices (excluyendo PKs), su propósito, y qué 
 ### uk_users_email_lower (btree, UNIQUE) (lower(email))
 **Propósito:** unicidad y búsqueda case-insensitive por email.\
 **Usado por:** login/registro (`WHERE lower(email)=lower(?)`).
+
+## Tabla: user_events
+
+### idx_user_events_user_id (btree) (user_id)
+**Propósito:** listar la agenda personal de un usuario de forma eficiente.\r
+**Usado por:** `WHERE user_id = ?` en consultas de agenda (INTERESTED/GOING).
+
+## Tabla: moderation_rules
+
+### idx_moderation_rules_active (btree, parcial) (active) WHERE active = true
+**Propósito:** acelerar la consulta de reglas activas en cada evaluación de moderación automática.\r
+**Nota:** índice parcial — solo indexa las filas con `active = true`, que son las únicas consultadas en caliente.
+
+## Tabla: auto_moderation_log
+
+### idx_auto_mod_log_event (btree) (event_id)
+**Propósito:** consultar el historial de flags automáticos de un evento concreto.\r
+**Usado por:** panel de administración (backlog) y auditoría interna.

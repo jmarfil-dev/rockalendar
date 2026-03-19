@@ -13,5 +13,6 @@ public enum EventStatus {
     NEEDS_CHANGES,
     HIDDEN,
     CANCELED,
-    ERASED
+    ERASED,
+    FLAGGED
 }
