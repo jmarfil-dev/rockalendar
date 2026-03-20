@@ -149,7 +149,31 @@
     "possibleDuplicate": "Posible duplicado",
     "hub": {
       "events": "Moderar conciertos",
-      "eventsDesc": "Revisar conciertos pendientes de moderación y archivados"
+      "eventsDesc": "Revisar conciertos pendientes de moderación y archivados",
+      "artists": "Artistas",
+      "artistsDesc": "Gestionar artistas sin concierto y añadir nuevos"
+    },
+    "artists": {
+      "listTitle": "Artistas sin concierto",
+      "searchPlaceholder": "Buscar por nombre...",
+      "noOrphans": "No hay artistas sin conciertos",
+      "createBtn": "Crear artista",
+      "createTitle": "Crear artista",
+      "name": "Nombre del artista",
+      "namePlaceholder": "Nombre tal como aparece en los carteles",
+      "submit": "Crear artista",
+      "cancel": "Cancelar",
+      "successTitle": "¡Artista creado!",
+      "successMsg": "El artista \"{name}\" ha sido añadido al catálogo.",
+      "successOk": "Crear otro",
+      "errorExists": "Ya existe un artista con ese nombre",
+      "existingWarning": "Ya existe un artista con un nombre similar.",
+      "existingLink": "Ver artista",
+      "delete": "Eliminar artista",
+      "deleteConfirm": "¿Seguro que quieres eliminar este artista? Esta acción no se puede deshacer.",
+      "deleteOk": "Sí, eliminar",
+      "deleteCancel": "Cancelar",
+      "errorHasEvents": "Este artista tiene conciertos asociados y no puede eliminarse"
     },
     "tabs": {
       "PENDING": "Pendientes",
@@ -196,9 +220,14 @@
     "to": "Hasta",
     "invalidRange": "La fecha fin no puede ser anterior a la fecha inicio"
   },
+  "artists": {
+    "upcomingEvents": "Próximos conciertos",
+    "noUpcomingEvents": "No hay conciertos próximos para este artista"
+  },
   "page": {
     "home": "Inicio",
     "events": "Conciertos",
+    "artistDetail": "Detalle de artista",
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "me": "Mi área",
@@ -208,6 +237,7 @@
     "meEdit": "Editar concierto",
     "moderation": "Moderación",
     "moderationEvents": "Moderar conciertos",
+    "moderationArtists": "Artistas sin concierto",
     "admin": "Administración",
     "forbidden": "Acceso denegado"
   },
@@ -258,6 +288,7 @@
     "409": {
       "message": "La operación entra en conflicto con el estado actual",
       "artistExists": "El artista ya existe",
+      "artistHasEvents": "Este artista tiene conciertos asociados y no puede eliminarse",
       "emailExists": "El email ya existe",
       "eventNotPending": "El concierto no está pendiente de moderación",
       "moderatorOwn": "No puedes moderar tu propio concierto",

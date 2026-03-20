@@ -4,6 +4,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
+
 /**
  * @author jmarfil
  *
@@ -17,5 +19,5 @@ public record EventPublicDto(UUID id,
                              UUID provinceId,
                              String provinceName,
                              String cityName,
-                             List<String> artists,
+                             List<ArtistDto> artists,
                              String sourceUrl) {}

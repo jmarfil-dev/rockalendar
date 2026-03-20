@@ -55,6 +55,7 @@ public final class ErrorConstants {
 
     // Conflict 409
     public static final String ARTIST_ALREADY_EXISTS = "error.409.artistExists";
+    public static final String ARTIST_HAS_EVENTS = "error.409.artistHasEvents";
     public static final String EMAIL_ALREADY_EXISTS = "error.409.emailExists";
     public static final String EVENT_NOT_PENDING = "error.409.eventNotPending";
     public static final String MODERATOR_OWN = "error.409.moderatorOwn";

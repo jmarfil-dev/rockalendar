@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
@@ -24,10 +25,10 @@ public interface EventMapper {
         return arr == null ? List.of() : Arrays.asList(arr);
     }
 
-    default List<String> mapArtists(Event event) {
+    default List<ArtistDto> mapArtists(Event event) {
         return event.getArtists()
                 .stream()
-                .map(Artist::getName)
+                .map(a -> new ArtistDto(a.getId(), a.getName()))
                 .toList();
     }
 

@@ -150,7 +150,13 @@ async function onDelete() {
                     <h3 class="m-0 text-lg font-semibold">{{ t("events.groups") }} / {{ t("events.artists") }}</h3>
                   </div>
                   <div class="flex flex-wrap gap-2">
-                    <Tag v-for="artist in event.artists" :key="artist" :value="artist" rounded severity="info" />
+                    <NuxtLink
+                      v-for="artist in event.artists"
+                      :key="artist.id"
+                      :to="ROUTE_PATH.artistDetail(artist.id)"
+                      class="no-underline">
+                      <Tag :value="artist.name" rounded severity="info" class="cursor-pointer" />
+                    </NuxtLink>
                   </div>
                 </section>
 

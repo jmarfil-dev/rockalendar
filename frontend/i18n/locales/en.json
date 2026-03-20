@@ -148,7 +148,31 @@
     "possibleDuplicate": "Possible duplicate",
     "hub": {
       "events": "Concerts",
-      "eventsDesc": "Review pending concerts and moderation archive"
+      "eventsDesc": "Review pending concerts and moderation archive",
+      "artists": "Artists",
+      "artistsDesc": "Manage artists without concerts and add new ones"
+    },
+    "artists": {
+      "listTitle": "Artists without concerts",
+      "searchPlaceholder": "Search by name...",
+      "noOrphans": "No artists without concerts",
+      "createBtn": "Create artist",
+      "createTitle": "Create artist",
+      "name": "Artist name",
+      "namePlaceholder": "Name as it appears on posters",
+      "submit": "Create artist",
+      "cancel": "Cancel",
+      "successTitle": "Artist created!",
+      "successMsg": "Artist \"{name}\" has been added to the catalogue.",
+      "successOk": "Create another",
+      "errorExists": "An artist with that name already exists",
+      "existingWarning": "An artist with a similar name already exists.",
+      "existingLink": "View artist",
+      "delete": "Delete artist",
+      "deleteConfirm": "Are you sure you want to delete this artist? This cannot be undone.",
+      "deleteOk": "Yes, delete",
+      "deleteCancel": "Cancel",
+      "errorHasEvents": "This artist has associated concerts and cannot be deleted"
     },
     "tabs": {
       "PENDING": "Pending",
@@ -195,9 +219,14 @@
     "to": "To",
     "invalidRange": "End date cannot be earlier than start date"
   },
+  "artists": {
+    "upcomingEvents": "Upcoming concerts",
+    "noUpcomingEvents": "No upcoming concerts for this artist"
+  },
   "page": {
     "home": "Home",
     "events": "Concerts",
+    "artistDetail": "Artist detail",
     "login": "Login",
     "register": "Register",
     "me": "My area",
@@ -207,6 +236,7 @@
     "meEdit": "Edit concert",
     "moderation": "Moderation",
     "moderationEvents": "Moderate concerts",
+    "moderationArtists": "Artists without concerts",
     "admin": "Administration",
     "forbidden": "Access denied"
   },
@@ -257,6 +287,7 @@
     "409": {
       "message": "The requested operation conflicts with the current state",
       "artistExists": "Artist already exists",
+      "artistHasEvents": "This artist has associated concerts and cannot be deleted",
       "emailExists": "email already exists",
       "eventNotPending": "Concert is not pending moderation",
       "moderatorOwn": "Moderator cannot approve own concert",
