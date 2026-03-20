@@ -199,7 +199,7 @@ const onLogoutClick = async () => {
         <header class="flex align-items-center gap-3 mb-3">
           <i class="pi pi-user text-2xl" />
           <div v-if="isAuthenticated && user" class="font-medium">
-            {{ user.email }}
+            {{ user.email.split('@')[0] }}
           </div>
         </header>
 
