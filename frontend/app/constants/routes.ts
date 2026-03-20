@@ -18,6 +18,10 @@ export const ROUTES = {
 
   errorForbidden: "/error/forbidden",
 
+  about: "/about",
+  privacy: "/privacy",
+  contact: "/contact",
+
   artists: "/artists",
 
   // api
