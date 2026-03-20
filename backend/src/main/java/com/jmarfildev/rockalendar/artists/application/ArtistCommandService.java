@@ -53,23 +53,38 @@ public class ArtistCommandService {
         }
 
         try {
-            var artist = artistRepository.saveAndFlush(Artist.builder()
-                    .name(displayName)
-                    .slug(slug)
-                    .createdByUserId(userId)
-                    .build());
+            var artist = artistRepository.saveAndFlush(Artist.builder().name(displayName).slug(slug).createdByUserId(userId).build());
             log.info("artist created artistId={} slug={}", artist.getId(), slug);
             return artist;
-        } catch (DataIntegrityViolationException ex) {
+        }
+        catch (DataIntegrityViolationException ex) {
             // Se lanza si otro hilo crea el mismo slug entre el existsBySlug y el save
             throw new ConflictException(ErrorConstants.ARTIST_ALREADY_EXISTS);
         }
     }
 
     @Transactional
+    public Artist renameArtist(UUID id, CreateArtistRequest req) {
+        Artist artist = artistRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorConstants.ARTIST_NOT_FOUND));
+        String displayName = req.name().trim();
+        String slug = SlugNormalizer.of(displayName);
+
+        if (slug.isBlank()) {
+            throw new BadRequestException(ErrorConstants.ARTIST_REQUIRED);
+        }
+        if (artistRepository.existsBySlugAndIdNot(slug, id)) {
+            throw new ConflictException(ErrorConstants.ARTIST_ALREADY_EXISTS);
+        }
+
+        artist.setName(displayName);
+        artist.setSlug(slug);
+        log.info("artist renamed artistId={} slug={}", artist.getId(), slug);
+        return artist;
+    }
+
+    @Transactional
     public void deleteArtist(UUID id) {
-        Artist artist = artistRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(ErrorConstants.ARTIST_NOT_FOUND));
+        Artist artist = artistRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorConstants.ARTIST_NOT_FOUND));
         if (artistRepository.hasEvents(id)) {
             throw new ConflictException(ErrorConstants.ARTIST_HAS_EVENTS);
         }

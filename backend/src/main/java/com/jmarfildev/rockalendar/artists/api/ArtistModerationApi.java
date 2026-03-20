@@ -6,6 +6,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,6 +63,19 @@ public interface ArtistModerationApi {
     @ApiBadRequest
     @ApiConflict
     ArtistDto createArtist(@Parameter(description = "Datos del artista", required = true) @Valid @RequestBody CreateArtistRequest request);
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Renombrar artista",
+            description = "Actualiza el nombre y el slug de un artista. Solo MODERATOR o ADMIN.")
+    @ApiResponse(responseCode = "200", description = "Artista renombrado correctamente",
+            content = @Content(schema = @Schema(implementation = ArtistDto.class)))
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    @ApiBadRequest
+    @ApiConflict
+    ArtistDto renameArtist(@Parameter(description = "ID del artista", required = true) @PathVariable UUID id,
+            @Parameter(description = "Nuevo nombre", required = true) @Valid @RequestBody CreateArtistRequest request);
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

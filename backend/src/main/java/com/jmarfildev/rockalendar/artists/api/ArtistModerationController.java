@@ -37,6 +37,11 @@ public class ArtistModerationController implements ArtistModerationApi {
     }
 
     @Override
+    public ArtistDto renameArtist(UUID id, CreateArtistRequest request) {
+        return mapper.toDto(artistService.renameArtist(id, request));
+    }
+
+    @Override
     public void deleteArtist(UUID id) {
         artistService.deleteArtist(id);
     }

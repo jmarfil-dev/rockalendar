@@ -64,6 +64,24 @@ function onWrapperKeydown(e: KeyboardEvent) {
   // Si PrimeVue ya procesó la selección del dropdown, inputValue es un objeto → no hacer nada (item-select lo gestionó)
   if (typeof inputValue.value === "string") onAddCurrentText();
 }
+
+// Pegado masivo: parsea lista separada por ; o salto de línea
+function onPaste(e: ClipboardEvent) {
+  const text = e.clipboardData?.getData("text") ?? "";
+  const tokens = text.split(/[;\n]/).map((s) => s.trim()).filter(Boolean);
+  if (tokens.length <= 1) return; // paste normal → el autocomplete lo gestiona
+  e.preventDefault();
+  const newChips = [...props.modelValue];
+  const newKeys = [...chipKeys.value];
+  for (const name of tokens) {
+    if (newChips.length >= MAX_ARTISTS) break;
+    newChips.push({ name });
+    newKeys.push(keyCounter++);
+  }
+  chipKeys.value = newKeys;
+  emit("update:modelValue", newChips);
+  nextTick(() => { inputValue.value = ""; });
+}
 </script>
 
 <template>
@@ -72,7 +90,7 @@ function onWrapperKeydown(e: KeyboardEvent) {
       {{ t("events.artists") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
     </label>
 
-    <div class="flex gap-2 align-items-center" @keydown="onWrapperKeydown">
+    <div class="flex gap-2 align-items-center" @keydown="onWrapperKeydown" @paste="onPaste">
       <AutoComplete
         v-model="inputValue"
         inputId="artists-input"

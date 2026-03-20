@@ -37,6 +37,35 @@ const deleteConfirmVisible = ref(false);
 const deleting = ref(false);
 const deleteError = ref<string | null>(null);
 
+const renameDialogVisible = ref(false);
+const renameValue = ref("");
+const renaming = ref(false);
+const renameError = ref<string | null>(null);
+
+function openRenameDialog() {
+  renameValue.value = artist.value?.name ?? "";
+  renameError.value = null;
+  renameDialogVisible.value = true;
+}
+
+async function confirmRename() {
+  renaming.value = true;
+  renameError.value = null;
+  const res = await fetchAuthResult<{ id: string; name: string }>(
+    ROUTE_PATH.apiModerationArtistDetail(id),
+    { method: "PATCH", body: { name: renameValue.value } },
+  );
+  renaming.value = false;
+  if (res.ok) {
+    artist.value!.name = res.data.name;
+    renameDialogVisible.value = false;
+  } else if (res.status === 409) {
+    renameError.value = t("moderation.artists.errorExists");
+  } else {
+    renameError.value = res.pd?.detail ?? t("error.unknown");
+  }
+}
+
 async function confirmDelete() {
   deleting.value = true;
   deleteError.value = null;
@@ -67,6 +96,13 @@ async function confirmDelete() {
         <i class="pi pi-arrow-left" aria-hidden="true" />
       </button>
       <h1 class="text-2xl font-bold m-0 flex-1">{{ artist?.name }}</h1>
+      <Button
+        v-if="isModerator"
+        icon="pi pi-pencil"
+        severity="secondary"
+        text
+        :aria-label="t('moderation.artists.rename')"
+        @click="openRenameDialog" />
       <Button
         v-if="isModerator"
         icon="pi pi-trash"
@@ -120,6 +156,40 @@ async function confirmDelete() {
       </Message>
     </section>
   </article>
+
+  <Dialog
+    v-model:visible="renameDialogVisible"
+    :header="t('moderation.artists.rename')"
+    modal
+    :closable="false"
+    :style="{ width: '24rem' }">
+    <div class="flex flex-column gap-3">
+      <div class="flex flex-column gap-2">
+        <label for="rename-input" class="text-sm text-color-secondary">{{ t("moderation.artists.renameTitle") }}</label>
+        <InputText
+          id="rename-input"
+          v-model="renameValue"
+          :placeholder="t('moderation.artists.renamePlaceholder')"
+          :disabled="renaming"
+          @keydown.enter.prevent="confirmRename" />
+      </div>
+      <Message v-if="renameError" severity="error" :closable="false">{{ renameError }}</Message>
+    </div>
+    <template #footer>
+      <Button
+        :label="t('moderation.artists.deleteCancel')"
+        severity="secondary"
+        outlined
+        :disabled="renaming"
+        @click="renameDialogVisible = false" />
+      <Button
+        :label="t('moderation.artists.renameOk')"
+        icon="pi pi-check"
+        :loading="renaming"
+        :disabled="!renameValue.trim()"
+        @click="confirmRename" />
+    </template>
+  </Dialog>
 
   <Dialog
     v-model:visible="deleteConfirmVisible"
