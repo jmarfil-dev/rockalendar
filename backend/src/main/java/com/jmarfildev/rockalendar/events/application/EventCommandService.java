@@ -73,24 +73,32 @@ public class EventCommandService {
     @Transactional
     public ProposeEventResponse propose(SubmitEventRequest req) {
         UUID userId = currentUser.userId();
+        boolean isAdmin = currentUser.isAdmin();
         EventInputValidate in = validate(req, userId);
 
-        var modResult = autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
-        EventStatus initialStatus = modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION;
+        // El admin publica directamente como APPROVED, sin pasar por auto-moderación
+        var modResult = isAdmin ? null : autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
+        EventStatus initialStatus = isAdmin ? EventStatus.APPROVED
+                : (modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION);
 
-        // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
-        var artistIds = in.artists().stream().map(a -> a.getId()).toList();
-        var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
-        var dayEnd = dayStart.plusDays(1);
-        List<DuplicateEventProjection> duplicates =
-                eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
+        // El admin puede crear ediciones anuales, correcciones, etc. sin detección de duplicados
+        UUID possibleDuplicateOfId = null;
+        PossibleDuplicateDto possibleDuplicate = null;
+        if (!isAdmin) {
+            // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
+            var artistIds = in.artists().stream().map(a -> a.getId()).toList();
+            var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
+            var dayEnd = dayStart.plusDays(1);
+            List<DuplicateEventProjection> duplicates =
+                    eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
 
-        UUID possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
-        PossibleDuplicateDto possibleDuplicate = duplicates.isEmpty() ? null
-                : new PossibleDuplicateDto(
-                        duplicates.get(0).getId(),
-                        duplicates.get(0).getTitle(),
-                        EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
+            possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
+            possibleDuplicate = duplicates.isEmpty() ? null
+                    : new PossibleDuplicateDto(
+                            duplicates.get(0).getId(),
+                            duplicates.get(0).getTitle(),
+                            EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
+        }
 
         var event = Event.builder()
                          .title(in.title())
@@ -112,14 +120,14 @@ public class EventCommandService {
 
         var saved = eventRepository.save(event);
 
-        if (modResult.flagged()) {
+        if (modResult != null && modResult.flagged()) {
             autoModerationService.logFlag(saved.getId(), modResult);
         }
         if (possibleDuplicateOfId != null) {
             log.info("possible duplicate detected eventId={} duplicateId={}", saved.getId(), possibleDuplicateOfId);
         }
 
-        log.info("event proposed eventId={} userId={} status={}", saved.getId(), userId, initialStatus);
+        log.info("event proposed eventId={} userId={} status={} isAdmin={}", saved.getId(), userId, initialStatus, isAdmin);
         return new ProposeEventResponse(mapper.toPrivateDto(saved), possibleDuplicate);
     }
 
@@ -134,14 +142,17 @@ public class EventCommandService {
     @Transactional
     public EventPrivateDto update(UUID eventId, SubmitEventRequest req) {
         UUID userId = currentUser.userId();
+        boolean isAdmin = currentUser.isAdmin();
         EventInputValidate in = validate(req, userId);
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
-        if (!userId.equals(event.getCreatedByUserId())) {
+        // El admin puede editar eventos de cualquier usuario
+        if (!isAdmin && !userId.equals(event.getCreatedByUserId())) {
             throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
         }
-        if (!hasEditableStatus(event.getStatus())) {
+        // El admin puede editar en cualquier estado (REJECTED, HIDDEN, etc.)
+        if (!isAdmin && !hasEditableStatus(event.getStatus())) {
             throw new ConflictException(ErrorConstants.EVENT_NOT_EDITABLE, ErrorConstants.TYPE_409_EVENT_STATE);
         }
 
@@ -161,27 +172,33 @@ public class EventCommandService {
         event.getArtists().clear();
         event.getArtists().addAll(in.artists());
 
-        // Reenviar a moderación (con comprobación de moderación automática)
-        var modResult = autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
-        event.setStatus(modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION);
+        if (isAdmin) {
+            // El admin publica directamente como APPROVED
+            event.setStatus(EventStatus.APPROVED);
+        } else {
+            // Reenviar a moderación (con comprobación de moderación automática)
+            var modResult = autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
+            event.setStatus(modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION);
+            if (modResult.flagged()) {
+                autoModerationService.logFlag(eventId, modResult);
+            }
+        }
         event.setSubmittedAt(OffsetDateTime.now());
 
-        if (modResult.flagged()) {
-            autoModerationService.logFlag(eventId, modResult);
-        }
-
         // No hace falta save() porque al ser un evento administrado por JPA (viene de un find()) se actualiza al terminar la transacción.
-        log.info("event updated eventId={} userId={} status={}", eventId, userId, event.getStatus());
+        log.info("event updated eventId={} userId={} status={} isAdmin={}", eventId, userId, event.getStatus(), isAdmin);
         return mapper.toPrivateDto(event);
     }
 
     @Transactional
     public void delete(UUID eventId) {
         UUID userId = currentUser.userId();
+        boolean isAdmin = currentUser.isAdmin();
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
-        if (!userId.equals(event.getCreatedByUserId())) {
+        // El admin puede eliminar eventos de cualquier usuario
+        if (!isAdmin && !userId.equals(event.getCreatedByUserId())) {
             throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
         }
 
@@ -189,17 +206,20 @@ public class EventCommandService {
             return; // idempotente
         }
 
-        // TODO: en frontend mensaje de "contactar con administración
-        if (event.getStatus() == EventStatus.APPROVED) {
-            throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED, ErrorConstants.TYPE_409_EVENT_STATE);
-        }
+        // El admin tiene control total del catálogo: puede eliminar en cualquier estado
+        if (!isAdmin) {
+            // TODO: en frontend mensaje de "contactar con administración"
+            if (event.getStatus() == EventStatus.APPROVED) {
+                throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED, ErrorConstants.TYPE_409_EVENT_STATE);
+            }
 
-        if (event.getStatus() != EventStatus.PENDING_MODERATION && event.getStatus() != EventStatus.NEEDS_CHANGES) {
-            throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE, ErrorConstants.TYPE_409_EVENT_STATE);
+            if (event.getStatus() != EventStatus.PENDING_MODERATION && event.getStatus() != EventStatus.NEEDS_CHANGES) {
+                throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE, ErrorConstants.TYPE_409_EVENT_STATE);
+            }
         }
 
         event.setStatus(EventStatus.ERASED);
-        log.info("event deleted eventId={} userId={}", eventId, userId);
+        log.info("event deleted eventId={} userId={} isAdmin={}", eventId, userId, isAdmin);
     }
 
     /**
@@ -281,7 +301,8 @@ public class EventCommandService {
     private Artist saveArtistOrFetch(String displayName, String slug, UUID userId) {
         try {
             return artistRepository.saveAndFlush(Artist.builder().name(displayName).slug(slug).createdByUserId(userId).build());
-        } catch (DataIntegrityViolationException ex) {
+        }
+        catch (DataIntegrityViolationException ex) {
             log.warn("artist race condition resolved slug={}", slug);
             return artistRepository.findBySlug(slug)
                                    .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));
