@@ -45,9 +45,16 @@ function goBack() {
   }
 }
 
-const { data: event, pending } = await useApiFetch<EventPublic>(ROUTE_PATH.apiEventDetail(id), {
+// Cualquier error 4xx (UUID inválido, no encontrado, etc.) se normaliza a 404:
+// el usuario no debe poder distinguir entre un ID malformado y uno inexistente.
+// Los errores 5xx se preservan para que sean reportables.
+const { data: event, pending, error: fetchError } = await useFetch<EventPublic>(ROUTE_PATH.apiEventDetail(id), {
   key: `event-${id}`,
 });
+if (fetchError.value) {
+  const status = (fetchError.value as any)?.status ?? (fetchError.value as any)?.statusCode ?? 500;
+  throw createError({ status: status >= 500 ? status : 404 });
+}
 
 useHead({ title: () => event.value?.title ?? t("page.events") });
 

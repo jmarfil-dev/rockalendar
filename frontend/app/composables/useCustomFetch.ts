@@ -60,22 +60,3 @@ export async function fetchAuthResult<T>(url: string, options: FetchOptions = {}
     return { ok: false, status, pd, raw: err };
   }
 }
-
-export async function useApiFetch<ResT = unknown, ReqT = ResT>(
-  request: Parameters<typeof useFetch<ResT, ReqT>>[0],
-  opts: Parameters<typeof useFetch<ResT, ReqT>>[1] = {},
-) {
-  const result = await useFetch<ResT, ReqT>(request, opts);
-
-  if (result.error.value) {
-    const fetchErr = result.error.value as RawFetchError;
-
-    throw createError({
-      status: fetchErr?.status ?? fetchErr?.statusCode ?? 500, // Nuxt 4 usa status
-      statusText: fetchErr?.statusText ?? fetchErr?.statusMessage ?? "Request failed",
-      data: fetchErr?.data, // ProblemDetail del backend
-    });
-  }
-
-  return result;
-}
