@@ -18,7 +18,7 @@ function tr(key: string) {
     <label for="email" class="text-sm text-color-secondary">
       {{ t("user.email") }}
       <template v-if="showRequired">
-        <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+        <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t("common.required") }}</span>
       </template>
     </label>
     <InputText
@@ -32,7 +32,7 @@ function tr(key: string) {
       :invalid="!!fieldError"
       aria-describedby="email-error" />
     <Message id="email-error" v-show="fieldError" severity="error" variant="simple" size="small">
-      {{ tr("fieldErrors.email") }}
+      {{ tr(fieldError!) }}
     </Message>
   </div>
 </template>

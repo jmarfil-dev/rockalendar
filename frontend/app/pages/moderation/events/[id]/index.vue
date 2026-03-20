@@ -324,7 +324,7 @@ async function onConfirm() {
       <section>
         <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.rejectTitle") }}</p>
         <ul class="m-0 pl-3 flex flex-column gap-2">
-          <li v-for="(item, i) in tm('moderation.tips.rejectItems')" :key="i" class="text-color-secondary">
+          <li v-for="(item, i) in (tm('moderation.tips.rejectItems') as string[])" :key="i" class="text-color-secondary">
             {{ rt(item) }}
           </li>
         </ul>
@@ -333,7 +333,7 @@ async function onConfirm() {
       <section>
         <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.requestChangesTitle") }}</p>
         <ul class="m-0 pl-3 flex flex-column gap-2">
-          <li v-for="(item, i) in tm('moderation.tips.requestChangesItems')" :key="i" class="text-color-secondary">
+          <li v-for="(item, i) in (tm('moderation.tips.requestChangesItems') as string[])" :key="i" class="text-color-secondary">
             {{ rt(item) }}
           </li>
         </ul>

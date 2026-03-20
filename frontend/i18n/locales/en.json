@@ -52,7 +52,9 @@
       "symbol": "One symbol",
       "hint": "Use a stronger password to continue",
       "invalid": "Invalid password"
-    }
+    },
+    "privacyAccept": "I have read and accept the {link}",
+    "privacyRequired": "You must accept the privacy policy to continue"
   },
   "me": {
     "title": "My area",
@@ -290,7 +292,8 @@
         "notNull": "Field cannot be empty",
         "email": "It must be a valid email address",
         "url": "It must be a valid URL",
-        "futureDate": "It must be a future date"
+        "futureDate": "It must be a future date",
+        "privacyNotAccepted": "You must accept the privacy policy to continue"
       }
     },
     "401": {

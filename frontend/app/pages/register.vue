@@ -28,16 +28,23 @@ const passwordChecks = computed(() => {
 
 const isPasswordValid = computed(() => passwordChecks.value.every((x) => x.ok));
 
+const privacyAccepted = ref(false);
+
 async function onSubmit() {
   if (!isPasswordValid.value) {
     errorMsg.value = t("auth.pw.invalid");
     return;
   }
 
+  if (!privacyAccepted.value) {
+    errorMsg.value = t("auth.privacyRequired");
+    return;
+  }
+
   resetErrors();
   loading.value = true;
   try {
-    const res = await auth.register(form);
+    const res = await auth.register({ ...form, privacyAccepted: privacyAccepted.value });
 
     if (!res.ok) {
       applyFormErrors(res.pd, t, errorMsg, fieldErrors);
@@ -61,58 +68,85 @@ async function onSubmit() {
     </div>
 
     <Card class="border-1 surface-border">
-    <template #content>
-      <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
+      <template #content>
+        <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
 
-      <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
-        <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" showRequired />
+        <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
+          <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" showRequired required />
 
-        <div class="flex flex-column gap-2">
-          <label for="password" class="text-sm text-color-secondary">
-            {{ t("user.password") }}
-            <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
-          </label>
-          <Password
-            v-fix-password-aria
-            inputId="password"
-            v-model="form.password"
-            toggleMask
-            :feedback="false"
-            autocomplete="new-password"
-            required
-            :invalid="!!fieldErrors.password"
-            :pt="{ input: { 'aria-describedby': 'pw-requirements register-password-error pw-hint' } }" />
-          <Message id="register-password-error" v-show="fieldErrors.password" severity="error" variant="simple" size="small">
-            {{ tr("fieldErrors.password") }}
-          </Message>
+          <div class="flex flex-column gap-2">
+            <label for="password" class="text-sm text-color-secondary">
+              {{ t("user.password") }}
+              <span class="text-red-500" aria-hidden="true">*</span
+              ><span class="sr-only">{{ t("common.required") }}</span>
+            </label>
+            <Password
+              v-fix-password-aria
+              inputId="password"
+              v-model="form.password"
+              toggleMask
+              :feedback="false"
+              autocomplete="new-password"
+              required
+              :invalid="!!fieldErrors.password"
+              :pt="{ input: { 'aria-describedby': 'pw-requirements register-password-error pw-hint' } }" />
+            <Message
+              id="register-password-error"
+              v-show="fieldErrors.password"
+              severity="error"
+              variant="simple"
+              size="small">
+              {{ tr(fieldErrors.password!) }}
+            </Message>
 
-          <!-- Checklist de requisitos de contraseña -->
-          <div id="pw-requirements" class="border-1 surface-border border-round-lg p-2">
-            <div class="text-sm text-color-secondary mb-2">{{ t("auth.pw.title") }}</div>
+            <!-- Checklist de requisitos de contraseña -->
+            <div id="pw-requirements" class="border-1 surface-border border-round-lg p-2">
+              <div class="text-sm text-color-secondary mb-2">{{ t("auth.pw.title") }}</div>
 
-            <ul class="m-0 p-0 list-none flex flex-column gap-1">
-              <li v-for="c in passwordChecks" :key="c.key" class="flex align-items-center gap-2">
-                <i :class="c.ok ? 'pi pi-check-circle text-green-500' : 'pi pi-circle text-color-secondary'"></i>
-                <span :class="c.ok ? '' : 'text-color-secondary'">{{ t(c.key) }}</span>
-              </li>
-            </ul>
+              <ul class="m-0 p-0 list-none flex flex-column gap-1">
+                <li v-for="c in passwordChecks" :key="c.key" class="flex align-items-center gap-2">
+                  <i :class="c.ok ? 'pi pi-check-circle text-green-500' : 'pi pi-circle text-color-secondary'"></i>
+                  <span :class="c.ok ? '' : 'text-color-secondary'">{{ t(c.key) }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <Message id="pw-hint" v-show="!isPasswordValid" severity="error" variant="simple" size="small">
+              {{ t("auth.pw.hint") }}
+            </Message>
           </div>
 
-          <Message id="pw-hint" v-show="!isPasswordValid" severity="error" variant="simple" size="small">
-            {{ t("auth.pw.hint") }}
-          </Message>
-        </div>
+          <div class="flex flex-column gap-2">
+            <div class="flex align-items-start gap-2">
+              <Checkbox inputId="privacy-accept" v-model="privacyAccepted" :binary="true" />
+              <label for="privacy-accept" class="text-sm">
+                <i18n-t keypath="auth.privacyAccept" tag="span">
+                  <template #link>
+                    <NuxtLink :to="ROUTES.privacy" target="_blank" class="underline">{{ t("page.privacy") }}</NuxtLink>
+                  </template>
+                </i18n-t>
+              </label>
+            </div>
+            <Message
+              id="register-privacy-accept-error"
+              v-show="fieldErrors.privacyAccepted"
+              severity="error"
+              variant="simple"
+              size="small">
+              {{ tr(fieldErrors.privacyAccepted!) }}
+            </Message>
+          </div>
 
-        <Button type="submit" :label="t('auth.register')" icon="pi pi-user-plus" :loading="loading" />
-      </form>
+          <Button type="submit" :label="t('auth.register')" icon="pi pi-user-plus" :loading="loading" />
+        </form>
 
-      <Divider class="my-1" />
-      <p class="text-sm text-surface-500">
-        <NuxtLink :to="ROUTES.login" class="font-medium underline">
-          {{ t("auth.goLogin") }}
-        </NuxtLink>
-      </p>
-    </template>
-  </Card>
+        <Divider class="my-1" />
+        <p class="text-sm text-surface-500">
+          <NuxtLink :to="ROUTES.login" class="font-medium underline">
+            {{ t("auth.goLogin") }}
+          </NuxtLink>
+        </p>
+      </template>
+    </Card>
   </div>
 </template>

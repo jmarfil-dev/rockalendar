@@ -53,7 +53,9 @@
       "symbol": "Un símbolo",
       "hint": "Usa una contraseña más robusta para continuar",
       "invalid": "La contraseña no es válida"
-    }
+    },
+    "privacyAccept": "He leído y acepto la {link}",
+    "privacyRequired": "Debes aceptar la política de privacidad para continuar"
   },
   "me": {
     "title": "Mi área",
@@ -291,7 +293,8 @@
         "notNull": "El campo no puede estar vacío",
         "email": "Debe ser un email válido",
         "url": "Debe ser una url correcta",
-        "futureDate": "Debe ser una fecha futura"
+        "futureDate": "Debe ser una fecha futura",
+        "privacyNotAccepted": "Debes aceptar la política de privacidad para continuar"
       }
     },
     "401": {

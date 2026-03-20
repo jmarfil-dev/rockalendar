@@ -51,6 +51,9 @@ public class User {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
+    @Column(name = "privacy_accepted", nullable = false)
+    private boolean privacyAccepted;
+
     @PrePersist
     void prePersist() {
         if (id == null) {

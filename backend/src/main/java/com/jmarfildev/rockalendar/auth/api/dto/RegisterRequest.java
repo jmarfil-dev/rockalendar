@@ -1,5 +1,6 @@
 package com.jmarfildev.rockalendar.auth.api.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -15,4 +16,5 @@ public record RegisterRequest(@NotBlank @Email String email,
                               @Size(min = 8,
                                     max = 72,
                                     message = ErrorConstants.VALID_SIZE_PASSWORD) @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).+$",
-                                                                message = ErrorConstants.VALID_PASSWORD) String password) {}
+                                                                                           message = ErrorConstants.VALID_PASSWORD) String password,
+                              @AssertTrue(message = ErrorConstants.PRIVACY_NOT_ACCEPTED) Boolean privacyAccepted) {}

@@ -6,7 +6,7 @@ import {
   readAuthFromStorage,
 } from "~/utils/authStorage";
 import { ROUTES } from "~/constants/routes";
-import type { AuthTokenResponse, LoginRequest } from "~/types/auth";
+import type { AuthTokenResponse, LoginRequest, RegisterRequest } from "~/types/auth";
 import type { ApiResult } from "~/types/api";
 import type { Role } from "~/types/user-roles";
 import { decodeJwtPayload, extractRoles } from "~/utils/jwt";
@@ -121,7 +121,7 @@ export function useAuth() {
     return res;
   }
 
-  async function register(req: LoginRequest): Promise<ApiResult<AuthTokenResponse>> {
+  async function register(req: RegisterRequest): Promise<ApiResult<AuthTokenResponse>> {
     const res = await fetchPublicResult<AuthTokenResponse>(ROUTES.apiRegister, {
       method: "POST",
       body: req,

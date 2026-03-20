@@ -39,6 +39,7 @@ public final class ErrorConstants {
     public static final String VALID_PASSWORD = "error.400.valid.patternPassword";
     public static final String VALID_SIZE_LIST_EMPTY = "error.400.valid.sizeListEmpty";
     public static final String VALID_SIZE_PASSWORD = "error.400.valid.sizePassword";
+    public static final String PRIVACY_NOT_ACCEPTED = "error.400.valid.privacyNotAccepted";
 
     // Unauthorized 401
     public static final String AUTH_REQUIRED = "error.401.message";
