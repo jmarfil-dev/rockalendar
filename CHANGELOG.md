@@ -23,7 +23,6 @@ El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 - [FRONT] Eliminado `useApiFetch`; errores 4xx en el detalle de evento público se normalizan a 404.
 
 ### Fixed
-- [BACK] Eventos con estado `FLAGGED` ocultos al usuario; incluidos en la cola de pendientes para moderadores.
 - [BACK] Refactorización de mensajes de error y limpieza de códigos i18n en respuestas.
 
 ## [v0.3.0-frontend]
