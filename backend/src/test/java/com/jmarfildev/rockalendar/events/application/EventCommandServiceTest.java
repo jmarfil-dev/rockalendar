@@ -67,8 +67,13 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @BeforeEach
     void setUp() {
         cleaner.truncateMutableTables();
-        when(currentUser.userId())
-                .thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
+        when(currentUser.userId()).thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
+        when(currentUser.isAdmin()).thenReturn(false);
+    }
+
+    private void asAdmin() {
+        when(currentUser.userId()).thenReturn(UUID.fromString(TestConstants.MOCK_ADMIN_ID));
+        when(currentUser.isAdmin()).thenReturn(true);
     }
 
     @Test
@@ -334,6 +339,143 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         service.delete(event.getId()); // primera vez: PENDING_MODERATION → ERASED
         service.delete(event.getId()); // segunda vez: ya ERASED, no lanza excepción
+
+        var reloaded = eventRepository.findById(event.getId()).orElseThrow();
+        assertThat(reloaded.getStatus()).isEqualTo(EventStatus.ERASED);
+    }
+
+    /*
+     * ROLE_ADMIN
+     */
+
+    @Test
+    @DisplayName("propose (admin): crea evento APPROVED directamente, sin moderación automática")
+    void propose_admin_createsApprovedEventDirectly() {
+        asAdmin();
+        var req = new SubmitEventRequest(
+                MOCK_TITLE, null, TestDates.madrid(), null, MOCK_WIZINK,
+                factory.madrid().getId(), TestConstants.MADRID,
+                List.of("Ska-P"), null);
+
+        var saved = service.propose(req);
+
+        var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
+        assertThat(reloaded.getStatus()).isEqualTo(EventStatus.APPROVED);
+        assertThat(reloaded.getCreatedByUserId()).isEqualTo(UUID.fromString(TestConstants.MOCK_ADMIN_ID));
+    }
+
+    @Test
+    @DisplayName("propose (admin): no detecta duplicados aunque exista evento similar")
+    void propose_admin_skipsDuplicateDetection() {
+        // Evento existente que sería detectado como duplicado para un usuario normal
+        factory.approvedMadridAgainstYou();
+        asAdmin();
+
+        var req = new SubmitEventRequest(
+                "%s en %s".formatted(TestConstants.MOCK_ARTIST_NAME_AY, TestConstants.MADRID),
+                null, TestDates.madrid(), null, "Sala Copérnico",
+                factory.madrid().getId(), TestConstants.MADRID,
+                List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
+
+        var result = service.propose(req);
+
+        assertThat(result.possibleDuplicate()).isNull();
+        assertThat(result.event().status()).isEqualTo(EventStatus.APPROVED);
+    }
+
+    @Test
+    @DisplayName("update (admin): puede editar evento de otro usuario")
+    void update_admin_canUpdateAnotherUsersEvent() {
+        // Evento creado por MOCK_USER_ID; el admin (distinto userId) lo edita
+        var event = factory.approvedMadridAgainstYou();
+        asAdmin();
+
+        var req = new SubmitEventRequest(
+                "Título editado por admin", null, TestDates.madrid(), null, MOCK_WIZINK,
+                factory.madrid().getId(), TestConstants.MADRID,
+                List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
+
+        var updated = service.update(event.getId(), req);
+
+        assertThat(updated.title()).isEqualTo("Título editado por admin");
+        assertThat(updated.status()).isEqualTo(EventStatus.APPROVED);
+    }
+
+    @Test
+    @DisplayName("update (admin): puede editar evento en estado REJECTED")
+    void update_admin_canUpdateRejectedEvent() {
+        var event = factory.rejectedValenciaMafalda();
+        asAdmin();
+
+        var req = new SubmitEventRequest(
+                "Mafalda corregido", null, TestDates.genericFuture(), null, "Sala Moon",
+                factory.valencia().getId(), "València",
+                List.of("Mafalda"), null);
+
+        var updated = service.update(event.getId(), req);
+
+        assertThat(updated.status()).isEqualTo(EventStatus.APPROVED);
+    }
+
+    @Test
+    @DisplayName("update (admin): puede editar evento en estado HIDDEN")
+    void update_admin_canUpdateHiddenEvent() {
+        var event = factory.hiddenMadridSoziedadAlkoholika();
+        asAdmin();
+
+        var req = new SubmitEventRequest(
+                "Soziedad Alkoholika corregido", null, TestDates.madrid(), null, "Sala Copérnico",
+                factory.madrid().getId(), TestConstants.MADRID,
+                List.of("Soziedad Alkoholika"), null);
+
+        var updated = service.update(event.getId(), req);
+
+        assertThat(updated.status()).isEqualTo(EventStatus.APPROVED);
+    }
+
+    @Test
+    @DisplayName("delete (admin): puede eliminar evento de otro usuario")
+    void delete_admin_canDeleteAnotherUsersEvent() {
+        var event = factory.pendingMadridAgainstYou(); // creado por MOCK_USER_ID
+        asAdmin();
+
+        service.delete(event.getId());
+
+        var reloaded = eventRepository.findById(event.getId()).orElseThrow();
+        assertThat(reloaded.getStatus()).isEqualTo(EventStatus.ERASED);
+    }
+
+    @Test
+    @DisplayName("delete (admin): puede eliminar evento APPROVED")
+    void delete_admin_canDeleteApprovedEvent() {
+        var event = factory.approvedMadridAgainstYou();
+        asAdmin();
+
+        service.delete(event.getId());
+
+        var reloaded = eventRepository.findById(event.getId()).orElseThrow();
+        assertThat(reloaded.getStatus()).isEqualTo(EventStatus.ERASED);
+    }
+
+    @Test
+    @DisplayName("delete (admin): puede eliminar evento HIDDEN")
+    void delete_admin_canDeleteHiddenEvent() {
+        var event = factory.hiddenMadridSoziedadAlkoholika();
+        asAdmin();
+
+        service.delete(event.getId());
+
+        var reloaded = eventRepository.findById(event.getId()).orElseThrow();
+        assertThat(reloaded.getStatus()).isEqualTo(EventStatus.ERASED);
+    }
+
+    @Test
+    @DisplayName("delete (admin): puede eliminar evento REJECTED")
+    void delete_admin_canDeleteRejectedEvent() {
+        var event = factory.rejectedValenciaMafalda();
+        asAdmin();
+
+        service.delete(event.getId());
 
         var reloaded = eventRepository.findById(event.getId()).orElseThrow();
         assertThat(reloaded.getStatus()).isEqualTo(EventStatus.ERASED);

@@ -23,4 +23,11 @@ public class CurrentUser {
         }
         throw new IllegalStateException("No JWT authentication in security context");
     }
+
+    public boolean isAdmin() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) return false;
+        return auth.getAuthorities().stream()
+                   .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+    }
 }

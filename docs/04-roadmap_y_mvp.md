@@ -175,12 +175,13 @@ Incluye:
 - Complejidad visual.
 - Saturación de información.
 
-### Backend v0.5 - Otras funcionalidades
+### v0.5 - Otras funcionalidades
 
 Completa la aplicación con detalles vistos durante el desarrollo.
 
 Incluye:
 
+- Evitar restricciones de negocio para perfil ADMIN
 - Cartel de evento
 - Detalle de artista
 - Crear artista (moderador)
@@ -190,10 +191,6 @@ Incluye:
 - Añadir rate limiting + captcha tras varios intentos para evitar accesos por fuerza bruta
 - Ley de protección de datos, política de privacidad, etc.
 - Mejorar agregar artistas al crear evento: pegado masivo, ¿leer desde cartel?
-
-### Frontend v0.5 - Otras funcionalidades
-
-Complementa la v0.5 de Backend.
 
 ### v1.0 - MVP
 
