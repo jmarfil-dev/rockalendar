@@ -15,6 +15,7 @@ import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
+import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 
@@ -63,5 +64,16 @@ public class ArtistCommandService {
             // Se lanza si otro hilo crea el mismo slug entre el existsBySlug y el save
             throw new ConflictException(ErrorConstants.ARTIST_ALREADY_EXISTS);
         }
+    }
+
+    @Transactional
+    public void deleteArtist(UUID id) {
+        Artist artist = artistRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ErrorConstants.ARTIST_NOT_FOUND));
+        if (artistRepository.hasEvents(id)) {
+            throw new ConflictException(ErrorConstants.ARTIST_HAS_EVENTS);
+        }
+        artistRepository.delete(artist);
+        log.info("artist deleted artistId={} slug={}", artist.getId(), artist.getSlug());
     }
 }

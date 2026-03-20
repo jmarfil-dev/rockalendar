@@ -29,16 +29,54 @@ const { data: eventsPage, pending: eventsPending } = await useFetch<{ content: E
 );
 
 const events = computed(() => eventsPage.value?.content ?? []);
+
+const { isModerator } = useAuth();
+const router = useRouter();
+
+const deleteConfirmVisible = ref(false);
+const deleting = ref(false);
+const deleteError = ref<string | null>(null);
+
+async function confirmDelete() {
+  deleting.value = true;
+  deleteError.value = null;
+
+  const res = await fetchAuthResult<void>(ROUTE_PATH.apiModerationArtistDetail(id), {
+    method: "DELETE",
+  });
+
+  deleting.value = false;
+
+  if (res.ok) {
+    deleteConfirmVisible.value = false;
+    navigateTo(ROUTES.events);
+  } else if (res.status === 409) {
+    deleteConfirmVisible.value = false;
+    deleteError.value = t("moderation.artists.errorHasEvents");
+  } else {
+    deleteConfirmVisible.value = false;
+    deleteError.value = res.pd?.detail ?? t("error.unknown");
+  }
+}
 </script>
 
 <template>
   <article class="p-3 md:p-4 lg:p-5 flex flex-column gap-4">
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.events" class="p-0 border-none bg-transparent cursor-pointer text-color-secondary" :aria-label="t('common.back')">
+      <button class="p-0 border-none bg-transparent cursor-pointer text-color-secondary" :aria-label="t('common.back')" @click="router.back()">
         <i class="pi pi-arrow-left" aria-hidden="true" />
-      </NuxtLink>
-      <h1 class="text-2xl font-bold m-0">{{ artist?.name }}</h1>
+      </button>
+      <h1 class="text-2xl font-bold m-0 flex-1">{{ artist?.name }}</h1>
+      <Button
+        v-if="isModerator"
+        icon="pi pi-trash"
+        severity="danger"
+        text
+        :aria-label="t('moderation.artists.delete')"
+        @click="deleteConfirmVisible = true" />
     </div>
+
+    <Message v-if="deleteError" severity="error" :closable="false">{{ deleteError }}</Message>
 
     <Divider class="my-1" />
 
@@ -82,4 +120,27 @@ const events = computed(() => eventsPage.value?.content ?? []);
       </Message>
     </section>
   </article>
+
+  <Dialog
+    v-model:visible="deleteConfirmVisible"
+    :header="t('moderation.artists.delete')"
+    modal
+    :closable="false"
+    :style="{ width: '24rem' }">
+    <p class="m-0 text-color-secondary">{{ t("moderation.artists.deleteConfirm") }}</p>
+    <template #footer>
+      <Button
+        :label="t('moderation.artists.deleteCancel')"
+        severity="secondary"
+        outlined
+        :disabled="deleting"
+        @click="deleteConfirmVisible = false" />
+      <Button
+        :label="t('moderation.artists.deleteOk')"
+        severity="danger"
+        icon="pi pi-trash"
+        :loading="deleting"
+        @click="confirmDelete" />
+    </template>
+  </Dialog>
 </template>

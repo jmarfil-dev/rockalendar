@@ -11,6 +11,7 @@ export const ROUTES = {
 
   moderation: "/moderation",
   moderationEvents: "/moderation/events",
+  moderationArtists: "/moderation/artists",
   moderationArtistCreate: "/moderation/artists/create",
 
   admin: "/admin",
@@ -46,6 +47,7 @@ export const ROUTE_PATH = {
   apiMeEventDetail: (id: string) => `${ROUTES.apiMeEvents}/${id}`,
   moderationEventDetail: (id: string) => `${ROUTES.moderationEvents}/${id}`,
   apiModerationEventDetail: (id: string) => `${ROUTES.apiModerationEvents}/${id}`,
+  apiModerationArtistDetail: (id: string) => `${ROUTES.apiModerationArtists}/${id}`,
   apiModerationApprove: (id: string) => `${ROUTES.apiModerationEvents}/${id}/approve`,
   apiModerationReject: (id: string) => `${ROUTES.apiModerationEvents}/${id}/reject`,
   apiModerationHide: (id: string) => `${ROUTES.apiModerationEvents}/${id}/hide`,

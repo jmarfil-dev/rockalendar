@@ -39,9 +39,9 @@ const router = useRouter();
           class="h-full border-1 surface-border cursor-pointer hover:surface-hover transition-colors transition-duration-150"
           role="button"
           tabindex="0"
-          @click="router.push(ROUTES.moderationArtistCreate)"
-          @keydown.enter="router.push(ROUTES.moderationArtistCreate)"
-          @keydown.space.prevent="router.push(ROUTES.moderationArtistCreate)">
+          @click="router.push(ROUTES.moderationArtists)"
+          @keydown.enter="router.push(ROUTES.moderationArtists)"
+          @keydown.space.prevent="router.push(ROUTES.moderationArtists)">
           <template #title>
             <div class="flex align-items-center gap-3">
               <i class="pi pi-user-plus text-3xl text-primary" />

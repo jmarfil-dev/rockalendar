@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ROUTES } from "~/constants/routes";
+import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 import type { Artist } from "~/types/artist";
 
 definePageMeta({ layout: "moderation", ssr: false });
@@ -7,11 +7,29 @@ definePageMeta({ layout: "moderation", ssr: false });
 const { t } = useI18n();
 useHead({ title: () => t("moderation.artists.createTitle") });
 
-const name = ref("");
+const { suggestions, search } = useArtistAutocomplete();
+
+const inputValue = ref<string | Artist>("");
 const submitting = ref(false);
 const errorMsg = ref<string | null>(null);
 const successVisible = ref(false);
 const createdName = ref("");
+const selectedExisting = ref<Artist | null>(null);
+
+const nameStr = computed(() => {
+  if (typeof inputValue.value === "string") return inputValue.value.trim();
+  return (inputValue.value as Artist).name;
+});
+
+function onItemSelect(event: { value: Artist }) {
+  selectedExisting.value = event.value;
+  errorMsg.value = null;
+}
+
+function onInput() {
+  if (selectedExisting.value) selectedExisting.value = null;
+  errorMsg.value = null;
+}
 
 async function onSubmit() {
   errorMsg.value = null;
@@ -19,7 +37,7 @@ async function onSubmit() {
 
   const res = await fetchAuthResult<Artist>(ROUTES.apiModerationArtists, {
     method: "POST",
-    body: { name: name.value.trim() },
+    body: { name: nameStr.value },
   });
 
   submitting.value = false;
@@ -27,6 +45,7 @@ async function onSubmit() {
   if (res.ok) {
     createdName.value = res.data.name;
     successVisible.value = true;
+    clearArtistAutocompleteCache();
   } else if (res.status === 409) {
     errorMsg.value = t("moderation.artists.errorExists");
   } else {
@@ -36,7 +55,8 @@ async function onSubmit() {
 
 function onSuccessOk() {
   successVisible.value = false;
-  name.value = "";
+  inputValue.value = "";
+  selectedExisting.value = null;
   errorMsg.value = null;
 }
 </script>
@@ -44,7 +64,7 @@ function onSuccessOk() {
 <template>
   <div class="flex flex-column gap-4">
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.moderation" class="text-color-secondary" :aria-label="t('common.back')">
+      <NuxtLink :to="ROUTES.moderationArtists" class="text-color-secondary" :aria-label="t('common.back')">
         <i class="pi pi-arrow-left" aria-hidden="true" />
       </NuxtLink>
       <h1 class="text-2xl font-bold m-0">{{ t("moderation.artists.createTitle") }}</h1>
@@ -60,15 +80,25 @@ function onSuccessOk() {
                   {{ t("moderation.artists.name") }}
                   <span class="text-color-secondary text-sm ml-1">({{ t("common.required") }})</span>
                 </label>
-                <InputText
+                <AutoComplete
                   id="artist-name"
-                  v-model="name"
+                  v-model="inputValue"
+                  :suggestions="suggestions"
+                  option-label="name"
                   :placeholder="t('moderation.artists.namePlaceholder')"
                   :maxlength="200"
-                  required
                   autofocus
                   class="w-full"
-                  :invalid="!!errorMsg" />
+                  :invalid="!!errorMsg"
+                  @complete="search($event.query)"
+                  @item-select="onItemSelect"
+                  @input="onInput" />
+                <Message v-if="selectedExisting" severity="info" :closable="false" class="mt-1">
+                  {{ t("moderation.artists.existingWarning") }}
+                  <NuxtLink :to="ROUTE_PATH.artistDetail(selectedExisting.id)" class="ml-1">
+                    {{ t("moderation.artists.existingLink") }}
+                  </NuxtLink>
+                </Message>
                 <Message v-if="errorMsg" severity="error" :closable="false" class="mt-1">{{ errorMsg }}</Message>
               </div>
 
@@ -78,14 +108,14 @@ function onSuccessOk() {
                   :label="t('moderation.artists.submit')"
                   icon="pi pi-plus"
                   :loading="submitting"
-                  :disabled="!name.trim()" />
+                  :disabled="!nameStr" />
                 <Button
                   type="button"
                   :label="t('moderation.artists.cancel')"
                   severity="secondary"
                   outlined
                   :disabled="submitting"
-                  @click="navigateTo(ROUTES.moderation)" />
+                  @click="navigateTo(ROUTES.moderationArtists)" />
               </div>
             </form>
           </template>

@@ -3,6 +3,7 @@ package com.jmarfildev.rockalendar.artists.application;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,5 +58,10 @@ public class ArtistQueryService {
 
     public ArtistDto getById(UUID id) {
         return repository.findById(id).map(mapper::toDto).orElseThrow(() -> new NotFoundException(ErrorConstants.ARTIST_NOT_FOUND));
+    }
+
+    public Page<ArtistDto> findOrphans(String query, Pageable pageable) {
+        String q = query == null ? "" : query.trim();
+        return repository.findOrphans(q, pageable).map(mapper::toDto);
     }
 }
