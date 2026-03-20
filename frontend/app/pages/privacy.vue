@@ -83,12 +83,17 @@ useHead({ title: () => t("page.privacy") });
           </section>
 
           <section>
-            <h2 class="text-lg font-semibold mt-0 mb-2">9. Modificaciones</h2>
+            <h2 class="text-lg font-semibold mt-0 mb-2">9. Cookies</h2>
+            <p class="m-0">La aplicación utiliza cookies técnicas necesarias para gestionar la sesión del usuario y recordar sus preferencias de idioma. No se utilizan cookies analíticas, publicitarias ni de seguimiento.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-semibold mt-0 mb-2">10. Modificaciones</h2>
             <p class="m-0">El responsable se reserva el derecho a modificar la presente política de privacidad para adaptarla a novedades legislativas o técnicas. En caso de cambios relevantes, se informará a los usuarios a través de la propia aplicación antes de que dichos cambios entren en vigor.</p>
           </section>
 
           <section>
-            <h2 class="text-lg font-semibold mt-0 mb-2">10. Legislación aplicable</h2>
+            <h2 class="text-lg font-semibold mt-0 mb-2">11. Legislación aplicable</h2>
             <p class="m-0">La presente política de privacidad se rige por el Reglamento General de Protección de Datos (RGPD), la Ley Orgánica 3/2018 de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), y demás normativa aplicable en materia de protección de datos.</p>
           </section>
         </div>
@@ -157,12 +162,17 @@ useHead({ title: () => t("page.privacy") });
           </section>
 
           <section>
-            <h2 class="text-lg font-semibold mt-0 mb-2">9. Changes to This Policy</h2>
+            <h2 class="text-lg font-semibold mt-0 mb-2">9. Cookies</h2>
+            <p class="m-0">The application uses technical cookies necessary to manage the user session and remember language preferences. No analytical, advertising or tracking cookies are used.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-semibold mt-0 mb-2">10. Changes to This Policy</h2>
             <p class="m-0">The data controller reserves the right to modify this privacy policy to reflect legislative or technical developments. In the event of significant changes, users will be notified through the application before those changes take effect.</p>
           </section>
 
           <section>
-            <h2 class="text-lg font-semibold mt-0 mb-2">10. Applicable Law</h2>
+            <h2 class="text-lg font-semibold mt-0 mb-2">11. Applicable Law</h2>
             <p class="m-0">This privacy policy is governed by the General Data Protection Regulation (GDPR), the Spanish Organic Law 3/2018 on Personal Data Protection and Digital Rights Guarantee (LOPDGDD), and any other applicable data protection legislation.</p>
           </section>
         </div>
