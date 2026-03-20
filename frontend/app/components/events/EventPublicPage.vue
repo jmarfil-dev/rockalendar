@@ -70,7 +70,7 @@ const first = computed<number>({
 });
 
 // Fetch
-const { data, pending, error } = await useApiFetch<PageResponse<EventPublicListItem>>(endpoint, {
+const { data, pending, error } = await useFetch<PageResponse<EventPublicListItem>>(endpoint, {
   query: computed(() => {
     // Params comunes
     const base: Record<string, any> = {

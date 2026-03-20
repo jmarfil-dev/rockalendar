@@ -133,7 +133,9 @@
       "sourceUrlPlaceholder": "https://...",
       "successTitle": "¡Concierto propuesto!",
       "successMsg": "Tu propuesta se ha enviado correctamente y queda pendiente de moderación.",
-      "successOk": "Ver mis conciertos"
+      "successOk": "Ver mis conciertos",
+      "duplicateWarning": "Hemos detectado un evento similar ya publicado o pendiente: \"{title}\". Los moderadores lo revisarán.",
+      "duplicateLink": "Ver el evento existente"
     }
   },
   "user": {
@@ -144,6 +146,7 @@
   },
   "moderation": {
     "title": "Moderación",
+    "possibleDuplicate": "Posible duplicado",
     "hub": {
       "events": "Moderar conciertos",
       "eventsDesc": "Revisar conciertos pendientes de moderación y archivados"
@@ -164,7 +167,23 @@
       "confirm": "Confirmar",
       "cancel": "Cancelar"
     },
-    "sendCom": "Envía un comentario a moderación"
+    "sendCom": "Envía un comentario a moderación",
+    "tips": {
+      "title": "Consejos para moderar",
+      "tipsButton": "Consejos",
+      "rejectTitle": "Rechaza el conci si cumple al menos una de estas condiciones:",
+      "rejectItems": [
+        "Festi non grato: festivales asociados al eje del mal (Superstruct, KKR) o con prácticas empresariales poco éticas (cobrar reacceso, explotar trabajadores en la barra). Ejemplos: Viña Rock, Resurrection, Tsunami. El Pirata se salva por los pelos, de momento.",
+        "Artista fascista: alguno de los grupos hace apología del fascismo (racismo, sexismo, lgtbifobia, etc), discursos de odio o es claramente de derechas. Ejemplos: Sherpa, grupos nazis.",
+        "Concierto malintencionado: el evento tiene datos malintencionados. Ejemplos: la url que no lleva al evento, anuncia grupos que no tocan para llamar la atención.",
+        "El cartel del festi pide expresamente que no se comparta, habitual en eventos organizados en CSOs."
+      ],
+      "requestChangesTitle": "Solicita cambios al usuario en estos casos:",
+      "requestChangesItems": [
+        "Hay errores identificables en los datos.",
+        "Hay discrepancia entre los datos introducidos y los reales (en el cartel o en la url)."
+      ]
+    }
   },
   "geo": {
     "province": "Provincia",

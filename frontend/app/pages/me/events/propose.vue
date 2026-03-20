@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ROUTES } from "~/constants/routes";
+import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 import ArtistSelector from "~/components/events/ArtistSelector.vue";
+import type { PossibleDuplicateDto } from "~/types/events";
 
 definePageMeta({ layout: "private", ssr: false });
 
@@ -16,12 +17,14 @@ const isDateRangeInvalid = computed(
 );
 
 const showSuccessDialog = ref(false);
+const possibleDuplicate = ref<PossibleDuplicateDto | null>(null);
 
 onMounted(() => loadProvinces());
 
 async function onSubmit() {
   const result = await submit();
   if (result) {
+    possibleDuplicate.value = result.possibleDuplicate;
     showSuccessDialog.value = true;
   }
 }
@@ -229,8 +232,14 @@ async function onSuccessClose() {
     :header="t('me.propose.successTitle')"
     modal
     :closable="false"
-    :style="{ width: '22rem' }">
+    :style="{ width: '24rem' }">
     <p class="m-0 text-color-secondary">{{ t("me.propose.successMsg") }}</p>
+    <Message v-if="possibleDuplicate" severity="warn" :closable="false" class="mt-3">
+      {{ t("me.propose.duplicateWarning", { title: possibleDuplicate.title }) }}
+      <NuxtLink v-if="possibleDuplicate.approved" :to="ROUTE_PATH.eventDetail(possibleDuplicate.id)" class="block mt-1">
+        {{ t("me.propose.duplicateLink") }}
+      </NuxtLink>
+    </Message>
     <template #footer>
       <Button :label="t('me.propose.successOk')" icon="pi pi-check" @click="onSuccessClose" />
     </template>

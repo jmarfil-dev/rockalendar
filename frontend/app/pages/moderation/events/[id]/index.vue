@@ -4,7 +4,7 @@ import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 
 definePageMeta({ layout: "moderation", ssr: false });
 
-const { t } = useI18n();
+const { t, tm, rt } = useI18n();
 const route = useRoute();
 const id = route.params.id as string;
 
@@ -40,6 +40,8 @@ onMounted(async () => {
 type ActionType = "approve" | "reject" | "hide" | "requestChanges";
 
 const { loading: actionLoading, error: actionError, approve, reject, hide, requestChanges } = useModerationActions();
+
+const tipsVisible = ref(false);
 
 const dialogVisible = ref(false);
 const currentAction = ref<ActionType | null>(null);
@@ -85,11 +87,21 @@ async function onConfirm() {
 <template>
   <article class="flex flex-column gap-4">
     <!-- Cabecera -->
-    <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.moderationEvents" class="text-color-secondary" :aria-label="t('common.back')">
-        <i class="pi pi-arrow-left" aria-hidden="true" />
-      </NuxtLink>
-      <h1 class="text-2xl font-bold m-0">{{ t("moderation.hub.events") }}</h1>
+    <div class="flex align-items-center justify-content-between gap-3">
+      <div class="flex align-items-center gap-3">
+        <NuxtLink :to="ROUTES.moderationEvents" class="text-color-secondary" :aria-label="t('common.back')">
+          <i class="pi pi-arrow-left" aria-hidden="true" />
+        </NuxtLink>
+        <h1 class="text-2xl font-bold m-0">{{ t("moderation.hub.events") }}</h1>
+      </div>
+      <Button
+        :label="t('moderation.tips.tipsButton')"
+        icon="pi pi-question-circle"
+        severity="secondary"
+        text
+        size="small"
+        type="button"
+        @click="tipsVisible = true" />
     </div>
 
     <!-- Cargando -->
@@ -299,6 +311,29 @@ async function onConfirm() {
       </div>
     </template>
   </article>
+
+  <!-- Drawer de consejos de moderación -->
+  <Drawer v-model:visible="tipsVisible" :header="t('moderation.tips.title')" position="right" style="width: 22rem">
+    <div class="flex flex-column gap-4 text-sm line-height-3">
+      <section>
+        <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.rejectTitle") }}</p>
+        <ul class="m-0 pl-3 flex flex-column gap-2">
+          <li v-for="(item, i) in tm('moderation.tips.rejectItems')" :key="i" class="text-color-secondary">
+            {{ rt(item) }}
+          </li>
+        </ul>
+      </section>
+      <Divider class="my-1" />
+      <section>
+        <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.requestChangesTitle") }}</p>
+        <ul class="m-0 pl-3 flex flex-column gap-2">
+          <li v-for="(item, i) in tm('moderation.tips.requestChangesItems')" :key="i" class="text-color-secondary">
+            {{ rt(item) }}
+          </li>
+        </ul>
+      </section>
+    </div>
+  </Drawer>
 
   <!-- Diálogo de acción de moderación -->
   <Dialog

@@ -132,7 +132,9 @@
       "sourceUrlPlaceholder": "https://...",
       "successTitle": "Concert proposed!",
       "successMsg": "Your proposal has been submitted and is now pending moderation.",
-      "successOk": "View my concerts"
+      "successOk": "View my concerts",
+      "duplicateWarning": "We detected a similar event already submitted or published: \"{title}\". Moderators will review it.",
+      "duplicateLink": "View existing event"
     }
   },
   "user": {
@@ -143,6 +145,7 @@
   },
   "moderation": {
     "title": "Moderation",
+    "possibleDuplicate": "Possible duplicate",
     "hub": {
       "events": "Concerts",
       "eventsDesc": "Review pending concerts and moderation archive"
@@ -163,7 +166,23 @@
       "confirm": "Confirm",
       "cancel": "Cancel"
     },
-    "sendCom": "Send a comment to moderation"
+    "sendCom": "Send a comment to moderation",
+    "tips": {
+      "title": "Moderation tips",
+      "tipsButton": "Tips",
+      "rejectTitle": "Reject the concert if it meets at least one of these conditions:",
+      "rejectItems": [
+        "Non grata festival: festivals associated with bad actors (Superstruct, KKR) or with unethical business practices (charging re-entry fees, exploiting bar staff). Examples: Viña Rock, Resurrection, Tsunami.",
+        "Fascist artist: one of the bands promotes fascism (racism, sexism, lgbtiphobia, etc.), hate speech, or is clearly far-right. Examples: Sherpa, nazi bands.",
+        "Malicious concert: the event contains misleading data. Examples: a URL that doesn't lead to the event, announces bands that aren't playing to attract attention.",
+        "The festival poster explicitly requests it not be shared, common in events organised in social centres (CSOs)."
+      ],
+      "requestChangesTitle": "Request changes from the user in these cases:",
+      "requestChangesItems": [
+        "There are identifiable errors in the data.",
+        "There is a discrepancy between the submitted data and the real data (on the poster or at the URL)."
+      ]
+    }
   },
   "geo": {
     "province": "Province",

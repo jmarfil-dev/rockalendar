@@ -33,6 +33,7 @@ import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
 import com.jmarfildev.rockalendar.events.api.doc.EventPrivatePageDoc;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
+import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.application.MeEventTabEnum;
 
@@ -52,8 +53,8 @@ public interface MeEventApi {
     @ApiResponse(responseCode = "201", description = "Evento propuesto correctamente")
     @ApiUnauthorized
     @ApiBadRequest
-    EventPrivateDto propose(@Parameter(description = "Datos del evento a proponer",
-                                       required = true) @Valid @RequestBody SubmitEventRequest request);
+    ProposeEventResponse propose(@Parameter(description = "Datos del evento a proponer",
+                                            required = true) @Valid @RequestBody SubmitEventRequest request);
 
     @GetMapping("/events")
     @Operation(summary = "Listar mis eventos", description = """

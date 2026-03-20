@@ -46,6 +46,17 @@ export type EventPublic = {
   sourceUrl?: string | null;
 };
 
+export type PossibleDuplicateDto = {
+  id: string;
+  title: string;
+  approved: boolean;
+};
+
+export type ProposeEventResponse = {
+  event: EventPrivateDto;
+  possibleDuplicate: PossibleDuplicateDto | null;
+};
+
 export type EventPrivateDto = {
   id: string;
   title: string;
@@ -71,6 +82,7 @@ export type ModerationPendingListItem = {
   id: string;
   title: string;
   submittedAt: string;
+  possibleDuplicateOf?: string | null;
 };
 
 export type ModerationArchivedListItem = {

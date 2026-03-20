@@ -1,4 +1,4 @@
-import type { EventPrivateDto } from "~/types/events";
+import type { ProposeEventResponse } from "~/types/events";
 import type { ArtistChip } from "~/types/artist";
 import { ROUTES } from "~/constants/routes";
 import { applyFormErrors } from "~/utils/formErrors";
@@ -34,7 +34,7 @@ export const useProposeEvent = () => {
     fieldErrors.value = {};
   }
 
-  async function submit(): Promise<EventPrivateDto | null> {
+  async function submit(): Promise<ProposeEventResponse | null> {
     submitting.value = true;
     resetErrors();
 
@@ -51,7 +51,7 @@ export const useProposeEvent = () => {
     };
 
     try {
-      const res = await fetchAuthResult<EventPrivateDto>(ROUTES.apiMeEvents, {
+      const res = await fetchAuthResult<ProposeEventResponse>(ROUTES.apiMeEvents, {
         method: "POST",
         body,
       });

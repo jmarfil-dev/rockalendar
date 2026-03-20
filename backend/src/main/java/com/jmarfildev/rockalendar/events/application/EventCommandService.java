@@ -1,7 +1,9 @@
 package com.jmarfildev.rockalendar.events.application;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,10 +25,13 @@ import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.events.api.dto.PossibleDuplicateDto;
+import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
+import com.jmarfildev.rockalendar.events.persistence.DuplicateEventProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
@@ -60,34 +65,49 @@ public class EventCommandService {
 
     /**
      * Propone un evento que queda en estado PENDING_MODERATION si todos los datos se validan correctamente.
-     * Crea los artistas que no existen.
+     * Crea los artistas que no existen. Detecta posibles duplicados antes de guardar.
      *
      * @param req request con los datos del evento
-     * @return el evento propuesto
+     * @return el evento propuesto, junto con info del posible duplicado si se detectó alguno
      */
     @Transactional
-    public EventPrivateDto propose(SubmitEventRequest req) {
+    public ProposeEventResponse propose(SubmitEventRequest req) {
         UUID userId = currentUser.userId();
         EventInputValidate in = validate(req, userId);
 
         var modResult = autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
         EventStatus initialStatus = modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION;
 
+        // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
+        var artistIds = in.artists().stream().map(a -> a.getId()).toList();
+        var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
+        var dayEnd = dayStart.plusDays(1);
+        List<DuplicateEventProjection> duplicates =
+                eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
+
+        UUID possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
+        PossibleDuplicateDto possibleDuplicate = duplicates.isEmpty() ? null
+                : new PossibleDuplicateDto(
+                        duplicates.get(0).getId(),
+                        duplicates.get(0).getTitle(),
+                        EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
+
         var event = Event.builder()
-                         .title(in.title)
-                         .description(in.description)
+                         .title(in.title())
+                         .description(in.description())
                          .startDateTime(in.startDateTime())
                          .endDateTime(in.endDateTime())
-                         .province(in.province)
-                         .cityName(in.cityName)
-                         .citySlug(in.citySlug)
-                         .venueName(in.venueName)
-                         .venueSlug(in.venueSlug)
-                         .sourceUrl(in.sourceUrl)
+                         .province(in.province())
+                         .cityName(in.cityName())
+                         .citySlug(in.citySlug())
+                         .venueName(in.venueName())
+                         .venueSlug(in.venueSlug())
+                         .sourceUrl(in.sourceUrl())
                          .status(initialStatus)
                          .createdByUserId(userId)
                          .submittedAt(OffsetDateTime.now())
-                         .artists(in.artists)
+                         .artists(in.artists())
+                         .possibleDuplicateOf(possibleDuplicateOfId)
                          .build();
 
         var saved = eventRepository.save(event);
@@ -95,9 +115,12 @@ public class EventCommandService {
         if (modResult.flagged()) {
             autoModerationService.logFlag(saved.getId(), modResult);
         }
+        if (possibleDuplicateOfId != null) {
+            log.info("possible duplicate detected eventId={} duplicateId={}", saved.getId(), possibleDuplicateOfId);
+        }
 
         log.info("event proposed eventId={} userId={} status={}", saved.getId(), userId, initialStatus);
-        return mapper.toPrivateDto(saved);
+        return new ProposeEventResponse(mapper.toPrivateDto(saved), possibleDuplicate);
     }
 
     /**

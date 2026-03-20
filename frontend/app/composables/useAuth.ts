@@ -39,7 +39,7 @@ export function useAuth() {
     return Date.now() < expiresAtMs.value;
   });
 
-  const isModerator = computed(() => roles.value.includes("ROLE_MODERATOR"));
+  const isModerator = computed(() => roles.value.includes("ROLE_MODERATOR") || roles.value.includes("ROLE_ADMIN"));
   const isAdmin = computed(() => roles.value.includes("ROLE_ADMIN"));
 
   function saveToStorage(t: string | null, exp: number | null) {

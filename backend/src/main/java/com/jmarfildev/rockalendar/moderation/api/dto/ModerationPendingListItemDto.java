@@ -7,4 +7,4 @@ import java.util.UUID;
  * @author jmarfil
  *
  */
-public record ModerationPendingListItemDto(UUID id, String title, OffsetDateTime submittedAt) {}
+public record ModerationPendingListItemDto(UUID id, String title, OffsetDateTime submittedAt, UUID possibleDuplicateOf) {}

@@ -98,7 +98,15 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
                   <Card
                     class="h-full border-1 surface-50 surface-border cursor-pointer hover:surface-100 transition-colors transition-duration-150">
                     <template #title>
-                      <span>{{ event.title }}</span>
+                      <div class="flex align-items-start justify-content-between gap-3">
+                        <span>{{ event.title }}</span>
+                        <Tag
+                          v-if="event.possibleDuplicateOf"
+                          :value="t('moderation.possibleDuplicate')"
+                          severity="warn"
+                          icon="pi pi-copy"
+                          class="flex-shrink-0" />
+                      </div>
                     </template>
                     <template #content>
                       <div class="text-color-secondary text-sm flex flex-column gap-2">
