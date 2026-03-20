@@ -22,6 +22,8 @@ public interface ArtistRepository extends JpaRepository<Artist, UUID> {
 
     boolean existsBySlug(String slug);
 
+    boolean existsBySlugAndIdNot(String slug, UUID id);
+
     @Query(value = "SELECT EXISTS(SELECT 1 FROM event_artists WHERE artist_id = :id)", nativeQuery = true)
     boolean hasEvents(@Param("id") UUID id);
 

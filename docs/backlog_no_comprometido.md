@@ -51,6 +51,10 @@ Cuándo hacerlo:
 - autocomplete empieza a “rascar” en producción
 - EXPLAIN muestra Seq Scan constante en artists
 
+## Cookies
+
+- Banner de aviso del uso de cookies cuando se use alguna que no sea de sistema, por ahora no es obligatorio.
+
 ## Gestión del ciclo de vida de eventos
 
 - Lista de eventos públicos pasados.
@@ -103,6 +107,8 @@ Cuándo hacerlo:
 
 ## Notificaciones
 
+- Confirmar cuenta al registrarse.
+  - Para usuarios ya registrado, confirmar cuenta la primera vez que se logueen tras implementar la funcionalidad de notificaciones o en la configuración de cuenta que salgan todas las notificaciones deshabilitadas por defecto y que para activarlas sea necesario confirmar la cuenta.
 - Preferencias de notificaciones por usuario.
 - Canales:
   - Email

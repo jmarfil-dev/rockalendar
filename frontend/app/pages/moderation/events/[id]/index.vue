@@ -107,7 +107,7 @@ async function onConfirm() {
     <!-- Cargando -->
     <div v-if="loading" role="status" class="flex align-items-center gap-2 py-6 justify-content-center">
       <ProgressSpinner style="width: 2rem; height: 2rem" />
-      <span class="sr-only">{{ t('common.loading') }}</span>
+      <span class="sr-only">{{ t("common.loading") }}</span>
     </div>
 
     <!-- Contenido -->
@@ -342,11 +342,7 @@ async function onConfirm() {
   </Drawer>
 
   <!-- Diálogo de acción de moderación -->
-  <Dialog
-    v-model:visible="dialogVisible"
-    :header="dialogTitle"
-    modal
-    :style="{ width: '26rem' }">
+  <Dialog v-model:visible="dialogVisible" :header="dialogTitle" modal :style="{ width: '26rem' }">
     <div class="flex flex-column gap-3">
       <label for="action-text" class="text-sm text-color-secondary">
         {{ isCommentOptional ? t("moderation.actions.commentLabel") : t("moderation.actions.reasonLabel") }}
@@ -360,14 +356,12 @@ async function onConfirm() {
         autofocus
         :aria-required="!isCommentOptional"
         aria-describedby="action-error" />
-      <Message id="action-error" v-if="actionError" severity="error" :closable="false" class="mt-1">{{ actionError }}</Message>
+      <Message id="action-error" v-if="actionError" severity="error" :closable="false" class="mt-1">{{
+        actionError
+      }}</Message>
     </div>
     <template #footer>
-      <Button
-        :label="t('moderation.actions.cancel')"
-        severity="secondary"
-        outlined
-        @click="dialogVisible = false" />
+      <Button :label="t('moderation.actions.cancel')" severity="secondary" outlined @click="dialogVisible = false" />
       <Button
         :label="t('moderation.actions.confirm')"
         :loading="actionLoading"
