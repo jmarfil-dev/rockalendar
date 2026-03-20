@@ -1,3 +1,5 @@
+import type { Artist } from "~/types/artist";
+
 export type EventStatus =
   | "PENDING_MODERATION"
   | "APPROVED"
@@ -42,7 +44,7 @@ export type EventPublic = {
   provinceId: string;
   provinceName: string;
   cityName: string;
-  artists: string[];
+  artists: Artist[];
   sourceUrl?: string | null;
 };
 
@@ -67,7 +69,7 @@ export type EventPrivateDto = {
   provinceId: string;
   provinceName: string;
   cityName: string;
-  artists: string[];
+  artists: Artist[];
   sourceUrl?: string | null;
   status: EventStatus;
   moderationMessage?: string | null;

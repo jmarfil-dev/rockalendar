@@ -16,6 +16,8 @@ export const ROUTES = {
 
   errorForbidden: "/error/forbidden",
 
+  artists: "/artists",
+
   // api
   apiLogin: "/api/auth/login",
   apiRegister: "/api/auth/register",
@@ -35,6 +37,8 @@ export const ROUTES = {
 
 export const ROUTE_PATH = {
   eventDetail: (id: string) => `${ROUTES.events}/${id}`,
+  artistDetail: (id: string) => `${ROUTES.artists}/${id}`,
+  apiArtistDetail: (id: string) => `${ROUTES.apiArtists}/${id}`,
   apiEventDetail: (id: string) => `${ROUTES.apiEvents}/${id}`,
   meEventDetail: (id: string) => `${ROUTES.meEvents}/${id}`,
   apiMeEventDetail: (id: string) => `${ROUTES.apiMeEvents}/${id}`,

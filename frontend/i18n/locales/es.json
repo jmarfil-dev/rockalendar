@@ -196,9 +196,14 @@
     "to": "Hasta",
     "invalidRange": "La fecha fin no puede ser anterior a la fecha inicio"
   },
+  "artists": {
+    "upcomingEvents": "Próximos conciertos",
+    "noUpcomingEvents": "No hay conciertos próximos para este artista"
+  },
   "page": {
     "home": "Inicio",
     "events": "Conciertos",
+    "artistDetail": "Detalle de artista",
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "me": "Mi área",

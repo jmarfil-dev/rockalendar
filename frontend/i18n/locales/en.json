@@ -195,9 +195,14 @@
     "to": "To",
     "invalidRange": "End date cannot be earlier than start date"
   },
+  "artists": {
+    "upcomingEvents": "Upcoming concerts",
+    "noUpcomingEvents": "No upcoming concerts for this artist"
+  },
   "page": {
     "home": "Home",
     "events": "Concerts",
+    "artistDetail": "Artist detail",
     "login": "Login",
     "register": "Register",
     "me": "My area",
