@@ -149,7 +149,20 @@
     "possibleDuplicate": "Posible duplicado",
     "hub": {
       "events": "Moderar conciertos",
-      "eventsDesc": "Revisar conciertos pendientes de moderación y archivados"
+      "eventsDesc": "Revisar conciertos pendientes de moderación y archivados",
+      "artists": "Crear artista",
+      "artistsDesc": "Añadir un artista nuevo al catálogo"
+    },
+    "artists": {
+      "createTitle": "Crear artista",
+      "name": "Nombre del artista",
+      "namePlaceholder": "Nombre tal como aparece en los carteles",
+      "submit": "Crear artista",
+      "cancel": "Cancelar",
+      "successTitle": "¡Artista creado!",
+      "successMsg": "El artista \"{name}\" ha sido añadido al catálogo.",
+      "successOk": "Crear otro",
+      "errorExists": "Ya existe un artista con ese nombre"
     },
     "tabs": {
       "PENDING": "Pendientes",

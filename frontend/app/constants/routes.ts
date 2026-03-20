@@ -11,6 +11,7 @@ export const ROUTES = {
 
   moderation: "/moderation",
   moderationEvents: "/moderation/events",
+  moderationArtistCreate: "/moderation/artists/create",
 
   admin: "/admin",
 
@@ -31,6 +32,7 @@ export const ROUTES = {
   apiMeAgenda: "/api/me/agenda",
 
   apiModerationEvents: "/api/moderation/events",
+  apiModerationArtists: "/api/moderation/artists",
   apiModerationPending: "/api/moderation/events/pending",
   apiModerationArchived: "/api/moderation/events/archived",
 } as const;

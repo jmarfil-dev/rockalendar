@@ -148,7 +148,20 @@
     "possibleDuplicate": "Possible duplicate",
     "hub": {
       "events": "Concerts",
-      "eventsDesc": "Review pending concerts and moderation archive"
+      "eventsDesc": "Review pending concerts and moderation archive",
+      "artists": "Create artist",
+      "artistsDesc": "Add a new artist to the catalogue"
+    },
+    "artists": {
+      "createTitle": "Create artist",
+      "name": "Artist name",
+      "namePlaceholder": "Name as it appears on posters",
+      "submit": "Create artist",
+      "cancel": "Cancel",
+      "successTitle": "Artist created!",
+      "successMsg": "Artist \"{name}\" has been added to the catalogue.",
+      "successOk": "Create another",
+      "errorExists": "An artist with that name already exists"
     },
     "tabs": {
       "PENDING": "Pending",
