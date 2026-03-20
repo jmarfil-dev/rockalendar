@@ -181,10 +181,15 @@ Completa la aplicación con detalles vistos durante el desarrollo.
 
 Incluye:
 
+- Cartel de evento
+- Detalle de artista
+- Crear artista (moderador)
 - Refresh token
 - Logout
-- Recuperar contraseña
+- Recuperar / cambiar contraseña
 - Añadir rate limiting + captcha tras varios intentos para evitar accesos por fuerza bruta
+- Ley de protección de datos, política de privacidad, etc.
+- Mejorar agregar artistas al crear evento: pegado masivo, ¿leer desde cartel?
 
 ### Frontend v0.5 - Otras funcionalidades
 

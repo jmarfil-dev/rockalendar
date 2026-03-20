@@ -54,21 +54,13 @@ Cuándo hacerlo:
 ## Gestión del ciclo de vida de eventos
 
 - Lista de eventos públicos pasados.
-- Constraint `UNIQUE` y evitar duplicados en eventos (por provincia, ciudad, recinto y fecha).
-- Devolver error 409 Conflict cuando se detecte un duplicado a `MeEventApi.propose()`.
 - Cron job cada 24 horas para cerrar eventos pasados.
 - Desarrollar estado `DRAFT`.
-- Nuevo estado `REALIZADO` o `PASADO` (nombre por decidir).
+- Nuevo estado `REALIZADO` o `PASADO` (nombre por decidir). ¿Merece la pena?
 - Historial de estados para auditoría.
-- Pensar qué hacer con un evento `REJECTED` para que no se vuelva a intentar crear.
 - Estado `REQUEST_CANCEL` para solicitar cancelación de evento.
   - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED` o `PENDING_MODERATION`.
 - Enviar correcciones sobre un evento aprobado. El flujo sería: usuario reporta corrección → va al sistema de moderación como cualquier otra acción → el evento del promotor aparece marcado con "hay observaciones" en su panel.
-
-## Artistas y contenido de eventos
-
-- Detalle de artista.
-- Imágenes (cartel del evento).
 
 ## Administración
 
@@ -94,6 +86,10 @@ Cuándo hacerlo:
 **Automoderación**
 - Si un artista tiene X eventos rechazados por blacklist (no por otros motivos), el sistema sugerirá añadirlo a la blacklist de artistas.
 - Si el sistema anti-spam no se queda corto, agregar regla: auto rechazo eventos propuestos por usuarios con trust_score igual al redflag para ascender a moderador (actualmente -200).
+
+## Traducciones
+
+- Traducción a las lenguas cooficiales de España: catalán, euskera, valenciano y gallego. Necesitaremos voluntarios.
 
 ## Funciones sociales (base)
 
