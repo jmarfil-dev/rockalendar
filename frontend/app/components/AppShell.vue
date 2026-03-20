@@ -72,8 +72,9 @@ const goToMyArea = async () => {
   await navigateTo(ROUTES.me);
 };
 
-const onSettingsClick = () => {
+const onSettingsClick = async () => {
   closeUserDrawer();
+  await navigateTo(ROUTES.meSettings);
 };
 
 const onLogoutClick = async () => {

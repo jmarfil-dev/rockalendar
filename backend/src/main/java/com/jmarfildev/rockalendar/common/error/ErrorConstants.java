@@ -36,6 +36,8 @@ public final class ErrorConstants {
     public static final String INVALID_PROVINCE = "error.400.invalidProvince";
     public static final String INVALID_DATE_RANGE = "error.400.invalidDateRange";
     public static final String PAGE_SIZE_TOO_LARGE = "error.400.pageSizeTooLarge";
+    public static final String WRONG_CURRENT_PASSWORD = "error.400.wrongCurrentPassword";
+    public static final String WRONG_CONFIRM_PASSWORD = "error.400.wrongConfirmPassword";
     public static final String VALID_PASSWORD = "error.400.valid.patternPassword";
     public static final String VALID_SIZE_LIST_EMPTY = "error.400.valid.sizeListEmpty";
     public static final String VALID_SIZE_PASSWORD = "error.400.valid.sizePassword";

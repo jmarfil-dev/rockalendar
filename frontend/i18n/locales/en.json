@@ -81,6 +81,17 @@
       "removeOk": "Yes, remove",
       "removeCancel": "Cancel"
     },
+    "settings": {
+      "title": "Account settings",
+      "changePassword": "Change password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "passwordMismatch": "Passwords do not match",
+      "submit": "Save password",
+      "successTitle": "Password updated!",
+      "successMsg": "Your password has been changed successfully."
+    },
     "myEvents": "My concerts",
     "myEventsDesc": "Concerts you have proposed",
     "tabs": {
@@ -258,6 +269,7 @@
     "meEvents": "My concerts",
     "mePropose": "Propose a concert",
     "meEdit": "Edit concert",
+    "meSettings": "Account settings",
     "moderation": "Moderation",
     "moderationEvents": "Moderate concerts",
     "moderationArtists": "Artists without concerts",
@@ -283,6 +295,8 @@
       "invalidProvince": "Invalid provinceId",
       "invalidDateRange": "Invalid date range: dateFrom must be <= dateTo",
       "pageSizeTooLarge": "Page size exceeds the maximum allowed limit",
+      "wrongCurrentPassword": "Current password is incorrect",
+      "wrongConfirmPassword": "Passwords do not match",
       "valid": {
         "patternPassword": "Password must contain upper, lower, number and symbol",
         "sizePassword": "Password must be between 8 and 72 characters",

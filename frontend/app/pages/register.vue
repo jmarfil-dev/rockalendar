@@ -13,7 +13,7 @@ definePageMeta({ layout: "minimal" });
 const { t } = useI18n();
 useHead({ title: () => t("page.register") });
 const auth = useAuth();
-const { form, loading, errorMsg, fieldErrors, resetErrors, tr } = useAuthForm();
+const { form, loading, errorMsg, fieldErrors, resetErrors } = useAuthForm();
 
 const passwordChecks = computed(() => {
   const pw = form.password || "";

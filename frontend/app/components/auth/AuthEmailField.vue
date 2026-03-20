@@ -7,10 +7,7 @@ defineProps<{
 }>();
 defineEmits<{ "update:modelValue": [value: string] }>();
 
-const { t, te } = useI18n();
-function tr(key: string) {
-  return te(key) ? t(key) : key;
-}
+const { t } = useI18n();
 </script>
 
 <template>

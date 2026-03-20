@@ -14,7 +14,7 @@ const { t } = useI18n();
 useHead({ title: () => t("page.login") });
 const auth = useAuth();
 const route = useRoute();
-const { form, loading, errorMsg, fieldErrors, resetErrors, tr } = useAuthForm();
+const { form, loading, errorMsg, fieldErrors, resetErrors } = useAuthForm();
 
 async function onSubmit() {
   resetErrors();

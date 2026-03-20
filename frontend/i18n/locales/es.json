@@ -82,6 +82,17 @@
       "removeOk": "Sí, quitar",
       "removeCancel": "Cancelar"
     },
+    "settings": {
+      "title": "Ajustes de cuenta",
+      "changePassword": "Cambiar contraseña",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar nueva contraseña",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "submit": "Guardar contraseña",
+      "successTitle": "¡Contraseña actualizada!",
+      "successMsg": "Tu contraseña ha sido cambiada correctamente."
+    },
     "myEvents": "Mis conciertos",
     "myEventsDesc": "Conciertos que has propuesto",
     "tabs": {
@@ -259,6 +270,7 @@
     "meEvents": "Mis conciertos",
     "mePropose": "Proponer concierto",
     "meEdit": "Editar concierto",
+    "meSettings": "Ajustes de cuenta",
     "moderation": "Moderación",
     "moderationEvents": "Moderar conciertos",
     "moderationArtists": "Artistas sin concierto",
@@ -284,6 +296,8 @@
       "invalidProvince": "Provincia no válida",
       "invalidDateRange": "Rango de fecha no válido: dateFrom debe ser <= dateTo",
       "pageSizeTooLarge": "Tamaño de página excede el límite máximo",
+      "wrongCurrentPassword": "La contraseña actual no es correcta",
+      "wrongConfirmPassword": "Las contraseñas no coinciden",
       "valid": {
         "patternPassword": "La contraseña debe tener al menos una mayuscula, una minúscula, un número y un símbolo",
         "sizePassword": "La contraseña debe tener entre 8 y 72 caracteres",

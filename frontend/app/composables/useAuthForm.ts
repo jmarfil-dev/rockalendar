@@ -1,8 +1,6 @@
 import type { LoginRequest } from "~/types/auth";
 
 export function useAuthForm() {
-  const { t, te } = useI18n();
-
   const form = reactive<LoginRequest>({
     email: "",
     password: "",
@@ -16,10 +14,5 @@ export function useAuthForm() {
     fieldErrors.value = {};
   }
 
-  // Devuelve la traducción si existe, o la clave literal si no
-  function tr(key: string) {
-    return te(key) ? t(key) : key;
-  }
-
-  return { form, loading, errorMsg, fieldErrors, resetErrors, tr };
+  return { form, loading, errorMsg, fieldErrors, resetErrors };
 }

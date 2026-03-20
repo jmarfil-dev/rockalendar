@@ -8,6 +8,7 @@ export const ROUTES = {
   meAgenda: "/me/agenda",
   meEvents: "/me/events",
   meEventPropose: "/me/events/propose",
+  meSettings: "/me/settings",
 
   moderation: "/moderation",
   moderationEvents: "/moderation/events",
@@ -33,6 +34,7 @@ export const ROUTES = {
   apiProvincesCombo: "/api/provinces/combo",
   apiMe: "/api/me",
   apiMePromotionRequest: "/api/me/promotion-request",
+  apiMePassword: "/api/me/password",
   apiMeEvents: "/api/me/events",
   apiMeAgenda: "/api/me/agenda",
 

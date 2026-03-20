@@ -12,11 +12,7 @@ const props = defineProps<{
 const emit = defineEmits<{ "update:modelValue": [value: ArtistChip[]] }>();
 
 const { suggestions, search } = useArtistAutocomplete();
-const { t, te } = useI18n();
-
-function tr(key: string) {
-  return te(key) ? t(key) : key;
-}
+const { t } = useI18n();
 
 const inputValue = ref<string | Artist>("");
 const atLimit = computed(() => props.modelValue.length >= MAX_ARTISTS);
@@ -68,7 +64,10 @@ function onWrapperKeydown(e: KeyboardEvent) {
 // Pegado masivo: parsea lista separada por ; o salto de línea
 function onPaste(e: ClipboardEvent) {
   const text = e.clipboardData?.getData("text") ?? "";
-  const tokens = text.split(/[;\n]/).map((s) => s.trim()).filter(Boolean);
+  const tokens = text
+    .split(/[;\n]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
   if (tokens.length <= 1) return; // paste normal → el autocomplete lo gestiona
   e.preventDefault();
   const newChips = [...props.modelValue];
@@ -80,14 +79,17 @@ function onPaste(e: ClipboardEvent) {
   }
   chipKeys.value = newKeys;
   emit("update:modelValue", newChips);
-  nextTick(() => { inputValue.value = ""; });
+  nextTick(() => {
+    inputValue.value = "";
+  });
 }
 </script>
 
 <template>
   <div class="flex flex-column gap-2">
     <label for="artists-input" class="text-sm text-color-secondary">
-      {{ t("events.artists") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+      {{ t("events.artists") }} <span class="text-red-500" aria-hidden="true">*</span
+      ><span class="sr-only">{{ t("common.required") }}</span>
     </label>
 
     <div class="flex gap-2 align-items-center" @keydown="onWrapperKeydown" @paste="onPaste">
