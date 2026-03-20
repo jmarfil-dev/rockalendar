@@ -139,11 +139,26 @@ const onLogoutClick = async () => {
     </header>
 
     <!-- Body -->
-    <main id="main-content" class="flex-1 surface-0 mb-5">
+    <main id="main-content" class="flex-1 surface-0">
       <div class="mx-auto w-full max-w-7xl px-3 py-4">
         <slot />
       </div>
     </main>
+
+    <!-- Footer: pb-6 cuando hay bottom nav fixed para no quedar tapado -->
+    <footer class="surface-0 border-top-1 surface-border" :class="{ 'pb-6': props.bottomItems?.length }">
+      <div class="mx-auto w-full max-w-7xl px-3 py-3 flex justify-content-center gap-4">
+        <NuxtLink :to="ROUTES.about" class="text-sm text-color-secondary no-underline hover:underline">
+          {{ t("page.about") }}
+        </NuxtLink>
+        <NuxtLink :to="ROUTES.privacy" class="text-sm text-color-secondary no-underline hover:underline">
+          {{ t("page.privacy") }}
+        </NuxtLink>
+        <NuxtLink :to="ROUTES.contact" class="text-sm text-color-secondary no-underline hover:underline">
+          {{ t("page.contact") }}
+        </NuxtLink>
+      </div>
+    </footer>
 
     <!-- Bottom nav -->
     <nav

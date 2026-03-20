@@ -198,6 +198,7 @@
       "rejectTitle": "Rechaza el conci si cumple al menos una de estas condiciones:",
       "rejectItems": [
         "Festi non grato: festivales asociados al eje del mal (Superstruct, KKR) o con prácticas empresariales poco éticas (cobrar reacceso, explotar trabajadores en la barra). Ejemplos: Viña Rock, Resurrection, Tsunami. El Pirata se salva por los pelos, de momento.",
+        "Festi mainstream: los eventos de pop ya tienen publicidad más que de sobra y ocupan espacio en otras plataformas, los pijos al Mad Cool.",
         "Artista fascista: alguno de los grupos hace apología del fascismo (racismo, sexismo, lgtbifobia, etc), discursos de odio o es claramente de derechas. Ejemplos: Sherpa, grupos nazis.",
         "Concierto malintencionado: el evento tiene datos malintencionados. Ejemplos: la url que no lleva al evento, anuncia grupos que no tocan para llamar la atención.",
         "El cartel del festi pide expresamente que no se comparta, habitual en eventos organizados en CSOs."
@@ -224,12 +225,28 @@
     "upcomingEvents": "Próximos conciertos",
     "noUpcomingEvents": "No hay conciertos próximos para este artista"
   },
+  "privacy": {
+    "placeholder": "Política de privacidad próximamente...",
+    "contactLink": "¿Tienes alguna duda? Contáctanos"
+  },
+  "contact": {
+    "title": "Contacto",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "message": "Mensaje",
+    "messagePlaceholder": "Escribe tu mensaje...",
+    "submit": "Enviar",
+    "note": "Responderemos a la mayor brevedad posible."
+  },
   "page": {
     "home": "Inicio",
     "events": "Conciertos",
     "artistDetail": "Detalle de artista",
     "login": "Iniciar sesión",
     "register": "Registrarse",
+    "about": "¿Qué es Rockalendar?",
+    "privacy": "Política de privacidad",
+    "contact": "Contacto",
     "me": "Mi área",
     "meAgenda": "Mi agenda",
     "meEvents": "Mis conciertos",

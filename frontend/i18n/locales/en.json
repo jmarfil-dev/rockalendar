@@ -197,6 +197,7 @@
       "rejectTitle": "Reject the concert if it meets at least one of these conditions:",
       "rejectItems": [
         "Non grata festival: festivals associated with bad actors (Superstruct, KKR) or with unethical business practices (charging re-entry fees, exploiting bar staff). Examples: Viña Rock, Resurrection, Tsunami.",
+        "Mainstream festivals: pop events already have more than enough publicity and occupy space on other platforms, preppies go to Mad Cool.",
         "Fascist artist: one of the bands promotes fascism (racism, sexism, lgbtiphobia, etc.), hate speech, or is clearly far-right. Examples: Sherpa, nazi bands.",
         "Malicious concert: the event contains misleading data. Examples: a URL that doesn't lead to the event, announces bands that aren't playing to attract attention.",
         "The festival poster explicitly requests it not be shared, common in events organised in social centres (CSOs)."
@@ -223,12 +224,28 @@
     "upcomingEvents": "Upcoming concerts",
     "noUpcomingEvents": "No upcoming concerts for this artist"
   },
+  "privacy": {
+    "placeholder": "Privacy policy coming soon...",
+    "contactLink": "Have a question? Contact us"
+  },
+  "contact": {
+    "title": "Contact",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "message": "Message",
+    "messagePlaceholder": "Write your message...",
+    "submit": "Send",
+    "note": "We will resply ASAP."
+  },
   "page": {
     "home": "Home",
     "events": "Concerts",
     "artistDetail": "Artist detail",
     "login": "Login",
     "register": "Register",
+    "about": "About Rockalendar",
+    "privacy": "Privacy policy",
+    "contact": "Contact",
     "me": "My area",
     "meAgenda": "My schedule",
     "meEvents": "My concerts",
