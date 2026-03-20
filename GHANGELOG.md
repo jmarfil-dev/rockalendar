@@ -3,6 +3,29 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v0.4.0]
+### Added
+- [BACK] Trust score de usuario y endpoint `GET /api/me` con datos del usuario autenticado.
+- [BACK] Ascenso a moderador: endpoint `POST /api/me/promote` con validación de trust score mínimo.
+- [BACK] Agenda personal: `UserEvent` con estados `INTERESTED` / `GOING`, endpoints `POST/DELETE /api/me/agenda/{id}` y `GET /api/me/agenda`.
+- [BACK] Moderación automática: blacklist de palabras, detección de spam (mismo usuario, mismo día) y auto-rechazo por tercera solicitud de cambios.
+- [BACK] Detección de eventos duplicados al proponer: similitud por título + artistas + recinto (pg_trgm > 0.3) en el mismo día; campo `possible_duplicate_of` en la entidad.
+- [FRONT] Agenda personal completa en `/me/agenda` con estados, confirmación de borrado y paginación.
+- [FRONT] Botón condicional de solicitud de ascenso a moderador en `/me`.
+- [FRONT] Aviso de posible duplicado al proponer un evento (con enlace si el original está aprobado).
+- [FRONT] Badge de posible duplicado en el listado de moderación.
+- [FRONT] Drawer de consejos de moderación en el detalle de evento con criterios de rechazo y de solicitud de cambios.
+
+### Changed
+- [FRONT] El email del usuario en el panel de cuenta muestra solo el nombre de usuario (sin dominio).
+- [FRONT] `isModerator` incluye también el rol `ROLE_ADMIN`.
+- [FRONT] Fechas pasadas deshabilitadas en los datepickers de propuesta y edición de eventos.
+- [FRONT] Eliminado `useApiFetch`; errores 4xx en el detalle de evento público se normalizan a 404.
+
+### Fixed
+- [BACK] Eventos con estado `FLAGGED` ocultos al usuario; incluidos en la cola de pendientes para moderadores.
+- [BACK] Refactorización de mensajes de error y limpieza de códigos i18n en respuestas.
+
 ## [v0.3.0-frontend]
 ### Added
 - [FRONT] Layout privado y hub `/me` con cards de agenda y mis conciertos.
