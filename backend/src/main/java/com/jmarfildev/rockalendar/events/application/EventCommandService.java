@@ -31,6 +31,7 @@ import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
+import com.jmarfildev.rockalendar.events.persistence.DuplicateEventProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
@@ -81,7 +82,7 @@ public class EventCommandService {
         var artistIds = in.artists().stream().map(a -> a.getId()).toList();
         var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
         var dayEnd = dayStart.plusDays(1);
-        List<com.jmarfildev.rockalendar.events.persistence.DuplicateEventProjection> duplicates =
+        List<DuplicateEventProjection> duplicates =
                 eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
 
         UUID possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
