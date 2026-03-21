@@ -13,6 +13,7 @@ import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
+import com.jmarfildev.rockalendar.users.api.dto.ChangeLocaleRequest;
 import com.jmarfildev.rockalendar.users.api.dto.ChangePasswordRequest;
 import com.jmarfildev.rockalendar.users.api.dto.MeDto;
 import com.jmarfildev.rockalendar.users.api.mapper.UserMapper;
@@ -77,6 +78,14 @@ public class MeCommandService {
 
         user.setDeletionRequestedAt(OffsetDateTime.now());
         log.info("account deletion requested userId={}", userId);
+    }
+
+    @Transactional
+    public void changeLocale(ChangeLocaleRequest request) {
+        var userId = currentUser.userId();
+        User user = userRepository.findById(userId).orElseThrow();
+        user.setPreferredLanguage(request.locale());
+        log.info("locale changed userId={} locale={}", userId, request.locale());
     }
 
     @Transactional

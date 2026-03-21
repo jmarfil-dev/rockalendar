@@ -35,6 +35,7 @@ export const ROUTES = {
   apiMe: "/api/me",
   apiMePromotionRequest: "/api/me/promotion-request",
   apiMePassword: "/api/me/password",
+  apiMeLocale: "/api/me/locale",
   apiMeCancelDeletion: "/api/me/cancel-deletion",
   apiMeEvents: "/api/me/events",
   apiMeAgenda: "/api/me/agenda",

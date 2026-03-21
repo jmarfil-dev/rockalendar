@@ -66,6 +66,7 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setRole(UserRole.USER.name());
         user.setPrivacyAccepted(true);
+        user.setPreferredLanguage(request.locale());
 
         try {
             userRepository.saveAndFlush(user); // flush para detectar unique de email aquí

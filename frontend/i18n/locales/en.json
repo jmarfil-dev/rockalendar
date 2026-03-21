@@ -17,7 +17,8 @@
     "details": "Details",
     "noAvail": "Not available",
     "anythingWrong": "Do you see anything wrong?",
-    "sendCom": "Send comment"
+    "sendCom": "Send comment",
+    "save": "Save"
   },
   "events": {
     "title": "Title",
@@ -83,6 +84,9 @@
     },
     "settings": {
       "title": "Account settings",
+      "changeLanguage": "Preferred language",
+      "changeLanguageDesc": "Used to send you emails (password reset, etc.) in your language.",
+      "changeLanguageSaved": "Language saved",
       "changePassword": "Change password",
       "currentPassword": "Current password",
       "newPassword": "New password",
