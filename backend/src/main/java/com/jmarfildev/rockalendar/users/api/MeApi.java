@@ -1,6 +1,7 @@
 package com.jmarfildev.rockalendar.users.api;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -51,4 +52,22 @@ public interface MeApi {
     @ApiBadRequest
     @ApiUnauthorized
     void changePassword(@Parameter(required = true) @Valid @RequestBody ChangePasswordRequest request);
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Solicitar eliminación de cuenta",
+               description = "Marca la cuenta para eliminación definitiva. Los datos personales se anonimizarán pasados 7 días. La cuenta sigue activa durante ese período y el usuario puede cancelar la solicitud.")
+    @ApiResponse(responseCode = "204", description = "Solicitud de eliminación registrada")
+    @ApiConflict
+    @ApiUnauthorized
+    void requestDeletion();
+
+    @PostMapping("/cancel-deletion")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Cancelar eliminación de cuenta",
+               description = "Cancela una solicitud de eliminación pendiente. Solo es posible dentro del período de gracia de 7 días.")
+    @ApiResponse(responseCode = "204", description = "Solicitud de eliminación cancelada")
+    @ApiConflict
+    @ApiUnauthorized
+    void cancelDeletion();
 }

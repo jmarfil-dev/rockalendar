@@ -33,4 +33,14 @@ public class MeController implements MeApi {
     public void changePassword(ChangePasswordRequest request) {
         commandService.changePassword(request);
     }
+
+    @Override
+    public void requestDeletion() {
+        commandService.requestDeletion();
+    }
+
+    @Override
+    public void cancelDeletion() {
+        commandService.cancelDeletion();
+    }
 }

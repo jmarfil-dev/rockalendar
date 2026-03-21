@@ -25,10 +25,14 @@ public class AuthUserDetailsService implements UserDetailsService {
         var user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        // Cuentas anonimizadas definitivamente no pueden autenticarse
+        boolean enabled = !user.isErased();
+
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPasswordHash())
                 .authorities(new SimpleGrantedAuthority(user.roleEnum().asAuthority()))
+                .disabled(!enabled)
                 .build();
     }
 }

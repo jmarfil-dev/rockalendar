@@ -91,7 +91,24 @@
       "passwordMismatch": "Las contraseñas no coinciden",
       "submit": "Guardar contraseña",
       "successTitle": "¡Contraseña actualizada!",
-      "successMsg": "Tu contraseña ha sido cambiada correctamente."
+      "successMsg": "Tu contraseña ha sido cambiada correctamente.",
+      "deleteAccount": {
+        "title": "Eliminar cuenta",
+        "desc": "Si eliminas tu cuenta, tendrás 7 días para cancelar la solicitud. Pasado ese plazo, tus datos personales serán eliminados de forma permanente.",
+        "requestBtn": "Eliminar mi cuenta",
+        "cancelBtn": "Cancelar eliminación",
+        "pendingWarning": "Tu cuenta está programada para eliminarse el {date}. Puedes cancelar esta solicitud antes de esa fecha.",
+        "modalTitle": "¿Eliminar cuenta?",
+        "modalBody": "Tu cuenta quedará activa durante 7 días. Pasado ese plazo, tus datos personales se eliminarán de forma permanente y no podrás recuperar el acceso. Puedes cancelar la solicitud en cualquier momento durante ese período.",
+        "modalConfirm": "Sí, eliminar mi cuenta",
+        "modalCancel": "Cancelar",
+        "requestedTitle": "Solicitud registrada",
+        "requestedMsg": "Tu cuenta se eliminará en 7 días. Puedes cancelar la solicitud desde esta misma página.",
+        "cancelledTitle": "Eliminación cancelada",
+        "cancelledMsg": "Tu cuenta permanecerá activa con normalidad.",
+        "errorTitle": "Error",
+        "errorMsg": "No se ha podido procesar la solicitud. Inténtalo de nuevo."
+      }
     },
     "myEvents": "Mis conciertos",
     "myEventsDesc": "Conciertos que has propuesto",
@@ -336,7 +353,9 @@
       "eventNotErasable": "El concierto no tiene un estado eliminable",
       "eventNotErasableAppr": "Los conciertos aprobados no pueden eliminarse",
       "agendaEventNotAvailable": "Solo puedes añadir a la agenda conciertos aprobados",
-      "dbConstraint": "Restricción de BD violada"
+      "dbConstraint": "Restricción de BD violada",
+      "accountPendingDeletion": "Tu cuenta ya tiene una solicitud de eliminación pendiente",
+      "accountNotPendingDeletion": "No hay ninguna solicitud de eliminación activa"
     },
     "500": {
       "server": "Error inesperado del servidor"

@@ -68,6 +68,8 @@ public final class ErrorConstants {
     public static final String EVENT_NOT_ERASABLE_APPROVED = "error.409.eventNotErasableAppr";
     public static final String AGENDA_EVENT_NOT_AVAILABLE = "error.409.agendaEventNotAvailable";
     public static final String PROMOTION_NOT_ELIGIBLE = "error.409.promotionNotEligible";
+    public static final String ACCOUNT_PENDING_DELETION = "error.409.accountPendingDeletion";
+    public static final String ACCOUNT_NOT_PENDING_DELETION = "error.409.accountNotPendingDeletion";
 
     // Conflict 409 genérico (constraint de BD no capturada explícitamente)
     public static final String DB_CONSTRAINT = "error.409.dbConstraint";

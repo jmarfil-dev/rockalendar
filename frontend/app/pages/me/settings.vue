@@ -12,11 +12,57 @@ definePageMeta({ layout: "private", ssr: false });
 const { t } = useI18n();
 useHead({ title: () => t("page.meSettings") });
 const toast = useToast();
+const { me, fetchMe } = useMe();
 
 const form = reactive({ currentPassword: "", newPassword: "", confirmPassword: "" });
 const loading = ref(false);
 const errorMsg = ref<string | null>(null);
 const fieldErrors = ref<Record<string, string>>({});
+
+// Eliminación de cuenta
+const showDeleteModal = ref(false);
+const deletionLoading = ref(false);
+const cancelLoading = ref(false);
+
+onMounted(fetchMe);
+
+const deletionDate = computed(() => {
+  if (!me.value?.deletionRequestedAt) return null;
+  const d = new Date(me.value.deletionRequestedAt);
+  d.setDate(d.getDate() + 7);
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
+});
+
+async function confirmDeletion() {
+  deletionLoading.value = true;
+  try {
+    const res = await fetchAuthResult<void>(ROUTES.apiMe, { method: "DELETE" });
+    if (!res.ok) {
+      toast.add({ severity: "error", summary: t("me.settings.deleteAccount.errorTitle"), detail: t("me.settings.deleteAccount.errorMsg"), life: 4000 });
+      return;
+    }
+    showDeleteModal.value = false;
+    await fetchMe();
+    toast.add({ severity: "warn", summary: t("me.settings.deleteAccount.requestedTitle"), detail: t("me.settings.deleteAccount.requestedMsg"), life: 6000 });
+  } finally {
+    deletionLoading.value = false;
+  }
+}
+
+async function cancelDeletion() {
+  cancelLoading.value = true;
+  try {
+    const res = await fetchAuthResult<void>(ROUTES.apiMeCancelDeletion, { method: "POST" });
+    if (!res.ok) {
+      toast.add({ severity: "error", summary: t("me.settings.deleteAccount.errorTitle"), detail: t("me.settings.deleteAccount.errorMsg"), life: 4000 });
+      return;
+    }
+    await fetchMe();
+    toast.add({ severity: "success", summary: t("me.settings.deleteAccount.cancelledTitle"), detail: t("me.settings.deleteAccount.cancelledMsg"), life: 4000 });
+  } finally {
+    cancelLoading.value = false;
+  }
+}
 
 const passwordChecks = computed(() => {
   const pw = form.newPassword || "";
@@ -198,5 +244,57 @@ async function onSubmit() {
         </form>
       </template>
     </Card>
+    <!-- Eliminar cuenta -->
+    <Card class="border-1 border-red-300">
+      <template #title>
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-trash text-xl text-red-500" />
+          <span class="text-lg">{{ t("me.settings.deleteAccount.title") }}</span>
+        </div>
+      </template>
+      <template #content>
+        <!-- Solicitud pendiente -->
+        <div v-if="me?.deletionRequestedAt" class="flex flex-column gap-3">
+          <Message severity="warn" :closable="false">
+            {{ t("me.settings.deleteAccount.pendingWarning", { date: deletionDate }) }}
+          </Message>
+          <Button
+            :label="t('me.settings.deleteAccount.cancelBtn')"
+            icon="pi pi-undo"
+            severity="secondary"
+            :loading="cancelLoading"
+            @click="cancelDeletion" />
+        </div>
+
+        <!-- Sin solicitud activa -->
+        <div v-else class="flex flex-column gap-3">
+          <p class="m-0 text-color-secondary">{{ t("me.settings.deleteAccount.desc") }}</p>
+          <Button
+            :label="t('me.settings.deleteAccount.requestBtn')"
+            icon="pi pi-trash"
+            severity="danger"
+            outlined
+            @click="showDeleteModal = true" />
+        </div>
+      </template>
+    </Card>
   </div>
+
+  <!-- Modal confirmación eliminación -->
+  <Dialog
+    v-model:visible="showDeleteModal"
+    modal
+    :header="t('me.settings.deleteAccount.modalTitle')"
+    :style="{ width: '28rem' }">
+    <p class="m-0 mb-3 line-height-3">{{ t("me.settings.deleteAccount.modalBody") }}</p>
+    <template #footer>
+      <Button :label="t('me.settings.deleteAccount.modalCancel')" severity="secondary" text @click="showDeleteModal = false" />
+      <Button
+        :label="t('me.settings.deleteAccount.modalConfirm')"
+        icon="pi pi-trash"
+        severity="danger"
+        :loading="deletionLoading"
+        @click="confirmDeletion" />
+    </template>
+  </Dialog>
 </template>

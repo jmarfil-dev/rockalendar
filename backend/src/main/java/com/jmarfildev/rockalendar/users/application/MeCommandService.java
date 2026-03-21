@@ -1,5 +1,7 @@
 package com.jmarfildev.rockalendar.users.application;
 
+import java.time.OffsetDateTime;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,5 +64,31 @@ public class MeCommandService {
 
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
         log.info("password changed userId={}", userId);
+    }
+
+    @Transactional
+    public void requestDeletion() {
+        var userId = currentUser.userId();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        if (user.getDeletionRequestedAt() != null) {
+            throw new ConflictException(ErrorConstants.ACCOUNT_PENDING_DELETION);
+        }
+
+        user.setDeletionRequestedAt(OffsetDateTime.now());
+        log.info("account deletion requested userId={}", userId);
+    }
+
+    @Transactional
+    public void cancelDeletion() {
+        var userId = currentUser.userId();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        if (user.getDeletionRequestedAt() == null) {
+            throw new ConflictException(ErrorConstants.ACCOUNT_NOT_PENDING_DELETION);
+        }
+
+        user.setDeletionRequestedAt(null);
+        log.info("account deletion cancelled userId={}", userId);
     }
 }

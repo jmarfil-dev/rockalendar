@@ -1,5 +1,6 @@
 package com.jmarfildev.rockalendar.users.api.dto;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -10,5 +11,6 @@ public record MeDto(
         String email,
         String role,
         String preferredLanguage,
-        boolean promotionEligible
+        boolean promotionEligible,
+        OffsetDateTime deletionRequestedAt
 ) {}

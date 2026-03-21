@@ -4,4 +4,5 @@ export type MeDto = {
   role: string;
   preferredLanguage: string | null;
   promotionEligible: boolean;
+  deletionRequestedAt: string | null;
 };

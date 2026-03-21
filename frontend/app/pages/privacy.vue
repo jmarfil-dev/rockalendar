@@ -54,7 +54,8 @@ useHead({ title: () => t("page.privacy") });
 
           <section>
             <h2 class="text-lg font-semibold mt-0 mb-2">5. Conservación de los datos</h2>
-            <p class="m-0">Los datos se conservarán mientras la cuenta de usuario permanezca activa. En caso de que el usuario elimine su cuenta o solicite la supresión de sus datos, estos serán eliminados de forma definitiva de nuestros sistemas.</p>
+            <p class="m-0 mb-2">Los datos se conservarán mientras la cuenta de usuario permanezca activa. Cuando el usuario solicita la eliminación de su cuenta a través de los ajustes de la aplicación, se abre un <strong>período de gracia de 7 días</strong> durante el cual la cuenta sigue siendo accesible y la solicitud puede cancelarse en cualquier momento.</p>
+            <p class="m-0">Transcurridos esos 7 días sin cancelación, los datos personales del usuario (dirección de correo electrónico y contraseña) son eliminados de forma definitiva e irreversible de nuestros sistemas.</p>
           </section>
 
           <section>
@@ -133,7 +134,8 @@ useHead({ title: () => t("page.privacy") });
 
           <section>
             <h2 class="text-lg font-semibold mt-0 mb-2">5. Data Retention</h2>
-            <p class="m-0">Data will be retained for as long as the user account remains active. If the user deletes their account or requests the erasure of their data, it will be permanently deleted from our systems.</p>
+            <p class="m-0 mb-2">Data will be retained for as long as the user account remains active. When a user requests account deletion through the application settings, a <strong>7-day grace period</strong> begins during which the account remains accessible and the request can be cancelled at any time.</p>
+            <p class="m-0">After those 7 days without cancellation, the user's personal data (email address and password) is permanently and irreversibly deleted from our systems.</p>
           </section>
 
           <section>
