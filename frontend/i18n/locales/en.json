@@ -259,6 +259,11 @@
     "upcomingEvents": "Upcoming concerts",
     "noUpcomingEvents": "No upcoming concerts for this artist"
   },
+  "footer": {
+    "feedbackLine": "Spotted a bug, or have comments or suggestions?",
+    "feedbackLink": "Contact us",
+    "openSourceLine": "Want to contribute? Rockalendar is open source —"
+  },
   "privacy": {
     "placeholder": "Privacy policy coming soon...",
     "contactLink": "Have a question? Contact us"

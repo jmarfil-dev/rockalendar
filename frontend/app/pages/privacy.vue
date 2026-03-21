@@ -23,7 +23,7 @@ useHead({ title: () => t("page.privacy") });
         <div v-if="locale === 'es'" class="privacy-content flex flex-column gap-4 line-height-3 text-color-secondary">
           <section>
             <h2 class="text-lg font-semibold mt-0 mb-2">1. Responsable del tratamiento</h2>
-            <p class="m-0">El responsable del tratamiento de los datos personales recogidos a través de esta aplicación es Rockalendar. Puedes contactar <NuxtLink :to="ROUTES.contact" class="underline">a través del formulario</NuxtLink> o enviando un correo a <a href="mailto:admin@rockalendar.com" class="underline">admin@rockalendar.com</a></p>
+            <p class="m-0">El responsable del tratamiento de los datos personales recogidos a través de esta aplicación es Rockalendar. Puedes contactar <NuxtLink :to="ROUTES.contact" class="inline-link">a través del formulario</NuxtLink> o enviando un correo a <a href="mailto:admin@rockalendar.com" class="inline-link">admin@rockalendar.com</a></p>
           </section>
 
           <section>
@@ -73,7 +73,7 @@ useHead({ title: () => t("page.privacy") });
               <li>Solicitar la limitación del tratamiento</li>
               <li>Oponerse al tratamiento</li>
               <li>Solicitar la portabilidad de sus datos</li>
-              <li>Reclamar ante la AEPD (Agencia Española de Protección de Datos) <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="underline">www.aepd.es</a></li>
+              <li>Reclamar ante la AEPD (Agencia Española de Protección de Datos) <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="inline-link">www.aepd.es</a></li>
             </ul>
             <p class="m-0 mt-2">Para ejercer estos derechos, el usuario podrá ponerse en contacto con el responsable del tratamiento a través de los medios habilitados en la aplicación.</p>
           </section>
@@ -103,7 +103,7 @@ useHead({ title: () => t("page.privacy") });
         <div v-else class="privacy-content flex flex-column gap-4 line-height-3 text-color-secondary">
           <section>
             <h2 class="text-lg font-semibold mt-0 mb-2">1. Data Controller</h2>
-            <p class="m-0">The data controller for the personal data collected through this application is Rockalendar. You can get in touch <NuxtLink :to="ROUTES.contact" class="underline">via the contact form</NuxtLink> or by sending an email to <a href="mailto:admin@rockalendar.com" class="underline">admin@rockalendar.com</a></p>
+            <p class="m-0">The data controller for the personal data collected through this application is Rockalendar. You can get in touch <NuxtLink :to="ROUTES.contact" class="inline-link">via the contact form</NuxtLink> or by sending an email to <a href="mailto:admin@rockalendar.com" class="inline-link">admin@rockalendar.com</a></p>
           </section>
 
           <section>
@@ -153,7 +153,7 @@ useHead({ title: () => t("page.privacy") });
               <li>Request the restriction of processing</li>
               <li>Object to processing</li>
               <li>Request data portability</li>
-              <li>Lodge a complaint with the AEPD (Spanish Data Protection Authority) at <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="underline">www.aepd.es</a></li>
+              <li>Lodge a complaint with the AEPD (Spanish Data Protection Authority) at <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="inline-link">www.aepd.es</a></li>
             </ul>
             <p class="m-0 mt-2">To exercise these rights, users may contact the data controller through the channels available in the application.</p>
           </section>

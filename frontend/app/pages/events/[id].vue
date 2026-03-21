@@ -89,7 +89,7 @@ function mapsUrl(e: EventPublic): string {
         <div class="flex align-items-center gap-2 text-color-secondary">
           <i class="pi pi-map-marker" />
           <span>
-            <a v-if="event.venueName" :href="mapsUrl(event)" target="_blank" rel="noopener noreferrer" class="text-color-secondary underline">{{ event.venueName }}</a>
+            <a v-if="event.venueName" :href="mapsUrl(event)" target="_blank" rel="noopener noreferrer" class="inline-link">{{ event.venueName }}</a>
             <span v-if="event.venueName && (event.cityName || event.provinceName)"> · </span>
             <span v-if="event.cityName">{{ event.cityName }}</span>
             <span v-if="event.cityName && event.provinceName">, </span>
@@ -202,7 +202,7 @@ function mapsUrl(e: EventPublic): string {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("geo.place") }}</span>
                       <span>
-                        <a v-if="event.venueName" :href="mapsUrl(event)" target="_blank" rel="noopener noreferrer" class="text-color-secondary underline">{{ event.venueName }}</a>
+                        <a v-if="event.venueName" :href="mapsUrl(event)" target="_blank" rel="noopener noreferrer" class="inline-link">{{ event.venueName }}</a>
                         <span v-if="event.venueName && (event.cityName || event.provinceName)"> · </span>
                         <span v-if="event.cityName">{{ event.cityName }}</span>
                         <span v-if="event.cityName && event.provinceName">, </span>

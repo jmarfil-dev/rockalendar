@@ -148,16 +148,28 @@ const onLogoutClick = async () => {
 
     <!-- Footer: pb-6 cuando hay bottom nav fixed para no quedar tapado -->
     <footer class="surface-0 border-top-1 surface-border" :class="{ 'pb-6': props.bottomItems?.length }">
-      <div class="mx-auto w-full max-w-7xl px-3 py-3 flex justify-content-center gap-4">
-        <NuxtLink :to="ROUTES.about" class="text-sm text-color-secondary no-underline hover:underline">
-          {{ t("page.about") }}
-        </NuxtLink>
-        <NuxtLink :to="ROUTES.privacy" class="text-sm text-color-secondary no-underline hover:underline">
-          {{ t("page.privacy") }}
-        </NuxtLink>
-        <NuxtLink :to="ROUTES.contact" class="text-sm text-color-secondary no-underline hover:underline">
-          {{ t("page.contact") }}
-        </NuxtLink>
+      <div class="mx-auto w-full max-w-7xl px-3 py-3 flex flex-column align-items-center gap-2">
+        <!-- Navegación: dos columnas -->
+        <div class="flex justify-content-center gap-4">
+          <NuxtLink :to="ROUTES.about" class="text-sm text-color-secondary no-underline hover:underline">
+            {{ t("page.about") }}
+          </NuxtLink>
+          <NuxtLink :to="ROUTES.privacy" class="text-sm text-color-secondary no-underline hover:underline">
+            {{ t("page.privacy") }}
+          </NuxtLink>
+        </div>
+
+        <Divider class="my-0" />
+
+        <!-- CTAs beta -->
+        <p class="text-xs text-color-secondary m-0 text-center">
+          {{ t("footer.feedbackLine") }}
+          <NuxtLink :to="ROUTES.contact" class="inline-link">{{ t("footer.feedbackLink") }}</NuxtLink>
+        </p>
+        <p class="text-xs text-color-secondary m-0 text-center">
+          {{ t("footer.openSourceLine") }}
+          <a href="https://github.com/jmarfil-dev/rockalendar" target="_blank" rel="noopener noreferrer" class="inline-link">GitHub</a>
+        </p>
       </div>
     </footer>
 

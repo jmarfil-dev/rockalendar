@@ -260,6 +260,11 @@
     "upcomingEvents": "Próximos conciertos",
     "noUpcomingEvents": "No hay conciertos próximos para este artista"
   },
+  "footer": {
+    "feedbackLine": "¿Ves algún error, o tienes comentarios o sugerencias?",
+    "feedbackLink": "Contáctanos",
+    "openSourceLine": "¿Quieres contribuir? Rockalendar es código abierto —"
+  },
   "privacy": {
     "placeholder": "Política de privacidad próximamente...",
     "contactLink": "¿Tienes alguna duda? Contáctanos"

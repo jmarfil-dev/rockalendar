@@ -122,7 +122,7 @@ async function onSubmit() {
               <label for="privacy-accept" class="text-sm">
                 <i18n-t keypath="auth.privacyAccept" tag="span">
                   <template #link>
-                    <NuxtLink :to="ROUTES.privacy" target="_blank" class="underline">{{ t("page.privacy") }}</NuxtLink>
+                    <NuxtLink :to="ROUTES.privacy" target="_blank" class="inline-link">{{ t("page.privacy") }}</NuxtLink>
                   </template>
                 </i18n-t>
               </label>
