@@ -61,6 +61,16 @@ useHead({ title: () => t("page.about") });
             </p>
             <p class="m-0">Sin más.<br />Y recuerda: ¡Baila pogo!</p>
           </section>
+
+          <Divider />
+
+          <section>
+            <h2 class="text-lg font-semibold mt-0 mb-2">¿Quieres contribuir?</h2>
+            <p class="m-0">
+              Rockalendar es código abierto. Puedes ver el código, reportar errores y proponer mejoras en
+              <a href="https://github.com/jmarfil-dev/rockalendar" target="_blank" rel="noopener noreferrer" class="inline-link">GitHub</a>.
+            </p>
+          </section>
         </div>
 
         <!-- English -->
@@ -102,6 +112,16 @@ useHead({ title: () => t("page.about") });
               with what we are — and we'll be upfront about it.
             </p>
             <p class="m-0">That's it.<br />And remember: dance the pogo!</p>
+          </section>
+
+          <Divider />
+
+          <section>
+            <h2 class="text-lg font-semibold mt-0 mb-2">Want to contribute?</h2>
+            <p class="m-0">
+              Rockalendar is open source. You can browse the code, report bugs and suggest improvements on
+              <a href="https://github.com/jmarfil-dev/rockalendar" target="_blank" rel="noopener noreferrer" class="inline-link">GitHub</a>.
+            </p>
           </section>
         </div>
       </template>
