@@ -36,9 +36,12 @@ public final class ErrorConstants {
     public static final String INVALID_PROVINCE = "error.400.invalidProvince";
     public static final String INVALID_DATE_RANGE = "error.400.invalidDateRange";
     public static final String PAGE_SIZE_TOO_LARGE = "error.400.pageSizeTooLarge";
+    public static final String WRONG_CURRENT_PASSWORD = "error.400.wrongCurrentPassword";
+    public static final String WRONG_CONFIRM_PASSWORD = "error.400.wrongConfirmPassword";
     public static final String VALID_PASSWORD = "error.400.valid.patternPassword";
     public static final String VALID_SIZE_LIST_EMPTY = "error.400.valid.sizeListEmpty";
     public static final String VALID_SIZE_PASSWORD = "error.400.valid.sizePassword";
+    public static final String PRIVACY_NOT_ACCEPTED = "error.400.valid.privacyNotAccepted";
 
     // Unauthorized 401
     public static final String AUTH_REQUIRED = "error.401.message";
@@ -65,6 +68,8 @@ public final class ErrorConstants {
     public static final String EVENT_NOT_ERASABLE_APPROVED = "error.409.eventNotErasableAppr";
     public static final String AGENDA_EVENT_NOT_AVAILABLE = "error.409.agendaEventNotAvailable";
     public static final String PROMOTION_NOT_ELIGIBLE = "error.409.promotionNotEligible";
+    public static final String ACCOUNT_PENDING_DELETION = "error.409.accountPendingDeletion";
+    public static final String ACCOUNT_NOT_PENDING_DELETION = "error.409.accountNotPendingDeletion";
 
     // Conflict 409 genérico (constraint de BD no capturada explícitamente)
     public static final String DB_CONSTRAINT = "error.409.dbConstraint";

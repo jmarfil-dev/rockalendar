@@ -36,3 +36,13 @@ body {
 .skip-link:focus {
   top: 0;
 }
+
+/* Link de texto inline (embebido en frases o párrafos) */
+.inline-link {
+  color: var(--p-primary-color);
+  text-decoration: underline;
+}
+
+.inline-link:hover {
+  color: var(--p-primary-300);
+}

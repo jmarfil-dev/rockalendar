@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
-import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;

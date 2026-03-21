@@ -18,7 +18,8 @@ export function pdToFormErrors(pd: ProblemDetail | null, t: (key: string) => str
 
   // Si hay errores en campos ignoramos detail y message
   if (Object.keys(fields).length == 0) {
-    if (pd.code) message = t(pd.code); // pd.code ya es la ruta i18n completa (ej: "error.409.moderatorOwn")
+    if (pd.code)
+      message = t(pd.code); // pd.code ya es la ruta i18n completa (ej: "error.409.moderatorOwn")
     else if (pd.detail) message = pd.detail;
     else message = t("error.unknown");
   }
@@ -35,4 +36,10 @@ export function applyFormErrors(
 
   messageRef.value = message;
   fieldsRef.value = fields;
+}
+
+// Devuelve la traducción si existe, o la clave literal si no
+export function tr(key: string) {
+  const { t, te } = useI18n();
+  return te(key) ? t(key) : key;
 }

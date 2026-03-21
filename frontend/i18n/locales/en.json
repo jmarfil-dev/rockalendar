@@ -52,7 +52,9 @@
       "symbol": "One symbol",
       "hint": "Use a stronger password to continue",
       "invalid": "Invalid password"
-    }
+    },
+    "privacyAccept": "I have read and accept the {link}",
+    "privacyRequired": "You must accept the privacy policy to continue"
   },
   "me": {
     "title": "My area",
@@ -78,6 +80,34 @@
       "removeConfirm": "Do you want to remove this concert from your schedule?",
       "removeOk": "Yes, remove",
       "removeCancel": "Cancel"
+    },
+    "settings": {
+      "title": "Account settings",
+      "changePassword": "Change password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "passwordMismatch": "Passwords do not match",
+      "submit": "Save password",
+      "successTitle": "Password updated!",
+      "successMsg": "Your password has been changed successfully.",
+      "deleteAccount": {
+        "title": "Delete account",
+        "desc": "If you delete your account, you will have 7 days to cancel the request. After that period, your personal data will be permanently deleted.",
+        "requestBtn": "Delete my account",
+        "cancelBtn": "Cancel deletion",
+        "pendingWarning": "Your account is scheduled for deletion on {date}. You can cancel this request before that date.",
+        "modalTitle": "Delete account?",
+        "modalBody": "Your account will remain active for 7 days. After that, your personal data will be permanently deleted and you will no longer be able to log in. You can cancel the request at any time during this period.",
+        "modalConfirm": "Yes, delete my account",
+        "modalCancel": "Cancel",
+        "requestedTitle": "Request registered",
+        "requestedMsg": "Your account will be deleted in 7 days. You can cancel the request from this page.",
+        "cancelledTitle": "Deletion cancelled",
+        "cancelledMsg": "Your account will remain active.",
+        "errorTitle": "Error",
+        "errorMsg": "The request could not be processed. Please try again."
+      }
     },
     "myEvents": "My concerts",
     "myEventsDesc": "Concerts you have proposed",
@@ -229,6 +259,11 @@
     "upcomingEvents": "Upcoming concerts",
     "noUpcomingEvents": "No upcoming concerts for this artist"
   },
+  "footer": {
+    "feedbackLine": "Spotted a bug, or have comments or suggestions?",
+    "feedbackLink": "Contact us",
+    "openSourceLine": "Want to contribute? Rockalendar is open source —"
+  },
   "privacy": {
     "placeholder": "Privacy policy coming soon...",
     "contactLink": "Have a question? Contact us"
@@ -256,6 +291,7 @@
     "meEvents": "My concerts",
     "mePropose": "Propose a concert",
     "meEdit": "Edit concert",
+    "meSettings": "Account settings",
     "moderation": "Moderation",
     "moderationEvents": "Moderate concerts",
     "moderationArtists": "Artists without concerts",
@@ -281,6 +317,8 @@
       "invalidProvince": "Invalid provinceId",
       "invalidDateRange": "Invalid date range: dateFrom must be <= dateTo",
       "pageSizeTooLarge": "Page size exceeds the maximum allowed limit",
+      "wrongCurrentPassword": "Current password is incorrect",
+      "wrongConfirmPassword": "Passwords do not match",
       "valid": {
         "patternPassword": "Password must contain upper, lower, number and symbol",
         "sizePassword": "Password must be between 8 and 72 characters",
@@ -290,7 +328,8 @@
         "notNull": "Field cannot be empty",
         "email": "It must be a valid email address",
         "url": "It must be a valid URL",
-        "futureDate": "It must be a future date"
+        "futureDate": "It must be a future date",
+        "privacyNotAccepted": "You must accept the privacy policy to continue"
       }
     },
     "401": {
@@ -318,7 +357,9 @@
       "eventNotErasable": "Concert does not have an erasable state",
       "eventNotErasableAppr": "Approved concerts cannot be deleted",
       "agendaEventNotAvailable": "You can only add approved concerts to your schedule",
-      "dbConstraint": "Violated DB Constraint"
+      "dbConstraint": "Violated DB Constraint",
+      "accountPendingDeletion": "Your account already has a pending deletion request",
+      "accountNotPendingDeletion": "There is no active deletion request"
     },
     "500": {
       "server": "Unexpected server error"

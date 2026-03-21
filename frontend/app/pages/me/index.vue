@@ -5,7 +5,6 @@ definePageMeta({ layout: "private", ssr: false });
 
 const { t } = useI18n();
 useHead({ title: () => t("page.me") });
-const router = useRouter();
 
 const { me, promoting, fetchMe, requestPromotion } = useMe();
 onMounted(fetchMe);
@@ -17,43 +16,51 @@ onMounted(fetchMe);
 
     <div class="grid">
       <div class="col-12 md:col-6">
-        <Card
-          class="h-full border-1 surface-border cursor-pointer hover:surface-hover transition-colors transition-duration-150"
-          role="button"
-          tabindex="0"
-          @click="router.push(ROUTES.meAgenda)"
-          @keydown.enter="router.push(ROUTES.meAgenda)"
-          @keydown.space.prevent="router.push(ROUTES.meAgenda)">
-          <template #title>
-            <div class="flex align-items-center gap-3">
-              <i class="pi pi-calendar text-3xl text-primary" />
-              <span>{{ t("me.agenda.title") }}</span>
-            </div>
-          </template>
-          <template #content>
-            <p class="m-0 text-color-secondary text-sm">{{ t("me.agendaDesc") }}</p>
-          </template>
-        </Card>
+        <NuxtLink :to="ROUTES.meAgenda" class="no-underline block h-full">
+          <Card class="h-full border-1 surface-border hover:surface-hover transition-colors transition-duration-150">
+            <template #title>
+              <div class="flex align-items-center gap-3">
+                <i class="pi pi-calendar text-3xl text-primary" />
+                <span>{{ t("me.agenda.title") }}</span>
+              </div>
+            </template>
+            <template #content>
+              <p class="m-0 text-color-secondary text-sm">{{ t("me.agendaDesc") }}</p>
+            </template>
+          </Card>
+        </NuxtLink>
       </div>
 
       <div class="col-12 md:col-6">
-        <Card
-          class="h-full border-1 surface-border cursor-pointer hover:surface-hover transition-colors transition-duration-150"
-          role="button"
-          tabindex="0"
-          @click="router.push(ROUTES.meEvents)"
-          @keydown.enter="router.push(ROUTES.meEvents)"
-          @keydown.space.prevent="router.push(ROUTES.meEvents)">
-          <template #title>
-            <div class="flex align-items-center gap-3">
-              <i class="pi pi-list text-3xl text-primary" />
-              <span>{{ t("me.myEvents") }}</span>
-            </div>
-          </template>
-          <template #content>
-            <p class="m-0 text-color-secondary text-sm">{{ t("me.myEventsDesc") }}</p>
-          </template>
-        </Card>
+        <NuxtLink :to="ROUTES.meEvents" class="no-underline block h-full">
+          <Card class="h-full border-1 surface-border hover:surface-hover transition-colors transition-duration-150">
+            <template #title>
+              <div class="flex align-items-center gap-3">
+                <i class="pi pi-list text-3xl text-primary" />
+                <span>{{ t("me.myEvents") }}</span>
+              </div>
+            </template>
+            <template #content>
+              <p class="m-0 text-color-secondary text-sm">{{ t("me.myEventsDesc") }}</p>
+            </template>
+          </Card>
+        </NuxtLink>
+      </div>
+
+      <div class="col-12 md:col-6">
+        <NuxtLink :to="ROUTES.meSettings" class="no-underline block h-full">
+          <Card class="h-full border-1 surface-border hover:surface-hover transition-colors transition-duration-150">
+            <template #title>
+              <div class="flex align-items-center gap-3">
+                <i class="pi pi-cog text-3xl text-primary" />
+                <span>{{ t("me.settings.title") }}</span>
+              </div>
+            </template>
+            <template #content>
+              <p class="m-0 text-color-secondary text-sm">{{ t("user.settings") }}</p>
+            </template>
+          </Card>
+        </NuxtLink>
       </div>
     </div>
 
