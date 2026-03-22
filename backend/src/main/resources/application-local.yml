@@ -4,3 +4,28 @@ spring:
     username: rockalendar
     password: rockalendar
     driver-class-name: org.postgresql.Driver
+
+# =================================
+# MAILHOG
+# Intercepta los emails para que no lleguen a bandejas de correo reales
+# =================================
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+# =================================
+# PROPERTIES
+# =================================
+rockalendar:
+  frontend:
+    base-url: "http://localhost:3000"
+  email:
+    from: "${EMAIL_FROM}"

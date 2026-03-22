@@ -74,6 +74,10 @@ async function onSubmit() {
           </div>
 
           <Button type="submit" :label="t('auth.loginButton')" icon="pi pi-sign-in" :loading="loading" />
+
+          <NuxtLink :to="ROUTES.forgotPassword" class="text-sm text-surface-500 underline text-right">
+            {{ t("auth.forgotPasswordLink") }}
+          </NuxtLink>
         </form>
 
         <Divider class="my-1" />

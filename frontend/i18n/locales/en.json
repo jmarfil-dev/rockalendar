@@ -55,7 +55,24 @@
       "invalid": "Invalid password"
     },
     "privacyAccept": "I have read and accept the {link}",
-    "privacyRequired": "You must accept the privacy policy to continue"
+    "privacyRequired": "You must accept the privacy policy to continue",
+    "forgotPasswordLink": "Forgot your password?",
+    "forgotPassword": {
+      "title": "Reset password",
+      "desc": "Enter your email and we'll send you a link to create a new password.",
+      "submit": "Send link",
+      "successMsg": "If that email is registered, you'll receive a link shortly. Check your spam folder too.",
+      "backToLogin": "Back to login"
+    },
+    "resetPassword": {
+      "title": "New password",
+      "desc": "Enter your new password.",
+      "submit": "Save password",
+      "successMsg": "Password updated! You can now log in.",
+      "errorMsg": "The link is invalid or has expired. Please request a new one.",
+      "noToken": "Invalid link.",
+      "requestNew": "Request a new link"
+    }
   },
   "me": {
     "title": "My area",

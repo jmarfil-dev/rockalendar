@@ -26,3 +26,12 @@ logging:
   level:
     com.jmarfildev.rockalendar: trace
     org.hibernate.SQL: trace
+
+# =================================
+# PROPERTIES
+# =================================
+rockalendar:
+  frontend:
+    base-url: "dev.rockalendar.es"
+  email:
+    from: "noreply@dev.rockalendar.es"

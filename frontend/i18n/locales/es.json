@@ -56,7 +56,24 @@
       "invalid": "La contraseña no es válida"
     },
     "privacyAccept": "He leído y acepto la {link}",
-    "privacyRequired": "Debes aceptar la política de privacidad para continuar"
+    "privacyRequired": "Debes aceptar la política de privacidad para continuar",
+    "forgotPasswordLink": "¿Olvidaste tu contraseña?",
+    "forgotPassword": {
+      "title": "Recuperar contraseña",
+      "desc": "Introduce tu email y te enviaremos un enlace para crear una nueva contraseña.",
+      "submit": "Enviar enlace",
+      "successMsg": "Si ese email está registrado, recibirás un enlace en breve. Revisa también tu carpeta de spam.",
+      "backToLogin": "Volver al inicio de sesión"
+    },
+    "resetPassword": {
+      "title": "Nueva contraseña",
+      "desc": "Introduce tu nueva contraseña.",
+      "submit": "Guardar contraseña",
+      "successMsg": "¡Contraseña actualizada! Ya puedes iniciar sesión.",
+      "errorMsg": "El enlace no es válido o ha caducado. Solicita uno nuevo.",
+      "noToken": "El enlace no es válido.",
+      "requestNew": "Solicitar un nuevo enlace"
+    }
   },
   "me": {
     "title": "Mi área",
