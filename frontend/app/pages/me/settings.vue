@@ -9,10 +9,37 @@ const vFixPasswordAria = {
 
 definePageMeta({ layout: "private", ssr: false });
 
-const { t } = useI18n();
+const { t, locale, setLocale, locales } = useI18n();
 useHead({ title: () => t("page.meSettings") });
 const toast = useToast();
 const { me, fetchMe } = useMe();
+
+const localeOptions = computed(() =>
+  (locales.value as { code: string; name: string }[]).map((l) => ({ label: l.name, value: l.code }))
+);
+const selectedLocale = ref<"es" | "en">(locale.value as "es" | "en");
+const localeLoading = ref(false);
+
+// Sincronizar con el valor guardado en BD cuando cargue el perfil
+watch(me, (val) => {
+  if (val?.preferredLanguage) selectedLocale.value = val.preferredLanguage as "es" | "en";
+});
+
+async function saveLocale() {
+  localeLoading.value = true;
+  try {
+    const res = await fetchAuthResult<void>(ROUTES.apiMeLocale, {
+      method: "PUT",
+      body: { locale: selectedLocale.value },
+    });
+    if (!res.ok) return;
+    if (me.value) me.value.preferredLanguage = selectedLocale.value;
+    await setLocale(selectedLocale.value);
+    toast.add({ severity: "success", summary: t("me.settings.changeLanguageSaved"), life: 3000 });
+  } finally {
+    localeLoading.value = false;
+  }
+}
 
 const form = reactive({ currentPassword: "", newPassword: "", confirmPassword: "" });
 const loading = ref(false);
@@ -131,6 +158,33 @@ async function onSubmit() {
       </NuxtLink>
       <h1 class="text-2xl font-bold m-0">{{ t("me.settings.title") }}</h1>
     </div>
+
+    <!-- Idioma preferido -->
+    <Card class="border-1 surface-border">
+      <template #title>
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-globe text-xl text-primary" />
+          <span class="text-lg">{{ t("me.settings.changeLanguage") }}</span>
+        </div>
+      </template>
+      <template #content>
+        <p class="text-sm text-color-secondary mt-0 mb-3">{{ t("me.settings.changeLanguageDesc") }}</p>
+        <div class="flex align-items-center gap-3">
+          <SelectButton
+            v-model="selectedLocale"
+            :options="localeOptions"
+            option-label="label"
+            option-value="value"
+            :disabled="localeLoading" />
+          <Button
+            :label="t('common.save')"
+            icon="pi pi-check"
+            :loading="localeLoading"
+            :disabled="!selectedLocale || selectedLocale === (me?.preferredLanguage ?? locale)"
+            @click="saveLocale" />
+        </div>
+      </template>
+    </Card>
 
     <Card class="border-1 surface-border">
       <template #title>

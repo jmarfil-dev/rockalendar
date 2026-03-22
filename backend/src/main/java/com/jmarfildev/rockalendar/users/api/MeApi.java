@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
 import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
+import com.jmarfildev.rockalendar.users.api.dto.ChangeLocaleRequest;
 import com.jmarfildev.rockalendar.users.api.dto.ChangePasswordRequest;
 import com.jmarfildev.rockalendar.users.api.dto.MeDto;
 
@@ -70,4 +71,12 @@ public interface MeApi {
     @ApiConflict
     @ApiUnauthorized
     void cancelDeletion();
+
+    @PutMapping("/locale")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Cambiar idioma preferido", description = "Actualiza el idioma preferido del usuario (es, en).")
+    @ApiResponse(responseCode = "204", description = "Idioma actualizado correctamente")
+    @ApiBadRequest
+    @ApiUnauthorized
+    void changeLocale(@Parameter(required = true) @Valid @RequestBody ChangeLocaleRequest request);
 }

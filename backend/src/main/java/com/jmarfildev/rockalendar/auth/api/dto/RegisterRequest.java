@@ -17,4 +17,5 @@ public record RegisterRequest(@NotBlank @Email String email,
                                     max = 72,
                                     message = ErrorConstants.VALID_SIZE_PASSWORD) @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).+$",
                                                                                            message = ErrorConstants.VALID_PASSWORD) String password,
-                              @AssertTrue(message = ErrorConstants.PRIVACY_NOT_ACCEPTED) Boolean privacyAccepted) {}
+                              @AssertTrue(message = ErrorConstants.PRIVACY_NOT_ACCEPTED) Boolean privacyAccepted,
+                              String locale) {}

@@ -10,7 +10,7 @@ const vFixPasswordAria = {
 
 definePageMeta({ layout: "minimal" });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 useHead({ title: () => t("page.register") });
 const auth = useAuth();
 const { form, loading, errorMsg, fieldErrors, resetErrors } = useAuthForm();
@@ -44,7 +44,7 @@ async function onSubmit() {
   resetErrors();
   loading.value = true;
   try {
-    const res = await auth.register({ ...form, privacyAccepted: privacyAccepted.value });
+    const res = await auth.register({ ...form, privacyAccepted: privacyAccepted.value, locale: locale.value });
 
     if (!res.ok) {
       applyFormErrors(res.pd, t, errorMsg, fieldErrors);

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+import com.jmarfildev.rockalendar.users.api.dto.ChangeLocaleRequest;
 import com.jmarfildev.rockalendar.users.api.dto.ChangePasswordRequest;
 import com.jmarfildev.rockalendar.users.api.dto.MeDto;
 import com.jmarfildev.rockalendar.users.application.MeCommandService;
@@ -42,5 +43,10 @@ public class MeController implements MeApi {
     @Override
     public void cancelDeletion() {
         commandService.cancelDeletion();
+    }
+
+    @Override
+    public void changeLocale(ChangeLocaleRequest request) {
+        commandService.changeLocale(request);
     }
 }
