@@ -3,6 +3,8 @@ export const ROUTES = {
   events: "/events",
   login: "/login",
   register: "/register",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
 
   me: "/me",
   meAgenda: "/me/agenda",
@@ -28,6 +30,8 @@ export const ROUTES = {
   // api
   apiLogin: "/api/auth/login",
   apiRegister: "/api/auth/register",
+  apiForgotPassword: "/api/auth/forgot-password",
+  apiResetPassword: "/api/auth/reset-password",
   apiHome: "/api/events/home",
   apiEvents: "/api/events",
   apiArtists: "/api/artists",

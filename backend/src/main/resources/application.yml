@@ -5,6 +5,20 @@
 spring:
   application:
     name: rockalendar
+# =================================
+# MAIL (Brevo SMTP)
+# =================================
+  mail:
+    host: smtp-relay.brevo.com
+    port: 587
+    username: "${BREVO_SMTP_USER}"
+    password: "${BREVO_SMTP_PASSWORD}"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # =================================
 # JPA / HIBERNATE
@@ -77,6 +91,10 @@ logging:
 # PROPERTIES
 # =================================
 rockalendar:
+  frontend:
+    base-url: "${FRONTEND_BASE_URL}"
+  email:
+    from: "${EMAIL_FROM}"
   search:
     public:
       minSimilarity: 0.30

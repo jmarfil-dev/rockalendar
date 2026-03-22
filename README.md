@@ -121,6 +121,8 @@ docker compose -f docker/compose.yml -p rockalendar down -v
 docker compose -f docker/compose.yml -p rockalendar up -d
 ~~~
 
+> **Email en local:** el compose incluye [Mailhog](https://github.com/mailhog/MailHog), un servidor SMTP ficticio que captura todos los correos salientes sin enviarlos. La bandeja de entrada está disponible en [http://localhost:8025](http://localhost:8025).
+
 ### 2) Backend
 
 ~~~
@@ -137,7 +139,14 @@ Si usas perfiles: `-Dspring-boot.run.profiles=dev` o mediante variable de entorn
 Perfiles disponibles:
 
 - `dev`
-- `local`
+- `local`: sobreescribe las propiedades de dev para trabajar en local
+
+#### Variables de entorno
+
+Es necesario configurar las siguientes variables de entorno:
+- `SPRING_PROFILES_ACTIVE`: para local usa el valor `dev,local`
+- `EMAIL_FROM`: usa tu correo personal, es en local, no hay problema
+- `BREVO_SMTP_USER` y `BREVO_SMTP_PASSWORD`: configuración del servidor SMTP, solicitar credenciales por privado al administrador.
 
 ### 3) Frontend
 
