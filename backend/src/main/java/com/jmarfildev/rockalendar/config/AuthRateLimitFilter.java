@@ -97,8 +97,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         return request.getRemoteAddr();
     }
 
-    private void writeTooManyRequests(HttpServletRequest request, HttpServletResponse response, long retryAfterSeconds)
-            throws IOException {
+    private void writeTooManyRequests(HttpServletRequest request, HttpServletResponse response, long retryAfterSeconds) throws IOException {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.TOO_MANY_REQUESTS);
         ProblemDetailGenericProperties.setGenericProperties(pd, "Too Many Requests", ErrorConstants.RATE_LIMIT_EXCEEDED,
                                                             request.getRequestURI(), ErrorConstants.TYPE_429_TOO_MANY_REQUESTS);

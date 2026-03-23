@@ -24,6 +24,10 @@ public interface UserEventRepository extends JpaRepository<UserEvent, UserEventI
                 JOIN e.province p
                 WHERE ue.id.userId = :userId
                   AND e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
+                  AND (
+                      (e.endDateTime IS NOT NULL AND e.endDateTime >= CURRENT_TIMESTAMP)
+                      OR (e.endDateTime IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
+                  )
                 ORDER BY e.startDateTime ASC, e.title ASC
             """)
     List<AgendaItemDto> findAgendaByUserId(UUID userId);
