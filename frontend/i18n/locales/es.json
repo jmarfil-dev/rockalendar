@@ -383,6 +383,9 @@
       "accountPendingDeletion": "Tu cuenta ya tiene una solicitud de eliminación pendiente",
       "accountNotPendingDeletion": "No hay ninguna solicitud de eliminación activa"
     },
+    "429": {
+      "rateLimitExceeded": "Demasiados intentos. Por favor, espera {seconds} segundos antes de volver a intentarlo."
+    },
     "500": {
       "server": "Error inesperado del servidor"
     }

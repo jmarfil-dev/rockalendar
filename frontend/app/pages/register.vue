@@ -29,6 +29,28 @@ const passwordChecks = computed(() => {
 const isPasswordValid = computed(() => passwordChecks.value.every((x) => x.ok));
 
 const privacyAccepted = ref(false);
+const honeypotWebsite = ref("");
+
+const rateLimitSeconds = ref<number | null>(null);
+let rateLimitTimer: ReturnType<typeof setInterval> | null = null;
+
+function startRateLimitCountdown(seconds: number) {
+  if (rateLimitTimer) clearInterval(rateLimitTimer);
+  rateLimitSeconds.value = seconds;
+  rateLimitTimer = setInterval(() => {
+    if (rateLimitSeconds.value && rateLimitSeconds.value > 1) {
+      rateLimitSeconds.value--;
+    } else {
+      rateLimitSeconds.value = null;
+      clearInterval(rateLimitTimer!);
+      rateLimitTimer = null;
+    }
+  }, 1000);
+}
+
+onUnmounted(() => {
+  if (rateLimitTimer) clearInterval(rateLimitTimer);
+});
 
 async function onSubmit() {
   if (!isPasswordValid.value) {
@@ -42,11 +64,21 @@ async function onSubmit() {
   }
 
   resetErrors();
+  rateLimitSeconds.value = null;
   loading.value = true;
   try {
-    const res = await auth.register({ ...form, privacyAccepted: privacyAccepted.value, locale: locale.value });
+    const res = await auth.register({
+      ...form,
+      privacyAccepted: privacyAccepted.value,
+      locale: locale.value,
+      website: honeypotWebsite.value || undefined,
+    });
 
     if (!res.ok) {
+      if (res.status === 429) {
+        startRateLimitCountdown((res.pd?.retryAfter as number) ?? 60);
+        return;
+      }
       applyFormErrors(res.pd, t, errorMsg, fieldErrors);
       return;
     }
@@ -69,9 +101,17 @@ async function onSubmit() {
 
     <Card class="border-1 surface-border">
       <template #content>
-        <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
+        <Message v-if="rateLimitSeconds" severity="warn" :closable="false">
+          {{ t("error.429.rateLimitExceeded", { seconds: rateLimitSeconds }) }}
+        </Message>
+        <Message v-else-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
 
         <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
+          <!-- Campo honeypot: oculto visualmente, nunca debe rellenarse por un usuario real -->
+          <div aria-hidden="true" style="position: absolute; left: -9999px; height: 0; overflow: hidden;">
+            <label for="website">Website</label>
+            <input id="website" v-model="honeypotWebsite" type="text" tabindex="-1" autocomplete="off" />
+          </div>
           <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" showRequired required />
 
           <div class="flex flex-column gap-2">

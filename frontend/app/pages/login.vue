@@ -16,13 +16,39 @@ const auth = useAuth();
 const route = useRoute();
 const { form, loading, errorMsg, fieldErrors, resetErrors } = useAuthForm();
 
+const rateLimitSeconds = ref<number | null>(null);
+let rateLimitTimer: ReturnType<typeof setInterval> | null = null;
+
+function startRateLimitCountdown(seconds: number) {
+  if (rateLimitTimer) clearInterval(rateLimitTimer);
+  rateLimitSeconds.value = seconds;
+  rateLimitTimer = setInterval(() => {
+    if (rateLimitSeconds.value && rateLimitSeconds.value > 1) {
+      rateLimitSeconds.value--;
+    } else {
+      rateLimitSeconds.value = null;
+      clearInterval(rateLimitTimer!);
+      rateLimitTimer = null;
+    }
+  }, 1000);
+}
+
+onUnmounted(() => {
+  if (rateLimitTimer) clearInterval(rateLimitTimer);
+});
+
 async function onSubmit() {
   resetErrors();
+  rateLimitSeconds.value = null;
   loading.value = true;
   try {
     const res = await auth.login(form);
 
     if (!res.ok) {
+      if (res.status === 429) {
+        startRateLimitCountdown((res.pd?.retryAfter as number) ?? 60);
+        return;
+      }
       applyFormErrors(res.pd, t, errorMsg, fieldErrors);
       return;
     }
@@ -46,7 +72,10 @@ async function onSubmit() {
 
     <Card class="border-1 surface-border">
       <template #content>
-        <Message v-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
+        <Message v-if="rateLimitSeconds" severity="warn" :closable="false">
+          {{ t("error.429.rateLimitExceeded", { seconds: rateLimitSeconds }) }}
+        </Message>
+        <Message v-else-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
 
         <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
           <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" required />

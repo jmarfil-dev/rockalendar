@@ -22,6 +22,9 @@ Estas implementaciones tienen prioridad sobre las demás.
 - Anotaciones de validación compuestas si hay repetición real.
 - Validators propios solo si hay reglas reutilizables.
 - TRGM para Autocompletar de `artist`.
+- Refresh token + httpOnly cookies: si almacenamos más datos personales y/o sensibles.
+  - Por ahora el riesgo es bajo, si alguien roba un token tiene acceso al email y puede proponer conciertos en su nombre. No es catastrófico.
+  - Logout en backend para evitar tokens robados.
 
 ### Mejora de búsquedas
 

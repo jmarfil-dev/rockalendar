@@ -185,12 +185,13 @@ Incluye:
 - Cartel de evento
 - Detalle de artista
 - Crear artista (moderador)
-- Refresh token
-- Logout
 - Recuperar / cambiar contraseña
-- Añadir rate limiting + captcha tras varios intentos para evitar accesos por fuerza bruta
+- Añadir rate limiting para evitar accesos por fuerza bruta
 - Ley de protección de datos, política de privacidad, etc.
 - Mejorar agregar artistas al crear evento: pegado masivo, ¿leer desde cartel?
+- Refresh token **Rechazado / movido al backlog**
+- Logout **Rechazado / movido al backlog**
+- Captcha tras varios intentos **Rechazado / movido al backlog**
 
 ### v1.0 - MVP
 

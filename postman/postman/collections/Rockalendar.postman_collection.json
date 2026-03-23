@@ -128,7 +128,77 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"usuario@prueba.com\",\r\n    \"password\": \"{{userPassword}}\"\r\n}",
+              "raw": "{\r\n    \"email\": \"usuario@prueba.com\",\r\n    \"password\": \"{{userPassword}}\",\r\n    \"privacyAccepted\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register (honeypot)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "58d5d460-6e34-4510-a191-268cd0fb17e4",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "937da908-9049-4b16-877a-0b7ca9354c09",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "\r",
+                  "    pm.test(\"Body matches string\", function () {\r",
+                  "        pm.expect(pm.response.text()).to.include(\"string_you_want_to_search\");\r",
+                  "    });\r",
+                  "\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.environment.set(\"token\", jsonData.accessToken);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "4a05ad9d-65d8-439d-bf3c-ba2dcecdce35",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"usuario@prueba.com\",\r\n    \"password\": \"{{userPassword}}\",\r\n    \"privacyAccepted\": true,\r\n    \"website\": \"prueba\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -561,15 +631,16 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"title\": \"Concierto de prueba en fhfhlgflkljk\",\n    \"description\": \"Evento creado desde curl\",\n    \"startDateTime\": \"2026-06-30T21:30:00Z\",\n    \"venueName\": \"Sala Custom\",\n    \"provinceId\": \"c74b11af-8d7f-50d1-b39b-4b10f1eb1b4f\",\n    \"cityName\": \"Zamopra\",\n    \"artists\": [\n        \"Grupo Demo\"\n    ],\n    \"sourceUrl\": \"https://example.com\"\n}"
+                  "raw": "{\n    \"title\": \"Concierto de prueba\",\n    \"description\": \"Evento creado desde curl\",\n    \"startDateTime\": \"2026-06-30T21:30:00Z\",\n    \"venueName\": \"Sala Custom\",\n    \"provinceId\": \"c74b11af-8d7f-50d1-b39b-4b10f1eb1b4f\",\n    \"cityName\": \"Sevilla\",\n    \"artists\": [\n        \"Artista 2\"\n    ],\n    \"sourceUrl\": \"https://example.com\"\n}"
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/events",
+                  "raw": "{{baseUrl}}/api/me/events",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "api",
+                    "me",
                     "events"
                   ]
                 }
