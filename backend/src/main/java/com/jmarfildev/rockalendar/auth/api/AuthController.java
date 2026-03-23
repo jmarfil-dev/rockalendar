@@ -2,7 +2,10 @@ package com.jmarfildev.rockalendar.auth.api;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.auth.api.dto.AuthTokenResponse;
 import com.jmarfildev.rockalendar.auth.api.dto.ForgotPasswordRequest;
@@ -18,7 +21,11 @@ import com.jmarfildev.rockalendar.auth.application.PasswordResetService;
  */
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController implements AuthApi {
+
+    // Token fake que parece legítimo para no delatar la trampa al bot
+    private static final String HONEYPOT_FAKE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cmFwIn0.honeypot";
 
     private final AuthService authService;
     private final PasswordResetService passwordResetService;
@@ -30,11 +37,19 @@ public class AuthController implements AuthApi {
 
     @Override
     public AuthTokenResponse register(RegisterRequest request) {
+        if (request.website() != null && !request.website().isBlank()) {
+            log.warn("Honeypot activado en /register (website='{}')", request.website());
+            return new AuthTokenResponse(HONEYPOT_FAKE_TOKEN, Instant.now().plusSeconds(3600));
+        }
         return authService.register(request);
     }
 
     @Override
     public void forgotPassword(ForgotPasswordRequest request) {
+        if (request.website() != null && !request.website().isBlank()) {
+            log.warn("Honeypot activado en /forgot-password (website='{}')", request.website());
+            return;
+        }
         passwordResetService.requestReset(request);
     }
 

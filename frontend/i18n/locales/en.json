@@ -382,6 +382,9 @@
       "accountPendingDeletion": "Your account already has a pending deletion request",
       "accountNotPendingDeletion": "There is no active deletion request"
     },
+    "429": {
+      "rateLimitExceeded": "Too many attempts. Please wait {seconds} seconds before trying again."
+    },
     "500": {
       "server": "Unexpected server error"
     }

@@ -6,4 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 /**
  * @author jmarfil
  */
-public record ForgotPasswordRequest(@NotBlank @Email String email) {}
+public record ForgotPasswordRequest(@NotBlank @Email String email,
+                                    // Campo honeypot: invisible en el formulario real; si viene relleno, es un bot
+                                    String website) {}

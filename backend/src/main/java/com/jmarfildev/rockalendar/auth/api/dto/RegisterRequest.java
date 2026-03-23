@@ -18,4 +18,6 @@ public record RegisterRequest(@NotBlank @Email String email,
                                     message = ErrorConstants.VALID_SIZE_PASSWORD) @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).+$",
                                                                                            message = ErrorConstants.VALID_PASSWORD) String password,
                               @AssertTrue(message = ErrorConstants.PRIVACY_NOT_ACCEPTED) Boolean privacyAccepted,
-                              String locale) {}
+                              String locale,
+                              // Campo honeypot: invisible en el formulario real; si viene relleno, es un bot
+                              String website) {}

@@ -19,6 +19,7 @@ public final class ErrorConstants {
     public static final String TYPE_409_CONFLICT = "conflict";
     public static final String TYPE_409_MODERATION_STATE = "moderation-state";
     public static final String TYPE_409_EVENT_STATE = "event-state";
+    public static final String TYPE_429_TOO_MANY_REQUESTS = "too-many-requests";
     public static final String TYPE_500_SERVER = "internal-error";
 
     /*
@@ -75,6 +76,9 @@ public final class ErrorConstants {
 
     // Conflict 409 genérico (constraint de BD no capturada explícitamente)
     public static final String DB_CONSTRAINT = "error.409.dbConstraint";
+
+    // Too Many Requests 429
+    public static final String RATE_LIMIT_EXCEEDED = "error.429.rateLimitExceeded";
 
     // Server Error 500
     public static final String SERVER = "error.500.server";
