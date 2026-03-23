@@ -66,6 +66,11 @@ Cuándo hacerlo:
   - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED` o `PENDING_MODERATION`.
 - Enviar correcciones sobre un evento aprobado. El flujo sería: usuario reporta corrección → va al sistema de moderación como cualquier otra acción → el evento del promotor aparece marcado con "hay observaciones" en su panel.
 
+## Artistas
+
+- Agregar al detalle de artista enlaces útiles (spoty, youtube, redes sociales).
+- Formulario para usuarios de "sugerir cambios".
+
 ## Administración
 
 - Panel de administrador.
@@ -136,6 +141,7 @@ Cuándo hacerlo:
 
 ## Integraciones externas
 
+- hCaptcha progresivo en registro y login si el spam se vuelve un problema.
 - Spotify:
   - Enlazar artista
   - Mostrar canciones populares
