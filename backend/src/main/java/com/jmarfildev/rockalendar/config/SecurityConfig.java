@@ -2,6 +2,7 @@ package com.jmarfildev.rockalendar.config;
 
 import java.util.List;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -36,6 +38,7 @@ import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
+    private final TokenRenewalFilter tokenRenewalFilter;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -67,9 +70,19 @@ public class SecurityConfig {
 
             .oauth2ResourceServer(oauth2 -> oauth2.authenticationEntryPoint(unauthorizedError())
                                                   .accessDeniedHandler(forbiddenError())
-                                                  .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                                                  .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+            .addFilterAfter(tokenRenewalFilter, BearerTokenAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    // Evita que Spring Boot registre TokenRenewalFilter también en el servlet container
+    // (ya está registrado dentro de la cadena de Spring Security)
+    @Bean
+    FilterRegistrationBean<TokenRenewalFilter> tokenRenewalFilterRegistration() {
+        var registration = new FilterRegistrationBean<>(tokenRenewalFilter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     @Bean

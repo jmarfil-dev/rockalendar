@@ -48,6 +48,18 @@ export async function fetchAuthResult<T>(url: string, options: FetchOptions = {}
         ...(options.headers ?? {}),
         ...(auth.token.value ? { Authorization: `Bearer ${auth.token.value}` } : {}),
       },
+      onResponse({ response }) {
+        // Renovación silenciosa: el backend incluye un nuevo token cuando el actual está próximo a expirar.
+        // Se comprueba auth.token antes de aplicar: si el usuario hizo logout mientras la petición
+        // estaba en vuelo, no restauramos la sesión accidentalmente.
+        if (response.ok && import.meta.client && auth.token.value) {
+          const newToken = response.headers.get("X-Refresh-Token");
+          const newExpiresAt = response.headers.get("X-Refresh-Token-Expires-At");
+          if (newToken && newExpiresAt) {
+            auth.setSession({ accessToken: newToken, expiresAt: newExpiresAt });
+          }
+        }
+      },
     });
     return { ok: true, data };
   } catch (err: unknown) {

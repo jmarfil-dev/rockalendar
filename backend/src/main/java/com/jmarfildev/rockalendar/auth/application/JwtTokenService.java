@@ -30,6 +30,14 @@ public class JwtTokenService {
     private long ttlMinutes;
 
     public LoginToken createToken(User user, List<String> authorities) {
+        return buildToken(user.getId().toString(), user.getEmail(), authorities);
+    }
+
+    public LoginToken renewToken(String subject, String email, List<String> authorities) {
+        return buildToken(subject, email, authorities);
+    }
+
+    private LoginToken buildToken(String subject, String email, List<String> authorities) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(ttlMinutes * 60);
 
@@ -37,8 +45,8 @@ public class JwtTokenService {
                 .issuer(issuer)
                 .issuedAt(now)
                 .expiresAt(exp)
-                .subject(user.getId().toString())
-                .claim("email", user.getEmail())
+                .subject(subject)
+                .claim("email", email)
                 .claim("roles", authorities)
                 .build();
 
