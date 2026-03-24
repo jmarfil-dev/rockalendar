@@ -1,4 +1,4 @@
-package com.jmarfildev.rockalendar.config;
+package com.jmarfildev.rockalendar.config.filters;
 
 import java.io.IOException;
 import java.time.Instant;

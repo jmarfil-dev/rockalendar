@@ -3,20 +3,25 @@ package com.jmarfildev.rockalendar.events.api;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.jmarfildev.rockalendar.common.storage.StorageService;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
@@ -38,6 +43,10 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     ContractApiTestUtils contractUtils;
     @Autowired
     MockMvc mockMvc;
+
+    // StorageService mockeado para que los tests no necesiten MinIO
+    @MockitoBean
+    StorageService storageService;
 
     private final String API_ME_EVENTS = "/api/me/events";
 
@@ -61,10 +70,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void propose_asUser_returns201WithPendingEvent() throws Exception {
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        mockMvc.perform(post(API_ME_EVENTS)
-                .with(contractUtils.authJwt())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+        mockMvc.perform(multipart(API_ME_EVENTS)
+                .file(eventPart(body))
+                .with(contractUtils.authJwt()))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.event.id").isNotEmpty())
@@ -75,12 +83,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/me/events sin auth -> 401 ProblemDetail")
     void propose_asAnon_returns401ProblemDetail() throws Exception {
-        String artists = "[%s]".formatted(TestConstants.MOCK_ARTIST_NAME_AY);
-        var body = eventBody(factory.sevilla().getId().toString(), artists);
+        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        var ra = mockMvc.perform(post(API_ME_EVENTS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body));
+        var ra = mockMvc.perform(multipart(API_ME_EVENTS).file(eventPart(body)));
 
         contractUtils.expectProblemDetail(ra, 401, API_ME_EVENTS);
     }
@@ -90,10 +95,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void propose_asUser_emptyArtists_returns400ProblemDetail() throws Exception {
         var body = eventBody(factory.sevilla().getId().toString(), "[]");
 
-        var ra = mockMvc.perform(post(API_ME_EVENTS)
-                .with(contractUtils.authJwt())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body));
+        var ra = mockMvc.perform(multipart(API_ME_EVENTS)
+                .file(eventPart(body))
+                .with(contractUtils.authJwt()));
 
         contractUtils.expectProblemDetail(ra, 400, API_ME_EVENTS);
     }
@@ -105,10 +109,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         String api = API_ME_EVENTS.concat("/" + event.getId());
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        mockMvc.perform(put(api)
-                .with(contractUtils.authJwt())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+        mockMvc.perform(multipart(HttpMethod.PUT, api)
+                .file(eventPart(body))
+                .with(contractUtils.authJwt()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").isNotEmpty())
@@ -118,14 +121,13 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("PUT /api/me/events/{eventId} sin body -> 400 ProblemDetail")
+    @DisplayName("PUT /api/me/events/{eventId} sin parte event -> 400 ProblemDetail")
     void update_asOwner_noBody_returns400ProblemDetail() throws Exception {
         var event = factory.approvedMadridAgainstYou();
         String api = API_ME_EVENTS.concat("/" + event.getId());
 
-        var ra = mockMvc.perform(put(api)
-                .with(contractUtils.authJwt())
-                .contentType(MediaType.APPLICATION_JSON))
+        var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
+                .with(contractUtils.authJwt()))
                 .andExpect(status().isBadRequest());
 
         contractUtils.expectProblemDetail(ra, 400, api);
@@ -151,10 +153,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
                 }
                 """.formatted(factory.madrid().getId());
 
-        var ra = mockMvc.perform(put(api)
-                .with(contractUtils.authJwt())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+        var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
+                .file(eventPart(body))
+                .with(contractUtils.authJwt()))
                 .andExpect(status().isBadRequest());
 
         contractUtils.expectProblemDetail(ra, 400, api);
@@ -167,9 +168,8 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         String api = API_ME_EVENTS.concat("/" + event.getId());
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        var ra = mockMvc.perform(put(api)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+        var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
+                .file(eventPart(body)))
                 .andExpect(status().isUnauthorized());
 
         contractUtils.expectProblemDetail(ra, 401, api);
@@ -183,10 +183,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         String api = API_ME_EVENTS.concat("/" + event.getId());
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        var ra = mockMvc.perform(put(api)
-                .with(contractUtils.authJwt())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+        var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
+                .file(eventPart(body))
+                .with(contractUtils.authJwt()))
                 .andExpect(status().isForbidden());
 
         contractUtils.expectProblemDetail(ra, 403, api);
@@ -198,10 +197,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         String api = API_ME_EVENTS.concat("/cccccccc-0000-0000-0000-000000000099");
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        var ra = mockMvc.perform(put(api)
-                .with(contractUtils.authJwt())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+        var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
+                .file(eventPart(body))
+                .with(contractUtils.authJwt()))
                 .andExpect(status().isNotFound());
 
         contractUtils.expectProblemDetail(ra, 404, api);
@@ -214,10 +212,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         String api = API_ME_EVENTS.concat("/" + event.getId());
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        var ra = mockMvc.perform(put(api)
-                .with(contractUtils.authJwt())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
+        var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
+                .file(eventPart(body))
+                .with(contractUtils.authJwt()))
                 .andExpect(status().isConflict());
 
         contractUtils.expectProblemDetail(ra, 409, api);
@@ -318,8 +315,13 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     /*
-     * Payload crear evento
+     * Helpers
      */
+
+    private static MockMultipartFile eventPart(String json) {
+        return new MockMultipartFile("event", "", MediaType.APPLICATION_JSON_VALUE, json.getBytes(StandardCharsets.UTF_8));
+    }
+
     private static String eventBody(String provinceId, String artists) {
         return """
                 {

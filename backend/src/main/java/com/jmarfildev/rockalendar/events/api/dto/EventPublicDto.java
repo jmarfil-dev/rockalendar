@@ -20,4 +20,5 @@ public record EventPublicDto(UUID id,
                              String provinceName,
                              String cityName,
                              List<ArtistDto> artists,
-                             String sourceUrl) {}
+                             String sourceUrl,
+                             String posterUrl) {}

@@ -5,6 +5,16 @@
 spring:
   application:
     name: rockalendar
+
+# =================================
+# MULTIPART
+# Tomcat rechaza peticiones que superen este límite con MaxUploadSizeExceededException,
+# capturada en GlobalExceptionHandler como 422 con mensaje descriptivo.
+# =================================
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 # =================================
 # MAIL (Brevo SMTP)
 # =================================
@@ -100,3 +110,9 @@ rockalendar:
       minSimilarity: 0.30
       ftsWeight: 2.0
       trgmWeight: 1.0
+  storage:
+    endpoint: "${STORAGE_ENDPOINT}"
+    bucket: "${STORAGE_BUCKET}"
+    access-key: "${STORAGE_ACCESS_KEY}"
+    secret-key: "${STORAGE_SECRET_KEY}"
+    public-url-base: "${STORAGE_PUBLIC_URL_BASE}"

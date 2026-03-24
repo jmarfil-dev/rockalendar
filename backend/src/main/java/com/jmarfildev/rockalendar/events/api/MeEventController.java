@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
@@ -28,8 +30,8 @@ public class MeEventController implements MeEventApi {
     private final EventQueryService queryService;
 
     @Override
-    public ProposeEventResponse propose(SubmitEventRequest request) {
-        return commandService.propose(request);
+    public ProposeEventResponse propose(SubmitEventRequest request, MultipartFile poster) {
+        return commandService.propose(request, poster);
     }
 
     @Override
@@ -43,8 +45,8 @@ public class MeEventController implements MeEventApi {
     }
 
     @Override
-    public EventPrivateDto update(UUID eventId, SubmitEventRequest request) {
-        return commandService.update(eventId, request);
+    public EventPrivateDto update(UUID eventId, SubmitEventRequest request, MultipartFile poster, boolean removePoster) {
+        return commandService.update(eventId, request, poster, removePoster);
     }
 
     @Override
