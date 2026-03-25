@@ -19,6 +19,15 @@ if (artistError.value) {
 }
 
 useHead({ title: () => artist.value?.name ?? t("page.artistDetail") });
+useSeoMeta({
+  description: () => `Upcoming concerts and festivals featuring ${artist.value?.name ?? ""} in Spain.`,
+  ogTitle: () => artist.value?.name,
+  ogDescription: () => `Upcoming concerts and festivals featuring ${artist.value?.name ?? ""} in Spain.`,
+  ogType: "website",
+  twitterCard: "summary",
+  twitterTitle: () => artist.value?.name,
+  twitterDescription: () => `Upcoming concerts and festivals featuring ${artist.value?.name ?? ""} in Spain.`,
+});
 
 const now = new Date().toISOString();
 const { data: eventsPage, pending: eventsPending } = await useFetch<{ content: EventPublicListItem[] }>(

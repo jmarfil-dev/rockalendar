@@ -3,6 +3,11 @@ definePageMeta({ layout: "public" });
 
 const { t } = useI18n();
 useHead({ title: () => t("page.contact") });
+useSeoMeta({
+  description: "Get in touch with the Rockalendar team.",
+  ogDescription: "Get in touch with the Rockalendar team.",
+  ogType: "website",
+});
 
 const form = reactive({ name: "", email: "", message: "" });
 

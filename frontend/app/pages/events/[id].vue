@@ -57,7 +57,55 @@ if (fetchError.value) {
   throw createError({ status: status >= 500 ? status : 404 });
 }
 
-useHead({ title: () => event.value?.title ?? t("page.events") });
+const eventDescription = computed(() => {
+  if (!event.value) return "";
+  if (event.value.description) return event.value.description.slice(0, 200);
+  const parts = [event.value.venueName, event.value.cityName, event.value.provinceName].filter(Boolean);
+  return parts.length ? `${event.value.title} — ${parts.join(", ")}` : event.value.title;
+});
+
+const eventJsonLd = computed(() => {
+  if (!event.value) return null;
+  const ev = event.value;
+  const schema: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: ev.title,
+    startDate: ev.startDateTime,
+    location: {
+      "@type": "Place",
+      name: ev.venueName ?? ev.cityName,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: ev.cityName,
+        addressRegion: ev.provinceName,
+        addressCountry: "ES",
+      },
+    },
+  };
+  if (ev.endDateTime) schema.endDate = ev.endDateTime;
+  if (ev.description) schema.description = ev.description;
+  if (ev.posterUrl) schema.image = ev.posterUrl;
+  if (ev.artists?.length) schema.performer = ev.artists.map((a) => ({ "@type": "MusicGroup", name: a.name }));
+  return JSON.stringify(schema);
+});
+
+useHead({
+  title: () => event.value?.title ?? t("page.events"),
+  script: () => eventJsonLd.value ? [{ type: "application/ld+json", innerHTML: eventJsonLd.value }] : [],
+});
+
+useSeoMeta({
+  description: () => eventDescription.value,
+  ogTitle: () => event.value?.title,
+  ogDescription: () => eventDescription.value,
+  ogImage: () => event.value?.posterUrl ?? undefined,
+  ogType: "website",
+  twitterCard: () => event.value?.posterUrl ? "summary_large_image" : "summary",
+  twitterTitle: () => event.value?.title,
+  twitterDescription: () => eventDescription.value,
+  twitterImage: () => event.value?.posterUrl ?? undefined,
+});
 
 function mapsUrl(e: EventPublic): string {
   const parts = [e.venueName, e.cityName, e.provinceName].filter(Boolean);

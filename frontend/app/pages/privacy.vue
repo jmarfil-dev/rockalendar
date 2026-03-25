@@ -5,6 +5,11 @@ definePageMeta({ layout: "public" });
 
 const { t, locale } = useI18n();
 useHead({ title: () => t("page.privacy") });
+useSeoMeta({
+  description: "Rockalendar privacy policy: how we collect, use and protect your personal data.",
+  ogDescription: "Rockalendar privacy policy: how we collect, use and protect your personal data.",
+  ogType: "website",
+});
 </script>
 
 <template>

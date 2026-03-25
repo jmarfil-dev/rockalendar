@@ -3,6 +3,11 @@ definePageMeta({ layout: "public" });
 
 const { t, locale } = useI18n();
 useHead({ title: () => t("page.about") });
+useSeoMeta({
+  description: "About Rockalendar: an independent, community-driven calendar for rock, metal and punk concerts in Spain.",
+  ogDescription: "About Rockalendar: an independent, community-driven calendar for rock, metal and punk concerts in Spain.",
+  ogType: "website",
+});
 </script>
 
 <template>
