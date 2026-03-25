@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
@@ -24,6 +26,8 @@ import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
+import com.jmarfildev.rockalendar.common.storage.ImageProcessingService;
+import com.jmarfildev.rockalendar.common.storage.StorageService;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.PossibleDuplicateDto;
 import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
@@ -62,6 +66,8 @@ public class EventCommandService {
     private final EventMapper mapper;
     private final CurrentUser currentUser;
     private final AutoModerationService autoModerationService;
+    private final StorageService storageService;
+    private final ImageProcessingService imageProcessingService;
 
     /**
      * Propone un evento que queda en estado PENDING_MODERATION si todos los datos se validan correctamente.
@@ -71,7 +77,7 @@ public class EventCommandService {
      * @return el evento propuesto, junto con info del posible duplicado si se detectó alguno
      */
     @Transactional
-    public ProposeEventResponse propose(SubmitEventRequest req) {
+    public ProposeEventResponse propose(SubmitEventRequest req, MultipartFile poster) {
         UUID userId = currentUser.userId();
         boolean isAdmin = currentUser.isAdmin();
         EventInputValidate in = validate(req, userId);
@@ -120,6 +126,10 @@ public class EventCommandService {
 
         var saved = eventRepository.save(event);
 
+        if (poster != null && !poster.isEmpty()) {
+            uploadPosterToEvent(saved, poster);
+        }
+
         if (modResult != null && modResult.flagged()) {
             autoModerationService.logFlag(saved.getId(), modResult);
         }
@@ -140,7 +150,7 @@ public class EventCommandService {
      * @return el evento actualizado
      */
     @Transactional
-    public EventPrivateDto update(UUID eventId, SubmitEventRequest req) {
+    public EventPrivateDto update(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster) {
         UUID userId = currentUser.userId();
         boolean isAdmin = currentUser.isAdmin();
         EventInputValidate in = validate(req, userId);
@@ -185,6 +195,14 @@ public class EventCommandService {
         }
         event.setSubmittedAt(OffsetDateTime.now());
 
+        if (poster != null && !poster.isEmpty()) {
+            uploadPosterToEvent(event, poster);
+        } else if (removePoster) {
+            storageService.delete(event.getPosterKey());
+            event.setPosterUrl(null);
+            event.setPosterKey(null);
+        }
+
         // No hace falta save() porque al ser un evento administrado por JPA (viene de un find()) se actualiza al terminar la transacción.
         log.info("event updated eventId={} userId={} status={} isAdmin={}", eventId, userId, event.getStatus(), isAdmin);
         return mapper.toPrivateDto(event);
@@ -218,6 +236,9 @@ public class EventCommandService {
             }
         }
 
+        storageService.delete(event.getPosterKey());
+        event.setPosterUrl(null);
+        event.setPosterKey(null);
         event.setStatus(EventStatus.ERASED);
         log.info("event deleted eventId={} userId={} isAdmin={}", eventId, userId, isAdmin);
     }
@@ -311,6 +332,17 @@ public class EventCommandService {
 
     private boolean hasEditableStatus(EventStatus status) {
         return status == EventStatus.DRAFT || status == EventStatus.NEEDS_CHANGES || status == EventStatus.APPROVED;
+    }
+
+    // Procesa y sube el cartel, reemplazando el anterior si existía
+    private void uploadPosterToEvent(Event event, MultipartFile poster) {
+        byte[] processed = imageProcessingService.process(poster);
+        String key = "posters/" + event.getId() + "/" + UUID.randomUUID() + ".jpg";
+        storageService.delete(event.getPosterKey());
+        String publicUrl = storageService.upload(processed, key, "image/jpeg");
+        event.setPosterUrl(publicUrl);
+        event.setPosterKey(key);
+        log.debug("poster subido eventId={} key={}", event.getId(), key);
     }
 
     private record EventInputValidate(String title,

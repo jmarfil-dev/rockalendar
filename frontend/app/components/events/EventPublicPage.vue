@@ -121,7 +121,13 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
     <header>
       <div class="flex align-items-center justify-content-between w-full">
         <span class="text-sm text-color-secondary">{{ t("pagination.sortedBy") }}</span>
-        <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" :pt="{ label: { 'aria-label': t('pagination.sortedBy') } }" />
+        <Select
+          v-model="sort"
+          :options="sortOptions"
+          optionLabel="label"
+          optionValue="value"
+          class="w-10rem"
+          :pt="{ label: { 'aria-label': t('pagination.sortedBy') } }" />
       </div>
     </header>
 
@@ -130,7 +136,7 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
       <!-- Loading -->
       <div v-if="pending" role="status" class="flex justify-content-center p-4">
         <ProgressSpinner />
-        <span class="sr-only">{{ t('common.loading') }}</span>
+        <span class="sr-only">{{ t("common.loading") }}</span>
       </div>
 
       <!-- Listado vacío -->
@@ -140,29 +146,52 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
       <div v-else class="grid">
         <div v-for="ev in events" :key="ev.id" class="col-12 md:col-6 lg:col-4">
           <NuxtLink :to="ROUTE_PATH.eventDetail(ev.id)" class="no-underline">
-            <Card class="h-full border-1 surface-50 surface-border cursor-pointer hover:surface-100 transition-colors transition-duration-150">
+            <Card
+              class="h-full border-1 surface-50 surface-border cursor-pointer hover:surface-100 transition-colors transition-duration-150"
+              :pt="{ body: { style: 'padding: 0.625rem' }, title: { style: 'margin-bottom: 0.5rem' } }">
               <template #title>
                 <span class="text-color-primary">{{ ev.title }}</span>
               </template>
 
               <template #content>
-                <div class="text-color-secondary text-sm flex flex-column gap-2">
-                  <div>
-                    <i class="pi pi-calendar mr-2" />
-                    <time :datetime="ev.startDateTime">
-                      {{ formatEventDate(ev.startDateTime) }}
-                    </time>
-                    <template v-if="ev.endDateTime">
-                      &nbsp;>>&nbsp;
-                      <time :datetime="ev.endDateTime">
-                        {{ formatEventDate(ev.endDateTime) }}
-                      </time>
-                    </template>
+                <div class="flex gap-3" style="overflow: hidden; height: 100px">
+                  <img
+                    v-if="ev.posterUrl"
+                    :src="ev.posterUrl"
+                    :alt="ev.title"
+                    style="
+                      width: 40%;
+                      flex-shrink: 0;
+                      object-fit: cover;
+                      object-position: top;
+                      border-radius: 6px;
+                      height: 100%;
+                    " />
+                  <div
+                    v-else
+                    class="border-1 surface-border border-round-lg surface-100 flex align-items-center justify-content-center text-center text-color-secondary"
+                    style="width: 40%; flex-shrink: 0; height: 100%">
+                    <div>
+                      <i class="pi pi-image text-xl" />
+                      <div class="text-xs mt-1">{{ t("events.noPoster") }}</div>
+                    </div>
                   </div>
+                  <div class="text-color-secondary text-sm flex flex-column gap-2">
+                    <div class="flex flex-column gap-1">
+                      <div>
+                        <i class="pi pi-calendar mr-2" />
+                        <time :datetime="ev.startDateTime">{{ formatEventDate(ev.startDateTime) }}</time>
+                      </div>
+                      <div v-if="ev.endDateTime" class="pl-4">
+                        <span class="mr-1">→</span>
+                        <time :datetime="ev.endDateTime">{{ formatEventDate(ev.endDateTime) }}</time>
+                      </div>
+                    </div>
 
-                  <div>
-                    <i class="pi pi-compass mr-2" />
-                    {{ ev.cityName }}<span v-if="ev.cityName && ev.provinceName">, </span>{{ ev.provinceName }}
+                    <div>
+                      <i class="pi pi-compass mr-2" />
+                      {{ ev.cityName }}<span v-if="ev.cityName && ev.provinceName">, </span>{{ ev.provinceName }}
+                    </div>
                   </div>
                 </div>
               </template>

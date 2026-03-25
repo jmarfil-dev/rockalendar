@@ -18,6 +18,7 @@ export const useProposeEvent = () => {
     sourceUrl: "",
   });
 
+  const posterFile = ref<File | null>(null);
   const submitting = ref(false);
   const errorMsg = ref<string | null>(null);
   const fieldErrors = ref<Record<string, string>>({});
@@ -38,7 +39,7 @@ export const useProposeEvent = () => {
     submitting.value = true;
     resetErrors();
 
-    const body = {
+    const eventData = {
       title: form.title,
       description: form.description || undefined,
       startDateTime: form.startDateTime?.toISOString(),
@@ -50,10 +51,16 @@ export const useProposeEvent = () => {
       sourceUrl: form.sourceUrl || undefined,
     };
 
+    const formData = new FormData();
+    formData.append("event", new Blob([JSON.stringify(eventData)], { type: "application/json" }));
+    if (posterFile.value) {
+      formData.append("poster", posterFile.value);
+    }
+
     try {
       const res = await fetchAuthResult<ProposeEventResponse>(ROUTES.apiMeEvents, {
         method: "POST",
-        body,
+        body: formData,
       });
 
       if (res.ok) {
@@ -68,5 +75,5 @@ export const useProposeEvent = () => {
     }
   }
 
-  return { form, submitting, errorMsg, fieldErrors, artistsError, submit, resetErrors };
+  return { form, posterFile, submitting, errorMsg, fieldErrors, artistsError, submit, resetErrors };
 };

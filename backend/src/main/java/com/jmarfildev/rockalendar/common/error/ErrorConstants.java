@@ -80,6 +80,11 @@ public final class ErrorConstants {
     // Too Many Requests 429
     public static final String RATE_LIMIT_EXCEEDED = "error.429.rateLimitExceeded";
 
+    // Unprocessable Entity 422
+    public static final String TYPE_422_STORAGE = "storage-error";
+    public static final String INVALID_IMAGE = "error.422.invalidImage";
+    public static final String STORAGE_UPLOAD_FAILED = "error.422.storageUploadFailed";
+
     // Server Error 500
     public static final String SERVER = "error.500.server";
 
@@ -87,4 +92,5 @@ public final class ErrorConstants {
      * Titles
      */
     public static final String TIT_VALIDATION_ERROR = "Validation error";
+    public static final String TIT_STORAGE_ERROR = "Storage error";
 }

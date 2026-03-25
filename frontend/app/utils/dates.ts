@@ -3,5 +3,5 @@
  * Usa la localización del navegador.
  */
 export function formatEventDate(isoString: string): string {
-  return new Date(isoString).toLocaleString();
+  return new Date(isoString).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
 }

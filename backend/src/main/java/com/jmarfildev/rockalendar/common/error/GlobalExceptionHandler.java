@@ -15,6 +15,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +47,7 @@ public class GlobalExceptionHandler {
                      ErrorConstants.TYPE_400_VALIDATION);
     }
 
-    @ExceptionHandler({ HttpMessageNotReadableException.class, NoResourceFoundException.class })
+    @ExceptionHandler({ HttpMessageNotReadableException.class, NoResourceFoundException.class, MissingServletRequestPartException.class })
     public ProblemDetail handleHttpMessageNotReadable(Exception ex, HttpServletRequest req) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         return build(pd, ErrorConstants.TIT_VALIDATION_ERROR, ErrorConstants.REQUEST_REQUIRED, req.getRequestURI(),
@@ -115,6 +117,14 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         return build(pd, HttpStatus.CONFLICT.getReasonPhrase(), ErrorConstants.DB_CONSTRAINT, req.getRequestURI(),
                      ErrorConstants.TYPE_409_CONFLICT);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ProblemDetail handleMaxUploadSize(MaxUploadSizeExceededException ex, HttpServletRequest req) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
+        pd.setDetail("La imagen supera el tamaño máximo permitido (10 MB)");
+        return build(pd, ErrorConstants.TIT_STORAGE_ERROR, ErrorConstants.INVALID_IMAGE, req.getRequestURI(),
+                     ErrorConstants.TYPE_422_STORAGE);
     }
 
     /**

@@ -10,7 +10,21 @@ const route = useRoute();
 const id = route.params.id as string;
 
 const { load: loadProvinces, options: provinceOptions, loading: provincesLoading } = useProvinces();
-const { form, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit } = useEditEvent(id);
+const { form, posterFile, existingPosterUrl, removePoster, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit } = useEditEvent(id);
+
+const posterInputRef = ref<HTMLInputElement | null>(null);
+const posterPreviewUrl = computed(() => (posterFile.value ? URL.createObjectURL(posterFile.value) : null));
+
+function onPosterChange(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0] ?? null;
+  posterFile.value = file;
+  removePoster.value = false;
+}
+
+function clearNewPoster() {
+  posterFile.value = null;
+  if (posterInputRef.value) posterInputRef.value.value = "";
+}
 
 const today = new Date();
 
@@ -197,6 +211,86 @@ async function onSuccessClose() {
 
           <!-- Artistas -->
           <ArtistSelector v-model="form.artists" :fieldError="artistsError ?? undefined" />
+
+          <!-- Cartel -->
+          <div class="flex flex-column gap-2">
+            <label class="text-sm text-color-secondary">{{ t("events.uploadPoster") }}</label>
+
+            <!-- Cartel existente (sin seleccionar nuevo ni marcado para eliminar) -->
+            <div v-if="existingPosterUrl && !posterFile && !removePoster" class="flex flex-column gap-2">
+              <img
+                :src="existingPosterUrl"
+                :alt="t('events.currentPoster')"
+                class="border-round-lg border-1 surface-border"
+                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" />
+              <div class="flex gap-2">
+                <Button
+                  type="button"
+                  :label="t('events.changePoster')"
+                  icon="pi pi-upload"
+                  severity="secondary"
+                  outlined
+                  size="small"
+                  @click="posterInputRef?.click()" />
+                <Button
+                  type="button"
+                  :label="t('events.removePoster')"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  outlined
+                  size="small"
+                  @click="removePoster = true" />
+              </div>
+            </div>
+
+            <!-- Preview del fichero nuevo seleccionado -->
+            <div v-else-if="posterFile" class="flex flex-column gap-2">
+              <img
+                :src="posterPreviewUrl!"
+                :alt="t('events.posterPreview')"
+                class="border-round-lg border-1 surface-border"
+                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" />
+              <div class="flex align-items-center gap-2">
+                <span class="text-sm text-color-secondary flex-1 overflow-hidden text-overflow-ellipsis white-space-nowrap">{{ posterFile.name }}</span>
+                <Button
+                  type="button"
+                  :label="t('events.removePoster')"
+                  icon="pi pi-times"
+                  severity="secondary"
+                  outlined
+                  size="small"
+                  @click="clearNewPoster" />
+              </div>
+            </div>
+
+            <!-- Aviso de eliminación pendiente -->
+            <div v-else-if="removePoster" class="flex align-items-center gap-2 p-3 border-1 border-round-lg surface-border">
+              <i class="pi pi-info-circle text-color-secondary flex-shrink-0" aria-hidden="true" />
+              <span class="text-sm text-color-secondary flex-1">{{ t("events.posterWillBeRemoved") }}</span>
+              <Button
+                type="button"
+                icon="pi pi-undo"
+                severity="secondary"
+                text
+                size="small"
+                :aria-label="t('common.retry')"
+                @click="removePoster = false" />
+            </div>
+
+            <!-- Botón de selección (sin cartel existente) -->
+            <div v-else>
+              <Button
+                type="button"
+                :label="t('events.uploadPoster')"
+                icon="pi pi-upload"
+                severity="secondary"
+                outlined
+                @click="posterInputRef?.click()" />
+            </div>
+
+            <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" />
+            <small class="text-xs text-color-secondary">{{ t("events.posterHint") }}</small>
+          </div>
 
           <!-- Más info (URL externa) -->
           <div class="flex flex-column gap-2">

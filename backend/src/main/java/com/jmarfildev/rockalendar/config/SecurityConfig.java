@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
+import com.jmarfildev.rockalendar.config.filters.TokenRenewalFilter;
 
 /**
  * @author jmarfil

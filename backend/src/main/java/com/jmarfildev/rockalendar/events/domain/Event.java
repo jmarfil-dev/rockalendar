@@ -81,6 +81,12 @@ public class Event {
     @Column(name = "source_url")
     private String sourceUrl;
 
+    @Column(name = "poster_url", length = 500)
+    private String posterUrl;
+
+    @Column(name = "poster_key", length = 300)
+    private String posterKey;
+
     @Column(name = "created_by_user_id", nullable = false)
     private UUID createdByUserId;
 

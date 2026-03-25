@@ -15,5 +15,6 @@ public interface EventPublicSearchProjection {
     String getProvinceName();
     String getCityName();
 
+    String getPosterUrl();
     Double getScore(); // Para ordenar por relevancia en query
 }

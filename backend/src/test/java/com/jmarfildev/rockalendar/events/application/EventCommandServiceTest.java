@@ -27,6 +27,8 @@ import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
+import com.jmarfildev.rockalendar.common.storage.ImageProcessingService;
+import com.jmarfildev.rockalendar.common.storage.StorageService;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapperImpl;
@@ -60,6 +62,10 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
     @MockitoBean
     CurrentUser currentUser;
+    @MockitoBean
+    StorageService storageService;
+    @MockitoBean
+    ImageProcessingService imageProcessingService;
 
     private final String MOCK_TITLE = "Concierto";
     private final String MOCK_WIZINK = "WiZink Center";
@@ -90,7 +96,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("Ska-P"),
                 null);
 
-        assertThatThrownBy(() -> service.propose(req))
+        assertThatThrownBy(() -> service.propose(req, null))
                 .isInstanceOf(BadRequestException.class)
                                                       .hasMessage(ErrorConstants.INVALID_DATE_RANGE);
     }
@@ -109,7 +115,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("   ", "!!!", "´´´"),
                 null);
 
-        assertThatThrownBy(() -> service.propose(req))
+        assertThatThrownBy(() -> service.propose(req, null))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage(ErrorConstants.ARTIST_REQUIRED);
     }
@@ -128,7 +134,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("Ska-P"),
                 null);
 
-        assertThatThrownBy(() -> service.propose(req))
+        assertThatThrownBy(() -> service.propose(req, null))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage(ErrorConstants.CITY_REQUIRED);
     }
@@ -147,7 +153,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("Ska-P"),
                 null);
 
-        assertThatThrownBy(() -> service.propose(req))
+        assertThatThrownBy(() -> service.propose(req, null))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage(ErrorConstants.VENUE_REQUIRED);
     }
@@ -166,7 +172,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("Ska-P"),
                 null);
 
-        assertThatThrownBy(() -> service.propose(req))
+        assertThatThrownBy(() -> service.propose(req, null))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage(ErrorConstants.TITLE_REQUIRED);
     }
@@ -187,7 +193,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("Ska-P"),
                 null);
 
-        assertThatThrownBy(() -> service.propose(req))
+        assertThatThrownBy(() -> service.propose(req, null))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage(ErrorConstants.INVALID_PROVINCE);
     }
@@ -206,7 +212,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("  Ska-P  "),
                 "  https://example.com  ");
 
-        var saved = service.propose(req);
+        var saved = service.propose(req, null);
 
         var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
 
@@ -241,7 +247,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("  AgAinST- yOU "),
                 null);
 
-        var saved = service.propose(req);
+        var saved = service.propose(req, null);
 
         var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
 
@@ -263,7 +269,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("Ska-P", "  ska p  ", "Boikot"),
                 null);
 
-        var saved = service.propose(req);
+        var saved = service.propose(req, null);
 
         var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
         assertThat(reloaded.getArtists())
@@ -287,7 +293,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("Ska-P"),
                 "   ");
 
-        var saved = service.propose(req);
+        var saved = service.propose(req, null);
 
         var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
         assertThat(reloaded.getDescription()).isNull();
@@ -309,7 +315,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 List.of("  Against You  "),
                 "  https://example.com  ");
 
-        var updated = service.update(event.getId(), req);
+        var updated = service.update(event.getId(), req, null, false);
 
         var reloaded = eventRepository.findById(updated.id()).orElseThrow();
 
@@ -357,7 +363,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of("Ska-P"), null);
 
-        var saved = service.propose(req);
+        var saved = service.propose(req, null);
 
         var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
         assertThat(reloaded.getStatus()).isEqualTo(EventStatus.APPROVED);
@@ -377,7 +383,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
-        var result = service.propose(req);
+        var result = service.propose(req, null);
 
         assertThat(result.possibleDuplicate()).isNull();
         assertThat(result.event().status()).isEqualTo(EventStatus.APPROVED);
@@ -395,7 +401,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
-        var updated = service.update(event.getId(), req);
+        var updated = service.update(event.getId(), req, null, false);
 
         assertThat(updated.title()).isEqualTo("Título editado por admin");
         assertThat(updated.status()).isEqualTo(EventStatus.APPROVED);
@@ -412,7 +418,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 factory.valencia().getId(), "València",
                 List.of("Mafalda"), null);
 
-        var updated = service.update(event.getId(), req);
+        var updated = service.update(event.getId(), req, null, false);
 
         assertThat(updated.status()).isEqualTo(EventStatus.APPROVED);
     }
@@ -428,7 +434,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of("Soziedad Alkoholika"), null);
 
-        var updated = service.update(event.getId(), req);
+        var updated = service.update(event.getId(), req, null, false);
 
         assertThat(updated.status()).isEqualTo(EventStatus.APPROVED);
     }
@@ -499,7 +505,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
-        var saved = service.propose(req);
+        var saved = service.propose(req, null);
 
         var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
         assertThat(reloaded.getArtists()).singleElement()

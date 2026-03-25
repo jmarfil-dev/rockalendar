@@ -35,6 +35,13 @@
     "searchConcerts": "Buscar conciertos",
     "poster": "Cartel del concierto o festival",
     "noPoster": "Cartel no disponible",
+    "uploadPoster": "Subir cartel (opcional)",
+    "posterHint": "JPEG, PNG o WebP. Se redimensionará automáticamente a 1200px.",
+    "removePoster": "Quitar cartel",
+    "changePoster": "Cambiar cartel",
+    "currentPoster": "Cartel actual",
+    "posterPreview": "Vista previa del cartel",
+    "posterWillBeRemoved": "El cartel actual será eliminado al guardar.",
     "status": "Estado"
   },
   "auth": {
@@ -341,6 +348,8 @@
       "pageSizeTooLarge": "Tamaño de página excede el límite máximo",
       "wrongCurrentPassword": "La contraseña actual no es correcta",
       "wrongConfirmPassword": "Las contraseñas no coinciden",
+      "invalidResetToken": "El enlace no es válido o ha caducado. Solicita uno nuevo.",
+      "invalidLocale": "El idioma seleccionado no es válido",
       "valid": {
         "patternPassword": "La contraseña debe tener al menos una mayuscula, una minúscula, un número y un símbolo",
         "sizePassword": "La contraseña debe tener entre 8 y 72 caracteres",
@@ -365,7 +374,8 @@
     "404": {
       "message": "La página que buscas no existe",
       "eventNotFound": "Concierto no encontrado",
-      "artistNotFound": "Artista no encontrado"
+      "artistNotFound": "Artista no encontrado",
+      "userNotFound": "Usuario no encontrado"
     },
     "409": {
       "message": "La operación entra en conflicto con el estado actual",
@@ -381,7 +391,12 @@
       "agendaEventNotAvailable": "Solo puedes añadir a la agenda conciertos aprobados",
       "dbConstraint": "Restricción de BD violada",
       "accountPendingDeletion": "Tu cuenta ya tiene una solicitud de eliminación pendiente",
-      "accountNotPendingDeletion": "No hay ninguna solicitud de eliminación activa"
+      "accountNotPendingDeletion": "No hay ninguna solicitud de eliminación activa",
+      "promotionNotEligible": "No cumples los requisitos para solicitar el ascenso a moderador/a"
+    },
+    "422": {
+      "invalidImage": "El archivo no es una imagen válida o supera el tamaño máximo permitido (10 MB)",
+      "storageUploadFailed": "No se ha podido subir el cartel. Inténtalo de nuevo."
     },
     "429": {
       "rateLimitExceeded": "Demasiados intentos. Por favor, espera {seconds} segundos antes de volver a intentarlo."

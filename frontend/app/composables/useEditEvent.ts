@@ -18,6 +18,9 @@ export const useEditEvent = (eventId: string) => {
     sourceUrl: "",
   });
 
+  const posterFile = ref<File | null>(null);
+  const existingPosterUrl = ref<string | null>(null);
+  const removePoster = ref(false);
   const loading = ref(true);
   const submitting = ref(false);
   const errorMsg = ref<string | null>(null);
@@ -37,8 +40,9 @@ export const useEditEvent = (eventId: string) => {
     form.venueName = event.venueName;
     form.provinceId = event.provinceId;
     form.cityName = event.cityName;
-    form.artists = event.artists.map((name) => ({ name }));
+    form.artists = event.artists.map((a) => ({ name: a.name }));
     form.sourceUrl = event.sourceUrl ?? "";
+    existingPosterUrl.value = event.posterUrl ?? null;
   }
 
   async function load() {
@@ -61,7 +65,7 @@ export const useEditEvent = (eventId: string) => {
     submitting.value = true;
     resetErrors();
 
-    const body = {
+    const eventData = {
       title: form.title,
       description: form.description || undefined,
       startDateTime: form.startDateTime?.toISOString(),
@@ -73,10 +77,17 @@ export const useEditEvent = (eventId: string) => {
       sourceUrl: form.sourceUrl || undefined,
     };
 
+    const formData = new FormData();
+    formData.append("event", new Blob([JSON.stringify(eventData)], { type: "application/json" }));
+    if (posterFile.value) {
+      formData.append("poster", posterFile.value);
+    }
+
     try {
       const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiMeEventDetail(eventId), {
         method: "PUT",
-        body,
+        body: formData,
+        query: { removePoster: removePoster.value },
       });
 
       if (res.ok) {
@@ -91,5 +102,5 @@ export const useEditEvent = (eventId: string) => {
     }
   }
 
-  return { form, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit };
+  return { form, posterFile, existingPosterUrl, removePoster, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit };
 };
