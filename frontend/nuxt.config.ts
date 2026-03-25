@@ -74,7 +74,7 @@ export default defineNuxtConfig({
       apiBase: "", // Se inyecta del fichero .env
     },
   },
-  modules: ["@primevue/nuxt-module", "@nuxtjs/i18n"],
+  modules: ["@nuxt/eslint", "@primevue/nuxt-module", "@nuxtjs/i18n"],
   css: ["primeicons/primeicons.css", "primeflex/primeflex.css", "~/assets/css/main.css"],
   primevue: {
     options: {

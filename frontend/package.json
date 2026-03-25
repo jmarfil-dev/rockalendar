@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.2.3",
@@ -24,7 +26,9 @@
     "serialize-javascript": "7.0.3"
   },
   "devDependencies": {
+    "@nuxt/eslint": "^1.15.2",
     "@primevue/nuxt-module": "^4.5.4",
-    "@types/node": "^25.3.3"
+    "@types/node": "^25.3.3",
+    "eslint-plugin-sonarjs": "^4.0.2"
   }
 }
