@@ -36,11 +36,18 @@ public class ModerationQueryService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
-    private static final Map<String, String> PENDING_SORT_MAP = Map.of("submitted", "submittedAt", "created", "createdAt", "title", "title");
-    private static final Sort PENDING_DEFAULT_SORT = Sort.by(Sort.Order.asc("submittedAt"), Sort.Order.asc("createdAt"));
+    private static final String FIELD_SUBMITTED_AT = "submittedAt";
+    private static final String FIELD_MODERATED_AT = "moderatedAt";
+    private static final String FIELD_CREATED_AT   = "createdAt";
+    private static final String FIELD_TITLE        = "title";
+    private static final String FIELD_STATUS       = "status";
+
+    private static final Map<String, String> PENDING_SORT_MAP =
+            Map.of("submitted", FIELD_SUBMITTED_AT, "created", FIELD_CREATED_AT, FIELD_TITLE, FIELD_TITLE);
+    private static final Sort PENDING_DEFAULT_SORT = Sort.by(Sort.Order.asc(FIELD_SUBMITTED_AT), Sort.Order.asc(FIELD_CREATED_AT));
     private static final Map<String, String> ARCHIVED_SORT_MAP =
-            Map.of("moderated", "moderatedAt", "created", "createdAt", "title", "title", "status", "status");
-    private static final Sort ARCHIVED_DEFAULT_SORT = Sort.by(Sort.Order.asc("moderatedAt"), Sort.Order.asc("createdAt"));
+            Map.of("moderated", FIELD_MODERATED_AT, "created", FIELD_CREATED_AT, FIELD_TITLE, FIELD_TITLE, FIELD_STATUS, FIELD_STATUS);
+    private static final Sort ARCHIVED_DEFAULT_SORT = Sort.by(Sort.Order.asc(FIELD_MODERATED_AT), Sort.Order.asc(FIELD_CREATED_AT));
 
     public EventPrivateDto getForModeration(UUID eventId) {
         return eventRepository.findById(eventId)

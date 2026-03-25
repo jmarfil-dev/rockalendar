@@ -22,7 +22,6 @@ import org.springframework.data.domain.Sort;
  *
  */
 public final class SortUtils {
-
     private SortUtils() {}
 
     /**
@@ -87,7 +86,7 @@ public final class SortUtils {
         String key = null;
         String dir = null;
 
-        if (pageable != null && pageable.getSort() != null && pageable.getSort().isSorted()) {
+        if (pageable != null && pageable.getSort().isSorted()) {
             Sort.Order first = pageable.getSort().iterator().next();
             key = normalizeSqlKey(first.getProperty(), aliases);
             dir = first.getDirection().isAscending() ? "asc" : "desc";

@@ -62,8 +62,9 @@ public class GlobalExceptionHandler {
         if (ex instanceof MethodArgumentTypeMismatchException matme) {
             detail += " '%s'".formatted(matme.getName());
             pd.setProperty("parameter", matme.getName());
-            if (matme.getRequiredType() != null) {
-                pd.setProperty("expectedType", matme.getRequiredType().getSimpleName());
+            Class<?> requiredType = matme.getRequiredType();
+            if (requiredType != null) {
+                pd.setProperty("expectedType", requiredType.getSimpleName());
             }
         }
 

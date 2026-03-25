@@ -1,13 +1,12 @@
 package com.jmarfildev.rockalendar.common.error;
 
-import lombok.NoArgsConstructor;
-
 /**
  * @author jmarfil
  *
  */
-@NoArgsConstructor
 public final class ErrorConstants {
+    private ErrorConstants() {}
+
     /*
      *  Types
      */

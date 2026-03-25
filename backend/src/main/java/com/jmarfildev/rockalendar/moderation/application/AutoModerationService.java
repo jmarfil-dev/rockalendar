@@ -50,8 +50,8 @@ public class AutoModerationService {
      * @return PASS si el evento puede pasar a moderación humana, FLAG con el motivo en caso contrario
      */
     public AutoModerationResult evaluate(String title, String description, Set<Artist> artists, UUID userId) {
-        int spamCount      = getConfigInt("spam_rejection_count", 5);
-        int spamWindowDays = getConfigInt("spam_window_days",     30);
+        int spamCount = getConfigInt("spam_rejection_count", 5);
+        int spamWindowDays = getConfigInt("spam_window_days", 30);
 
         // Comprobar anti-spam
         OffsetDateTime spamSince = OffsetDateTime.now().minusDays(spamWindowDays);
@@ -66,38 +66,48 @@ public class AutoModerationService {
         String content = (title + " " + (description != null ? description : "")).toLowerCase();
 
         for (ModerationRule rule : rules) {
-            switch (rule.getRuleType()) {
-                case TEXT_TERM -> {
-                    if (content.contains(rule.getValue().toLowerCase())) {
-                        log.info("auto-moderation TEXT_TERM ruleId={} value={}", rule.getId(), rule.getValue());
-                        return AutoModerationResult.flag(ModerationRuleType.TEXT_TERM, rule.getId(), rule.getValue());
-                    }
-                }
-                case REGEX -> {
-                    try {
-                        Pattern pattern = Pattern.compile(rule.getValue(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-                        if (pattern.matcher(content).find()) {
-                            log.info("auto-moderation REGEX ruleId={} pattern={}", rule.getId(), rule.getValue());
-                            return AutoModerationResult.flag(ModerationRuleType.REGEX, rule.getId(), rule.getValue());
-                        }
-                    }
-                    catch (PatternSyntaxException e) {
-                        log.warn("auto-moderation invalid regex ruleId={} pattern={}", rule.getId(), rule.getValue());
-                    }
-                }
-                case ARTIST_SLUG -> {
-                    for (Artist artist : artists) {
-                        if (artist.getSlug().equals(rule.getValue())) {
-                            log.info("auto-moderation ARTIST_SLUG ruleId={} slug={}", rule.getId(), artist.getSlug());
-                            return AutoModerationResult.flag(ModerationRuleType.ARTIST_SLUG, rule.getId(), artist.getSlug());
-                        }
-                    }
-                }
-                default -> { /* TRUST_SCORE y SPAM no tienen reglas en BD */ }
+            AutoModerationResult result = switch (rule.getRuleType()) {
+                case TEXT_TERM -> evaluateTextTerm(rule, content);
+                case REGEX -> evaluateRegex(rule, content);
+                case ARTIST_SLUG -> evaluateArtistSlug(rule, artists);
+                default -> null; // TRUST_SCORE y SPAM no se evalúan con reglas de BD
+            };
+            if (result != null && result.flagged()) {
+                return result;
             }
         }
 
         return AutoModerationResult.pass();
+    }
+
+    private AutoModerationResult evaluateTextTerm(ModerationRule rule, String content) {
+        if (!content.contains(rule.getValue().toLowerCase())) {
+            return AutoModerationResult.pass();
+        }
+        log.info("auto-moderation TEXT_TERM ruleId={} value={}", rule.getId(), rule.getValue());
+        return AutoModerationResult.flag(ModerationRuleType.TEXT_TERM, rule.getId(), rule.getValue());
+    }
+
+    private AutoModerationResult evaluateRegex(ModerationRule rule, String content) {
+        try {
+            Pattern pattern = Pattern.compile(rule.getValue(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+            if (!pattern.matcher(content).find()) {
+                return AutoModerationResult.pass();
+            }
+            log.info("auto-moderation REGEX ruleId={} pattern={}", rule.getId(), rule.getValue());
+            return AutoModerationResult.flag(ModerationRuleType.REGEX, rule.getId(), rule.getValue());
+        }
+        catch (PatternSyntaxException e) {
+            log.warn("auto-moderation invalid regex ruleId={} pattern={}", rule.getId(), rule.getValue());
+            return AutoModerationResult.pass();
+        }
+    }
+
+    private AutoModerationResult evaluateArtistSlug(ModerationRule rule, Set<Artist> artists) {
+        return artists.stream().filter(a -> a.getSlug().equals(rule.getValue())).findFirst().map(a -> {
+            log.info("auto-moderation ARTIST_SLUG ruleId={} slug={}", rule.getId(), a.getSlug());
+            return AutoModerationResult.flag(ModerationRuleType.ARTIST_SLUG, rule.getId(), a.getSlug());
+        }).orElse(AutoModerationResult.pass());
     }
 
     /**

@@ -33,8 +33,8 @@ import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 @AutoConfigureMockMvc
 class MeApiContractTest extends AbstractPostgresTest {
 
-    private static final String API_ME = "/api/me";
-    private static final String API_PROMOTION = "/api/me/promotion-request";
+    private final String apiMe = "/api/me";
+    private final String apiPromotion = "/api/me/promotion-request";
 
     @Autowired
     MockMvc mockMvc;
@@ -57,7 +57,7 @@ class MeApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("GET /api/me autenticado -> 200 con datos del usuario")
     void getMe_authenticated_200WithUserData() throws Exception {
-        mockMvc.perform(get(API_ME).with(contractUtils.authJwt()))
+        mockMvc.perform(get(apiMe).with(contractUtils.authJwt()))
                .andExpect(status().isOk())
                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                .andExpect(jsonPath("$.email").value(TestConstants.MOCK_USER_EMAIL))
@@ -68,9 +68,9 @@ class MeApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("GET /api/me sin autenticar -> 401")
     void getMe_anonymous_401() throws Exception {
-        var ra = mockMvc.perform(get(API_ME))
+        var ra = mockMvc.perform(get(apiMe))
                         .andExpect(status().isUnauthorized());
-        contractUtils.expectProblemDetail(ra, 401, API_ME);
+        contractUtils.expectProblemDetail(ra, 401, apiMe);
     }
 
     // --- POST /api/me/promotion-request ---
@@ -84,7 +84,7 @@ class MeApiContractTest extends AbstractPostgresTest {
                 OffsetDateTime.now().minusDays(PromotionEligibilityService.MIN_SENIORITY_DAYS + 1)
         );
 
-        mockMvc.perform(post(API_PROMOTION)
+        mockMvc.perform(post(apiPromotion)
                        .with(contractUtils.authJwt(eligible.getId().toString(),
                                eligible.getEmail(), "ROLE_USER")))
                .andExpect(status().isOk())
@@ -96,16 +96,16 @@ class MeApiContractTest extends AbstractPostgresTest {
     @DisplayName("POST /api/me/promotion-request usuario no elegible -> 409")
     void requestPromotion_notEligible_409() throws Exception {
         // El usuario seed MOCK_USER tiene trust_score=10, insuficiente
-        var ra = mockMvc.perform(post(API_PROMOTION).with(contractUtils.authJwt()))
+        var ra = mockMvc.perform(post(apiPromotion).with(contractUtils.authJwt()))
                         .andExpect(status().isConflict());
-        contractUtils.expectProblemDetail(ra, 409, API_PROMOTION);
+        contractUtils.expectProblemDetail(ra, 409, apiPromotion);
     }
 
     @Test
     @DisplayName("POST /api/me/promotion-request sin autenticar -> 401")
     void requestPromotion_anonymous_401() throws Exception {
-        var ra = mockMvc.perform(post(API_PROMOTION))
+        var ra = mockMvc.perform(post(apiPromotion))
                         .andExpect(status().isUnauthorized());
-        contractUtils.expectProblemDetail(ra, 401, API_PROMOTION);
+        contractUtils.expectProblemDetail(ra, 401, apiPromotion);
     }
 }

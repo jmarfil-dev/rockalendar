@@ -10,6 +10,8 @@ import org.springframework.http.ProblemDetail;
  *
  */
 public class ProblemDetailGenericProperties {
+    private ProblemDetailGenericProperties() {}
+
     public static ProblemDetail setGenericProperties(ProblemDetail pd,
                                                      String title,
                                                      String code,

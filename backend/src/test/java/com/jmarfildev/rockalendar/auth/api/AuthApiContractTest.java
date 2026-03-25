@@ -30,13 +30,13 @@ class AuthApiContractTest extends AbstractPostgresTest {
     @Autowired
     MockMvc mockMvc;
 
-    private final String API_AUTH_LOGIN = "/api/auth/login";
-    private final String API_AUTH_REGISTER = "/api/auth/register";
+    private final String apiAuthLogin = "/api/auth/login";
+    private final String apiAuthRegister = "/api/auth/register";
 
     @Test
     @DisplayName("POST /api/auth/login con credenciales válidas -> 200 y token")
     void login_validCredentials_returnsToken() throws Exception {
-        mockMvc.perform(post(API_AUTH_LOGIN).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(apiAuthLogin).contentType(MediaType.APPLICATION_JSON)
                                             .content("""
                                                      { "email": "%s", "password": "%s" }
                                                      """.formatted(TestConstants.MOCK_USER_EMAIL, TestConstants.MOCK_USER_PASSWORD)))
@@ -51,18 +51,18 @@ class AuthApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/auth/login con credenciales inválidas -> 401 ProblemDetail")
     void login_badCredentials_returns401ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(post(API_AUTH_LOGIN).contentType(MediaType.APPLICATION_JSON)
+        var ra = mockMvc.perform(post(apiAuthLogin).contentType(MediaType.APPLICATION_JSON)
                                                      .content("""
                                                               { "email": "nope@rockalendar.test", "password": "wrong" }
                                                               """));
 
-        contractUtils.expectProblemDetail(ra, 401, API_AUTH_LOGIN);
+        contractUtils.expectProblemDetail(ra, 401, apiAuthLogin);
     }
 
     @Test
     @DisplayName("POST /api/auth/register -> 200 y token")
     void register_asAnon_returns200() throws Exception {
-        mockMvc.perform(post(API_AUTH_REGISTER).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(apiAuthRegister).contentType(MediaType.APPLICATION_JSON)
                                                .content("""
                                                         { "email": "user01@test.com", "password": "Test@1234" }
                                                         """))
@@ -77,7 +77,7 @@ class AuthApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/auth/register con datos inválidos -> 400 ProblemDetail")
     void register_asAnon_invalidRequest_returns400ProblemDetail() throws Exception {
-        mockMvc.perform(post(API_AUTH_REGISTER).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(apiAuthRegister).contentType(MediaType.APPLICATION_JSON)
                                                .content("""
                                                         { "email": "not-an-email","password": "short" }
                                                         """))
@@ -87,13 +87,13 @@ class AuthApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/auth/register con email ya registrado (case-insensitive) -> 409 ProblemDetail")
     void register_asAnon_duplicateEmail_returns409ProblemDetail() throws Exception {
-        mockMvc.perform(post(API_AUTH_REGISTER).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(apiAuthRegister).contentType(MediaType.APPLICATION_JSON)
                                                .content("""
                                                         { "email": "User02@Test.com", "password": "%s" }
                                                         """.formatted(TestConstants.MOCK_USER_PASSWORD)))
                .andExpect(status().isOk());
 
-        mockMvc.perform(post(API_AUTH_REGISTER).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(apiAuthRegister).contentType(MediaType.APPLICATION_JSON)
                                                .content("""
                                                         { "email": "user02@test.com", "password": "%s" }
                                                         """.formatted(TestConstants.MOCK_USER_PASSWORD)))

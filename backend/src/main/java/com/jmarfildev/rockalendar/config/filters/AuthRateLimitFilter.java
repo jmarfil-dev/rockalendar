@@ -16,6 +16,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +39,8 @@ import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 @Slf4j
 public class AuthRateLimitFilter extends OncePerRequestFilter {
 
-    private static final String AUTH_PATH_PREFIX = "/api/auth/";
+    @Value("${rockalendar.auth.rate-limit.path-prefix:/api/auth/}")
+    private String authPathPrefix;
 
     private final ObjectMapper objectMapper;
 
@@ -46,7 +49,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getRequestURI().startsWith(AUTH_PATH_PREFIX);
+        return !request.getRequestURI().startsWith(authPathPrefix);
     }
 
     @Override
@@ -74,7 +77,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
     private Bucket createBucketForPath(String path) {
         Bandwidth limit;
         if (path.endsWith("/login")) {
-            // 10 intentos por minuto
+            // 10 intentos cada 10 minutos
             limit = Bandwidth.builder().capacity(10).refillIntervally(10, Duration.ofMinutes(10)).build();
         }
         else if (path.endsWith("/register")) {
@@ -82,8 +85,8 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             limit = Bandwidth.builder().capacity(5).refillIntervally(5, Duration.ofHours(1)).build();
         }
         else {
-            // forgot-password, reset-password: 5 intentos por 10 minutos
-            limit = Bandwidth.builder().capacity(5).refillIntervally(5, Duration.ofMinutes(10)).build();
+            // forgot-password, reset-password: 2 intentos cada 10 minutos
+            limit = Bandwidth.builder().capacity(2).refillIntervally(2, Duration.ofMinutes(10)).build();
         }
         return Bucket.builder().addLimit(limit).build();
     }

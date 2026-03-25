@@ -34,14 +34,14 @@ class EventApiContractTest extends AbstractPostgresTest {
     @Autowired
     MockMvc mockMvc;
 
-    private final String API_EVENTS = "/api/events";
-    private final String API_EVENTS_HOME = "/api/events/home";
-    private final String API_EVENTS_ID = "/api/events/%s";
+    private final String apiEvents = "/api/events";
+    private final String apiEventsHome = "/api/events/home";
+    private final String apiEventsId = "/api/events/%s";
 
     @Test
     @DisplayName("GET /api/events es público -> 200")
     void getEvents_isPublic_returns200() throws Exception {
-        mockMvc.perform(get(API_EVENTS))
+        mockMvc.perform(get(apiEvents))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
@@ -49,26 +49,26 @@ class EventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("GET /api/events con dateFrom > dateTo -> 400 ProblemDetail")
     void getEvents_invalidDateRange_returns400ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_EVENTS)
+        var ra = mockMvc.perform(get(apiEvents)
                 .param("dateFrom", TestDates.rangeEnd().toString())
                 .param("dateTo", TestDates.rangeStart().toString()));
 
-        contractUtils.expectProblemDetail(ra, 400, API_EVENTS);
+        contractUtils.expectProblemDetail(ra, 400, apiEvents);
     }
 
     @Test
     @DisplayName("GET /api/events con size demasiado grande -> 400 ProblemDetail")
     void getEvents_pageSizeTooLarge_returns400ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_EVENTS)
+        var ra = mockMvc.perform(get(apiEvents)
                 .param("size", String.valueOf(10_000)));
 
-        contractUtils.expectProblemDetail(ra, 400, API_EVENTS);
+        contractUtils.expectProblemDetail(ra, 400, apiEvents);
     }
 
     @Test
     @DisplayName("GET /api/events/home es público -> 200")
     void getEventsHome_isPublic_returns200() throws Exception {
-        mockMvc.perform(get(API_EVENTS_HOME))
+        mockMvc.perform(get(apiEventsHome))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
@@ -76,10 +76,10 @@ class EventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("GET /api/events/home con size demasiado grande -> 400 ProblemDetail")
     void getEventsHome_pageSizeTooLarge_returns400ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_EVENTS_HOME)
+        var ra = mockMvc.perform(get(apiEventsHome)
                 .param("size", String.valueOf(10_000)));
 
-        contractUtils.expectProblemDetail(ra, 400, API_EVENTS_HOME);
+        contractUtils.expectProblemDetail(ra, 400, apiEventsHome);
     }
 
     @Test
@@ -87,7 +87,7 @@ class EventApiContractTest extends AbstractPostgresTest {
     void getEventById_isPublic_returns200WhenExists() throws Exception {
         var eventM = factory.approvedMadridAgainstYou();
 
-        mockMvc.perform(get(API_EVENTS_ID.formatted("{id}"), eventM.getId()))
+        mockMvc.perform(get(apiEventsId.formatted("{id}"), eventM.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
@@ -97,16 +97,16 @@ class EventApiContractTest extends AbstractPostgresTest {
     void getEventById_notFound_returns404ProblemDetail() throws Exception {
         var missingId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
 
-        var ra = mockMvc.perform(get(API_EVENTS_ID.formatted("{id}"), missingId));
+        var ra = mockMvc.perform(get(apiEventsId.formatted("{id}"), missingId));
 
-        contractUtils.expectProblemDetail(ra, 404, API_EVENTS_ID.formatted(missingId));
+        contractUtils.expectProblemDetail(ra, 404, apiEventsId.formatted(missingId));
     }
 
     @Test
     @DisplayName("GET /api/events/{id} con UUID inválido -> 400 ProblemDetail")
     void getEventById_invalidUuid_returns400ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_EVENTS_ID.formatted("{id}"), "no-es-un-uuid"));
+        var ra = mockMvc.perform(get(apiEventsId.formatted("{id}"), "no-es-un-uuid"));
 
-        contractUtils.expectProblemDetail(ra, 400, API_EVENTS_ID.formatted("no-es-un-uuid"));
+        contractUtils.expectProblemDetail(ra, 400, apiEventsId.formatted("no-es-un-uuid"));
     }
 }

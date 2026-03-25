@@ -28,49 +28,50 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     Optional<Event> findByIdAndStatus(UUID id, EventStatus status);
 
     // Sobreescribe findById de JpaRepository para cargar province y artists con JOIN FETCH
+    @Override
     @EntityGraph(attributePaths = { "province", "artists" })
     Optional<Event> findById(UUID id);
 
     @Query("""
-                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto(
-                    e.id,
-                    e.title,
-                    e.startDateTime,
-                    e.endDateTime,
-                    p.name,
-                    e.cityName,
-                    e.posterUrl
-                )
-                FROM Event e
-                JOIN e.province p
-                WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
-                    AND (
-                        (e.endDateTime IS NOT NULL AND e.endDateTime >= CURRENT_TIMESTAMP)
-                            OR (e.endDateTime IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
-                    )
-            """)
+               SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto(
+                   e.id,
+                   e.title,
+                   e.startDateTime,
+                   e.endDateTime,
+                   p.name,
+                   e.cityName,
+                   e.posterUrl
+               )
+               FROM Event e
+               JOIN e.province p
+               WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
+                   AND (
+                       (e.endDateTime IS NOT NULL AND e.endDateTime >= CURRENT_TIMESTAMP)
+                           OR (e.endDateTime IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
+                   )
+           """)
     Page<EventPublicListItemDto> findHome(Pageable pageable);
 
     @Query("""
-                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
-                )
-                FROM Event e
-                JOIN e.province p
-                WHERE e.createdByUserId = :userId
-                  AND e.status IN :statuses
-            """)
+               SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
+                   e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+               )
+               FROM Event e
+               JOIN e.province p
+               WHERE e.createdByUserId = :userId
+                 AND e.status IN :statuses
+           """)
     Page<EventPrivateListItemDto> listMineByStatuses(UUID userId, Collection<EventStatus> statuses, Pageable pageable);
 
     @Query("""
-                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
-                )
-                FROM Event e
-                JOIN e.province p
-                WHERE e.createdByUserId = :userId
-                  AND e.status NOT IN :excluded
-            """)
+               SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
+                   e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+               )
+               FROM Event e
+               JOIN e.province p
+               WHERE e.createdByUserId = :userId
+                 AND e.status NOT IN :excluded
+           """)
     Page<EventPrivateListItemDto> listMineExcludingStatuses(UUID userId, Collection<EventStatus> excluded, Pageable pageable);
 
     /**
@@ -81,25 +82,25 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
      * @return
      */
     @Query("""
-                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                    e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
-                )
-                FROM Event e
-                JOIN e.province p
-                WHERE e.createdByUserId = :userId
-                ORDER BY
-                  CASE
-                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.NEEDS_CHANGES THEN 0
-                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION THEN 1
-                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.FLAGGED THEN 1
-                   WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED THEN 2
-                   ELSE 3
-                  END ASC,
-                  e.status ASC,
-                  CASE WHEN e.startDateTime >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END ASC,
-                  CASE WHEN e.startDateTime >= CURRENT_TIMESTAMP THEN e.startDateTime END ASC,
-                  CASE WHEN e.startDateTime <  CURRENT_TIMESTAMP THEN e.startDateTime END DESC
-            """)
+               SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
+                   e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+               )
+               FROM Event e
+               JOIN e.province p
+               WHERE e.createdByUserId = :userId
+               ORDER BY
+                 CASE
+                  WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.NEEDS_CHANGES THEN 0
+                  WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION THEN 1
+                  WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.FLAGGED THEN 1
+                  WHEN e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED THEN 2
+                  ELSE 3
+                 END ASC,
+                 e.status ASC,
+                 CASE WHEN e.startDateTime >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END ASC,
+                 CASE WHEN e.startDateTime >= CURRENT_TIMESTAMP THEN e.startDateTime END ASC,
+                 CASE WHEN e.startDateTime <  CURRENT_TIMESTAMP THEN e.startDateTime END DESC
+           """)
     Page<EventPrivateListItemDto> listMineAllPriorityFutureFirst(UUID userId, Pageable pageable);
 
     @Query(value = """
@@ -144,6 +145,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                        :provinceId, :citySlug, :artistId
                                      ) s
                                      """, nativeQuery = true)
+    @SuppressWarnings("java:S107") // Los parámetros mapean 1:1 con la firma de la función PostgreSQL
     Page<EventPublicSearchProjection> searchPublicEvents(@Param("q") String q,
                                                          @Param("minSim") double minSim,
                                                          @Param("ftsW") double ftsW,
@@ -197,6 +199,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                        :provinceId, :citySlug, :artistId
                                      ) s
                                      """, nativeQuery = true)
+    @SuppressWarnings("java:S107") // Los parámetros mapean 1:1 con la firma de la función PostgreSQL
     Page<EventPublicSearchProjection> searchPublicEventsFallback(@Param("q") String q,
                                                                  @Param("minSim") double minSim,
                                                                  @Param("ftsW") double ftsW,
@@ -257,55 +260,55 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
      * Un resultado no vacío indica que el usuario no es elegible.
      */
     @Query("""
-                SELECT e.venueSlug
-                FROM Event e
-                WHERE e.createdByUserId = :userId
-                  AND e.createdAt >= :since
-                  AND e.status NOT IN :excluded
-                GROUP BY e.venueSlug
-                HAVING COUNT(e) > :limit
-            """)
+               SELECT e.venueSlug
+               FROM Event e
+               WHERE e.createdByUserId = :userId
+                 AND e.createdAt >= :since
+                 AND e.status NOT IN :excluded
+               GROUP BY e.venueSlug
+               HAVING COUNT(e) > :limit
+           """)
     List<String> findVenuesExceedingRecentLimit(UUID userId, OffsetDateTime since, Collection<EventStatus> excluded, long limit);
 
     /**
      * Devuelve artist IDs donde el usuario supera el límite de eventos en el período reciente.
      */
     @Query("""
-                SELECT a.id
-                FROM Event e
-                JOIN e.artists a
-                WHERE e.createdByUserId = :userId
-                  AND e.createdAt >= :since
-                  AND e.status NOT IN :excluded
-                GROUP BY a.id
-                HAVING COUNT(e) > :limit
-            """)
+               SELECT a.id
+               FROM Event e
+               JOIN e.artists a
+               WHERE e.createdByUserId = :userId
+                 AND e.createdAt >= :since
+                 AND e.status NOT IN :excluded
+               GROUP BY a.id
+               HAVING COUNT(e) > :limit
+           """)
     List<UUID> findArtistsExceedingRecentLimit(UUID userId, OffsetDateTime since, Collection<EventStatus> excluded, long limit);
 
     /**
      * Devuelve venue slugs donde el usuario supera el límite total de eventos.
      */
     @Query("""
-                SELECT e.venueSlug
-                FROM Event e
-                WHERE e.createdByUserId = :userId
-                  AND e.status NOT IN :excluded
-                GROUP BY e.venueSlug
-                HAVING COUNT(e) > :limit
-            """)
+               SELECT e.venueSlug
+               FROM Event e
+               WHERE e.createdByUserId = :userId
+                 AND e.status NOT IN :excluded
+               GROUP BY e.venueSlug
+               HAVING COUNT(e) > :limit
+           """)
     List<String> findVenuesExceedingTotalLimit(UUID userId, Collection<EventStatus> excluded, long limit);
 
     /**
      * Devuelve artist IDs donde el usuario supera el límite total de eventos.
      */
     @Query("""
-                SELECT a.id
-                FROM Event e
-                JOIN e.artists a
-                WHERE e.createdByUserId = :userId
-                  AND e.status NOT IN :excluded
-                GROUP BY a.id
-                HAVING COUNT(e) > :limit
-            """)
+               SELECT a.id
+               FROM Event e
+               JOIN e.artists a
+               WHERE e.createdByUserId = :userId
+                 AND e.status NOT IN :excluded
+               GROUP BY a.id
+               HAVING COUNT(e) > :limit
+           """)
     List<UUID> findArtistsExceedingTotalLimit(UUID userId, Collection<EventStatus> excluded, long limit);
 }

@@ -10,9 +10,10 @@ import com.jmarfildev.rockalendar.common.error.ErrorConstants;
  *
  */
 public class CommonValidations {
+    private CommonValidations() {}
 
     public static void validatePageable(Pageable pageable) {
-        if (pageable.getPageSize() > Constants.maxPageSize) {
+        if (pageable.getPageSize() > Constants.MAX_PAGE_SIZE) {
             throw new BadRequestException(ErrorConstants.PAGE_SIZE_TOO_LARGE);
         }
     }

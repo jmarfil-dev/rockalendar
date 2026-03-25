@@ -10,11 +10,10 @@ import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.web.multipart.MultipartFile;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
@@ -39,6 +38,7 @@ import com.jmarfildev.rockalendar.events.persistence.DuplicateEventProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
+import com.jmarfildev.rockalendar.moderation.application.AutoModerationResult;
 import com.jmarfildev.rockalendar.moderation.application.AutoModerationService;
 
 /**
@@ -84,26 +84,24 @@ public class EventCommandService {
 
         // El admin publica directamente como APPROVED, sin pasar por auto-moderación
         var modResult = isAdmin ? null : autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
-        EventStatus initialStatus = isAdmin ? EventStatus.APPROVED
-                : (modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION);
+        EventStatus initialStatus = resolveInitialStatus(isAdmin, modResult);
 
         // El admin puede crear ediciones anuales, correcciones, etc. sin detección de duplicados
         UUID possibleDuplicateOfId = null;
         PossibleDuplicateDto possibleDuplicate = null;
         if (!isAdmin) {
             // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
-            var artistIds = in.artists().stream().map(a -> a.getId()).toList();
+            var artistIds = in.artists().stream().map(Artist::getId).toList();
             var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
             var dayEnd = dayStart.plusDays(1);
             List<DuplicateEventProjection> duplicates =
                     eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
 
             possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
-            possibleDuplicate = duplicates.isEmpty() ? null
-                    : new PossibleDuplicateDto(
-                            duplicates.get(0).getId(),
-                            duplicates.get(0).getTitle(),
-                            EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
+            possibleDuplicate = duplicates.isEmpty()
+                    ? null
+                    : new PossibleDuplicateDto(duplicates.get(0).getId(), duplicates.get(0).getTitle(),
+                                               EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
         }
 
         var event = Event.builder()
@@ -185,7 +183,8 @@ public class EventCommandService {
         if (isAdmin) {
             // El admin publica directamente como APPROVED
             event.setStatus(EventStatus.APPROVED);
-        } else {
+        }
+        else {
             // Reenviar a moderación (con comprobación de moderación automática)
             var modResult = autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
             event.setStatus(modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION);
@@ -197,7 +196,8 @@ public class EventCommandService {
 
         if (poster != null && !poster.isEmpty()) {
             uploadPosterToEvent(event, poster);
-        } else if (removePoster) {
+        }
+        else if (removePoster) {
             storageService.delete(event.getPosterKey());
             event.setPosterUrl(null);
             event.setPosterKey(null);
@@ -226,7 +226,6 @@ public class EventCommandService {
 
         // El admin tiene control total del catálogo: puede eliminar en cualquier estado
         if (!isAdmin) {
-            // TODO: en frontend mensaje de "contactar con administración"
             if (event.getStatus() == EventStatus.APPROVED) {
                 throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED, ErrorConstants.TYPE_409_EVENT_STATE);
             }
@@ -272,8 +271,7 @@ public class EventCommandService {
                 continue; // Aunque tiene @NotBlank, aquí puede quedar vacío si es solo símbolos/diacríticos/etc.
             }
 
-            var artist = artistRepository.findBySlug(slug)
-                                         .orElseGet(() -> saveArtistOrFetch(displayName, slug, userId));
+            var artist = artistRepository.findBySlug(slug).orElseGet(() -> saveArtistOrFetch(displayName, slug, userId));
 
             artists.add(artist);
         }
@@ -305,8 +303,6 @@ public class EventCommandService {
         String description = StringUtils.blankToNull(req.description());
         String sourceUrl = StringUtils.blankToNull(req.sourceUrl());
 
-        // TODO: Evitar eventos duplicados
-
         return new EventInputValidate(title, description, req.startDateTime(), req.endDateTime(), province, cityName, citySlug, venueName,
                                       venueSlug, sourceUrl, artists);
     }
@@ -328,6 +324,13 @@ public class EventCommandService {
             return artistRepository.findBySlug(slug)
                                    .orElseThrow(() -> new IllegalStateException("Artist slug conflict but not found: " + slug));
         }
+    }
+
+    private EventStatus resolveInitialStatus(boolean isAdmin, AutoModerationResult modResult) {
+        if (isAdmin) {
+            return EventStatus.APPROVED;
+        }
+        return modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION;
     }
 
     private boolean hasEditableStatus(EventStatus status) {

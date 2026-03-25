@@ -25,8 +25,8 @@ import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.helper.SortUtils;
 import com.jmarfildev.rockalendar.common.helper.SortUtils.SortChoice;
-import com.jmarfildev.rockalendar.config.properties.PublicSearchProperties;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
+import com.jmarfildev.rockalendar.config.properties.PublicSearchProperties;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
@@ -58,16 +58,28 @@ public class EventQueryService {
     private final PublicSearchProperties props;
     private final CurrentUser currentUser;
 
-    private static final Set<String> SEARCH_SORT_ALLOW = Set.of("relevance", "date", "title", "province", "city");
+    private static final String SORT_RELEVANCE = "relevance";
+    private static final String SORT_DATE = "date";
+    private static final String SORT_TITLE = "title";
+    private static final String SORT_PROVINCE = "province";
+    private static final String SORT_CITY = "city";
+    private static final String SORT_STATUS = "status";
+    private static final String FIELD_START_DATE_TIME = "startDateTime";
+    private static final String FIELD_PROVINCE_NAME = "province.name";
+    private static final String FIELD_CITY_NAME = "cityName";
+    private static final String FIELD_SUBMITTED_AT = "submittedAt";
+
+    private static final Set<String> SEARCH_SORT_ALLOW = Set.of(SORT_RELEVANCE, SORT_DATE, SORT_TITLE, SORT_PROVINCE, SORT_CITY);
     private static final Map<String, String> SEARCH_SORT_ALIASES =
-            Map.of("startDateTime", "date", "provinceName", "province", "cityName", "city", "start_date_time", "date", "province_name",
-                   "province", "city_name", "city");
-    private static final Map<String, String> HOME_SORT_ALLOW =
-            Map.of("title", "title", "date", "startDateTime", "province", "province.name", "city", "cityName");
+            Map.of(FIELD_START_DATE_TIME, SORT_DATE, "provinceName", SORT_PROVINCE, FIELD_CITY_NAME, SORT_CITY, "start_date_time",
+                   SORT_DATE, "province_name", SORT_PROVINCE, "city_name", SORT_CITY);
+    private static final Map<String, String> HOME_SORT_ALLOW = Map.of(SORT_TITLE, SORT_TITLE, SORT_DATE, FIELD_START_DATE_TIME,
+                                                                      SORT_PROVINCE, FIELD_PROVINCE_NAME, SORT_CITY, FIELD_CITY_NAME);
     private static final Map<String, String> MINE_SORT_ALLOW =
-            Map.of("title", "title", "date", "submittedAt", "province", "province.name", "city", "cityName", "status", "status");
+            Map.of(SORT_TITLE, SORT_TITLE, SORT_DATE, FIELD_SUBMITTED_AT, SORT_PROVINCE, FIELD_PROVINCE_NAME, SORT_CITY, FIELD_CITY_NAME,
+                   SORT_STATUS, SORT_STATUS);
     private static final Sort DEFAULT_SORT_JPA =
-            Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc("title"));
+            Sort.by(Sort.Order.asc(FIELD_START_DATE_TIME), Sort.Order.asc(FIELD_PROVINCE_NAME), Sort.Order.asc(SORT_TITLE));
 
     public Page<EventPublicListItemDto> listHome(Pageable pageable) {
         CommonValidations.validatePageable(pageable);
@@ -104,7 +116,7 @@ public class EventQueryService {
 
         String citySlug = city.map(SlugNormalizer::of).filter(s -> !s.isBlank()).orElse(null);
 
-        String defaultKey = !q.isBlank() ? "relevance" : "date";
+        String defaultKey = !q.isBlank() ? SORT_RELEVANCE : SORT_DATE;
         String defaultDir = !q.isBlank() ? "desc" : "asc";
         SortChoice sort = SortUtils.toSqlSortChoice(pageable, SEARCH_SORT_ALLOW, SEARCH_SORT_ALIASES, defaultKey, defaultDir);
         Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());

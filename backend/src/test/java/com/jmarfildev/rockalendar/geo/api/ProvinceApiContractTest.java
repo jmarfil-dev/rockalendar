@@ -28,12 +28,12 @@ class ProvinceApiContractTest extends AbstractPostgresTest {
     @Autowired
     MockMvc mockMvc;
 
-    private final String API_PROVINCES_COMBO = "/api/provinces/combo";
+    private final String apiProvincesCombo = "/api/provinces/combo";
 
     @Test
     @DisplayName("GET /api/provinces/combo (público) -> 200 con lista no vacía de provincias")
     void listCombo_public_returns200WithProvinces() throws Exception {
-        mockMvc.perform(get(API_PROVINCES_COMBO))
+        mockMvc.perform(get(apiProvincesCombo))
                .andExpect(status().isOk())
                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                .andExpect(jsonPath("$", not(empty())));

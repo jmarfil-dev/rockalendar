@@ -35,8 +35,8 @@ class ModerationListApiContractTest extends AbstractPostgresTest {
     @Autowired
     MockMvc mockMvc;
 
-    private final String API_PENDING = "/api/moderation/events/pending";
-    private final String API_ARCHIVED = "/api/moderation/events/archived";
+    private final String apiPending = "/api/moderation/events/pending";
+    private final String apiArchived = "/api/moderation/events/archived";
 
     @BeforeEach
     void cleanDb() {
@@ -44,33 +44,33 @@ class ModerationListApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("GET " + API_PENDING + " sin autenticar -> 401")
+    @DisplayName("GET " + apiPending + " sin autenticar -> 401")
     void listPending_asAnon_401ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_PENDING))
+        var ra = mockMvc.perform(get(apiPending))
                 .andExpect(status().isUnauthorized());
 
-        contractUtils.expectProblemDetail(ra, 401, API_PENDING);
+        contractUtils.expectProblemDetail(ra, 401, apiPending);
     }
 
     @Test
-    @DisplayName("GET " + API_PENDING + " como USER -> 403")
+    @DisplayName("GET " + apiPending + " como USER -> 403")
     void listPending_asUser_403ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_PENDING)
+        var ra = mockMvc.perform(get(apiPending)
                 .with(contractUtils.authJwt()))
                 .andExpect(status().isForbidden());
 
-        contractUtils.expectProblemDetail(ra, 403, API_PENDING);
+        contractUtils.expectProblemDetail(ra, 403, apiPending);
     }
 
     @Test
-    @DisplayName("GET " + API_PENDING + " como MODERATOR -> 200 solo eventos PENDING ordenados por submittedAt ASC")
+    @DisplayName("GET " + apiPending + " como MODERATOR -> 200 solo eventos PENDING ordenados por submittedAt ASC")
     void listPending_asModerator_returns200OnlyPendingOrderBySubmittedAtAsc() throws Exception {
         var eventV = factory.pendingValenciaLosDeMarras();
         var eventM = factory.pendingMadridAgainstYou();
         factory.approvedMadridAgainstYou();
         factory.rejectedValenciaMafalda();
 
-        mockMvc.perform(get(API_PENDING)
+        mockMvc.perform(get(apiPending)
                 .with(contractUtils.authJwtModerator()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
@@ -79,33 +79,33 @@ class ModerationListApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("GET " + API_ARCHIVED + " sin autenticar -> 401")
+    @DisplayName("GET " + apiArchived + " sin autenticar -> 401")
     void listArchived_asAnon_401ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_ARCHIVED))
+        var ra = mockMvc.perform(get(apiArchived))
                 .andExpect(status().isUnauthorized());
 
-        contractUtils.expectProblemDetail(ra, 401, API_ARCHIVED);
+        contractUtils.expectProblemDetail(ra, 401, apiArchived);
     }
 
     @Test
-    @DisplayName("GET " + API_ARCHIVED + " como USER -> 403")
+    @DisplayName("GET " + apiArchived + " como USER -> 403")
     void listArchived_asUser_403ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_ARCHIVED)
+        var ra = mockMvc.perform(get(apiArchived)
                 .with(contractUtils.authJwt()))
                 .andExpect(status().isForbidden());
 
-        contractUtils.expectProblemDetail(ra, 403, API_ARCHIVED);
+        contractUtils.expectProblemDetail(ra, 403, apiArchived);
     }
 
     @Test
-    @DisplayName("GET " + API_ARCHIVED + " como MODERATOR -> 200 solo eventos REJECTED, HIDDEN y CANCELED ordenados por moderatedAt DES")
+    @DisplayName("GET " + apiArchived + " como MODERATOR -> 200 solo eventos REJECTED, HIDDEN y CANCELED ordenados por moderatedAt DES")
     void listArchived_asModerator_returns200ArchivedOrderByModeratedAtDesc() throws Exception {
         factory.pendingValenciaLosDeMarras();
         factory.rejectedValenciaMafalda();
         factory.hiddenMadridSoziedadAlkoholika();
         factory.canceledBarcelonaManifa();
 
-        mockMvc.perform(get(API_ARCHIVED).param("sort", "moderated,desc")
+        mockMvc.perform(get(apiArchived).param("sort", "moderated,desc")
                 .with(contractUtils.authJwtModerator()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(3))
