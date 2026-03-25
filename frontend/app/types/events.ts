@@ -46,6 +46,7 @@ export type EventPublic = {
   cityName: string;
   artists: Artist[];
   sourceUrl?: string | null;
+  posterUrl?: string | null;
 };
 
 export type PossibleDuplicateDto = {
@@ -71,6 +72,7 @@ export type EventPrivateDto = {
   cityName: string;
   artists: Artist[];
   sourceUrl?: string | null;
+  posterUrl?: string | null;
   status: EventStatus;
   moderationMessage?: string | null;
   createdAt: string;

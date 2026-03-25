@@ -143,6 +143,32 @@ async function onConfirm() {
 
       <Divider class="my-1" />
 
+      <!-- Poster -->
+      <section :aria-label="t('events.poster')">
+        <Card class="border-1 surface-border">
+          <template #content>
+            <div
+              v-if="event.posterUrl"
+              class="border-round-lg overflow-hidden flex align-items-center justify-content-center surface-50"
+              style="min-height: 8rem">
+              <img
+                :src="event.posterUrl"
+                :alt="event.title"
+                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" />
+            </div>
+            <div
+              v-else
+              class="border-1 surface-border border-round-lg surface-50 flex align-items-center justify-content-center"
+              style="aspect-ratio: 16/9">
+              <div class="text-center text-color-secondary">
+                <i class="pi pi-image text-2xl" />
+                <div class="mt-2 text-sm">{{ t("events.noPoster") }}</div>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </section>
+
       <!-- Mensaje de moderación previo -->
       <Message v-if="event.moderationMessage" severity="warn" :closable="false">
         {{ event.moderationMessage }}

@@ -114,6 +114,16 @@ function mapsUrl(e: EventPublic): string {
         <Card class="border-1 surface-border">
           <template #content>
             <div
+              v-if="event.posterUrl"
+              class="border-round-lg overflow-hidden flex align-items-center justify-content-center surface-50"
+              style="min-height: 8rem">
+              <img
+                :src="event.posterUrl"
+                :alt="event.title"
+                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" />
+            </div>
+            <div
+              v-else
               class="border-1 surface-border border-round-lg surface-50 flex align-items-center justify-content-center"
               style="aspect-ratio: 16/9">
               <div class="text-center text-color-secondary">

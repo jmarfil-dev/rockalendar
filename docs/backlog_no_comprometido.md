@@ -69,6 +69,10 @@ Cuándo hacerlo:
   - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED` o `PENDING_MODERATION`.
 - Enviar correcciones sobre un evento aprobado. El flujo sería: usuario reporta corrección → va al sistema de moderación como cualquier otra acción → el evento del promotor aparece marcado con "hay observaciones" en su panel.
 
+## Eventos (otros)
+
+- Opción: cartel de evento mediante URL externa. En lugar de subir una imagen, aceptar url y referenciarla sin guardarla.
+
 ## Artistas
 
 - Agregar al detalle de artista enlaces útiles (spoty, youtube, redes sociales).
@@ -117,6 +121,7 @@ Cuándo hacerlo:
 
 - Confirmar cuenta al registrarse.
   - Para usuarios ya registrado, confirmar cuenta la primera vez que se logueen tras implementar la funcionalidad de notificaciones o en la configuración de cuenta que salgan todas las notificaciones deshabilitadas por defecto y que para activarlas sea necesario confirmar la cuenta.
+  - Modificación de email en settings (depende de la confirmación de cuenta).
 - Preferencias de notificaciones por usuario.
 - Canales:
   - Email

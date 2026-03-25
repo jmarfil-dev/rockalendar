@@ -34,6 +34,13 @@
     "listEvents": "List of concerts",
     "poster": "Concert or festival poster",
     "noPoster": "Poster not available",
+    "uploadPoster": "Upload poster (optional)",
+    "posterHint": "JPEG, PNG or WebP. Will be automatically resized to 1200px.",
+    "removePoster": "Remove poster",
+    "changePoster": "Change poster",
+    "currentPoster": "Current poster",
+    "posterPreview": "Poster preview",
+    "posterWillBeRemoved": "The current poster will be deleted when you save.",
     "status": "Status"
   },
   "auth": {
@@ -340,6 +347,8 @@
       "pageSizeTooLarge": "Page size exceeds the maximum allowed limit",
       "wrongCurrentPassword": "Current password is incorrect",
       "wrongConfirmPassword": "Passwords do not match",
+      "invalidResetToken": "The link is invalid or has expired. Please request a new one.",
+      "invalidLocale": "The selected language is not valid",
       "valid": {
         "patternPassword": "Password must contain upper, lower, number and symbol",
         "sizePassword": "Password must be between 8 and 72 characters",
@@ -364,7 +373,8 @@
     "404": {
       "message": "The page you are looking for does not exist",
       "eventNotFound": "Concert not found",
-      "artistNotFound": "Artist not found"
+      "artistNotFound": "Artist not found",
+      "userNotFound": "User not found"
     },
     "409": {
       "message": "The requested operation conflicts with the current state",
@@ -380,7 +390,12 @@
       "agendaEventNotAvailable": "You can only add approved concerts to your schedule",
       "dbConstraint": "Violated DB Constraint",
       "accountPendingDeletion": "Your account already has a pending deletion request",
-      "accountNotPendingDeletion": "There is no active deletion request"
+      "accountNotPendingDeletion": "There is no active deletion request",
+      "promotionNotEligible": "You do not meet the requirements to request a moderator promotion"
+    },
+    "422": {
+      "invalidImage": "The file is not a valid image or exceeds the maximum allowed size (10 MB)",
+      "storageUploadFailed": "Could not upload the poster. Please try again."
     },
     "429": {
       "rateLimitExceeded": "Too many attempts. Please wait {seconds} seconds before trying again."
