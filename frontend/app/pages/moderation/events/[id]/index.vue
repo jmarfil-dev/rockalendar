@@ -154,7 +154,7 @@ async function onConfirm() {
               <img
                 :src="event.posterUrl"
                 :alt="event.title"
-                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" />
+                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" >
             </div>
             <div
               v-else
@@ -382,7 +382,7 @@ async function onConfirm() {
         autofocus
         :aria-required="!isCommentOptional"
         aria-describedby="action-error" />
-      <Message id="action-error" v-if="actionError" severity="error" :closable="false" class="mt-1">{{
+      <Message v-if="actionError" id="action-error" severity="error" :closable="false" class="mt-1">{{
         actionError
       }}</Message>
     </div>

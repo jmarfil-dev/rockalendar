@@ -11,7 +11,6 @@ function base64Decode(b64: string): string {
   }
 
   // Node (SSR)
-  // eslint-disable-next-line n/no-unsupported-features/node-builtins
   return Buffer.from(b64, "base64").toString("binary");
 }
 
@@ -25,6 +24,7 @@ function base64UrlDecode(input: string): string {
   const str = b64 + pad;
 
   // decode base64 -> binary string
+  // eslint-disable-next-line sonarjs/todo-tag
   // TODO: cuando cambie el token de localStorage a cookie, esto fallará
   const decoded = base64Decode(str);
 

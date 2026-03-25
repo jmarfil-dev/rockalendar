@@ -13,7 +13,8 @@ const { data: artist, error: artistError } = await useFetch<ArtistRef>(
   { key: `artist-${id}` },
 );
 if (artistError.value) {
-  const status = (artistError.value as any)?.status ?? (artistError.value as any)?.statusCode ?? 500;
+  const err = artistError.value as unknown as { status?: number; statusCode?: number };
+  const status = err?.status ?? err?.statusCode ?? 500;
   throw createError({ status: status >= 500 ? status : 404 });
 }
 
@@ -70,7 +71,7 @@ async function confirmDelete() {
   deleting.value = true;
   deleteError.value = null;
 
-  const res = await fetchAuthResult<void>(ROUTE_PATH.apiModerationArtistDetail(id), {
+  const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiModerationArtistDetail(id), {
     method: "DELETE",
   });
 

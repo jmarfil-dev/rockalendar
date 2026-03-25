@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ROUTES } from "~/constants/routes";
-
 definePageMeta({ layout: "public" });
 
 const { t } = useI18n();
@@ -9,6 +7,7 @@ useHead({ title: () => t("page.contact") });
 const form = reactive({ name: "", email: "", message: "" });
 
 function onSubmit() {
+  // eslint-disable-next-line sonarjs/todo-tag
   // TODO: conectar con backend cuando esté disponible
 }
 </script>

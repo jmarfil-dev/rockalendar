@@ -102,7 +102,7 @@ async function onSuccessClose() {
               :invalid="!!fieldErrors['description']"
               rows="4"
               maxlength="5000"
-              autoResize />
+              auto-resize />
             <Message v-if="fieldErrors['description']" severity="error" variant="simple" size="small">
               {{ t(fieldErrors["description"]) }}
             </Message>
@@ -115,16 +115,16 @@ async function onSuccessClose() {
                 {{ t("me.propose.startDate") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
               <DatePicker
-                inputId="startDateTime"
                 v-model="form.startDateTime"
-                showTime
-                hourFormat="24"
-                dateFormat="dd/mm/yy"
-                :minDate="today"
+                input-id="startDateTime"
+                show-time
+                hour-format="24"
+                date-format="dd/mm/yy"
+                :min-date="today"
                 :invalid="!!fieldErrors['startDateTime']"
-                :manualInput="false"
-                showIcon
-                iconDisplay="input"
+                :manual-input="false"
+                show-icon
+                icon-display="input"
                 required />
               <Message v-if="fieldErrors['startDateTime']" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["startDateTime"]) }}
@@ -134,16 +134,16 @@ async function onSuccessClose() {
             <div class="col-12 md:col-6 flex flex-column gap-2">
               <label for="endDateTime" class="text-sm text-color-secondary">{{ t("me.propose.endDate") }}</label>
               <DatePicker
-                inputId="endDateTime"
                 v-model="form.endDateTime"
-                showTime
-                hourFormat="24"
-                dateFormat="dd/mm/yy"
-                :minDate="form.startDateTime ?? undefined"
+                input-id="endDateTime"
+                show-time
+                hour-format="24"
+                date-format="dd/mm/yy"
+                :min-date="form.startDateTime ?? undefined"
                 :invalid="!!fieldErrors['endDateTime'] || isDateRangeInvalid"
-                :manualInput="false"
-                showIcon
-                iconDisplay="input" />
+                :manual-input="false"
+                show-icon
+                icon-display="input" />
               <Message v-if="fieldErrors['endDateTime']" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["endDateTime"]) }}
               </Message>
@@ -177,11 +177,11 @@ async function onSuccessClose() {
                 {{ t("geo.province") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
               <Select
-                inputId="provinceId"
                 v-model="form.provinceId"
+                input-id="provinceId"
                 :options="provinceOptions"
-                optionLabel="label"
-                optionValue="value"
+                option-label="label"
+                option-value="value"
                 :loading="provincesLoading"
                 :invalid="!!fieldErrors['provinceId']"
                 filter
@@ -210,7 +210,7 @@ async function onSuccessClose() {
           </div>
 
           <!-- Artistas -->
-          <ArtistSelector v-model="form.artists" :fieldError="artistsError ?? undefined" />
+          <ArtistSelector v-model="form.artists" :field-error="artistsError ?? undefined" />
 
           <!-- Cartel -->
           <div class="flex flex-column gap-2">
@@ -222,7 +222,7 @@ async function onSuccessClose() {
                 :src="existingPosterUrl"
                 :alt="t('events.currentPoster')"
                 class="border-round-lg border-1 surface-border"
-                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" />
+                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" >
               <div class="flex gap-2">
                 <Button
                   type="button"
@@ -249,7 +249,7 @@ async function onSuccessClose() {
                 :src="posterPreviewUrl!"
                 :alt="t('events.posterPreview')"
                 class="border-round-lg border-1 surface-border"
-                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" />
+                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" >
               <div class="flex align-items-center gap-2">
                 <span class="text-sm text-color-secondary flex-1 overflow-hidden text-overflow-ellipsis white-space-nowrap">{{ posterFile.name }}</span>
                 <Button
@@ -288,7 +288,7 @@ async function onSuccessClose() {
                 @click="posterInputRef?.click()" />
             </div>
 
-            <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" />
+            <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
             <small class="text-xs text-color-secondary">{{ t("events.posterHint") }}</small>
           </div>
 

@@ -34,7 +34,7 @@ export function useMyEvents() {
   async function deleteEvent(id: string): Promise<boolean> {
     deleting.value = id;
     error.value = null;
-    const res = await fetchAuthResult<void>(ROUTE_PATH.apiMeEventDetail(id), { method: "DELETE" });
+    const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiMeEventDetail(id), { method: "DELETE" });
     deleting.value = null;
     if (!res.ok) error.value = extractApiError(res, t);
     return res.ok;

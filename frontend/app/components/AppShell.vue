@@ -92,14 +92,14 @@ const onLogoutClick = async () => {
     <header class="surface-0 mt-2">
       <div class="mx-auto w-full max-w-7xl px-3 py-1 flex align-items-center justify-content-between gap-2">
         <NuxtLink :to="ROUTES.home" class="no-underline flex align-items-center">
-          <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" />
+          <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" >
         </NuxtLink>
 
         <Select
           v-model="currentLocale"
           :options="localeOptions"
-          optionLabel="label"
-          optionValue="value"
+          option-label="label"
+          option-value="value"
           class="w-4rem"
           :aria-label="t('common.changeLanguage')">
           <!-- Cerrado: solo bandera -->
@@ -112,7 +112,7 @@ const onLogoutClick = async () => {
                 :title="optionByValue(slotProps.value).label"
                 width="18"
                 height="12"
-                style="display: block" />
+                style="display: block" >
             </div>
           </template>
 
@@ -124,7 +124,7 @@ const onLogoutClick = async () => {
                 :alt="slotProps.option.label"
                 width="18"
                 height="12"
-                style="display: block" />
+                style="display: block" >
               <span>{{ slotProps.option.label }}</span>
             </div>
           </template>
@@ -289,14 +289,14 @@ const onLogoutClick = async () => {
             >
             <AutoComplete
               v-model="selectedArtist"
-              inputId="artist"
+              input-id="artist"
               :suggestions="artistSuggestions"
               :loading="artistLoading"
-              :minLength="2"
-              :maxLength="50"
-              optionLabel="name"
+              :min-length="2"
+              :max-length="50"
+              option-label="name"
               :placeholder="`${t('common.example')}. Elektroduendes`"
-              inputClass="w-full"
+              input-class="w-full"
               @complete="(e) => searchArtists(e.query)" />
           </div>
 
@@ -314,13 +314,13 @@ const onLogoutClick = async () => {
           <div class="flex flex-column gap-2">
             <label for="search-province" class="text-sm text-color-secondary">{{ t("geo.province") }}</label>
             <Select
-              inputId="search-province"
               v-model="searchForm.provinceId"
+              input-id="search-province"
               :options="provinceOptions"
-              optionLabel="label"
-              optionValue="value"
+              option-label="label"
+              option-value="value"
               :placeholder="t('geo.province')"
-              showClear
+              show-clear
               filter
               class="w-full"
               :pt="{ label: { 'aria-label': t('geo.province') } }" />
@@ -330,23 +330,23 @@ const onLogoutClick = async () => {
           <div class="flex flex-column gap-2">
             <label for="dateFrom" class="text-sm text-color-secondary">{{ t("dates.from") }}</label>
             <DatePicker
-              inputId="dateFrom"
               v-model="searchForm.dateFrom"
-              dateFormat="dd/mm/yy"
-              showIcon
-              iconDisplay="input"
+              input-id="dateFrom"
+              date-format="dd/mm/yy"
+              show-icon
+              icon-display="input"
               :placeholder="`${t('dates.from')}...`" />
           </div>
 
           <div class="flex flex-column gap-2">
             <label for="dateTo" class="text-sm text-color-secondary">{{ t("dates.to") }}</label>
             <DatePicker
-              inputId="dateTo"
               v-model="searchForm.dateTo"
-              :minDate="searchForm.dateFrom ?? undefined"
-              dateFormat="dd/mm/yy"
-              showIcon
-              iconDisplay="input"
+              input-id="dateTo"
+              :min-date="searchForm.dateFrom ?? undefined"
+              date-format="dd/mm/yy"
+              show-icon
+              icon-display="input"
               :placeholder="`${t('dates.to')}...`" />
             <Message v-show="isDateRangeInvalid" severity="error" variant="simple" size="small">
               {{ t("dates.invalidRange") }}

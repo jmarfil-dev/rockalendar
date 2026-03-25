@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { EventStatus, InteractionStatus } from "~/types/events";
-import type { EventPrivateDto } from "~/types/events";
+import type { EventStatus, InteractionStatus, EventPrivateDto  } from "~/types/events";
+
 import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 
 definePageMeta({ layout: "private", ssr: false });
@@ -68,7 +68,7 @@ onMounted(async () => {
 async function onDelete() {
   deleting.value = true;
   deleteError.value = null;
-  const res = await fetchAuthResult<void>(ROUTE_PATH.apiMeEventDetail(id), { method: "DELETE" });
+  const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiMeEventDetail(id), { method: "DELETE" });
   deleting.value = false;
   if (res.ok) {
     await navigateTo(ROUTES.meEvents);
@@ -139,7 +139,7 @@ async function onDelete() {
               <img
                 :src="event.posterUrl"
                 :alt="event.title"
-                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" />
+                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" >
             </div>
             <div
               v-else

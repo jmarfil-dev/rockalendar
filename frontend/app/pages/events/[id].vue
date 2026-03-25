@@ -52,7 +52,8 @@ const { data: event, pending, error: fetchError } = await useFetch<EventPublic>(
   key: `event-${id}`,
 });
 if (fetchError.value) {
-  const status = (fetchError.value as any)?.status ?? (fetchError.value as any)?.statusCode ?? 500;
+  const err = fetchError.value as unknown as { status?: number; statusCode?: number };
+  const status = err?.status ?? err?.statusCode ?? 500;
   throw createError({ status: status >= 500 ? status : 404 });
 }
 
@@ -120,7 +121,7 @@ function mapsUrl(e: EventPublic): string {
               <img
                 :src="event.posterUrl"
                 :alt="event.title"
-                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" />
+                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" >
             </div>
             <div
               v-else

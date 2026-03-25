@@ -69,37 +69,33 @@ const first = computed<number>({
   },
 });
 
+function buildSearchParams(q: typeof route.query): Record<string, string> {
+  const params: Record<string, string> = {};
+  const artistId = typeof q.artistId === "string" ? q.artistId.trim() : "";
+  const city = typeof q.city === "string" ? q.city.trim() : "";
+  const provinceId = typeof q.provinceId === "string" ? q.provinceId : "";
+  const dateFrom = typeof q.dateFrom === "string" ? q.dateFrom : "";
+  const dateTo = typeof q.dateTo === "string" ? q.dateTo : "";
+  const free = typeof q.query === "string" ? q.query.trim() : "";
+
+  if (artistId) params.artistId = artistId;
+  if (city) params.city = city;
+  if (provinceId) params.provinceId = provinceId;
+  if (dateFrom) params.dateFrom = dateFrom;
+  if (dateTo) params.dateTo = dateTo;
+  if (free) params.query = free;
+
+  return params;
+}
+
 // Fetch
 const { data, pending, error } = await useFetch<PageResponse<EventPublicListItem>>(endpoint, {
-  query: computed(() => {
-    // Params comunes
-    const base: Record<string, any> = {
-      page: page.value,
-      size: size.value,
-      sort: sort.value,
-    };
-
-    // Params de búsqueda (solo cuando estemos en búsqueda o haya filtros)
-    if (endpoint.value === searchEndpoint) {
-      const q = route.query;
-
-      const artistId = typeof q.artistId === "string" ? q.artistId.trim() : "";
-      const city = typeof q.city === "string" ? q.city.trim() : "";
-      const provinceId = typeof q.provinceId === "string" ? q.provinceId : "";
-      const dateFrom = typeof q.dateFrom === "string" ? q.dateFrom : "";
-      const dateTo = typeof q.dateTo === "string" ? q.dateTo : "";
-      const free = typeof q.query === "string" ? q.query.trim() : "";
-
-      if (artistId) base.artistId = artistId;
-      if (city) base.city = city;
-      if (provinceId) base.provinceId = provinceId;
-      if (dateFrom) base.dateFrom = dateFrom;
-      if (dateTo) base.dateTo = dateTo;
-      if (free) base.query = free;
-    }
-
-    return base;
-  }),
+  query: computed(() => ({
+    page: page.value,
+    size: size.value,
+    sort: sort.value,
+    ...(endpoint.value === searchEndpoint ? buildSearchParams(route.query) : {}),
+  })),
   // importante: que refetchee si cambia endpoint (home/search) o cambian query params
   watch: [endpoint, () => route.query],
 });
@@ -124,8 +120,8 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
         <Select
           v-model="sort"
           :options="sortOptions"
-          optionLabel="label"
-          optionValue="value"
+          option-label="label"
+          option-value="value"
           class="w-10rem"
           :pt="{ label: { 'aria-label': t('pagination.sortedBy') } }" />
       </div>
@@ -166,7 +162,7 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
                       object-position: top;
                       border-radius: 6px;
                       height: 100%;
-                    " />
+                    " >
                   <div
                     v-else
                     class="border-1 surface-border border-round-lg surface-100 flex align-items-center justify-content-center text-center text-color-secondary"
@@ -206,7 +202,7 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
       v-if="!pending && !error && total > 0"
       :first="first"
       :rows="size"
-      :totalRecords="total"
+      :total-records="total"
       @page="onPage" />
   </article>
 </template>

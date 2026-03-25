@@ -52,7 +52,7 @@ export function useAgenda() {
     saving.value = eventId;
     error.value = null;
 
-    const res = await fetchAuthResult<void>(ROUTE_PATH.apiMeAgendaItem(eventId), { method: "DELETE" });
+    const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiMeAgendaItem(eventId), { method: "DELETE" });
 
     saving.value = null;
 

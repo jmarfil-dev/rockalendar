@@ -43,7 +43,7 @@ const bottomItems = computed(() => {
 </script>
 
 <template>
-  <AppShell :bottomItems="bottomItems">
+  <AppShell :bottom-items="bottomItems">
     <slot />
   </AppShell>
 </template>

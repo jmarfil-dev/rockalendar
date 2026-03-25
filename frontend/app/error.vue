@@ -18,8 +18,8 @@ const props = defineProps<{
 }>();
 
 const pd = computed<ProblemDetail | null>(() => {
-  const anyErr = props.error as any;
-  return (anyErr?.data as ProblemDetail) ?? (anyErr?.cause?.data as ProblemDetail) ?? null;
+  const anyErr = props.error as unknown as { data?: ProblemDetail; cause?: { data?: ProblemDetail } };
+  return anyErr?.data ?? anyErr?.cause?.data ?? null;
 });
 
 const status = computed(() => (pd.value?.status as number | undefined) ?? props.error.status ?? 500);
@@ -62,7 +62,7 @@ const goBack = () => clearError({ redirect: window.history.state?.back ?? ROUTES
     <header class="surface-0 mt-2">
       <div class="mx-auto w-full max-w-7xl px-3 py-1 flex align-items-center justify-content-between gap-2">
         <NuxtLink :to="ROUTES.home" class="no-underline flex align-items-center">
-          <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" />
+          <img src="/banner.png" alt="Rockalendar" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" >
         </NuxtLink>
       </div>
     </header>
@@ -72,7 +72,7 @@ const goBack = () => clearError({ redirect: window.history.state?.back ?? ROUTES
       <div class="mx-auto w-full max-w-7xl px-3 py-4">
         <header>
           <h1 id="error-name" class="flex flex-wrap justify-content-between mx-5">
-            <span><i class="pi pi-exclamation-circle" aria-hidden="true"></i></span><span>{{ heading }}</span>
+            <span><i class="pi pi-exclamation-circle" aria-hidden="true"/></span><span>{{ heading }}</span>
             <span>{{ status }}</span>
           </h1>
         </header>
