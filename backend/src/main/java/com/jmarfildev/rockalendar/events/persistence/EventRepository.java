@@ -38,7 +38,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                     e.startDateTime,
                     e.endDateTime,
                     p.name,
-                    e.cityName
+                    e.cityName,
+                    e.posterUrl
                 )
                 FROM Event e
                 JOIN e.province p
@@ -109,6 +110,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                      e.end_date_time   AS endDateTime,
                      p.name            AS provinceName,
                      e.city_name       AS cityName,
+                     e.poster_url      AS posterUrl,
                      s.score           AS score
                    FROM search_public_events(
                      :q, :minSim, :ftsW, :trgmW,
@@ -163,6 +165,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                      e.end_date_time   AS endDateTime,
                      p.name            AS provinceName,
                      e.city_name       AS cityName,
+                     e.poster_url      AS posterUrl,
                      s.score           AS score
                    FROM search_public_events_fallback(
                      :q, :minSim, :ftsW, :trgmW,

@@ -12,4 +12,5 @@ public record EventPublicListItemDto(UUID id,
                                      OffsetDateTime startDateTime,
                                      OffsetDateTime endDateTime,
                                      String provinceName,
-                                     String cityName) {}
+                                     String cityName,
+                                     String posterUrl) {}

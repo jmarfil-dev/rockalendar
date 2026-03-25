@@ -32,6 +32,7 @@ export type EventPublicListItem = {
   endDateTime?: string;
   provinceName: string;
   cityName: string;
+  posterUrl?: string | null;
 };
 
 export type EventPublic = {
