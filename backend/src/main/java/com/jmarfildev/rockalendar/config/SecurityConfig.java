@@ -26,6 +26,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jmarfildev.rockalendar.common.Constants;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 import com.jmarfildev.rockalendar.config.filters.TokenRenewalFilter;
@@ -100,7 +101,7 @@ public class SecurityConfig {
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         var conv = new JwtAuthenticationConverter();
         conv.setJwtGrantedAuthoritiesConverter(jwt -> {
-            var roles = jwt.getClaimAsStringList("roles");
+            var roles = jwt.getClaimAsStringList(Constants.JWT_CLAIM_ROLES);
             return roles == null ? List.of() : roles.stream().map(r -> (GrantedAuthority) new SimpleGrantedAuthority(r)).toList();
         });
         return conv;

@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.auth.application.JwtTokenService;
+import com.jmarfildev.rockalendar.common.Constants;
 
 /**
  * Renueva silenciosamente el JWT cuando le queda menos de la mitad de su vida útil.
@@ -52,12 +53,12 @@ public class TokenRenewalFilter extends OncePerRequestFilter {
 
                 if (remainingSeconds < thresholdSeconds) {
                     String subject = jwtAuth.getToken().getSubject();
-                    String email = jwtAuth.getToken().getClaimAsString("email");
+                    String email = jwtAuth.getToken().getClaimAsString(Constants.JWT_CLAIM_EMAIL);
                     List<String> roles = jwtAuth.getAuthorities().stream().map(a -> a.getAuthority()).toList();
 
                     var newToken = jwtTokenService.renewToken(subject, email, roles);
-                    response.setHeader("X-Refresh-Token", newToken.token());
-                    response.setHeader("X-Refresh-Token-Expires-At", newToken.expiresAt().toString());
+                    response.setHeader(Constants.HEADER_REFRESH_TOKEN, newToken.token());
+                    response.setHeader(Constants.HEADER_REFRESH_TOKEN_EXPIRES_AT, newToken.expiresAt().toString());
                     log.debug("Token renovado para subject={} remainingSeconds={}", subject, remainingSeconds);
                 }
             }

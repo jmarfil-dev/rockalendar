@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.auth.api.dto.AuthTokenResponse;
 import com.jmarfildev.rockalendar.auth.api.dto.LoginRequest;
+import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.auth.api.dto.RegisterRequest;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
@@ -42,7 +43,7 @@ public class AuthService {
         Authentication auth;
         try {
             auth = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.email().trim().toLowerCase(), request.password()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(StringUtils.normalizeEmail(request.email()), request.password()));
         }
         catch (AuthenticationException e) {
             throw new BadCredentialsException(ErrorConstants.INVALID_CREDENTIALS);
@@ -59,7 +60,7 @@ public class AuthService {
 
     @Transactional
     public AuthTokenResponse register(RegisterRequest request) {
-        String normalizedEmail = request.email().trim().toLowerCase();
+        String normalizedEmail = StringUtils.normalizeEmail(request.email());
 
         User user = new User();
         user.setEmail(normalizedEmail);

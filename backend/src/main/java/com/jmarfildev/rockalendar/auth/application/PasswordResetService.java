@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.auth.api.dto.ForgotPasswordRequest;
+import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.auth.api.dto.ResetPasswordRequest;
 import com.jmarfildev.rockalendar.auth.domain.PasswordResetToken;
 import com.jmarfildev.rockalendar.auth.persistence.PasswordResetTokenRepository;
@@ -47,7 +48,7 @@ public class PasswordResetService {
      */
     @Transactional
     public void requestReset(ForgotPasswordRequest request) {
-        String email = request.email().trim().toLowerCase();
+        String email = StringUtils.normalizeEmail(request.email());
 
         userRepository.findByEmail(email).ifPresent(user -> {
             // Invalidar tokens previos del mismo usuario

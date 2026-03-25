@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import net.coobird.thumbnailator.Thumbnails;
 
+import com.jmarfildev.rockalendar.common.Constants;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.StorageException;
 
@@ -37,7 +38,7 @@ public class ImageProcessingService {
         }
 
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
+        if (contentType == null || !contentType.startsWith(Constants.IMAGE_CONTENT_TYPE_PREFIX)) {
             throw new StorageException(ErrorConstants.INVALID_IMAGE);
         }
 
@@ -48,7 +49,7 @@ public class ImageProcessingService {
             }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            var builder = Thumbnails.of(img).outputFormat("jpeg").outputQuality(JPEG_QUALITY);
+            var builder = Thumbnails.of(img).outputFormat(Constants.IMAGE_OUTPUT_FORMAT).outputQuality(JPEG_QUALITY);
 
             if (img.getWidth() > MAX_DIMENSION || img.getHeight() > MAX_DIMENSION) {
                 builder.size(MAX_DIMENSION, MAX_DIMENSION).keepAspectRatio(true);

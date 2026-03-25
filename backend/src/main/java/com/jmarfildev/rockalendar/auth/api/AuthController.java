@@ -14,6 +14,7 @@ import com.jmarfildev.rockalendar.auth.api.dto.RegisterRequest;
 import com.jmarfildev.rockalendar.auth.api.dto.ResetPasswordRequest;
 import com.jmarfildev.rockalendar.auth.application.AuthService;
 import com.jmarfildev.rockalendar.auth.application.PasswordResetService;
+import com.jmarfildev.rockalendar.common.helper.StringUtils;
 
 /**
  * @author jmarfil
@@ -37,7 +38,7 @@ public class AuthController implements AuthApi {
 
     @Override
     public AuthTokenResponse register(RegisterRequest request) {
-        if (request.website() != null && !request.website().isBlank()) {
+        if (StringUtils.blankToNull(request.website()) != null) {
             log.warn("Honeypot activado en /register (website='{}')", request.website());
             return new AuthTokenResponse(HONEYPOT_FAKE_TOK, Instant.now().plusSeconds(3600));
         }
@@ -46,7 +47,7 @@ public class AuthController implements AuthApi {
 
     @Override
     public void forgotPassword(ForgotPasswordRequest request) {
-        if (request.website() != null && !request.website().isBlank()) {
+        if (StringUtils.blankToNull(request.website()) != null) {
             log.warn("Honeypot activado en /forgot-password (website='{}')", request.website());
             return;
         }

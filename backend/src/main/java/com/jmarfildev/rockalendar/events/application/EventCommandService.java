@@ -17,10 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
+import com.jmarfildev.rockalendar.common.CommonValidations;
+import com.jmarfildev.rockalendar.common.Constants;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
-import com.jmarfildev.rockalendar.common.error.ForbiddenException;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
@@ -156,8 +157,8 @@ public class EventCommandService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
         // El admin puede editar eventos de cualquier usuario
-        if (!isAdmin && !userId.equals(event.getCreatedByUserId())) {
-            throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
+        if (!isAdmin) {
+            CommonValidations.validateEventOwner(userId, event.getCreatedByUserId());
         }
         // El admin puede editar en cualquier estado (REJECTED, HIDDEN, etc.)
         if (!isAdmin && !hasEditableStatus(event.getStatus())) {
@@ -216,8 +217,8 @@ public class EventCommandService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
         // El admin puede eliminar eventos de cualquier usuario
-        if (!isAdmin && !userId.equals(event.getCreatedByUserId())) {
-            throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
+        if (!isAdmin) {
+            CommonValidations.validateEventOwner(userId, event.getCreatedByUserId());
         }
 
         if (event.getStatus() == EventStatus.ERASED) {
@@ -257,9 +258,7 @@ public class EventCommandService {
      * @return un record con los datos validados
      */
     private EventInputValidate validate(SubmitEventRequest req, UUID userId) {
-        if (req.endDateTime() != null && req.endDateTime().isBefore(req.startDateTime())) {
-            throw new BadRequestException(ErrorConstants.INVALID_DATE_RANGE);
-        }
+        CommonValidations.validateDateRange(req.startDateTime(), req.endDateTime());
 
         // Artistas normalizados (descarta blancos tras trim/slug)
         var artists = new LinkedHashSet<Artist>();
@@ -342,7 +341,7 @@ public class EventCommandService {
         byte[] processed = imageProcessingService.process(poster);
         String key = "posters/" + event.getId() + "/" + UUID.randomUUID() + ".jpg";
         storageService.delete(event.getPosterKey());
-        String publicUrl = storageService.upload(processed, key, "image/jpeg");
+        String publicUrl = storageService.upload(processed, key, Constants.IMAGE_CONTENT_TYPE);
         event.setPosterUrl(publicUrl);
         event.setPosterKey(key);
         log.debug("poster subido eventId={} key={}", event.getId(), key);

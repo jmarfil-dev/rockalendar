@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.common.CommonValidations;
-import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
-import com.jmarfildev.rockalendar.common.error.ForbiddenException;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
@@ -96,8 +94,8 @@ public class EventQueryService {
                                                      Optional<UUID> artistId,
                                                      Pageable pageable) {
         CommonValidations.validatePageable(pageable);
-        if (dateFrom.isPresent() && dateTo.isPresent() && dateFrom.get().isAfter(dateTo.get())) {
-            throw new BadRequestException(ErrorConstants.INVALID_DATE_RANGE);
+        if (dateFrom.isPresent() && dateTo.isPresent()) {
+            CommonValidations.validateDateRange(dateFrom.get(), dateTo.get());
         }
 
         String q = query.map(String::trim).orElse("");
@@ -163,9 +161,7 @@ public class EventQueryService {
     public EventPrivateDto getMine(UUID eventId) {
         UUID userId = currentUser.userId();
         Event event = repository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
-        if (!userId.equals(event.getCreatedByUserId())) {
-            throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
-        }
+        CommonValidations.validateEventOwner(userId, event.getCreatedByUserId());
         return mapper.toPrivateDto(event);
     }
 

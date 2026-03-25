@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
+import com.jmarfildev.rockalendar.common.Constants;
 import com.jmarfildev.rockalendar.users.domain.User;
 
 /**
@@ -46,8 +47,8 @@ public class JwtTokenService {
                 .issuedAt(now)
                 .expiresAt(exp)
                 .subject(subject)
-                .claim("email", email)
-                .claim("roles", authorities)
+                .claim(Constants.JWT_CLAIM_EMAIL, email)
+                .claim(Constants.JWT_CLAIM_ROLES, authorities)
                 .build();
 
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();

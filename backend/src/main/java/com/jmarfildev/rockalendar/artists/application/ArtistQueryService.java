@@ -18,6 +18,7 @@ import com.jmarfildev.rockalendar.common.dto.ComboItemDto;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
+import com.jmarfildev.rockalendar.common.helper.StringUtils;
 
 /**
  * Servicio con los métodos para <b>casos de uso que modifican</b> Artistas:
@@ -45,8 +46,8 @@ public class ArtistQueryService {
      * @return lista de artistas con entre 0 y 10 resultados
      */
     public List<ComboItemDto> searchArtistsAutocomplete(String query) {
-        String qRaw = query == null ? "" : query.trim();
-        if (qRaw.isBlank()) {
+        String qRaw = StringUtils.blankToEmpty(query);
+        if (qRaw.isEmpty()) {
             return List.of();
         }
 
@@ -61,7 +62,7 @@ public class ArtistQueryService {
     }
 
     public Page<ArtistDto> findOrphans(String query, Pageable pageable) {
-        String q = query == null ? "" : query.trim();
+        String q = StringUtils.blankToEmpty(query);
         return repository.findOrphans(q, pageable).map(mapper::toDto);
     }
 }
