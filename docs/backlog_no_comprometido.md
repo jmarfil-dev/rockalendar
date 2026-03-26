@@ -10,6 +10,14 @@ Son ideas sujetas a validación, disponibilidad de tiempo y coherencia con la fi
 
 Estas implementaciones tienen prioridad sobre las demás.
 
+### Seguridad
+
+- Guardar token en httpOnly cookies: al parecer es un agujero de seguridad importante.
+- Agregar rate limiting a todas las Request no GET.
+- Refresh token + httpOnly cookies: si almacenamos más datos personales y/o sensibles.
+  - Si alguien roba un token tiene acceso al email y puede proponer conciertos en su nombre. No es catastrófico.
+  - Logout en backend para evitar tokens robados.
+
 ### Backend
 
 - Base común para búsquedas, filtros y mapas.
@@ -22,9 +30,6 @@ Estas implementaciones tienen prioridad sobre las demás.
 - Anotaciones de validación compuestas si hay repetición real.
 - Validators propios solo si hay reglas reutilizables.
 - TRGM para Autocompletar de `artist`.
-- Refresh token + httpOnly cookies: si almacenamos más datos personales y/o sensibles.
-  - Por ahora el riesgo es bajo, si alguien roba un token tiene acceso al email y puede proponer conciertos en su nombre. No es catastrófico.
-  - Logout en backend para evitar tokens robados.
 
 ### Mejora de búsquedas
 
@@ -72,6 +77,27 @@ Cuándo hacerlo:
 ## Eventos (otros)
 
 - Opción: cartel de evento mediante URL externa. En lugar de subir una imagen, aceptar url y referenciarla sin guardarla.
+- Agregar lista de artistas desde cartel mediante Vision API (Claude/GPT-4o).
+
+### Explicación de Vision API
+
+~~~
+Flujo híbrido: el modelo de visión extrae una propuesta de lista de artistas, y el usuario la revisa y confirma antes de guardar. Así:
+  1. Usuario sube el cartel
+  2. La API llama a Claude con visión y prompt tipo "extrae todos los nombres de bandas/artistas de este cartel de festival"
+  3. Se pre-rellena el campo de artistas con el resultado
+  4. El usuario añade/quita los que estén mal
+~~~
+
+**Problema**\
+Cada llamada al API tiene un coste aproximado de ~2.000 tokens → $0.006 (medio céntimo) a fecha marzo de 2026 (puede subir y es probable que lo haga).\
+Es decir, unos ~6€ al mes si se llama 1000 veces al API.\
+Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber trampas / abusos (bots, bugs).
+
+**Solución / protección (siendo optimistas)**
+- Rate limiting: ya está implementado en POST públicos (login, registro, reset-password).
+
+> Lo bueno es que solo los usuarios registrados pueden proponer / editar eventos y que el tamaño de la imagen está limitado a 1200px (el tamaño afecta al coste de la llamada al API).
 
 ## Artistas
 

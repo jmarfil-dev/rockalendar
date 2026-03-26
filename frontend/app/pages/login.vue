@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
+import { sanitizeRedirect } from "~/utils/safeRedirect";
 
 // PrimeVue añade aria-expanded al <input> del componente Password, lo cual no es válido en inputs.
 // Como usamos :feedback="false" no hay panel que expandir, así que lo eliminamos tras cada render.
@@ -53,7 +54,10 @@ async function onSubmit() {
       return;
     }
 
-    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : ROUTES.me;
+    const redirect = sanitizeRedirect(
+      typeof route.query.redirect === "string" ? route.query.redirect : undefined,
+      ROUTES.me,
+    );
     await navigateTo(redirect);
   } finally {
     loading.value = false;

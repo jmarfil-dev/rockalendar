@@ -89,7 +89,7 @@ export default defineNuxtConfig({
     },
   },
   modules: ["@nuxt/eslint", "@primevue/nuxt-module", "@nuxtjs/i18n"],
-  css: ["primeicons/primeicons.css", "primeflex/primeflex.css", "~/assets/css/main.css"],
+  css: ["~/assets/css/main.css"],
   primevue: {
     options: {
       theme: {

@@ -45,12 +45,12 @@ import com.jmarfildev.rockalendar.events.application.MeEventTabEnum;
  * @author jmarfil
  *
  */
-@RequestMapping("/api/me")
+@RequestMapping("/api/me/events")
 @Tag(name = "Mis Eventos", description = "Gestión de eventos de usuario autenticado")
 @SecurityRequirement(name = "bearerAuth")
 public interface MeEventApi {
 
-    @PostMapping(value = "/events", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @RequestBody(content = @Content(encoding = @Encoding(name = "event", contentType = "application/json")))
     @Operation(summary = "Proponer un nuevo evento",
@@ -64,7 +64,7 @@ public interface MeEventApi {
                                  @Parameter(description = "Cartel del evento (opcional)") @RequestPart(value = "poster",
                                                                                                        required = false) MultipartFile poster);
 
-    @GetMapping("/events")
+    @GetMapping
     @Operation(summary = "Listar mis eventos",
                description = """
                              Devuelve los eventos creados por el usuario autenticado.
@@ -84,7 +84,7 @@ public interface MeEventApi {
     Page<EventPrivateListItemDto> listMine(@Parameter(description = "Nombre de la pestaña") @RequestParam(defaultValue = "ALL") MeEventTabEnum tab,
                                            @Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 
-    @GetMapping("/events/{eventId}")
+    @GetMapping("/{eventId}")
     @Operation(summary = "Obtener detalle de un evento propio",
                description = "Devuelve el detalle completo de un evento del usuario autenticado.")
     @ApiResponse(responseCode = "200", description = "Detalle del evento")
@@ -95,7 +95,7 @@ public interface MeEventApi {
                                           example = "cccccccc-0000-0000-0000-000000000001",
                                           required = true) @PathVariable UUID eventId);
 
-    @PutMapping(value = "/events/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @RequestBody(content = @Content(encoding = @Encoding(name = "event", contentType = "application/json")))
     @Operation(summary = "Actualizar un evento propio",
                description = "Permite editar un evento del usuario en estados editables (DRAFT/NEEDS_CHANGES/APPROVED). "
@@ -119,7 +119,7 @@ public interface MeEventApi {
                            @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(value = "removePoster",
                                                                                                                                   defaultValue = "false") boolean removePoster);
 
-    @DeleteMapping("/events/{eventId}")
+    @DeleteMapping("/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Eliminar (retirar) un evento propio",
                description = "Cambia el estado del evento a ERASED. Solo permitido en PENDING_MODERATION y NEEDS_CHANGES. "

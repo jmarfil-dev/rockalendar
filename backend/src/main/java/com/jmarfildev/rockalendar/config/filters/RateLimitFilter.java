@@ -3,6 +3,7 @@ package com.jmarfildev.rockalendar.config.filters;
 import java.io.IOException;
 import java.time.Duration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,8 +17,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,10 +36,13 @@ import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 @Order(1)
 @RequiredArgsConstructor
 @Slf4j
-public class AuthRateLimitFilter extends OncePerRequestFilter {
+public class RateLimitFilter extends OncePerRequestFilter {
 
     @Value("${rockalendar.auth.rate-limit.path-prefix:/api/auth/}")
     private String authPathPrefix;
+
+    @Value("${rockalendar.contact.rate-limit.path:/api/contact}")
+    private String contactPath;
 
     private final ObjectMapper objectMapper;
 
@@ -49,7 +51,8 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getRequestURI().startsWith(authPathPrefix);
+        String uri = request.getRequestURI();
+        return !uri.startsWith(authPathPrefix) && !uri.equals(contactPath);
     }
 
     @Override
@@ -80,7 +83,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             // 10 intentos cada 10 minutos
             limit = Bandwidth.builder().capacity(10).refillIntervally(10, Duration.ofMinutes(10)).build();
         }
-        else if (path.endsWith("/register")) {
+        else if (path.endsWith("/register") || path.equals(contactPath)) {
             // 5 intentos por hora
             limit = Bandwidth.builder().capacity(5).refillIntervally(5, Duration.ofHours(1)).build();
         }

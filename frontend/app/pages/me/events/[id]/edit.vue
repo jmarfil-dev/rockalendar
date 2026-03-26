@@ -14,15 +14,37 @@ const { form, posterFile, existingPosterUrl, removePoster, loading, submitting, 
 
 const posterInputRef = ref<HTMLInputElement | null>(null);
 const posterPreviewUrl = computed(() => (posterFile.value ? URL.createObjectURL(posterFile.value) : null));
+const posterError = ref<string | null>(null);
+
+const POSTER_MAX_MB = 5;
+const POSTER_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 function onPosterChange(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0] ?? null;
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0] ?? null;
+  posterError.value = null;
+
+  if (!file) return;
+
+  if (!POSTER_ALLOWED_TYPES.includes(file.type)) {
+    posterError.value = t("events.posterInvalidType");
+    input.value = "";
+    return;
+  }
+
+  if (file.size > POSTER_MAX_MB * 1024 * 1024) {
+    posterError.value = t("events.posterTooLarge", { max: POSTER_MAX_MB });
+    input.value = "";
+    return;
+  }
+
   posterFile.value = file;
   removePoster.value = false;
 }
 
 function clearNewPoster() {
   posterFile.value = null;
+  posterError.value = null;
   if (posterInputRef.value) posterInputRef.value.value = "";
 }
 
@@ -289,6 +311,7 @@ async function onSuccessClose() {
             </div>
 
             <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
+            <Message v-if="posterError" severity="error" variant="simple" size="small">{{ posterError }}</Message>
             <small class="text-xs text-color-secondary">{{ t("events.posterHint") }}</small>
           </div>
 

@@ -251,12 +251,14 @@ async function onDelete() {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("events.sourceUrl") }}</span>
                       <a
+                        v-if="isSafeUrl(event.sourceUrl)"
                         :href="event.sourceUrl"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="text-primary underline text-xs break-all">
                         {{ event.sourceUrl }}
                       </a>
+                      <span v-else class="text-color-secondary text-xs break-all">{{ event.sourceUrl }}</span>
                     </div>
                   </div>
 
