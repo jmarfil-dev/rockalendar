@@ -3,6 +3,38 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v0.5.0]
+### Added
+- [BACK] Cartel de evento: subida de imagen con almacenamiento en S3.
+- [BACK] Rate limiting en endpoints de autenticación y honeypot en formulario de registro.
+- [BACK] Renovación silenciosa de JWT con TTL de 48h.
+- [BACK] Recuperación de contraseña vía email.
+- [BACK] Formulario de contacto: endpoint `POST /api/contact` y rate limiting.
+- [FRONT] Cartel en formulario de propuesta/edición, detalle de evento y miniatura en listado público.
+- [FRONT] Idioma preferido del usuario en registro y ajustes de cuenta.
+- [FRONT] Aceptación obligatoria de política de privacidad en el registro.
+- [FRONT] Cambio de contraseña en ajustes de cuenta.
+- [FRONT] Solicitud de eliminación de cuenta con período de gracia de 7 días.
+- [FRONT] Página de detalle de artista con sus próximos eventos.
+- [FRONT] Gestión de artistas en moderación: autocomplete, eliminación y lista de huérfanos.
+- [FRONT] Formulario de creación de artista para moderadores.
+- [FRONT] Bypass de restricciones de negocio para rol ADMIN en formularios de evento.
+- [FRONT] Páginas `/about`, `/privacy` y `/contact`, y CTAs en footer.
+- [FRONT] Sección de colaboración y código abierto.
+- [FRONT] Renombrado de artista desde su detalle en moderación.
+- [FRONT] Pegado masivo de artistas en formulario de propuesta/edición.
+- [FRONT] Formulario de contacto conectado al backend; navega a él desde el detalle de evento.
+- [FRONT] CSP dinámica: `http:` permitido en imágenes solo en desarrollo (MinIO local); `blob:` permitido siempre para previsualizaciones de cartel.
+
+### Fixed
+- [FRONT] Eventos pasados filtrados de la agenda personal.
+- [FRONT] Mismatch de hidratación SSR en el bottom nav (dependía de `isAuthenticated`, solo disponible en cliente).
+- [FRONT] Fuentes de Google Fonts (`fonts.gstatic.com`) permitidas en la CSP.
+
+### Changed
+- [FRONT] ESLint configurado con `@nuxt/eslint` y `eslint-plugin-sonarjs`; todos los issues corregidos.
+- [BACK+FRONT] Refactorizaciones de calidad: centralización de constantes, limpieza de issues de SonarQube.
+
 ## [v0.4.0]
 ### Added
 - [BACK] Trust score de usuario y endpoint `GET /api/me` con datos del usuario autenticado.
