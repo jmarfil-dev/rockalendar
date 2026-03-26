@@ -173,53 +173,56 @@ const onLogoutClick = async () => {
       </div>
     </footer>
 
-    <!-- Bottom nav -->
-    <nav
-      v-if="props.bottomItems && props.bottomItems.length"
-      class="surface-900 border-top-1 surface-border fixed bottom-0 left-0 right-0"
-      :aria-label="t('common.bottomNav')">
-      <div class="mx-auto w-full max-w-7xl flex justify-content-around">
-        <Button
-          v-if="proposeItem"
-          :key="proposeItem.id"
-          :icon="proposeItem.icon"
-          size="large"
-          text
-          rounded
-          :aria-label="proposeItem.label"
-          @click="proposeItem.action" />
+    <!-- Bottom nav: ClientOnly porque los items dependen de isAuthenticated,
+         que en SSR siempre es false (token solo disponible en cliente vía localStorage) -->
+    <ClientOnly>
+      <nav
+        v-if="props.bottomItems && props.bottomItems.length"
+        class="surface-900 border-top-1 surface-border fixed bottom-0 left-0 right-0"
+        :aria-label="t('common.bottomNav')">
+        <div class="mx-auto w-full max-w-7xl flex justify-content-around">
+          <Button
+            v-if="proposeItem"
+            :key="proposeItem.id"
+            :icon="proposeItem.icon"
+            size="large"
+            text
+            rounded
+            :aria-label="proposeItem.label"
+            @click="proposeItem.action" />
 
-        <Button
-          v-if="searchItem"
-          :key="searchItem.id"
-          :icon="searchItem.icon"
-          size="large"
-          text
-          rounded
-          :aria-label="searchItem.label"
-          @click="searchItem.action" />
+          <Button
+            v-if="searchItem"
+            :key="searchItem.id"
+            :icon="searchItem.icon"
+            size="large"
+            text
+            rounded
+            :aria-label="searchItem.label"
+            @click="searchItem.action" />
 
-        <Button
-          v-if="meItem"
-          :key="meItem.id"
-          :icon="meItem.icon"
-          size="large"
-          text
-          rounded
-          :aria-label="meItem.label"
-          @click="meItem.action" />
+          <Button
+            v-if="meItem"
+            :key="meItem.id"
+            :icon="meItem.icon"
+            size="large"
+            text
+            rounded
+            :aria-label="meItem.label"
+            @click="meItem.action" />
 
-        <Button
-          v-if="moderationItem"
-          :key="moderationItem.id"
-          :icon="moderationItem.icon"
-          size="large"
-          text
-          rounded
-          :aria-label="moderationItem.label"
-          @click="moderationItem.action" />
-      </div>
-    </nav>
+          <Button
+            v-if="moderationItem"
+            :key="moderationItem.id"
+            :icon="moderationItem.icon"
+            size="large"
+            text
+            rounded
+            :aria-label="moderationItem.label"
+            @click="moderationItem.action" />
+        </div>
+      </nav>
+    </ClientOnly>
 
     <!-- User drawer (derecha) -->
     <Drawer v-model:visible="isUserDrawerOpen" position="right" :style="{ width: '340px' }" @hide="closeUserDrawer">

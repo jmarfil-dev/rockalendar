@@ -29,6 +29,19 @@ public class EmailService {
     @Value("${rockalendar.email.from}")
     private String fromAddress;
 
+    public void sendContactEmail(String fromName, String fromEmail, String message) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom(fromAddress);
+        mail.setTo("ruido@rockalendar.es");
+        mail.setReplyTo(fromEmail);
+        mail.setSubject("[Contacto] " + (fromName != null && !fromName.isBlank() ? fromName : fromEmail));
+        mail.setText("De: " + (fromName != null && !fromName.isBlank() ? fromName + " <" + fromEmail + ">" : fromEmail)
+                + "\n\n" + message);
+
+        mailSender.send(mail);
+        log.info("contact email sent from={}", fromEmail);
+    }
+
     public void sendPasswordResetEmail(String toEmail, String resetLink, String preferredLanguage) {
         Locale locale = resolveLocale(preferredLanguage);
         ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE, locale);

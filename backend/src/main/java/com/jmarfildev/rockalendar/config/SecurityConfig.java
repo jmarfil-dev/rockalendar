@@ -44,7 +44,10 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())// Para APIs REST en dev
+        http.headers(headers -> headers.httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
+                                                                                .maxAgeInSeconds(31_536_000) // 1 año
+                                                                                .preload(true)))
+            .csrf(csrf -> csrf.disable())// Para APIs REST en dev
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(eh -> eh.authenticationEntryPoint(unauthorizedError())
                                        // Token válido pero sin Rol adecuado o acceso denegado por configuración
@@ -55,6 +58,9 @@ public class SecurityConfig {
                                                .permitAll()
                                                // Auth
                                                .requestMatchers("/api/auth/**")
+                                               .permitAll()
+                                               // Contacto
+                                               .requestMatchers(HttpMethod.POST, "/api/contact")
                                                .permitAll()
                                                // Público (lectura)
                                                .requestMatchers(HttpMethod.GET, "/api/events/**", "/api/artists/**", "/api/provinces/**")
@@ -110,8 +116,7 @@ public class SecurityConfig {
     private AuthenticationEntryPoint unauthorizedError() {
         return (request, response, authException) -> {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                                                                ErrorConstants.AUTH_REQUIRED,
+            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ErrorConstants.AUTH_REQUIRED,
                                                                 request.getRequestURI(), ErrorConstants.TYPE_401_UNAUTHORIZED);
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -123,8 +128,7 @@ public class SecurityConfig {
     private AccessDeniedHandler forbiddenError() {
         return (request, response, accessDeniedException) -> {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(),
-                                                                ErrorConstants.ACCESS_DENIED,
+            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ErrorConstants.ACCESS_DENIED,
                                                                 request.getRequestURI(), ErrorConstants.TYPE_403_FORBIDDEN);
 
             response.setStatus(HttpStatus.FORBIDDEN.value());

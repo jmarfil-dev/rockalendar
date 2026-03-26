@@ -64,6 +64,12 @@ const eventDescription = computed(() => {
   return parts.length ? `${event.value.title} — ${parts.join(", ")}` : event.value.title;
 });
 
+function escapeJsonForScriptTag(json: string): string {
+  // JSON.stringify no escapa < > & por defecto.
+  // Sin este escape, <\/script> en datos de usuario podría romper el contexto del tag.
+  return json.replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026");
+}
+
 const eventJsonLd = computed(() => {
   if (!event.value) return null;
   const ev = event.value;
@@ -87,7 +93,7 @@ const eventJsonLd = computed(() => {
   if (ev.description) schema.description = ev.description;
   if (ev.posterUrl) schema.image = ev.posterUrl;
   if (ev.artists?.length) schema.performer = ev.artists.map((a) => ({ "@type": "MusicGroup", name: a.name }));
-  return JSON.stringify(schema);
+  return escapeJsonForScriptTag(JSON.stringify(schema));
 });
 
 useHead({
@@ -275,12 +281,14 @@ function mapsUrl(e: EventPublic): string {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("events.sourceUrl") }}</span>
                       <a
+                        v-if="isSafeUrl(event.sourceUrl)"
                         :href="event.sourceUrl"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="text-primary underline text-xs break-all">
                         {{ event.sourceUrl }}
                       </a>
+                      <span v-else class="text-color-secondary text-xs break-all">{{ event.sourceUrl }}</span>
                     </div>
                   </div>
                 </div>
@@ -327,8 +335,7 @@ function mapsUrl(e: EventPublic): string {
                       <span class="text-color-secondary text-sm">{{ t("moderation.sendCom") }}</span>
                     </div>
                   </div>
-                  <!-- Por ahora no hace nada -->
-                  <Button :label="t('common.sendCom')" icon="pi pi-send" class="w-full" type="button" />
+                  <Button :label="t('common.sendCom')" icon="pi pi-send" class="w-full" type="button" @click="navigateTo(ROUTES.contact)" />
                 </div>
               </template>
             </Card>

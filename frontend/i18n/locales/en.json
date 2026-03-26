@@ -41,6 +41,8 @@
     "currentPoster": "Current poster",
     "posterPreview": "Poster preview",
     "posterWillBeRemoved": "The current poster will be deleted when you save.",
+    "posterTooLarge": "The poster must not exceed {max} MB.",
+    "posterInvalidType": "Only JPEG, PNG or WebP images are allowed.",
     "status": "Status"
   },
   "auth": {
@@ -303,7 +305,8 @@
     "message": "Message",
     "messagePlaceholder": "Write your message...",
     "submit": "Send",
-    "note": "We will resply ASAP."
+    "note": "We will reply ASAP.",
+    "successMsg": "Message sent! We will get back to you as soon as possible."
   },
   "page": {
     "home": "Home",
