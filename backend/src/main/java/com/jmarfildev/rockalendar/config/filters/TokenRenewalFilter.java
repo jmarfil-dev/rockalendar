@@ -3,6 +3,8 @@ package com.jmarfildev.rockalendar.config.filters;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.auth.application.JwtTokenService;
+import com.jmarfildev.rockalendar.common.Constants;
+import com.jmarfildev.rockalendar.users.domain.User;
+import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 
 /**
  * Renueva silenciosamente el JWT cuando le queda menos de la mitad de su vida útil.
@@ -32,6 +37,7 @@ import com.jmarfildev.rockalendar.auth.application.JwtTokenService;
 public class TokenRenewalFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
+    private final UserRepository userRepository;
 
     @Value("${security.jwt.ttl-minutes}")
     private long ttlMinutes;
@@ -52,12 +58,22 @@ public class TokenRenewalFilter extends OncePerRequestFilter {
 
                 if (remainingSeconds < thresholdSeconds) {
                     String subject = jwtAuth.getToken().getSubject();
-                    String email = jwtAuth.getToken().getClaimAsString("email");
-                    List<String> roles = jwtAuth.getAuthorities().stream().map(a -> a.getAuthority()).toList();
+                    UUID userId = UUID.fromString(subject);
 
-                    var newToken = jwtTokenService.renewToken(subject, email, roles);
-                    response.setHeader("X-Refresh-Token", newToken.token());
-                    response.setHeader("X-Refresh-Token-Expires-At", newToken.expiresAt().toString());
+                    // Verificar que el usuario sigue activo antes de renovar
+                    Optional<User> userOpt = userRepository.findById(userId);
+                    if (userOpt.isEmpty() || userOpt.get().isErased() || userOpt.get().isBanned()) {
+                        // No renovar — dejar que el token expire naturalmente
+                        filterChain.doFilter(request, response);
+                        return;
+                    }
+
+                    // Usar datos frescos de BD para el nuevo token
+                    User user = userOpt.get();
+                    List<String> freshRoles = List.of(user.roleEnum().asAuthority());
+                    var newToken = jwtTokenService.renewToken(subject, user.getEmail(), freshRoles);
+                    response.setHeader(Constants.HEADER_REFRESH_TOKEN, newToken.token());
+                    response.setHeader(Constants.HEADER_REFRESH_TOKEN_EXPIRES_AT, newToken.expiresAt().toString());
                     log.debug("Token renovado para subject={} remainingSeconds={}", subject, remainingSeconds);
                 }
             }

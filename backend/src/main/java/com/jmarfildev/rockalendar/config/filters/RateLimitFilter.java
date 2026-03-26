@@ -3,6 +3,7 @@ package com.jmarfildev.rockalendar.config.filters;
 import java.io.IOException;
 import java.time.Duration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,9 +36,13 @@ import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 @Order(1)
 @RequiredArgsConstructor
 @Slf4j
-public class AuthRateLimitFilter extends OncePerRequestFilter {
+public class RateLimitFilter extends OncePerRequestFilter {
 
-    private static final String AUTH_PATH_PREFIX = "/api/auth/";
+    @Value("${rockalendar.auth.rate-limit.path-prefix:/api/auth/}")
+    private String authPathPrefix;
+
+    @Value("${rockalendar.contact.rate-limit.path:/api/contact}")
+    private String contactPath;
 
     private final ObjectMapper objectMapper;
 
@@ -46,7 +51,8 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getRequestURI().startsWith(AUTH_PATH_PREFIX);
+        String uri = request.getRequestURI();
+        return !uri.startsWith(authPathPrefix) && !uri.equals(contactPath);
     }
 
     @Override
@@ -74,16 +80,16 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
     private Bucket createBucketForPath(String path) {
         Bandwidth limit;
         if (path.endsWith("/login")) {
-            // 10 intentos por minuto
+            // 10 intentos cada 10 minutos
             limit = Bandwidth.builder().capacity(10).refillIntervally(10, Duration.ofMinutes(10)).build();
         }
-        else if (path.endsWith("/register")) {
+        else if (path.endsWith("/register") || path.equals(contactPath)) {
             // 5 intentos por hora
             limit = Bandwidth.builder().capacity(5).refillIntervally(5, Duration.ofHours(1)).build();
         }
         else {
-            // forgot-password, reset-password: 5 intentos por 10 minutos
-            limit = Bandwidth.builder().capacity(5).refillIntervally(5, Duration.ofMinutes(10)).build();
+            // forgot-password, reset-password: 2 intentos cada 10 minutos
+            limit = Bandwidth.builder().capacity(2).refillIntervally(2, Duration.ofMinutes(10)).build();
         }
         return Bucket.builder().addLimit(limit).build();
     }

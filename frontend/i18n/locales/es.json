@@ -42,6 +42,8 @@
     "currentPoster": "Cartel actual",
     "posterPreview": "Vista previa del cartel",
     "posterWillBeRemoved": "El cartel actual será eliminado al guardar.",
+    "posterTooLarge": "El cartel no puede superar los {max} MB.",
+    "posterInvalidType": "Solo se permiten imágenes JPEG, PNG o WebP.",
     "status": "Estado"
   },
   "auth": {
@@ -304,7 +306,8 @@
     "message": "Mensaje",
     "messagePlaceholder": "Escribe tu mensaje...",
     "submit": "Enviar",
-    "note": "Responderemos a la mayor brevedad posible."
+    "note": "Responderemos a la mayor brevedad posible.",
+    "successMsg": "¡Mensaje enviado! Te responderemos lo antes posible."
   },
   "page": {
     "home": "Inicio",

@@ -78,7 +78,7 @@ async function confirmDelete() {
   deletingId.value = id;
   deleteError.value = null;
 
-  const res = await fetchAuthResult<void>(ROUTE_PATH.apiModerationArtistDetail(id), { method: "DELETE" });
+  const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiModerationArtistDetail(id), { method: "DELETE" });
 
   deletingId.value = null;
   deleteConfirmId.value = null;

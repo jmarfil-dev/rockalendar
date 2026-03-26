@@ -11,4 +11,4 @@ showError(
 );
 </script>
 
-<template></template>
+<template><!-- Página vacía: showError() redirige al error handler antes de renderizar --></template>

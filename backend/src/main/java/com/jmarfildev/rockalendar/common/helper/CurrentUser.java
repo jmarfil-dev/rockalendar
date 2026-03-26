@@ -3,6 +3,8 @@ package com.jmarfildev.rockalendar.common.helper;
 import java.util.UUID;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.jmarfildev.rockalendar.users.domain.UserRole;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,6 @@ public class CurrentUser {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) return false;
         return auth.getAuthorities().stream()
-                   .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+                   .anyMatch(a -> UserRole.ADMIN.asAuthority().equals(a.getAuthority()));
     }
 }

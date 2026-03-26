@@ -28,7 +28,7 @@ watch(me, (val) => {
 async function saveLocale() {
   localeLoading.value = true;
   try {
-    const res = await fetchAuthResult<void>(ROUTES.apiMeLocale, {
+    const res = await fetchAuthResult<undefined>(ROUTES.apiMeLocale, {
       method: "PUT",
       body: { locale: selectedLocale.value },
     });
@@ -63,7 +63,7 @@ const deletionDate = computed(() => {
 async function confirmDeletion() {
   deletionLoading.value = true;
   try {
-    const res = await fetchAuthResult<void>(ROUTES.apiMe, { method: "DELETE" });
+    const res = await fetchAuthResult<undefined>(ROUTES.apiMe, { method: "DELETE" });
     if (!res.ok) {
       toast.add({ severity: "error", summary: t("me.settings.deleteAccount.errorTitle"), detail: t("me.settings.deleteAccount.errorMsg"), life: 4000 });
       return;
@@ -79,7 +79,7 @@ async function confirmDeletion() {
 async function cancelDeletion() {
   cancelLoading.value = true;
   try {
-    const res = await fetchAuthResult<void>(ROUTES.apiMeCancelDeletion, { method: "POST" });
+    const res = await fetchAuthResult<undefined>(ROUTES.apiMeCancelDeletion, { method: "POST" });
     if (!res.ok) {
       toast.add({ severity: "error", summary: t("me.settings.deleteAccount.errorTitle"), detail: t("me.settings.deleteAccount.errorMsg"), life: 4000 });
       return;
@@ -120,7 +120,7 @@ async function onSubmit() {
 
   loading.value = true;
   try {
-    const res = await fetchAuthResult<void>(ROUTES.apiMePassword, {
+    const res = await fetchAuthResult<undefined>(ROUTES.apiMePassword, {
       method: "PUT",
       body: {
         currentPassword: form.currentPassword,
@@ -205,17 +205,17 @@ async function onSubmit() {
               ><span class="sr-only">{{ t("common.required") }}</span>
             </label>
             <Password
-              v-fix-password-aria
-              inputId="current-password"
               v-model="form.currentPassword"
-              toggleMask
+              v-fix-password-aria
+              input-id="current-password"
+              toggle-mask
               :feedback="false"
               autocomplete="current-password"
               required
               :invalid="!!fieldErrors.currentPassword" />
             <Message
-              id="current-password-error"
               v-show="fieldErrors.currentPassword"
+              id="current-password-error"
               severity="error"
               variant="simple"
               size="small">
@@ -231,18 +231,18 @@ async function onSubmit() {
               ><span class="sr-only">{{ t("common.required") }}</span>
             </label>
             <Password
-              v-fix-password-aria
-              inputId="new-password"
               v-model="form.newPassword"
-              toggleMask
+              v-fix-password-aria
+              input-id="new-password"
+              toggle-mask
               :feedback="false"
               autocomplete="new-password"
               required
               :invalid="!!fieldErrors.newPassword"
               :pt="{ input: { 'aria-describedby': 'pw-requirements pw-hint' } }" />
             <Message
-              id="new-password-error"
               v-show="fieldErrors.newPassword"
+              id="new-password-error"
               severity="error"
               variant="simple"
               size="small">
@@ -260,8 +260,8 @@ async function onSubmit() {
               </ul>
             </div>
             <Message
-              id="pw-hint"
               v-show="!isPasswordValid && form.newPassword"
+              id="pw-hint"
               severity="error"
               variant="simple"
               size="small">
@@ -277,16 +277,16 @@ async function onSubmit() {
               ><span class="sr-only">{{ t("common.required") }}</span>
             </label>
             <Password
-              v-fix-password-aria
-              inputId="confirm-password"
               v-model="form.confirmPassword"
-              toggleMask
+              v-fix-password-aria
+              input-id="confirm-password"
+              toggle-mask
               :feedback="false"
               autocomplete="new-password"
               required />
             <Message
-              id="confirm-password-error"
               v-show="fieldErrors.confirmPassword"
+              id="confirm-password-error"
               severity="error"
               variant="simple"
               size="small">

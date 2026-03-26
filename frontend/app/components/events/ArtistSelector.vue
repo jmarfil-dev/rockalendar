@@ -95,7 +95,7 @@ function onPaste(e: ClipboardEvent) {
     <div class="flex gap-2 align-items-center" @keydown="onWrapperKeydown" @paste="onPaste">
       <AutoComplete
         v-model="inputValue"
-        inputId="artists-input"
+        input-id="artists-input"
         :suggestions="suggestions"
         option-label="name"
         :disabled="atLimit"
@@ -119,7 +119,7 @@ function onPaste(e: ClipboardEvent) {
       <Chip v-for="(chip, i) in modelValue" :key="chipKeys[i]" :label="chip.name" removable @remove="removeChip(i)" />
     </div>
 
-    <Message id="artists-error" v-show="fieldError" severity="error" variant="simple" size="small">
+    <Message v-show="fieldError" id="artists-error" severity="error" variant="simple" size="small">
       {{ tr(fieldError!) }}
     </Message>
   </div>

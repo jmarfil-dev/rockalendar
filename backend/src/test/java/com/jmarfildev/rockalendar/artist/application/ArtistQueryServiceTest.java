@@ -34,7 +34,7 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
     @Autowired
     TestDataFactory factory;
 
-    private final String MOCK_ARTIST_NAME_SKAP = "Ska-P";
+    private final String mockArtistNameSkap = "Ska-P";
 
     @BeforeEach
     void cleanDb() {
@@ -56,11 +56,11 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("searchArtistsAutocomplete: busca por slug normalizado (ska-p -> ska p) -> devuelve coincidencia")
     void autocomplete_normalizedSlugInput_returnsMatch() {
-        factory.artist(MOCK_ARTIST_NAME_SKAP);
+        factory.artist(mockArtistNameSkap);
 
         var result = service.searchArtistsAutocomplete("ska-p");
 
-        assertThat(result).extracting(ComboItemDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
+        assertThat(result).extracting(ComboItemDto::name).anyMatch(mockArtistNameSkap::equals);
     }
 
     @Test
@@ -74,20 +74,19 @@ class ArtistQueryServiceTest extends AbstractPostgresTest {
 
         var result = service.searchArtistsAutocomplete("artist");
 
-        assertThat(result).isNotEmpty();
-        assertThat(result).hasSizeLessThanOrEqualTo(10);
+        assertThat(result).isNotEmpty().hasSizeLessThanOrEqualTo(10);
     }
 
     @Test
     @DisplayName("searchArtistsAutocomplete: mayúsculas y minúsculas devuelven el mismo resultado")
     void autocomplete_caseInsensitive_returnsMatch() {
-        factory.artist(MOCK_ARTIST_NAME_SKAP);
+        factory.artist(mockArtistNameSkap);
 
         var resultUpper = service.searchArtistsAutocomplete("SKA");
         var resultLower = service.searchArtistsAutocomplete("ska");
 
-        assertThat(resultUpper).extracting(ComboItemDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
-        assertThat(resultLower).extracting(ComboItemDto::name).anyMatch(MOCK_ARTIST_NAME_SKAP::equals);
+        assertThat(resultUpper).extracting(ComboItemDto::name).anyMatch(mockArtistNameSkap::equals);
+        assertThat(resultLower).extracting(ComboItemDto::name).anyMatch(mockArtistNameSkap::equals);
     }
 
     @Test

@@ -45,6 +45,8 @@ export const ROUTES = {
   apiMeAgenda: "/api/me/agenda",
 
   apiModerationEvents: "/api/moderation/events",
+  apiContact: "/api/contact",
+
   apiModerationArtists: "/api/moderation/artists",
   apiModerationPending: "/api/moderation/events/pending",
   apiModerationArchived: "/api/moderation/events/archived",

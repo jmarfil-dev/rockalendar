@@ -1,5 +1,7 @@
 package com.jmarfildev.rockalendar.artists.api;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -14,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.UUID;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import com.jmarfildev.rockalendar.artists.api.doc.ArtistPageDoc;
 import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
 import com.jmarfildev.rockalendar.artists.api.dto.CreateArtistRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
@@ -44,20 +45,22 @@ public interface ArtistModerationApi {
 
     @GetMapping
     @Operation(summary = "Listar artistas huérfanos",
-            description = "Devuelve artistas que no están vinculados a ningún concierto. Solo MODERATOR o ADMIN.")
-    @ApiResponse(responseCode = "200", description = "Lista paginada de artistas sin concierto")
+               description = "Devuelve artistas que no están vinculados a ningún concierto. Solo MODERATOR o ADMIN.")
+    @ApiResponse(responseCode = "200",
+                 description = "Lista paginada de artistas sin concierto",
+                 content = @Content(schema = @Schema(implementation = ArtistPageDoc.class)))
     @ApiUnauthorized
     @ApiForbidden
-    Page<ArtistDto> getOrphanArtists(
-            @Parameter(description = "Filtro por nombre (opcional)") @RequestParam(required = false) String query,
-            @PageableDefault(size = 20, sort = "name") Pageable pageable);
+    Page<ArtistDto> getOrphanArtists(@Parameter(description = "Filtro por nombre (opcional)") @RequestParam(required = false) String query,
+                                     @PageableDefault(size = 20, sort = "name") Pageable pageable);
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Crear artista",
-            description = "Crea un artista nuevo. Solo usuarios con rol MODERATOR o ADMIN pueden crear artistas de forma explícita.")
-    @ApiResponse(responseCode = "201", description = "Artista creado correctamente",
-            content = @Content(schema = @Schema(implementation = ArtistDto.class)))
+               description = "Crea un artista nuevo. Solo usuarios con rol MODERATOR o ADMIN pueden crear artistas de forma explícita.")
+    @ApiResponse(responseCode = "201",
+                 description = "Artista creado correctamente",
+                 content = @Content(schema = @Schema(implementation = ArtistDto.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiBadRequest
@@ -65,22 +68,21 @@ public interface ArtistModerationApi {
     ArtistDto createArtist(@Parameter(description = "Datos del artista", required = true) @Valid @RequestBody CreateArtistRequest request);
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Renombrar artista",
-            description = "Actualiza el nombre y el slug de un artista. Solo MODERATOR o ADMIN.")
-    @ApiResponse(responseCode = "200", description = "Artista renombrado correctamente",
-            content = @Content(schema = @Schema(implementation = ArtistDto.class)))
+    @Operation(summary = "Renombrar artista", description = "Actualiza el nombre y el slug de un artista. Solo MODERATOR o ADMIN.")
+    @ApiResponse(responseCode = "200",
+                 description = "Artista renombrado correctamente",
+                 content = @Content(schema = @Schema(implementation = ArtistDto.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound
     @ApiBadRequest
     @ApiConflict
     ArtistDto renameArtist(@Parameter(description = "ID del artista", required = true) @PathVariable UUID id,
-            @Parameter(description = "Nuevo nombre", required = true) @Valid @RequestBody CreateArtistRequest request);
+                           @Parameter(description = "Nuevo nombre", required = true) @Valid @RequestBody CreateArtistRequest request);
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Eliminar artista",
-            description = "Elimina un artista. No se puede eliminar si tiene conciertos asociados.")
+    @Operation(summary = "Eliminar artista", description = "Elimina un artista. No se puede eliminar si tiene conciertos asociados.")
     @ApiResponse(responseCode = "204", description = "Artista eliminado correctamente")
     @ApiUnauthorized
     @ApiForbidden

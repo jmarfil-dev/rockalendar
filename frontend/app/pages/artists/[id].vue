@@ -13,11 +13,21 @@ const { data: artist, error: artistError } = await useFetch<ArtistRef>(
   { key: `artist-${id}` },
 );
 if (artistError.value) {
-  const status = (artistError.value as any)?.status ?? (artistError.value as any)?.statusCode ?? 500;
+  const err = artistError.value as unknown as { status?: number; statusCode?: number };
+  const status = err?.status ?? err?.statusCode ?? 500;
   throw createError({ status: status >= 500 ? status : 404 });
 }
 
 useHead({ title: () => artist.value?.name ?? t("page.artistDetail") });
+useSeoMeta({
+  description: () => `Upcoming concerts and festivals featuring ${artist.value?.name ?? ""} in Spain.`,
+  ogTitle: () => artist.value?.name,
+  ogDescription: () => `Upcoming concerts and festivals featuring ${artist.value?.name ?? ""} in Spain.`,
+  ogType: "website",
+  twitterCard: "summary",
+  twitterTitle: () => artist.value?.name,
+  twitterDescription: () => `Upcoming concerts and festivals featuring ${artist.value?.name ?? ""} in Spain.`,
+});
 
 const now = new Date().toISOString();
 const { data: eventsPage, pending: eventsPending } = await useFetch<{ content: EventPublicListItem[] }>(
@@ -70,7 +80,7 @@ async function confirmDelete() {
   deleting.value = true;
   deleteError.value = null;
 
-  const res = await fetchAuthResult<void>(ROUTE_PATH.apiModerationArtistDetail(id), {
+  const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiModerationArtistDetail(id), {
     method: "DELETE",
   });
 

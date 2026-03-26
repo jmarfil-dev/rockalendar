@@ -10,18 +10,18 @@ import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.jmarfildev.rockalendar.artists.domain.Artist;
 import com.jmarfildev.rockalendar.artists.persistence.ArtistRepository;
+import com.jmarfildev.rockalendar.common.CommonValidations;
+import com.jmarfildev.rockalendar.common.Constants;
 import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
-import com.jmarfildev.rockalendar.common.error.ForbiddenException;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
@@ -39,6 +39,7 @@ import com.jmarfildev.rockalendar.events.persistence.DuplicateEventProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
+import com.jmarfildev.rockalendar.moderation.application.AutoModerationResult;
 import com.jmarfildev.rockalendar.moderation.application.AutoModerationService;
 
 /**
@@ -84,26 +85,24 @@ public class EventCommandService {
 
         // El admin publica directamente como APPROVED, sin pasar por auto-moderación
         var modResult = isAdmin ? null : autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
-        EventStatus initialStatus = isAdmin ? EventStatus.APPROVED
-                : (modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION);
+        EventStatus initialStatus = resolveInitialStatus(isAdmin, modResult);
 
         // El admin puede crear ediciones anuales, correcciones, etc. sin detección de duplicados
         UUID possibleDuplicateOfId = null;
         PossibleDuplicateDto possibleDuplicate = null;
         if (!isAdmin) {
             // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
-            var artistIds = in.artists().stream().map(a -> a.getId()).toList();
+            var artistIds = in.artists().stream().map(Artist::getId).toList();
             var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
             var dayEnd = dayStart.plusDays(1);
             List<DuplicateEventProjection> duplicates =
                     eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
 
             possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
-            possibleDuplicate = duplicates.isEmpty() ? null
-                    : new PossibleDuplicateDto(
-                            duplicates.get(0).getId(),
-                            duplicates.get(0).getTitle(),
-                            EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
+            possibleDuplicate = duplicates.isEmpty()
+                    ? null
+                    : new PossibleDuplicateDto(duplicates.get(0).getId(), duplicates.get(0).getTitle(),
+                                               EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
         }
 
         var event = Event.builder()
@@ -158,8 +157,8 @@ public class EventCommandService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
         // El admin puede editar eventos de cualquier usuario
-        if (!isAdmin && !userId.equals(event.getCreatedByUserId())) {
-            throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
+        if (!isAdmin) {
+            CommonValidations.validateEventOwner(userId, event.getCreatedByUserId());
         }
         // El admin puede editar en cualquier estado (REJECTED, HIDDEN, etc.)
         if (!isAdmin && !hasEditableStatus(event.getStatus())) {
@@ -185,7 +184,8 @@ public class EventCommandService {
         if (isAdmin) {
             // El admin publica directamente como APPROVED
             event.setStatus(EventStatus.APPROVED);
-        } else {
+        }
+        else {
             // Reenviar a moderación (con comprobación de moderación automática)
             var modResult = autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
             event.setStatus(modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION);
@@ -197,7 +197,8 @@ public class EventCommandService {
 
         if (poster != null && !poster.isEmpty()) {
             uploadPosterToEvent(event, poster);
-        } else if (removePoster) {
+        }
+        else if (removePoster) {
             storageService.delete(event.getPosterKey());
             event.setPosterUrl(null);
             event.setPosterKey(null);
@@ -216,8 +217,8 @@ public class EventCommandService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
         // El admin puede eliminar eventos de cualquier usuario
-        if (!isAdmin && !userId.equals(event.getCreatedByUserId())) {
-            throw new ForbiddenException(ErrorConstants.EVENT_NOT_OWNER);
+        if (!isAdmin) {
+            CommonValidations.validateEventOwner(userId, event.getCreatedByUserId());
         }
 
         if (event.getStatus() == EventStatus.ERASED) {
@@ -226,7 +227,6 @@ public class EventCommandService {
 
         // El admin tiene control total del catálogo: puede eliminar en cualquier estado
         if (!isAdmin) {
-            // TODO: en frontend mensaje de "contactar con administración"
             if (event.getStatus() == EventStatus.APPROVED) {
                 throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED, ErrorConstants.TYPE_409_EVENT_STATE);
             }
@@ -258,9 +258,7 @@ public class EventCommandService {
      * @return un record con los datos validados
      */
     private EventInputValidate validate(SubmitEventRequest req, UUID userId) {
-        if (req.endDateTime() != null && req.endDateTime().isBefore(req.startDateTime())) {
-            throw new BadRequestException(ErrorConstants.INVALID_DATE_RANGE);
-        }
+        CommonValidations.validateDateRange(req.startDateTime(), req.endDateTime());
 
         // Artistas normalizados (descarta blancos tras trim/slug)
         var artists = new LinkedHashSet<Artist>();
@@ -272,8 +270,7 @@ public class EventCommandService {
                 continue; // Aunque tiene @NotBlank, aquí puede quedar vacío si es solo símbolos/diacríticos/etc.
             }
 
-            var artist = artistRepository.findBySlug(slug)
-                                         .orElseGet(() -> saveArtistOrFetch(displayName, slug, userId));
+            var artist = artistRepository.findBySlug(slug).orElseGet(() -> saveArtistOrFetch(displayName, slug, userId));
 
             artists.add(artist);
         }
@@ -305,8 +302,6 @@ public class EventCommandService {
         String description = StringUtils.blankToNull(req.description());
         String sourceUrl = StringUtils.blankToNull(req.sourceUrl());
 
-        // TODO: Evitar eventos duplicados
-
         return new EventInputValidate(title, description, req.startDateTime(), req.endDateTime(), province, cityName, citySlug, venueName,
                                       venueSlug, sourceUrl, artists);
     }
@@ -330,6 +325,13 @@ public class EventCommandService {
         }
     }
 
+    private EventStatus resolveInitialStatus(boolean isAdmin, AutoModerationResult modResult) {
+        if (isAdmin) {
+            return EventStatus.APPROVED;
+        }
+        return modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION;
+    }
+
     private boolean hasEditableStatus(EventStatus status) {
         return status == EventStatus.DRAFT || status == EventStatus.NEEDS_CHANGES || status == EventStatus.APPROVED;
     }
@@ -339,7 +341,7 @@ public class EventCommandService {
         byte[] processed = imageProcessingService.process(poster);
         String key = "posters/" + event.getId() + "/" + UUID.randomUUID() + ".jpg";
         storageService.delete(event.getPosterKey());
-        String publicUrl = storageService.upload(processed, key, "image/jpeg");
+        String publicUrl = storageService.upload(processed, key, Constants.IMAGE_CONTENT_TYPE);
         event.setPosterUrl(publicUrl);
         event.setPosterKey(key);
         log.debug("poster subido eventId={} key={}", event.getId(), key);

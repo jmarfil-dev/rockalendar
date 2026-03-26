@@ -3,6 +3,11 @@ definePageMeta({ layout: "public" });
 
 const { t, locale } = useI18n();
 useHead({ title: () => t("page.about") });
+useSeoMeta({
+  description: "About Rockalendar: an independent, community-driven calendar for rock, metal and punk concerts in Spain.",
+  ogDescription: "About Rockalendar: an independent, community-driven calendar for rock, metal and punk concerts in Spain.",
+  ogType: "website",
+});
 </script>
 
 <template>
@@ -59,7 +64,7 @@ useHead({ title: () => t("page.about") });
               patterns diseñados para tenerte más tiempo del que quieres. Si algún día necesitamos financiación, será
               con publicidad coherente con lo que somos — y lo avisaremos.
             </p>
-            <p class="m-0">Sin más.<br />Y recuerda: ¡Baila pogo!</p>
+            <p class="m-0">Sin más.<br >Y recuerda: ¡Baila pogo!</p>
           </section>
 
           <Divider />
@@ -111,7 +116,7 @@ useHead({ title: () => t("page.about") });
               designed to keep you longer than you want. If we ever need funding, it'll be through advertising coherent
               with what we are — and we'll be upfront about it.
             </p>
-            <p class="m-0">That's it.<br />And remember: dance the pogo!</p>
+            <p class="m-0">That's it.<br >And remember: dance the pogo!</p>
           </section>
 
           <Divider />

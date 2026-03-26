@@ -1,4 +1,5 @@
 import { ROUTES } from "~/constants/routes";
+import { sanitizeRedirect } from "~/utils/safeRedirect";
 import type { Rule } from "~/types/user-roles";
 
 const RULES: Rule[] = [
@@ -25,7 +26,10 @@ export default defineNuxtRouteMiddleware((to) => {
   const auth = useAuth();
   if (to.path === ROUTES.login && auth.isAuthenticated.value) {
     // Si ruta es login y ya está autenticado, redir a página privada o ruta original
-    const redirect = typeof to.query.redirect === "string" ? to.query.redirect : ROUTES.meEvents;
+    const redirect = sanitizeRedirect(
+      typeof to.query.redirect === "string" ? to.query.redirect : undefined,
+      ROUTES.meEvents,
+    );
     return navigateTo(redirect);
   }
 

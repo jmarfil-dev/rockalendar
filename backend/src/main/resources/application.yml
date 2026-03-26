@@ -70,6 +70,10 @@ server:
     include-message: never
     include-binding-errors: never
     include-exception: false
+  forward-headers-strategy: framework  # o NATIVE
+  tomcat:
+    remoteip:
+      trusted-proxies: "${IP_PROXY}" # IP del proxy/load balancer
 
 # =================================
 # DOCUMENTATION

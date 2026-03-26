@@ -10,7 +10,7 @@ export function useModerationActions() {
     loading.value = true;
     error.value = null;
     const body: ModerationApproveRequest = comment ? { comment } : {};
-    const res = await fetchAuthResult<void>(ROUTE_PATH.apiModerationApprove(eventId), {
+    const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiModerationApprove(eventId), {
       method: "POST",
       body,
     });
@@ -23,7 +23,7 @@ export function useModerationActions() {
     loading.value = true;
     error.value = null;
     const body: ModerationArchiveRequest = { reason };
-    const res = await fetchAuthResult<void>(ROUTE_PATH.apiModerationReject(eventId), {
+    const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiModerationReject(eventId), {
       method: "POST",
       body,
     });
@@ -36,7 +36,7 @@ export function useModerationActions() {
     loading.value = true;
     error.value = null;
     const body: ModerationArchiveRequest = { reason };
-    const res = await fetchAuthResult<void>(ROUTE_PATH.apiModerationHide(eventId), {
+    const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiModerationHide(eventId), {
       method: "POST",
       body,
     });
@@ -49,7 +49,7 @@ export function useModerationActions() {
     loading.value = true;
     error.value = null;
     const body: ModerationArchiveRequest = { reason };
-    const res = await fetchAuthResult<void>(ROUTE_PATH.apiModerationRequestChanges(eventId), {
+    const res = await fetchAuthResult<undefined>(ROUTE_PATH.apiModerationRequestChanges(eventId), {
       method: "POST",
       body,
     });

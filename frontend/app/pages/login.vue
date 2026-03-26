@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
+import { sanitizeRedirect } from "~/utils/safeRedirect";
 
 // PrimeVue añade aria-expanded al <input> del componente Password, lo cual no es válido en inputs.
 // Como usamos :feedback="false" no hay panel que expandir, así que lo eliminamos tras cada render.
@@ -53,7 +54,10 @@ async function onSubmit() {
       return;
     }
 
-    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : ROUTES.me;
+    const redirect = sanitizeRedirect(
+      typeof route.query.redirect === "string" ? route.query.redirect : undefined,
+      ROUTES.me,
+    );
     await navigateTo(redirect);
   } finally {
     loading.value = false;
@@ -78,23 +82,23 @@ async function onSubmit() {
         <Message v-else-if="errorMsg" severity="error" :closable="false">{{ errorMsg }}</Message>
 
         <form class="flex flex-column gap-3" @submit.prevent="onSubmit">
-          <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" required />
+          <AuthEmailField v-model="form.email" :field-error="fieldErrors.email" required />
 
           <div class="flex flex-column gap-2">
             <label for="password" class="text-sm text-color-secondary">{{ t("user.password") }}</label>
             <Password
-              v-fix-password-aria
-              inputId="password"
               v-model="form.password"
-              toggleMask
+              v-fix-password-aria
+              input-id="password"
+              toggle-mask
               :feedback="false"
               autocomplete="current-password"
               required
               :invalid="!!fieldErrors.password"
               :pt="{ input: { 'aria-describedby': 'login-password-error' } }" />
             <Message
-              id="login-password-error"
               v-show="fieldErrors.password"
+              id="login-password-error"
               severity="error"
               variant="simple"
               size="small">

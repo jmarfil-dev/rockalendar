@@ -43,19 +43,19 @@ class AgendaApiContractTest extends AbstractPostgresTest {
     @Autowired
     MockMvc mockMvc;
 
-    private final String API_AGENDA = "/api/me/agenda";
+    private final String apiAgenda = "/api/me/agenda";
 
     @Test
     @DisplayName("GET /api/me/agenda sin auth -> 401 ProblemDetail")
     void getAgenda_asAnon_returns401() throws Exception {
-        var ra = mockMvc.perform(get(API_AGENDA));
-        contractUtils.expectProblemDetail(ra, 401, API_AGENDA);
+        var ra = mockMvc.perform(get(apiAgenda));
+        contractUtils.expectProblemDetail(ra, 401, apiAgenda);
     }
 
     @Test
     @DisplayName("GET /api/me/agenda con auth y agenda vacía -> 200 lista vacía")
     void getAgenda_asUser_emptyAgenda_returns200EmptyList() throws Exception {
-        mockMvc.perform(get(API_AGENDA)
+        mockMvc.perform(get(apiAgenda)
                 .with(contractUtils.authJwt()))
                .andExpect(status().isOk())
                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -72,7 +72,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
                                           .status(InteractionStatus.GOING)
                                           .build());
 
-        mockMvc.perform(get(API_AGENDA)
+        mockMvc.perform(get(apiAgenda)
                 .with(contractUtils.authJwt()))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$[0].eventId").value(event.getId().toString()))
@@ -83,7 +83,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("PUT /api/me/agenda/{eventId} sin auth -> 401 ProblemDetail")
     void upsert_asAnon_returns401() throws Exception {
-        String api = API_AGENDA + "/" + UUID.randomUUID();
+        String api = apiAgenda + "/" + UUID.randomUUID();
         var ra = mockMvc.perform(put(api)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"status\": \"INTERESTED\"}"));
@@ -94,7 +94,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
     @DisplayName("PUT /api/me/agenda/{eventId} con auth y evento APPROVED -> 200 AgendaItemDto")
     void upsert_asUser_approvedEvent_returns200() throws Exception {
         Event event = factory.approvedMadridAgainstYou();
-        String api = API_AGENDA + "/" + event.getId();
+        String api = apiAgenda + "/" + event.getId();
 
         mockMvc.perform(put(api)
                 .with(contractUtils.authJwt())
@@ -117,7 +117,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
                                           .status(InteractionStatus.INTERESTED)
                                           .build());
 
-        String api = API_AGENDA + "/" + event.getId();
+        String api = apiAgenda + "/" + event.getId();
         mockMvc.perform(put(api)
                 .with(contractUtils.authJwt())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -130,7 +130,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
     @DisplayName("PUT /api/me/agenda/{eventId} evento no APPROVED -> 409 ProblemDetail")
     void upsert_asUser_notApprovedEvent_returns409() throws Exception {
         Event event = factory.pendingMadridAgainstYou();
-        String api = API_AGENDA + "/" + event.getId();
+        String api = apiAgenda + "/" + event.getId();
 
         var ra = mockMvc.perform(put(api)
                 .with(contractUtils.authJwt())
@@ -143,7 +143,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("PUT /api/me/agenda/{eventId} evento no existe -> 404 ProblemDetail")
     void upsert_asUser_nonExistentEvent_returns404() throws Exception {
-        String api = API_AGENDA + "/" + UUID.randomUUID();
+        String api = apiAgenda + "/" + UUID.randomUUID();
 
         var ra = mockMvc.perform(put(api)
                 .with(contractUtils.authJwt())
@@ -156,7 +156,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("PUT /api/me/agenda/{eventId} sin body -> 400 ProblemDetail")
     void upsert_asUser_noBody_returns400() throws Exception {
-        String api = API_AGENDA + "/" + UUID.randomUUID();
+        String api = apiAgenda + "/" + UUID.randomUUID();
 
         var ra = mockMvc.perform(put(api)
                 .with(contractUtils.authJwt())
@@ -168,7 +168,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("DELETE /api/me/agenda/{eventId} sin auth -> 401 ProblemDetail")
     void remove_asAnon_returns401() throws Exception {
-        String api = API_AGENDA + "/" + UUID.randomUUID();
+        String api = apiAgenda + "/" + UUID.randomUUID();
         var ra = mockMvc.perform(delete(api));
         contractUtils.expectProblemDetail(ra, 401, api);
     }
@@ -183,7 +183,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
                                           .status(InteractionStatus.INTERESTED)
                                           .build());
 
-        String api = API_AGENDA + "/" + event.getId();
+        String api = apiAgenda + "/" + event.getId();
         mockMvc.perform(delete(api).with(contractUtils.authJwt()))
                .andExpect(status().isNoContent());
     }
@@ -191,7 +191,7 @@ class AgendaApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("DELETE /api/me/agenda/{eventId} interacción no existe -> 204 (idempotente)")
     void remove_asUser_noInteraction_returns204() throws Exception {
-        String api = API_AGENDA + "/" + UUID.randomUUID();
+        String api = apiAgenda + "/" + UUID.randomUUID();
         mockMvc.perform(delete(api).with(contractUtils.authJwt()))
                .andExpect(status().isNoContent());
     }

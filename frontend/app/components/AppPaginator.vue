@@ -15,8 +15,8 @@ defineEmits<{
     <Paginator
       :first="first"
       :rows="rows"
-      :totalRecords="totalRecords"
-      :rowsPerPageOptions="[20, 50, 100]"
+      :total-records="totalRecords"
+      :rows-per-page-options="[20, 50, 100]"
       @page="$emit('page', $event)" />
   </div>
 </template>

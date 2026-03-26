@@ -35,13 +35,13 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     @Autowired
     MockMvc mockMvc;
 
-    private final String API_HIDE = "/api/moderation/events/%s/hide";
+    private final String apiHide = "/api/moderation/events/%s/hide";
 
     @Test
-    @DisplayName("POST " + API_HIDE + " moderar ok -> 200 EventPrivateDto con status HIDDEN")
+    @DisplayName("POST " + apiHide + " moderar ok -> 200 EventPrivateDto con status HIDDEN")
     void hide_asModerator_ok_200ReturnsEvent() throws Exception {
         var event = factory.pendingMadridAgainstYou();
-        String api = API_HIDE.formatted(event.getId());
+        String api = apiHide.formatted(event.getId());
 
         mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())
@@ -57,10 +57,10 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_HIDE + " reason muy largo -> 400")
+    @DisplayName("POST " + apiHide + " reason muy largo -> 400")
     void hide_asModerator_invalidRequest_400ProblemDetail() throws Exception {
         var event = factory.pendingMadridAgainstYou();
-        String api = API_HIDE.formatted(event.getId());
+        String api = apiHide.formatted(event.getId());
 
         String tooLong = "a".repeat(501);
         var ra = mockMvc.perform(post(api)
@@ -75,10 +75,10 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_HIDE + " moderar evento sin request -> 400")
+    @DisplayName("POST " + apiHide + " moderar evento sin request -> 400")
     void hide_asModerator_noRequest_400ProblemDetail() throws Exception {
         var event = factory.pendingMadridAgainstYou();
-        String api = API_HIDE.formatted(event.getId());
+        String api = apiHide.formatted(event.getId());
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())
@@ -89,10 +89,10 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_HIDE + " moderar evento sin reason -> 400")
+    @DisplayName("POST " + apiHide + " moderar evento sin reason -> 400")
     void hide_asModerator_noReason_400ProblemDetail() throws Exception {
         var event = factory.pendingMadridAgainstYou();
-        String api = API_HIDE.formatted(event.getId());
+        String api = apiHide.formatted(event.getId());
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())
@@ -106,10 +106,10 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_HIDE + " sin autenticar -> 401")
+    @DisplayName("POST " + apiHide + " sin autenticar -> 401")
     void hide_asAnon_401ProblemDetail() throws Exception {
         UUID eventId = UUID.fromString("cccccccc-0000-0000-0000-000000000007");
-        String api = API_HIDE.formatted(eventId);
+        String api = apiHide.formatted(eventId);
 
         var ra = mockMvc.perform(post(api))
                 .andExpect(status().isUnauthorized());
@@ -118,10 +118,10 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_HIDE + " como USER -> 403")
+    @DisplayName("POST " + apiHide + " como USER -> 403")
     void hide_asUser_403ProblemDetail() throws Exception {
         UUID eventId = UUID.fromString("cccccccc-0000-0000-0000-000000000007");
-        String api = API_HIDE.formatted(eventId);
+        String api = apiHide.formatted(eventId);
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwt())
@@ -132,10 +132,10 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_HIDE + " moderar evento no existe -> 404")
+    @DisplayName("POST " + apiHide + " moderar evento no existe -> 404")
     void hide_asModerator_notFound_404ProblemDetail() throws Exception {
         UUID eventId = UUID.fromString("cccccccc-0000-0000-0000-000000000007");
-        String api = API_HIDE.formatted(eventId);
+        String api = apiHide.formatted(eventId);
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())
@@ -149,10 +149,10 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_HIDE + " moderar status != PENDING_MODERATION -> 409")
+    @DisplayName("POST " + apiHide + " moderar status != PENDING_MODERATION -> 409")
     void hide_asModerator_wrongStatus_409ProblemDetail() throws Exception {
         var event = factory.canceledBarcelonaManifa();
-        String api = API_HIDE.formatted(event.getId());
+        String api = apiHide.formatted(event.getId());
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())
@@ -166,10 +166,10 @@ class ModerationHideApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_HIDE + " moderar evento propio -> 409")
+    @DisplayName("POST " + apiHide + " moderar evento propio -> 409")
     void hide_asModerator_ownEvent_409ProblemDetail() throws Exception {
         var event = factory.pendingValenciaLosDeMarras();
-        String api = API_HIDE.formatted(event.getId());
+        String api = apiHide.formatted(event.getId());
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())

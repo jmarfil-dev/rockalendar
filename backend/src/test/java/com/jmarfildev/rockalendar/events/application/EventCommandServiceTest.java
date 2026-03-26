@@ -67,8 +67,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @MockitoBean
     ImageProcessingService imageProcessingService;
 
-    private final String MOCK_TITLE = "Concierto";
-    private final String MOCK_WIZINK = "WiZink Center";
+    private final String mockTitle = "Concierto";
+    private final String mockWizink = "WiZink Center";
 
     @BeforeEach
     void setUp() {
@@ -86,11 +86,11 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: invalid date range -> BadRequestException")
     void propose_invalidDateRange_throws() {
         var req = new SubmitEventRequest(
-                MOCK_TITLE,
+                mockTitle,
                 "Desc",
                 TestDates.rangeEnd(),
                 TestDates.rangeStart(),
-                MOCK_WIZINK,
+                mockWizink,
                 factory.madrid().getId(),
                 TestConstants.MADRID,
                 List.of("Ska-P"),
@@ -105,11 +105,11 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: artists vacíos tras normalizar -> BadRequestException")
     void propose_artistsBecomeEmptyAfterNormalize_throws() {
         var req = new SubmitEventRequest(
-                MOCK_TITLE,
+                mockTitle,
                 null,
                 TestDates.madrid(),
                 null,
-                MOCK_WIZINK,
+                mockWizink,
                 factory.madrid().getId(),
                 TestConstants.MADRID,
                 List.of("   ", "!!!", "´´´"),
@@ -124,11 +124,11 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: citySlug se queda vacío tras normalizar -> BadRequestException")
     void propose_cityBecomesBlankAfterNormalize_throws() {
         var req = new SubmitEventRequest(
-                MOCK_TITLE,
+                mockTitle,
                 null,
                 TestDates.madrid(),
                 null,
-                MOCK_WIZINK,
+                mockWizink,
                 factory.madrid().getId(),
                 "!!!",
                 List.of("Ska-P"),
@@ -143,7 +143,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: venueSlug se queda vacío tras normalizar -> BadRequestException")
     void propose_venueBecomesBlankAfterNormalize_throws() {
         var req = new SubmitEventRequest(
-                MOCK_TITLE,
+                mockTitle,
                 null,
                 TestDates.madrid(),
                 null,
@@ -166,7 +166,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 TestDates.madrid(),
                 null,
-                MOCK_WIZINK,
+                mockWizink,
                 factory.madrid().getId(),
                 TestConstants.MADRID,
                 List.of("Ska-P"),
@@ -183,11 +183,11 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         UUID missingProv = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
 
         var req = new SubmitEventRequest(
-                MOCK_TITLE,
+                mockTitle,
                 null,
                 TestDates.madrid(),
                 null,
-                MOCK_WIZINK,
+                mockWizink,
                 missingProv,
                 TestConstants.MADRID,
                 List.of("Ska-P"),
@@ -221,10 +221,10 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThat(reloaded.getTitle()).isEqualTo("Ska-P en Madrid");
         assertThat(reloaded.getCityName()).isEqualTo(TestConstants.MADRID);
-        assertThat(reloaded.getVenueName()).isEqualTo(MOCK_WIZINK);
+        assertThat(reloaded.getVenueName()).isEqualTo(mockWizink);
 
         assertThat(reloaded.getCitySlug()).isEqualTo(SlugNormalizer.of(TestConstants.MADRID));
-        assertThat(reloaded.getVenueSlug()).isEqualTo(SlugNormalizer.of(MOCK_WIZINK));
+        assertThat(reloaded.getVenueSlug()).isEqualTo(SlugNormalizer.of(mockWizink));
 
         assertThat(reloaded.getArtists()).hasSize(1);
         assertThat(reloaded.getArtists().iterator().next().getSlug()).isEqualTo(SlugNormalizer.of("Ska-P"));
@@ -241,7 +241,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 TestDates.madrid(),
                 null,
-                MOCK_WIZINK,
+                mockWizink,
                 factory.madrid().getId(),
                 TestConstants.MADRID,
                 List.of("  AgAinST- yOU "),
@@ -259,11 +259,11 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: artistas  no se duplican por slug y preservan orden (LinkedHashSet)")
     void propose_deduplicatesArtists_preservesOrder() {
         var req = new SubmitEventRequest(
-                MOCK_TITLE,
+                mockTitle,
                 null,
                 TestDates.madrid(),
                 null,
-                MOCK_WIZINK,
+                mockWizink,
                 factory.madrid().getId(),
                 TestConstants.MADRID,
                 List.of("Ska-P", "  ska p  ", "Boikot"),
@@ -283,11 +283,11 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: description y sourceUrl en blanco se guardan como null")
     void propose_blankOptionalFields_becomeNull() {
         var req = new SubmitEventRequest(
-                MOCK_TITLE,
+                mockTitle,
                 "    ",
                 TestDates.madrid(),
                 null,
-                MOCK_WIZINK,
+                mockWizink,
                 factory.madrid().getId(),
                 TestConstants.MADRID,
                 List.of("Ska-P"),
@@ -321,8 +321,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         assertThat(reloaded.getStatus()).isEqualTo(EventStatus.PENDING_MODERATION);
         assertThat(reloaded.getTitle()).isEqualTo("Against You en concierto");
-        assertThat(reloaded.getVenueName()).isEqualTo(MOCK_WIZINK);
-        assertThat(reloaded.getVenueSlug()).isEqualTo(SlugNormalizer.of(MOCK_WIZINK));
+        assertThat(reloaded.getVenueName()).isEqualTo(mockWizink);
+        assertThat(reloaded.getVenueSlug()).isEqualTo(SlugNormalizer.of(mockWizink));
         assertThat(reloaded.getArtists()).hasSize(1);
         assertThat(reloaded.getArtists().iterator().next().getSlug()).isEqualTo(SlugNormalizer.of(TestConstants.MOCK_ARTIST_NAME_AY));
     }
@@ -359,7 +359,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     void propose_admin_createsApprovedEventDirectly() {
         asAdmin();
         var req = new SubmitEventRequest(
-                MOCK_TITLE, null, TestDates.madrid(), null, MOCK_WIZINK,
+                mockTitle, null, TestDates.madrid(), null, mockWizink,
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of("Ska-P"), null);
 
@@ -397,7 +397,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         asAdmin();
 
         var req = new SubmitEventRequest(
-                "Título editado por admin", null, TestDates.madrid(), null, MOCK_WIZINK,
+                "Título editado por admin", null, TestDates.madrid(), null, mockWizink,
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
@@ -501,7 +501,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 .when(artistRepository).saveAndFlush(any());
 
         var req = new SubmitEventRequest(
-                MOCK_TITLE, null, TestDates.madrid(), null, MOCK_WIZINK,
+                mockTitle, null, TestDates.madrid(), null, mockWizink,
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 

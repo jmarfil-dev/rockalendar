@@ -78,7 +78,7 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
           <!-- Ordenación -->
           <div class="flex align-items-center justify-content-between mb-3">
             <span class="text-sm text-color-secondary">{{ t("pagination.sortedBy") }}</span>
-            <Select v-model="sort" :options="sortOptions" optionLabel="label" optionValue="value" class="w-10rem" :pt="{ label: { 'aria-label': t('pagination.sortedBy') } }" />
+            <Select v-model="sort" :options="sortOptions" option-label="label" option-value="value" class="w-10rem" :pt="{ label: { 'aria-label': t('pagination.sortedBy') } }" />
           </div>
 
           <!-- Estado de carga -->
@@ -168,7 +168,7 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
             v-if="!loading && !error && total > 0"
             :first="first"
             :rows="pageSize"
-            :totalRecords="total"
+            :total-records="total"
             class="mt-4"
             @page="onPageChange" />
         </TabPanel>

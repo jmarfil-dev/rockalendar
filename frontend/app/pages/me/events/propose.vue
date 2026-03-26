@@ -12,14 +12,36 @@ const { form, posterFile, submitting, errorMsg, fieldErrors, artistsError, submi
 
 const posterInputRef = ref<HTMLInputElement | null>(null);
 const posterPreviewUrl = computed(() => (posterFile.value ? URL.createObjectURL(posterFile.value) : null));
+const posterError = ref<string | null>(null);
+
+const POSTER_MAX_MB = 5;
+const POSTER_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 function onPosterChange(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0] ?? null;
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0] ?? null;
+  posterError.value = null;
+
+  if (!file) return;
+
+  if (!POSTER_ALLOWED_TYPES.includes(file.type)) {
+    posterError.value = t("events.posterInvalidType");
+    input.value = "";
+    return;
+  }
+
+  if (file.size > POSTER_MAX_MB * 1024 * 1024) {
+    posterError.value = t("events.posterTooLarge", { max: POSTER_MAX_MB });
+    input.value = "";
+    return;
+  }
+
   posterFile.value = file;
 }
 
 function clearPoster() {
   posterFile.value = null;
+  posterError.value = null;
   if (posterInputRef.value) posterInputRef.value.value = "";
 }
 
@@ -75,7 +97,7 @@ async function onSuccessClose() {
               maxlength="200"
               required
               aria-describedby="title-error" />
-            <Message id="title-error" v-if="fieldErrors['title']" severity="error" variant="simple" size="small">
+            <Message v-if="fieldErrors['title']" id="title-error" severity="error" variant="simple" size="small">
               {{ t(fieldErrors["title"]) }}
             </Message>
           </div>
@@ -90,9 +112,9 @@ async function onSuccessClose() {
               :invalid="!!fieldErrors['description']"
               rows="4"
               maxlength="5000"
-              autoResize
+              auto-resize
               aria-describedby="description-error" />
-            <Message id="description-error" v-if="fieldErrors['description']" severity="error" variant="simple" size="small">
+            <Message v-if="fieldErrors['description']" id="description-error" severity="error" variant="simple" size="small">
               {{ t(fieldErrors["description"]) }}
             </Message>
           </div>
@@ -104,19 +126,19 @@ async function onSuccessClose() {
                 {{ t("me.propose.startDate") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
               <DatePicker
-                inputId="startDateTime"
                 v-model="form.startDateTime"
-                showTime
-                hourFormat="24"
-                dateFormat="dd/mm/yy"
-                :minDate="today"
+                input-id="startDateTime"
+                show-time
+                hour-format="24"
+                date-format="dd/mm/yy"
+                :min-date="today"
                 :invalid="!!fieldErrors['startDateTime']"
-                :manualInput="false"
-                showIcon
-                iconDisplay="input"
+                :manual-input="false"
+                show-icon
+                icon-display="input"
                 required
                 aria-describedby="start-error" />
-              <Message id="start-error" v-if="fieldErrors['startDateTime']" severity="error" variant="simple" size="small">
+              <Message v-if="fieldErrors['startDateTime']" id="start-error" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["startDateTime"]) }}
               </Message>
             </div>
@@ -124,21 +146,21 @@ async function onSuccessClose() {
             <div class="col-12 md:col-6 flex flex-column gap-2">
               <label for="endDateTime" class="text-sm text-color-secondary">{{ t("me.propose.endDate") }}</label>
               <DatePicker
-                inputId="endDateTime"
                 v-model="form.endDateTime"
-                showTime
-                hourFormat="24"
-                dateFormat="dd/mm/yy"
-                :minDate="form.startDateTime ?? undefined"
+                input-id="endDateTime"
+                show-time
+                hour-format="24"
+                date-format="dd/mm/yy"
+                :min-date="form.startDateTime ?? undefined"
                 :invalid="!!fieldErrors['endDateTime'] || isDateRangeInvalid"
-                :manualInput="false"
-                showIcon
-                iconDisplay="input"
+                :manual-input="false"
+                show-icon
+                icon-display="input"
                 aria-describedby="end-error end-range-error" />
-              <Message id="end-error" v-if="fieldErrors['endDateTime']" severity="error" variant="simple" size="small">
+              <Message v-if="fieldErrors['endDateTime']" id="end-error" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["endDateTime"]) }}
               </Message>
-              <Message id="end-range-error" v-else-if="isDateRangeInvalid" severity="error" variant="simple" size="small">
+              <Message v-else-if="isDateRangeInvalid" id="end-range-error" severity="error" variant="simple" size="small">
                 {{ t("dates.invalidRange") }}
               </Message>
             </div>
@@ -157,7 +179,7 @@ async function onSuccessClose() {
               maxlength="200"
               required
               aria-describedby="venue-error" />
-            <Message id="venue-error" v-if="fieldErrors['venueName']" severity="error" variant="simple" size="small">
+            <Message v-if="fieldErrors['venueName']" id="venue-error" severity="error" variant="simple" size="small">
               {{ t(fieldErrors["venueName"]) }}
             </Message>
           </div>
@@ -169,17 +191,17 @@ async function onSuccessClose() {
                 {{ t("geo.province") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
               <Select
-                inputId="provinceId"
                 v-model="form.provinceId"
+                input-id="provinceId"
                 :options="provinceOptions"
-                optionLabel="label"
-                optionValue="value"
+                option-label="label"
+                option-value="value"
                 :loading="provincesLoading"
                 :invalid="!!fieldErrors['provinceId']"
                 filter
                 required
                 :pt="{ label: { 'aria-label': t('geo.province'), 'aria-describedby': 'province-error' } }" />
-              <Message id="province-error" v-if="fieldErrors['provinceId']" severity="error" variant="simple" size="small">
+              <Message v-if="fieldErrors['provinceId']" id="province-error" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["provinceId"]) }}
               </Message>
             </div>
@@ -196,14 +218,14 @@ async function onSuccessClose() {
                 maxlength="120"
                 required
                 aria-describedby="city-error" />
-              <Message id="city-error" v-if="fieldErrors['cityName']" severity="error" variant="simple" size="small">
+              <Message v-if="fieldErrors['cityName']" id="city-error" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["cityName"]) }}
               </Message>
             </div>
           </div>
 
           <!-- Artistas -->
-          <ArtistSelector v-model="form.artists" :fieldError="artistsError ?? undefined" />
+          <ArtistSelector v-model="form.artists" :field-error="artistsError ?? undefined" />
 
           <!-- Cartel -->
           <div class="flex flex-column gap-2">
@@ -215,7 +237,7 @@ async function onSuccessClose() {
                 :src="posterPreviewUrl!"
                 :alt="t('events.posterPreview')"
                 class="border-round-lg border-1 surface-border"
-                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" />
+                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" >
               <div class="flex align-items-center gap-2">
                 <span class="text-sm text-color-secondary flex-1 overflow-hidden text-overflow-ellipsis white-space-nowrap">{{ posterFile.name }}</span>
                 <Button
@@ -240,7 +262,8 @@ async function onSuccessClose() {
                 @click="posterInputRef?.click()" />
             </div>
 
-            <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" />
+            <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
+            <Message v-if="posterError" severity="error" variant="simple" size="small">{{ posterError }}</Message>
             <small class="text-xs text-color-secondary">{{ t("events.posterHint") }}</small>
           </div>
 
@@ -254,7 +277,7 @@ async function onSuccessClose() {
               :invalid="!!fieldErrors['sourceUrl']"
               maxlength="2048"
               aria-describedby="source-error" />
-            <Message id="source-error" v-if="fieldErrors['sourceUrl']" severity="error" variant="simple" size="small">
+            <Message v-if="fieldErrors['sourceUrl']" id="source-error" severity="error" variant="simple" size="small">
               {{ t(fieldErrors["sourceUrl"]) }}
             </Message>
           </div>

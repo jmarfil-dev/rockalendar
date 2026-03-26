@@ -40,7 +40,7 @@ export const useArtistAutocomplete = () => {
         cache.value[query] = list;
         suggestions.value = list;
       } catch (err) {
-        console.error("Error loading artists", err);
+        if (import.meta.dev) console.error("Error loading artists", err);
         suggestions.value = [];
       } finally {
         loading.value = false;

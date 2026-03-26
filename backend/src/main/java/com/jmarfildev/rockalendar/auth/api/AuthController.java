@@ -14,6 +14,7 @@ import com.jmarfildev.rockalendar.auth.api.dto.RegisterRequest;
 import com.jmarfildev.rockalendar.auth.api.dto.ResetPasswordRequest;
 import com.jmarfildev.rockalendar.auth.application.AuthService;
 import com.jmarfildev.rockalendar.auth.application.PasswordResetService;
+import com.jmarfildev.rockalendar.common.helper.StringUtils;
 
 /**
  * @author jmarfil
@@ -25,7 +26,7 @@ import com.jmarfildev.rockalendar.auth.application.PasswordResetService;
 public class AuthController implements AuthApi {
 
     // Token fake que parece legítimo para no delatar la trampa al bot
-    private static final String HONEYPOT_FAKE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cmFwIn0.honeypot";
+    private static final String HONEYPOT_FAKE_TOK = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cmFwIn0.honeypot";
 
     private final AuthService authService;
     private final PasswordResetService passwordResetService;
@@ -37,16 +38,16 @@ public class AuthController implements AuthApi {
 
     @Override
     public AuthTokenResponse register(RegisterRequest request) {
-        if (request.website() != null && !request.website().isBlank()) {
+        if (StringUtils.blankToNull(request.website()) != null) {
             log.warn("Honeypot activado en /register (website='{}')", request.website());
-            return new AuthTokenResponse(HONEYPOT_FAKE_TOKEN, Instant.now().plusSeconds(3600));
+            return new AuthTokenResponse(HONEYPOT_FAKE_TOK, Instant.now().plusSeconds(3600));
         }
         return authService.register(request);
     }
 
     @Override
     public void forgotPassword(ForgotPasswordRequest request) {
-        if (request.website() != null && !request.website().isBlank()) {
+        if (StringUtils.blankToNull(request.website()) != null) {
             log.warn("Honeypot activado en /forgot-password (website='{}')", request.website());
             return;
         }

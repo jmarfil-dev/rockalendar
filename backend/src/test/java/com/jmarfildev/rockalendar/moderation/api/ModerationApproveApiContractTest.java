@@ -35,13 +35,13 @@ class ModerationApproveApiContractTest extends AbstractPostgresTest {
     @Autowired
     MockMvc mockMvc;
 
-    private final String API_APPROVE = "/api/moderation/events/%s/approve";
+    private final String apiApprove = "/api/moderation/events/%s/approve";
 
     @Test
-    @DisplayName("POST " + API_APPROVE + " moderar ok -> 200 EventPrivateDto con status APPROVED")
+    @DisplayName("POST " + apiApprove + " moderar ok -> 200 EventPrivateDto con status APPROVED")
     void approve_asModerator_ok_200ReturnsEvent() throws Exception {
         var event = factory.pendingMadridAgainstYou();
-        String api = API_APPROVE.formatted(event.getId());
+        String api = apiApprove.formatted(event.getId());
 
         mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())
@@ -54,10 +54,10 @@ class ModerationApproveApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_APPROVE + " comment muy largo -> 400")
+    @DisplayName("POST " + apiApprove + " comment muy largo -> 400")
     void approve_asModerator_invalidRequest_400ProblemDetail() throws Exception {
         var event = factory.pendingMadridAgainstYou();
-        String api = API_APPROVE.formatted(event.getId());
+        String api = apiApprove.formatted(event.getId());
 
         String tooLong = "a".repeat(501);
         var ra = mockMvc.perform(post(api)
@@ -72,10 +72,10 @@ class ModerationApproveApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_APPROVE + " sin autenticar -> 401")
+    @DisplayName("POST " + apiApprove + " sin autenticar -> 401")
     void approve_asAnon_401ProblemDetail() throws Exception {
         UUID eventId = UUID.fromString("cccccccc-0000-0000-0000-000000000007");
-        String api = API_APPROVE.formatted(eventId);
+        String api = apiApprove.formatted(eventId);
 
         var ra = mockMvc.perform(post(api))
                 .andExpect(status().isUnauthorized());
@@ -84,10 +84,10 @@ class ModerationApproveApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_APPROVE + " como USER -> 403")
+    @DisplayName("POST " + apiApprove + " como USER -> 403")
     void approve_asUser_403ProblemDetail() throws Exception {
         UUID eventId = UUID.fromString("cccccccc-0000-0000-0000-000000000007");
-        String api = API_APPROVE.formatted(eventId);
+        String api = apiApprove.formatted(eventId);
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwt())
@@ -98,10 +98,10 @@ class ModerationApproveApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_APPROVE + " moderar evento no existe -> 404")
+    @DisplayName("POST " + apiApprove + " moderar evento no existe -> 404")
     void approve_asModerator_notFound_404ProblemDetail() throws Exception {
         UUID eventId = UUID.fromString("cccccccc-0000-0000-0000-000000000007");
-        String api = API_APPROVE.formatted(eventId);
+        String api = apiApprove.formatted(eventId);
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())
@@ -113,10 +113,10 @@ class ModerationApproveApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_APPROVE + " moderar status != PENDING_MODERATION -> 409")
+    @DisplayName("POST " + apiApprove + " moderar status != PENDING_MODERATION -> 409")
     void approve_asModerator_wrongStatus_409ProblemDetail() throws Exception {
         var event = factory.canceledBarcelonaManifa();
-        String api = API_APPROVE.formatted(event.getId());
+        String api = apiApprove.formatted(event.getId());
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())
@@ -128,10 +128,10 @@ class ModerationApproveApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST " + API_APPROVE + " moderar evento propio -> 409")
+    @DisplayName("POST " + apiApprove + " moderar evento propio -> 409")
     void approve_asModerator_ownEvent_409ProblemDetail() throws Exception {
         var event = factory.pendingValenciaLosDeMarras();
-        String api = API_APPROVE.formatted(event.getId());
+        String api = apiApprove.formatted(event.getId());
 
         var ra = mockMvc.perform(post(api)
                 .with(contractUtils.authJwtModerator())

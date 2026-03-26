@@ -61,21 +61,35 @@ const RockalendarPreset = definePreset(Aura, {
 });
 
 export default defineNuxtConfig({
+  compatibilityDate: '2026-03-23',
   app: {
     head: {
       titleTemplate: "%s — Rockalendar",
+      meta: [
+        {
+          name: "description",
+          content:
+            "Find rock, metal and punk concerts and festivals in Spain. Community-driven, no algorithms, no corporate bullshit.",
+        },
+        { property: "og:site_name", content: "Rockalendar" },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
     },
   },
   routeRules: {
     "/api/**": { proxy: "http://localhost:8080/api/**" },
+    "/me/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
+    "/moderation/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
+    "/admin/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
   },
   runtimeConfig: {
     public: {
       apiBase: "", // Se inyecta del fichero .env
     },
   },
-  modules: ["@primevue/nuxt-module", "@nuxtjs/i18n"],
-  css: ["primeicons/primeicons.css", "primeflex/primeflex.css", "~/assets/css/main.css"],
+  modules: ["@nuxt/eslint", "@primevue/nuxt-module", "@nuxtjs/i18n"],
+  css: ["~/assets/css/main.css"],
   primevue: {
     options: {
       theme: {
@@ -87,6 +101,7 @@ export default defineNuxtConfig({
     },
   },
   i18n: {
+    baseUrl: process.env.NUXT_PUBLIC_SITE_URL || "http://localhost:3000",
     strategy: "no_prefix", // No queremos /es/... /en/... por ahora
     locales: [
       { code: "en", language: "en-US", file: "en.json", name: "English" },

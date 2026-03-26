@@ -26,6 +26,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jmarfildev.rockalendar.common.Constants;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.ProblemDetailGenericProperties;
 import com.jmarfildev.rockalendar.config.filters.TokenRenewalFilter;
@@ -43,7 +44,10 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())// Para APIs REST en dev
+        http.headers(headers -> headers.httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
+                                                                                .maxAgeInSeconds(31_536_000) // 1 año
+                                                                                .preload(true)))
+            .csrf(csrf -> csrf.disable())// Para APIs REST en dev
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(eh -> eh.authenticationEntryPoint(unauthorizedError())
                                        // Token válido pero sin Rol adecuado o acceso denegado por configuración
@@ -54,6 +58,9 @@ public class SecurityConfig {
                                                .permitAll()
                                                // Auth
                                                .requestMatchers("/api/auth/**")
+                                               .permitAll()
+                                               // Contacto
+                                               .requestMatchers(HttpMethod.POST, "/api/contact")
                                                .permitAll()
                                                // Público (lectura)
                                                .requestMatchers(HttpMethod.GET, "/api/events/**", "/api/artists/**", "/api/provinces/**")
@@ -100,7 +107,7 @@ public class SecurityConfig {
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         var conv = new JwtAuthenticationConverter();
         conv.setJwtGrantedAuthoritiesConverter(jwt -> {
-            var roles = jwt.getClaimAsStringList("roles");
+            var roles = jwt.getClaimAsStringList(Constants.JWT_CLAIM_ROLES);
             return roles == null ? List.of() : roles.stream().map(r -> (GrantedAuthority) new SimpleGrantedAuthority(r)).toList();
         });
         return conv;
@@ -109,8 +116,7 @@ public class SecurityConfig {
     private AuthenticationEntryPoint unauthorizedError() {
         return (request, response, authException) -> {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                                                                ErrorConstants.AUTH_REQUIRED,
+            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.UNAUTHORIZED.getReasonPhrase(), ErrorConstants.AUTH_REQUIRED,
                                                                 request.getRequestURI(), ErrorConstants.TYPE_401_UNAUTHORIZED);
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -122,8 +128,7 @@ public class SecurityConfig {
     private AccessDeniedHandler forbiddenError() {
         return (request, response, accessDeniedException) -> {
             ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(),
-                                                                ErrorConstants.ACCESS_DENIED,
+            ProblemDetailGenericProperties.setGenericProperties(pd, HttpStatus.FORBIDDEN.getReasonPhrase(), ErrorConstants.ACCESS_DENIED,
                                                                 request.getRequestURI(), ErrorConstants.TYPE_403_FORBIDDEN);
 
             response.setStatus(HttpStatus.FORBIDDEN.value());

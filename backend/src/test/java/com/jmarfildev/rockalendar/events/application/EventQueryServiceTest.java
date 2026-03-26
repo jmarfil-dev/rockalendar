@@ -65,9 +65,8 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     void listHome_pageSizeTooLarge_throws() {
         Pageable pageable = PageRequest.of(0, 10_000);
 
-        assertThatThrownBy(() -> service.listHome(pageable))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
+        assertThatThrownBy(() -> service.listHome(pageable)).isInstanceOf(BadRequestException.class)
+                                                            .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
     }
 
     @Test
@@ -83,11 +82,9 @@ class EventQueryServiceTest extends AbstractPostgresTest {
          *  Si usa el sort city_name, Barcelona va primero. Pero el service está desarrollado
          *  para ignorar este sort y poner por fecha, así que Madrid va primero.
          */
-        assertThat(page.getContent())
-                .hasSize(2)
-                .satisfiesExactly(
-                        e -> assertThat(e.cityName()).isEqualTo(TestConstants.MADRID), // Futuro más próximo
-                        e -> assertThat(e.cityName()).isEqualTo(TestConstants.BARCELONA)); // Futuro siguiente
+        assertThat(page.getContent()).hasSize(2)
+                                     .extracting(EventPublicListItemDto::cityName)
+                                     .containsExactly(TestConstants.MADRID, TestConstants.BARCELONA);
     }
 
     @Test
@@ -109,32 +106,33 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     void searchPublic_invalidDateRange_throws() {
         OffsetDateTime from = OffsetDateTime.parse(TestDates.rangeEnd().toString());
         OffsetDateTime to = OffsetDateTime.parse(TestDates.rangeStart().toString());
+        var pageable = PageRequest.of(0, 20);
+        var fromOpt = Optional.of(from);
+        var toOpt = Optional.of(to);
+        Optional<String> noQuery = Optional.empty();
+        Optional<UUID> noProvinceId = Optional.empty();
+        Optional<String> noCity = Optional.empty();
+        Optional<UUID> noArtistId = Optional.empty();
 
-        assertThatThrownBy(() -> service.searchPublic(
-                Optional.empty(),
-                Optional.of(from),
-                Optional.of(to),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                PageRequest.of(0, 20)))
-                        .isInstanceOf(BadRequestException.class)
-                        .hasMessage(ErrorConstants.INVALID_DATE_RANGE);
+        assertThatThrownBy(() -> service.searchPublic(noQuery, fromOpt, toOpt, noProvinceId, noCity, noArtistId,
+                                                      pageable)).isInstanceOf(BadRequestException.class)
+                                                                .hasMessage(ErrorConstants.INVALID_DATE_RANGE);
     }
 
     @Test
     @DisplayName("searchPublic: size demasiado grande -> 400 BadRequestException")
     void searchPublic_pageSizeTooLarge_throws() {
-        assertThatThrownBy(() -> service.searchPublic(
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                PageRequest.of(0, 10_000)))
-                        .isInstanceOf(BadRequestException.class)
-                        .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
+        var pageable = PageRequest.of(0, 10_000);
+        Optional<String> noQuery = Optional.empty();
+        Optional<OffsetDateTime> noDateFrom = Optional.empty();
+        Optional<OffsetDateTime> noDateTo = Optional.empty();
+        Optional<UUID> noProvinceId = Optional.empty();
+        Optional<String> noCity = Optional.empty();
+        Optional<UUID> noArtistId = Optional.empty();
+
+        assertThatThrownBy(() -> service.searchPublic(noQuery, noDateFrom, noDateTo, noProvinceId, noCity, noArtistId,
+                                                      pageable)).isInstanceOf(BadRequestException.class)
+                                                                .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
     }
 
     @Test
@@ -143,14 +141,8 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         factory.approvedBarcelonaBoikot();
         factory.approvedMadridAgainstYou();
 
-        var page = service.searchPublic(
-                Optional.of("   "),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.of(TestConstants.MADRID),
-                Optional.empty(),
-                PageRequest.of(0, 10));
+        var page = service.searchPublic(Optional.of("   "), Optional.empty(), Optional.empty(), Optional.empty(),
+                                        Optional.of(TestConstants.MADRID), Optional.empty(), PageRequest.of(0, 10));
 
         assertThat(page.getContent()).singleElement().extracting(EventPublicListItemDto::cityName).isEqualTo(TestConstants.MADRID);
     }
@@ -161,20 +153,10 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         factory.approvedBarcelonaBoikot();
         factory.approvedMadridAgainstYou();
 
-        var page = service.searchPublic(
-                Optional.of(""),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.of(factory.againstYou().getId()),
-                PageRequest.of(0, 10));
+        var page = service.searchPublic(Optional.of(""), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+                                        Optional.of(factory.againstYou().getId()), PageRequest.of(0, 10));
 
-        assertThat(page.getContent())
-                .singleElement()
-                .satisfies(e -> {
-                    assertThat(e.cityName()).isEqualTo(TestConstants.MADRID);
-                });
+        assertThat(page.getContent()).singleElement().extracting(EventPublicListItemDto::cityName).isEqualTo(TestConstants.MADRID);
     }
 
     @Test
@@ -183,14 +165,8 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         factory.approvedBarcelonaBoikot();
         factory.approvedMadridAgainstYou();
 
-        var page = service.searchPublic(
-                Optional.of("palau madri"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                PageRequest.of(0, 10));
+        var page = service.searchPublic(Optional.of("palau madri"), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+                                        Optional.empty(), PageRequest.of(0, 10));
 
         /*
          * Como no hay eventos que coincidan con "palau" AND "madri",
@@ -214,9 +190,9 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         var dto = service.getPublicById(approved.getId());
 
         assertThat(dto.id()).isEqualTo(approved.getId());
-        assertThatThrownBy(() -> service.getPublicById(pending.getId()))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
+        var pendingId = pending.getId();
+        assertThatThrownBy(() -> service.getPublicById(pendingId)).isInstanceOf(NotFoundException.class)
+                                                                  .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
     }
 
     @Test
@@ -224,9 +200,8 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     void getPublicById_notFound_throws() {
         UUID missing = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
 
-        assertThatThrownBy(() -> service.getPublicById(missing))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
+        assertThatThrownBy(() -> service.getPublicById(missing)).isInstanceOf(NotFoundException.class)
+                                                                .hasMessage(ErrorConstants.EVENT_NOT_FOUND);
     }
 
     /*
@@ -236,9 +211,9 @@ class EventQueryServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("listMine: size demasiado grande -> 400 BadRequestException")
     void listMine_pageSizeTooLarge_throws() {
-        assertThatThrownBy(() -> service.listMine(MeEventTabEnum.ALL, PageRequest.of(0, 10_000)))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
+        var pageable = PageRequest.of(0, 10_000);
+        assertThatThrownBy(() -> service.listMine(MeEventTabEnum.ALL, pageable)).isInstanceOf(BadRequestException.class)
+                                                                                .hasMessage(ErrorConstants.PAGE_SIZE_TOO_LARGE);
     }
 
     @Test
@@ -252,8 +227,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
 
         var page = service.listMine(MeEventTabEnum.CHANGES, PageRequest.of(0, 10));
 
-        assertThat(page.getContent()).singleElement()
-                .satisfies(e -> assertThat(e.status()).isEqualTo(EventStatus.NEEDS_CHANGES));
+        assertThat(page.getContent()).singleElement().extracting(EventPrivateListItemDto::status).isEqualTo(EventStatus.NEEDS_CHANGES);
     }
 
     @Test
@@ -267,8 +241,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
 
         var page = service.listMine(MeEventTabEnum.PENDING, PageRequest.of(0, 10));
 
-        assertThat(page.getContent()).singleElement()
-                .satisfies(e -> assertThat(e.status()).isEqualTo(EventStatus.PENDING_MODERATION));
+        assertThat(page.getContent()).singleElement().extracting(EventPrivateListItemDto::status).isEqualTo(EventStatus.PENDING_MODERATION);
     }
 
     @Test
@@ -283,9 +256,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
 
         var page = service.listMine(MeEventTabEnum.OTHERS, PageRequest.of(0, 10));
 
-        assertThat(page.getContent()).hasSize(2)
-                .extracting(EventPrivateListItemDto::status)
-                .containsOnly(EventStatus.APPROVED);
+        assertThat(page.getContent()).hasSize(2).extracting(EventPrivateListItemDto::status).containsOnly(EventStatus.APPROVED);
     }
 
     @Test
@@ -295,17 +266,13 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         factory.approvedMadridAgainstYou();
         factory.approvedValenciaPast();
 
-        when(currentUser.userId())
-                .thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
+        when(currentUser.userId()).thenReturn(UUID.fromString(TestConstants.MOCK_USER_ID));
 
         var page = service.listMine(MeEventTabEnum.ALL, PageRequest.of(0, 10));
 
         // Los futuros deben aparecer antes que cualquier pasado y ordenados
-        assertThat(page.getContent())
-                .hasSize(3)
-                .satisfiesExactly(
-                        e -> assertThat(e.cityName()).isEqualTo(TestConstants.MADRID), // Futuro más próximo
-                        e -> assertThat(e.cityName()).isEqualTo(TestConstants.BARCELONA), // Futuro siguiente
-                        e -> assertThat(e.cityName()).isEqualTo("València")); // Pasado
+        assertThat(page.getContent()).hasSize(3)
+                                     .extracting(EventPrivateListItemDto::cityName)
+                                     .containsExactly(TestConstants.MADRID, TestConstants.BARCELONA, "València");
     }
 }

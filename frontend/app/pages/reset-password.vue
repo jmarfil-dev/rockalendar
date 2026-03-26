@@ -96,10 +96,10 @@ async function onSubmit() {
           <div class="flex flex-column gap-2">
             <label for="new-password" class="text-sm text-color-secondary">{{ t("me.settings.newPassword") }}</label>
             <Password
-              v-fix-password-aria
-              inputId="new-password"
               v-model="newPassword"
-              toggleMask
+              v-fix-password-aria
+              input-id="new-password"
+              toggle-mask
               :feedback="false"
               autocomplete="new-password"
               required
@@ -110,7 +110,7 @@ async function onSubmit() {
               <div class="text-sm text-color-secondary mb-2">{{ t("auth.pw.title") }}</div>
               <ul class="m-0 p-0 list-none flex flex-column gap-1">
                 <li v-for="c in passwordChecks" :key="c.key" class="flex align-items-center gap-2">
-                  <i :class="c.ok ? 'pi pi-check-circle text-green-500' : 'pi pi-circle text-color-secondary'" aria-hidden="true"></i>
+                  <i :class="c.ok ? 'pi pi-check-circle text-green-500' : 'pi pi-circle text-color-secondary'" aria-hidden="true"/>
                   <span :class="c.ok ? '' : 'text-color-secondary'">{{ t(c.key) }}</span>
                 </li>
               </ul>
@@ -121,10 +121,10 @@ async function onSubmit() {
           <div class="flex flex-column gap-2">
             <label for="confirm-password" class="text-sm text-color-secondary">{{ t("me.settings.confirmPassword") }}</label>
             <Password
-              v-fix-password-aria
-              inputId="confirm-password"
               v-model="confirmPassword"
-              toggleMask
+              v-fix-password-aria
+              input-id="confirm-password"
+              toggle-mask
               :feedback="false"
               autocomplete="new-password"
               required

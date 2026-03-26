@@ -110,9 +110,9 @@ async function onSubmit() {
           <!-- Campo honeypot: oculto visualmente, nunca debe rellenarse por un usuario real -->
           <div aria-hidden="true" style="position: absolute; left: -9999px; height: 0; overflow: hidden;">
             <label for="website">Website</label>
-            <input id="website" v-model="honeypotWebsite" type="text" tabindex="-1" autocomplete="off" />
+            <input id="website" v-model="honeypotWebsite" type="text" tabindex="-1" autocomplete="off" >
           </div>
-          <AuthEmailField v-model="form.email" :fieldError="fieldErrors.email" showRequired required />
+          <AuthEmailField v-model="form.email" :field-error="fieldErrors.email" show-required required />
 
           <div class="flex flex-column gap-2">
             <label for="password" class="text-sm text-color-secondary">
@@ -121,18 +121,18 @@ async function onSubmit() {
               ><span class="sr-only">{{ t("common.required") }}</span>
             </label>
             <Password
-              v-fix-password-aria
-              inputId="password"
               v-model="form.password"
-              toggleMask
+              v-fix-password-aria
+              input-id="password"
+              toggle-mask
               :feedback="false"
               autocomplete="new-password"
               required
               :invalid="!!fieldErrors.password"
               :pt="{ input: { 'aria-describedby': 'pw-requirements register-password-error pw-hint' } }" />
             <Message
-              id="register-password-error"
               v-show="fieldErrors.password"
+              id="register-password-error"
               severity="error"
               variant="simple"
               size="small">
@@ -145,20 +145,20 @@ async function onSubmit() {
 
               <ul class="m-0 p-0 list-none flex flex-column gap-1">
                 <li v-for="c in passwordChecks" :key="c.key" class="flex align-items-center gap-2">
-                  <i :class="c.ok ? 'pi pi-check-circle text-green-500' : 'pi pi-circle text-color-secondary'"></i>
+                  <i :class="c.ok ? 'pi pi-check-circle text-green-500' : 'pi pi-circle text-color-secondary'"/>
                   <span :class="c.ok ? '' : 'text-color-secondary'">{{ t(c.key) }}</span>
                 </li>
               </ul>
             </div>
 
-            <Message id="pw-hint" v-show="!isPasswordValid" severity="error" variant="simple" size="small">
+            <Message v-show="!isPasswordValid" id="pw-hint" severity="error" variant="simple" size="small">
               {{ t("auth.pw.hint") }}
             </Message>
           </div>
 
           <div class="flex flex-column gap-2">
             <div class="flex align-items-start gap-2">
-              <Checkbox inputId="privacy-accept" v-model="privacyAccepted" :binary="true" />
+              <Checkbox v-model="privacyAccepted" input-id="privacy-accept" :binary="true" />
               <label for="privacy-accept" class="text-sm">
                 <i18n-t keypath="auth.privacyAccept" tag="span">
                   <template #link>
@@ -168,8 +168,8 @@ async function onSubmit() {
               </label>
             </div>
             <Message
-              id="register-privacy-accept-error"
               v-show="fieldErrors.privacyAccepted"
+              id="register-privacy-accept-error"
               severity="error"
               variant="simple"
               size="small">

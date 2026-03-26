@@ -71,10 +71,6 @@ public class PromotionEligibilityService {
         }
 
         // Límite total por grupo
-        if (!eventRepository.findArtistsExceedingTotalLimit(userId, EXCLUDED_STATUSES, MAX_SAME_ARTIST_TOTAL).isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return eventRepository.findArtistsExceedingTotalLimit(userId, EXCLUDED_STATUSES, MAX_SAME_ARTIST_TOTAL).isEmpty();
     }
 }

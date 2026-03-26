@@ -20,15 +20,15 @@ const { t } = useI18n();
     </label>
     <InputText
       id="email"
-      :modelValue="modelValue"
-      @update:modelValue="$emit('update:modelValue', $event ?? '')"
+      :model-value="modelValue"
       type="email"
       inputmode="email"
       autocomplete="email"
       :required="required"
       :invalid="!!fieldError"
-      aria-describedby="email-error" />
-    <Message id="email-error" v-show="fieldError" severity="error" variant="simple" size="small">
+      aria-describedby="email-error"
+      @update:model-value="$emit('update:modelValue', $event ?? '')" />
+    <Message v-show="fieldError" id="email-error" severity="error" variant="simple" size="small">
       {{ tr(fieldError!) }}
     </Message>
   </div>

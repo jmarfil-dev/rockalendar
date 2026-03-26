@@ -48,19 +48,19 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @MockitoBean
     StorageService storageService;
 
-    private final String API_ME_EVENTS = "/api/me/events";
+    private final String apiMeEvents = "/api/me/events";
 
     @Test
     @DisplayName("GET /api/me/events sin auth -> 401 ProblemDetail")
     void getMeEvents_asAnon_returns401ProblemDetail() throws Exception {
-        var ra = mockMvc.perform(get(API_ME_EVENTS));
-        contractUtils.expectProblemDetail(ra, 401, API_ME_EVENTS);
+        var ra = mockMvc.perform(get(apiMeEvents));
+        contractUtils.expectProblemDetail(ra, 401, apiMeEvents);
     }
 
     @Test
     @DisplayName("GET /api/me/events con auth -> 200 (lista vacía OK)")
     void getMeEvents_asUser_returns200() throws Exception {
-        mockMvc.perform(get(API_ME_EVENTS).with(contractUtils.authJwt()))
+        mockMvc.perform(get(apiMeEvents).with(contractUtils.authJwt()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
@@ -70,7 +70,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void propose_asUser_returns201WithPendingEvent() throws Exception {
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        mockMvc.perform(multipart(API_ME_EVENTS)
+        mockMvc.perform(multipart(apiMeEvents)
                 .file(eventPart(body))
                 .with(contractUtils.authJwt()))
                 .andExpect(status().isCreated())
@@ -85,9 +85,9 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void propose_asAnon_returns401ProblemDetail() throws Exception {
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
-        var ra = mockMvc.perform(multipart(API_ME_EVENTS).file(eventPart(body)));
+        var ra = mockMvc.perform(multipart(apiMeEvents).file(eventPart(body)));
 
-        contractUtils.expectProblemDetail(ra, 401, API_ME_EVENTS);
+        contractUtils.expectProblemDetail(ra, 401, apiMeEvents);
     }
 
     @Test
@@ -95,18 +95,18 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void propose_asUser_emptyArtists_returns400ProblemDetail() throws Exception {
         var body = eventBody(factory.sevilla().getId().toString(), "[]");
 
-        var ra = mockMvc.perform(multipart(API_ME_EVENTS)
+        var ra = mockMvc.perform(multipart(apiMeEvents)
                 .file(eventPart(body))
                 .with(contractUtils.authJwt()));
 
-        contractUtils.expectProblemDetail(ra, 400, API_ME_EVENTS);
+        contractUtils.expectProblemDetail(ra, 400, apiMeEvents);
     }
 
     @Test
     @DisplayName("PUT /api/me/events/{eventId} con auth -> 200 EventPrivateDto con status PENDING_MODERATION")
     void update_asOwner_returns200WithPendingEvent() throws Exception {
         var event = factory.approvedMadridAgainstYou();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         mockMvc.perform(multipart(HttpMethod.PUT, api)
@@ -124,7 +124,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("PUT /api/me/events/{eventId} sin parte event -> 400 ProblemDetail")
     void update_asOwner_noBody_returns400ProblemDetail() throws Exception {
         var event = factory.approvedMadridAgainstYou();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .with(contractUtils.authJwt()))
@@ -137,7 +137,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("PUT /api/me/events/{eventId} endDateTime < startDateTime -> 400 ProblemDetail")
     void update_asOwner_invalidDateRange_returns400ProblemDetail() throws Exception {
         var event = factory.approvedMadridAgainstYou();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
 
         String body = """
                 {
@@ -165,7 +165,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("PUT /api/me/events/{eventId} sin auth -> 401 ProblemDetail")
     void update_asAnon_returns401ProblemDetail() throws Exception {
         var event = factory.approvedMadridAgainstYou();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
@@ -180,7 +180,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void update_asUser_notOwner_returns403ProblemDetail() throws Exception {
         var event = factory.approvedEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
                 TestConstants.MOCK_MODERATOR_ID, TestConstants.MOCK_ARTIST_NAME_AY);
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
@@ -194,7 +194,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("PUT /api/me/events/{eventId} no existe -> 404 ProblemDetail")
     void update_asOwner_notFound_returns404ProblemDetail() throws Exception {
-        String api = API_ME_EVENTS.concat("/cccccccc-0000-0000-0000-000000000099");
+        String api = apiMeEvents.concat("/cccccccc-0000-0000-0000-000000000099");
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
@@ -209,7 +209,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("PUT /api/me/events/{eventId} estado no editable -> 409 ProblemDetail")
     void update_asOwner_notEditableStatus_returns409ProblemDetail() throws Exception {
         var event = factory.pendingMadridAgainstYou();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
         var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
@@ -224,7 +224,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("DELETE /api/me/events/{eventId} con auth -> 204 sin contenido")
     void delete_asOwner_returns204NoContent() throws Exception {
         var event = factory.pendingMadridAgainstYou();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
 
         mockMvc.perform(delete(api)
                 .with(contractUtils.authJwt())
@@ -235,7 +235,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("DELETE /api/me/events/{eventId} sin eventId -> 400 ProblemDetail")
     void delete_asOwner_missingEventId_returns400ProblemDetail() throws Exception {
-        String api = API_ME_EVENTS.concat("/");
+        String api = apiMeEvents.concat("/");
 
         var ra = mockMvc.perform(delete(api)
                 .with(contractUtils.authJwt())
@@ -249,7 +249,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("DELETE /api/me/events/{eventId} sin auth -> 401 ProblemDetail")
     void delete_asAnon_returns401ProblemDetail() throws Exception {
         var event = factory.approvedMadridAgainstYou();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
 
         var ra = mockMvc.perform(delete(api)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -263,7 +263,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void delete_asUser_notOwner_returns403ProblemDetail() throws Exception {
         var event = factory.approvedEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
                 TestConstants.MOCK_MODERATOR_ID, TestConstants.MOCK_ARTIST_NAME_AY);
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
 
         var ra = mockMvc.perform(delete(api)
                 .with(contractUtils.authJwt())
@@ -276,7 +276,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("DELETE /api/me/events/{eventId} no existe -> 404 ProblemDetail")
     void delete_asOwner_notFound_returns404ProblemDetail() throws Exception {
-        String api = API_ME_EVENTS.concat("/cccccccc-0000-0000-0000-000000000099");
+        String api = apiMeEvents.concat("/cccccccc-0000-0000-0000-000000000099");
 
         var ra = mockMvc.perform(delete(api)
                 .with(contractUtils.authJwt())
@@ -290,7 +290,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("DELETE /api/me/events/{eventId} estado no eliminable (CANCELED) -> 409 ProblemDetail")
     void delete_asOwner_notErasableStatus_returns409ProblemDetail() throws Exception {
         var event = factory.canceledBarcelonaManifa();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
 
         var ra = mockMvc.perform(delete(api)
                 .with(contractUtils.authJwt())
@@ -304,7 +304,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("DELETE /api/me/events/{eventId} estado APPROVED -> 409 ProblemDetail (contactar administración)")
     void delete_asOwner_approvedEvent_returns409ProblemDetail() throws Exception {
         var event = factory.approvedMadridAgainstYou();
-        String api = API_ME_EVENTS.concat("/" + event.getId());
+        String api = apiMeEvents.concat("/" + event.getId());
 
         var ra = mockMvc.perform(delete(api)
                 .with(contractUtils.authJwt())
