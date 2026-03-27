@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.artists.domain.Artist;
+import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.moderation.domain.AutoModerationLog;
 import com.jmarfildev.rockalendar.moderation.domain.ModerationRule;
@@ -63,7 +64,7 @@ public class AutoModerationService {
 
         // Comprobar reglas de blacklist
         List<ModerationRule> rules = ruleRepository.findAllByActiveTrue();
-        String content = (title + " " + (description != null ? description : "")).toLowerCase();
+        String content = SlugNormalizer.removeAccents(title + " " + (description != null ? description : "")).toLowerCase();
 
         for (ModerationRule rule : rules) {
             AutoModerationResult result = switch (rule.getRuleType()) {
