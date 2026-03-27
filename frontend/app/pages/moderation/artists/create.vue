@@ -128,7 +128,6 @@ function onSuccessOk() {
     v-model:visible="successVisible"
     :header="t('moderation.artists.successTitle')"
     modal
-    :closable="false"
     :style="{ width: '22rem' }">
     <p class="m-0 text-color-secondary">
       {{ t("moderation.artists.successMsg", { name: createdName }) }}
