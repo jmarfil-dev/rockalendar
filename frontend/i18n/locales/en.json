@@ -18,7 +18,8 @@
     "noAvail": "Not available",
     "anythingWrong": "Do you see anything wrong?",
     "sendCom": "Send comment",
-    "save": "Save"
+    "save": "Save",
+    "clearDate": "Clear date"
   },
   "events": {
     "title": "Title",
@@ -183,6 +184,7 @@
       "removeArtist": "Remove artist",
       "artistPlaceholder": "Artist",
       "artistSelectorPlaceholder": "Add artists (type and press Enter)",
+      "artistSelectorHint": "Tip: paste a semicolon- or newline-separated list to add multiple artists at once.",
       "submit": "Propose",
       "cancel": "Cancel",
       "titlePlaceholder": "Concert or festival name",

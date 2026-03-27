@@ -125,19 +125,32 @@ async function onSuccessClose() {
               <label for="startDateTime" class="text-sm text-color-secondary">
                 {{ t("me.propose.startDate") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
-              <DatePicker
-                v-model="form.startDateTime"
-                input-id="startDateTime"
-                show-time
-                hour-format="24"
-                date-format="dd/mm/yy"
-                :min-date="today"
-                :invalid="!!fieldErrors['startDateTime']"
-                :manual-input="false"
-                show-icon
-                icon-display="input"
-                required
-                aria-describedby="start-error" />
+              <div class="flex align-items-center gap-2">
+                <DatePicker
+                  v-model="form.startDateTime"
+                  input-id="startDateTime"
+                  show-time
+                  hour-format="24"
+                  date-format="dd/mm/yy"
+                  :min-date="today"
+                  :invalid="!!fieldErrors['startDateTime']"
+                  :manual-input="false"
+                  show-icon
+                  icon-display="input"
+                  required
+                  class="flex-1"
+                  aria-describedby="start-error" />
+                <Button
+                  v-if="form.startDateTime"
+                  type="button"
+                  icon="pi pi-times"
+                  severity="secondary"
+                  text
+                  rounded
+                  size="small"
+                  :aria-label="t('common.clearDate')"
+                  @click="form.startDateTime = null" />
+              </div>
               <Message v-if="fieldErrors['startDateTime']" id="start-error" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["startDateTime"]) }}
               </Message>
@@ -145,18 +158,31 @@ async function onSuccessClose() {
 
             <div class="col-12 md:col-6 flex flex-column gap-2">
               <label for="endDateTime" class="text-sm text-color-secondary">{{ t("me.propose.endDate") }}</label>
-              <DatePicker
-                v-model="form.endDateTime"
-                input-id="endDateTime"
-                show-time
-                hour-format="24"
-                date-format="dd/mm/yy"
-                :min-date="form.startDateTime ?? undefined"
-                :invalid="!!fieldErrors['endDateTime'] || isDateRangeInvalid"
-                :manual-input="false"
-                show-icon
-                icon-display="input"
-                aria-describedby="end-error end-range-error" />
+              <div class="flex align-items-center gap-2">
+                <DatePicker
+                  v-model="form.endDateTime"
+                  input-id="endDateTime"
+                  show-time
+                  hour-format="24"
+                  date-format="dd/mm/yy"
+                  :min-date="form.startDateTime ?? undefined"
+                  :invalid="!!fieldErrors['endDateTime'] || isDateRangeInvalid"
+                  :manual-input="false"
+                  show-icon
+                  icon-display="input"
+                  class="flex-1"
+                  aria-describedby="end-error end-range-error" />
+                <Button
+                  v-if="form.endDateTime"
+                  type="button"
+                  icon="pi pi-times"
+                  severity="secondary"
+                  text
+                  rounded
+                  size="small"
+                  :aria-label="t('common.clearDate')"
+                  @click="form.endDateTime = null" />
+              </div>
               <Message v-if="fieldErrors['endDateTime']" id="end-error" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["endDateTime"]) }}
               </Message>
@@ -187,12 +213,13 @@ async function onSuccessClose() {
           <!-- Provincia / Ciudad -->
           <div class="grid">
             <div class="col-12 md:col-6 flex flex-column gap-2">
-              <label for="provinceId" class="text-sm text-color-secondary">
+              <span id="propose-province-label" class="text-sm text-color-secondary">
                 {{ t("geo.province") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
-              </label>
+              </span>
               <Select
                 v-model="form.provinceId"
                 input-id="provinceId"
+                aria-labelledby="propose-province-label"
                 :options="provinceOptions"
                 option-label="label"
                 option-value="value"
@@ -200,7 +227,7 @@ async function onSuccessClose() {
                 :invalid="!!fieldErrors['provinceId']"
                 filter
                 required
-                :pt="{ label: { 'aria-label': t('geo.province'), 'aria-describedby': 'province-error' } }" />
+                :pt="{ label: { 'aria-describedby': 'province-error' } }" />
               <Message v-if="fieldErrors['provinceId']" id="province-error" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["provinceId"]) }}
               </Message>
@@ -229,7 +256,7 @@ async function onSuccessClose() {
 
           <!-- Cartel -->
           <div class="flex flex-column gap-2">
-            <label class="text-sm text-color-secondary">{{ t("events.uploadPoster") }}</label>
+            <label for="poster" class="text-sm text-color-secondary">{{ t("events.uploadPoster") }}</label>
 
             <!-- Preview del fichero seleccionado -->
             <div v-if="posterFile" class="flex flex-column gap-2">
@@ -262,7 +289,7 @@ async function onSuccessClose() {
                 @click="posterInputRef?.click()" />
             </div>
 
-            <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
+            <input id="poster" ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
             <Message v-if="posterError" severity="error" variant="simple" size="small">{{ posterError }}</Message>
             <small class="text-xs text-color-secondary">{{ t("events.posterHint") }}</small>
           </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: "global" });
 const auth = useAuth();
 const router = useRouter();
 

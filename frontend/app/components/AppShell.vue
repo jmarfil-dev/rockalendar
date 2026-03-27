@@ -8,7 +8,7 @@ const props = defineProps<{
   bottomItems?: BottomItem[];
 }>();
 
-const { t, locale, setLocale } = useI18n();
+const { t, locale, setLocale } = useI18n({ useScope: "global" });
 const { isAuthenticated, user, logout } = useAuth();
 
 // ------- Header -------
@@ -315,10 +315,11 @@ const onLogoutClick = async () => {
 
           <!-- Provincia -->
           <div class="flex flex-column gap-2">
-            <label for="search-province" class="text-sm text-color-secondary">{{ t("geo.province") }}</label>
+            <span id="search-province-label" class="text-sm text-color-secondary">{{ t("geo.province") }}</span>
             <Select
               v-model="searchForm.provinceId"
               input-id="search-province"
+              aria-labelledby="search-province-label"
               :options="provinceOptions"
               option-label="label"
               option-value="value"
@@ -326,31 +327,59 @@ const onLogoutClick = async () => {
               show-clear
               filter
               class="w-full"
-              :pt="{ label: { 'aria-label': t('geo.province') } }" />
+              />
           </div>
 
           <!-- Rango de fechas -->
           <div class="flex flex-column gap-2">
             <label for="dateFrom" class="text-sm text-color-secondary">{{ t("dates.from") }}</label>
-            <DatePicker
-              v-model="searchForm.dateFrom"
-              input-id="dateFrom"
-              date-format="dd/mm/yy"
-              show-icon
-              icon-display="input"
-              :placeholder="`${t('dates.from')}...`" />
+            <div class="flex align-items-center gap-2">
+              <DatePicker
+                v-model="searchForm.dateFrom"
+                input-id="dateFrom"
+                date-format="dd/mm/yy"
+                :manual-input="false"
+                show-icon
+                icon-display="input"
+                class="flex-1"
+                :placeholder="`${t('dates.from')}...`" />
+              <Button
+                v-if="searchForm.dateFrom"
+                type="button"
+                icon="pi pi-times"
+                severity="secondary"
+                text
+                rounded
+                size="small"
+                :aria-label="t('common.clearDate')"
+                @click="searchForm.dateFrom = null" />
+            </div>
           </div>
 
           <div class="flex flex-column gap-2">
             <label for="dateTo" class="text-sm text-color-secondary">{{ t("dates.to") }}</label>
-            <DatePicker
-              v-model="searchForm.dateTo"
-              input-id="dateTo"
-              :min-date="searchForm.dateFrom ?? undefined"
-              date-format="dd/mm/yy"
-              show-icon
-              icon-display="input"
-              :placeholder="`${t('dates.to')}...`" />
+            <div class="flex align-items-center gap-2">
+              <DatePicker
+                v-model="searchForm.dateTo"
+                input-id="dateTo"
+                :min-date="searchForm.dateFrom ?? undefined"
+                date-format="dd/mm/yy"
+                :manual-input="false"
+                show-icon
+                icon-display="input"
+                class="flex-1"
+                :placeholder="`${t('dates.to')}...`" />
+              <Button
+                v-if="searchForm.dateTo"
+                type="button"
+                icon="pi pi-times"
+                severity="secondary"
+                text
+                rounded
+                size="small"
+                :aria-label="t('common.clearDate')"
+                @click="searchForm.dateTo = null" />
+            </div>
             <Message v-show="isDateRangeInvalid" severity="error" variant="simple" size="small">
               {{ t("dates.invalidRange") }}
             </Message>
