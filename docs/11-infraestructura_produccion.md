@@ -45,7 +45,7 @@ El proceso es:
 
 ✅ Hecho. Cloudflare gestiona los DNS de `rockalendar.es`. DNSSEC activado (DS record en OVH apuntando a Cloudflare).
 
-> **Pendiente antes de desplegar:** Cloudflare importó dos registros A (`rockalendar.es` y `www`) apuntando a OVH que hay que actualizar con la IP del VPS de Hetzner. También hay una decisión pendiente sobre cómo gestionar las imágenes de la aplicación antes de tocar esos registros.
+> **Pendiente antes de desplegar:** Cloudflare importó dos registros A (`rockalendar.es` y `www`) apuntando a OVH que hay que actualizar con la IP del VPS de Hetzner.
 
 ---
 
