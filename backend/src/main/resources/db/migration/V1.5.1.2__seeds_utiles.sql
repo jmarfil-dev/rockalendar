@@ -11,24 +11,25 @@ INSERT INTO users (id, email, password_hash, "role", trust_score, preferred_lang
 
 -- Algnos grupos
 INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES
-    (gen_random_uuid(), 'Against You', 'against you', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Vagos Permanentes', 'vagos permanentes', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Brutus'' Daughters', 'brutus daughters', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'No Konforme', 'no konforme', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Manifa', 'manifa', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Orri Berdea', 'orri berdea', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Narco', 'narco', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Dubioza Kolektiv', 'dubioza kolektiv', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Boikot', 'boikot', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Arpaviejas', 'arpaviejas', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Mala Komunikación', 'mala komunikacion', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'El Reno Renardo', 'el reno renardo', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Mamá Ladilla', 'mama ladilla', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Lendakaris Muertos', 'lendakaris muertos', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Loncha Velasco', 'loncha velasco', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Yakovlev 42', 'yakovlev 42', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now()),
-    (gen_random_uuid(), 'Mocow Death Brigade', 'mocow death brigade', SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com', now())
+    (gen_random_uuid(), 'Against You', 'against you', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Vagos Permanentes', 'vagos permanentes', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Brutus'' Daughters', 'brutus daughters', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'No Konforme', 'no konforme', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Manifa', 'manifa', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Orri Berdea', 'orri berdea', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Narco', 'narco', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Dubioza Kolektiv', 'dubioza kolektiv', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Boikot', 'boikot', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Arpaviejas', 'arpaviejas', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Mala Komunikación', 'mala komunikacion', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'El Reno Renardo', 'el reno renardo', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Mamá Ladilla', 'mama ladilla', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Lendakaris Muertos', 'lendakaris muertos', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Loncha Velasco', 'loncha velasco', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Yakovlev 42', 'yakovlev 42', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now()),
+    (gen_random_uuid(), 'Mocow Death Brigade', 'mocow death brigade', (SELECT id FROM users WHERE email = 'cyber.makarra@gmail.com'), now())
 ;
+
 
 -- Reglas de blacklist para festivales del grupo Superstruct.
 -- El contenido evaluado ya está normalizado (sin tildes, en minúsculas) por SlugNormalizer.removeAccents().
