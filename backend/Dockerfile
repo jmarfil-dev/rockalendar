@@ -5,7 +5,7 @@ WORKDIR /build
 COPY pom.xml .
 RUN mvn dependency:go-offline -q
 COPY src ./src
-RUN mvn clean package -DskipTests -q && \
+RUN mvn clean package spring-boot:repackage -DskipTests -q && \
     cp $(find target -name "*.jar" -not -name "*.jar.original") target/app.jar
 
 # ---- Runtime ----
