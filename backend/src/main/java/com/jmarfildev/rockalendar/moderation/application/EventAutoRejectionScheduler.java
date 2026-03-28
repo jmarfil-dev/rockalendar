@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
+import com.jmarfildev.rockalendar.moderation.persistence.AutoModerationLogRepository;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationConfigRepository;
+import com.jmarfildev.rockalendar.moderation.persistence.ModerationRuleRepository;
 
 /**
  * Scheduler que rechaza automáticamente los eventos en estado FLAGGED
@@ -27,11 +29,13 @@ import com.jmarfildev.rockalendar.moderation.persistence.ModerationConfigReposit
 @Slf4j
 public class EventAutoRejectionScheduler {
 
-    private static final String REJECTION_MESSAGE = "El evento no cumple los requisitos de publicación.";
+    private static final String FALLBACK_REJECTION_MESSAGE = "El evento no cumple los requisitos de publicación.";
     private static final int DEFAULT_DELAY_HOURS = 24;
 
     private final EventRepository eventRepository;
     private final ModerationConfigRepository configRepository;
+    private final AutoModerationLogRepository autoModerationLogRepository;
+    private final ModerationRuleRepository ruleRepository;
 
     @Scheduled(fixedDelay = 21_600_000) // cada 6 horas
     @Transactional
@@ -48,8 +52,14 @@ public class EventAutoRejectionScheduler {
         log.info("auto-rejection scheduler: procesando {} eventos FLAGGED", flaggedEvents.size());
 
         for (Event event : flaggedEvents) {
+            String message = autoModerationLogRepository.findByEventId(event.getId())
+                    .flatMap(logEntry -> logEntry.getRuleId() != null
+                            ? ruleRepository.findById(logEntry.getRuleId()).map(rule -> rule.getReason())
+                            : java.util.Optional.empty())
+                    .orElse(FALLBACK_REJECTION_MESSAGE);
+
             event.setStatus(EventStatus.REJECTED);
-            event.setModerationMessage(REJECTION_MESSAGE);
+            event.setModerationMessage(message);
             event.setModeratedAt(OffsetDateTime.now());
             // moderatedByUserId queda null — indica acción del sistema
             log.info("auto-rejected eventId={}", event.getId());

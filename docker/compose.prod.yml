@@ -1,0 +1,130 @@
+# Compose de producción — Rockalendar
+#
+# IMPORTANTE: No commitear nunca un fichero .env con secretos reales.
+# En Coolify, las variables de entorno se configuran en la UI del servicio.
+# Para arrancar manualmente: cp .env.example .env && editar .env
+#
+# Postgres NO tiene puerto expuesto al host: solo accesible dentro de la red interna Docker.
+# Para conectarte desde DBeaver en local, usa túnel SSH (ver docs/11-infraestructura_produccion.md).
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: rockalendar-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rockalendar
+      POSTGRES_USER: rockalendar
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale-provider=icu --icu-locale=es-ES"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rockalendar -d rockalendar"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: rockalendar-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+    volumes:
+      - miniodata:/data
+    networks:
+      - internal
+    expose:
+      - "9000"  # API S3 — Coolify enruta al dominio de almacenamiento
+      - "9001"  # Consola web — accesible solo vía túnel SSH en producción
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Crea el bucket al arrancar y sale. No tiene restart para no repetirse.
+  minio-init:
+    image: minio/mc:latest
+    container_name: rockalendar-minio-init
+    restart: "no"
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - internal
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+        mc mb --ignore-existing local/rockalendar &&
+        mc anonymous set download local/rockalendar
+      "
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    image: rockalendar-backend
+    container_name: rockalendar-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+    expose:
+      - "8080"
+    environment:
+      # Datasource — apunta al servicio postgres por nombre de red interna
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/rockalendar"
+      SPRING_DATASOURCE_USERNAME: "rockalendar"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASSWORD}"
+      # Seguridad
+      JWT_SECRET: "${JWT_SECRET}"
+      IP_PROXY: "${IP_PROXY}"
+      # Email transaccional (Brevo)
+      BREVO_SMTP_USER: "${BREVO_SMTP_USER}"
+      BREVO_SMTP_PASSWORD: "${BREVO_SMTP_PASSWORD}"
+      EMAIL_FROM: "${EMAIL_FROM}"
+      # Frontend (para links en emails)
+      FRONTEND_BASE_URL: "${FRONTEND_BASE_URL}"
+      # Almacenamiento (MinIO — endpoint interno, URL pública para los clientes)
+      STORAGE_ENDPOINT: "http://minio:9000"
+      STORAGE_BUCKET: "rockalendar"
+      STORAGE_ACCESS_KEY: "${MINIO_ROOT_USER}"
+      STORAGE_SECRET_KEY: "${MINIO_ROOT_PASSWORD}"
+      STORAGE_PUBLIC_URL_BASE: "${STORAGE_PUBLIC_URL_BASE}"
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: rockalendar-frontend
+    container_name: rockalendar-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - internal
+    expose:
+      - "3000"
+    environment:
+      # URL del backend visible desde el navegador (no desde el contenedor)
+      NUXT_PUBLIC_API_BASE: "${NUXT_PUBLIC_API_BASE}"
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  pgdata:
+  miniodata:
