@@ -5,11 +5,12 @@ WORKDIR /build
 COPY pom.xml .
 RUN mvn dependency:go-offline -q
 COPY src ./src
-RUN mvn clean package -DskipTests -q
+RUN mvn clean package -DskipTests -q && \
+    cp $(find target -name "*.jar" -not -name "*.jar.original") target/app.jar
 
 # ---- Runtime ----
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=builder /build/target/rockalendar-*.jar app.jar
+COPY --from=builder /build/target/app.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
