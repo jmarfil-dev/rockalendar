@@ -5,12 +5,15 @@ definePageMeta({ layout: "public" });
 
 useHead({ titleTemplate: null, title: "Rockalendar" });
 useSeoMeta({
-  description: "Find rock, metal and punk concerts and festivals in Spain. Community-driven, no algorithms, no corporate bullshit.",
+  description:
+    "Encuentra conciertos y festivales de punk, rock y metal en España. Impulsado por la comunidad, sin algoritmos ni tonterías corporativas.",
   ogTitle: "Rockalendar",
-  ogDescription: "Find rock, metal and punk concerts and festivals in Spain. Community-driven, no algorithms, no corporate bullshit.",
+  ogDescription:
+    "Encuentra conciertos y festivales de punk, rock y metal en España. Impulsado por la comunidad, sin algoritmos ni tonterías corporativas.",
   ogType: "website",
   twitterTitle: "Rockalendar",
-  twitterDescription: "Find rock, metal and punk concerts and festivals in Spain. Community-driven, no algorithms, no corporate bullshit.",
+  twitterDescription:
+    "Encuentra conciertos y festivales de punk, rock y metal en España. Impulsado por la comunidad, sin algoritmos ni tonterías corporativas.",
 });
 </script>
 
