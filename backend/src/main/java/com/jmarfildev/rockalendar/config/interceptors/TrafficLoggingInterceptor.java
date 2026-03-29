@@ -26,6 +26,8 @@ public class TrafficLoggingInterceptor implements HandlerInterceptor {
         String query = request.getQueryString();
         String path = query != null ? uri + "?" + query : uri;
 
+        if ("GET".equals(method) && "/api/health".equals(uri)) return true;
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         boolean isAnonymous = auth == null || auth instanceof AnonymousAuthenticationToken;
         String principal = isAnonymous ? "anon" : "user";
