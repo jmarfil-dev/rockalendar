@@ -48,7 +48,7 @@ export const useProposeEvent = () => {
       provinceId: form.provinceId,
       cityName: form.cityName,
       artists: form.artists.map((a) => a.name),
-      sourceUrl: form.sourceUrl || undefined,
+      sourceUrl: normalizeUrl(form.sourceUrl) || undefined,
     };
 
     const formData = new FormData();

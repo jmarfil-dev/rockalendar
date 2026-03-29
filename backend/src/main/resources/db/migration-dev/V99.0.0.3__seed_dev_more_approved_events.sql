@@ -173,7 +173,7 @@ INSERT INTO events (
         'madrid',
         'APPROVED',
         'https://example.com/sabaton-arena',
-        NULL,
+        'aaaaaaaa-0000-0000-0000-000000000003',
         'Aprobado. Evento importado.',
         '2026-02-12T11:20:00+01:00',
         '2026-02-12T13:20:00+01:00',

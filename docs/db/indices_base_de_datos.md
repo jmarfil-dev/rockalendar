@@ -2,7 +2,7 @@
 
 Este documento lista TODOS los índices (excluyendo PKs), su propósito, y qué consultas típicas los aprovechan.
 
-> Fuente: inventario hasta Flyway V1.4.0.1__auto_moderation.sql.
+> Fuente: inventario hasta Flyway V1.5.0.4__password_reset_tokens.sql.
 
 ## Tabla: artists
 
@@ -120,3 +120,13 @@ Este documento lista TODOS los índices (excluyendo PKs), su propósito, y qué 
 ### idx_auto_mod_log_event (btree) (event_id)
 **Propósito:** consultar el historial de flags automáticos de un evento concreto.\r
 **Usado por:** panel de administración (backlog) y auditoría interna.
+
+## Tabla: password_reset_tokens
+
+### idx_prt_token_hash (btree) (token_hash)
+**Propósito:** localizar el token de restablecimiento por su hash SHA-256 de forma eficiente.\
+**Usado por:** `WHERE token_hash = ?` al validar el token recibido por email.
+
+### idx_prt_user_id (btree) (user_id)
+**Propósito:** consultar/invalidar todos los tokens pendientes de un usuario.\
+**Usado por:** `WHERE user_id = ?` al emitir un nuevo token (para borrar los anteriores).

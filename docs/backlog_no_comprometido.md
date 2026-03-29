@@ -20,6 +20,7 @@ Estas implementaciones tienen prioridad sobre las demás.
 
 ### Backend
 
+- Cuando el tráfico crezca y no haga falta monitoriear: eliminar TrafficLoggingInterceptor y WebMvcConfig.
 - Base común para búsquedas, filtros y mapas.
 - Reemplazar `Page<T>` por un DTO propio de paginación: `PageResponse`:
   - Control total del contrato JSON
@@ -67,6 +68,7 @@ Cuándo hacerlo:
 
 - Lista de eventos públicos pasados.
 - Cron job cada 24 horas para cerrar eventos pasados.
+- EventAutoRejectionScheduler.REJECTION_MESSAGE configurable y traducible.
 - Desarrollar estado `DRAFT`.
 - Nuevo estado `REALIZADO` o `PASADO` (nombre por decidir). ¿Merece la pena?
 - Historial de estados para auditoría.

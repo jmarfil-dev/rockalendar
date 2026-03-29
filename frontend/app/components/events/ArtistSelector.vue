@@ -115,6 +115,8 @@ function onPaste(e: ClipboardEvent) {
         @click="onAddCurrentText" />
     </div>
 
+    <small class="text-xs text-color-secondary">{{ t("me.propose.artistSelectorHint") }}</small>
+
     <div v-if="modelValue.length > 0" class="flex flex-wrap gap-2">
       <Chip v-for="(chip, i) in modelValue" :key="chipKeys[i]" :label="chip.name" removable @remove="removeChip(i)" />
     </div>

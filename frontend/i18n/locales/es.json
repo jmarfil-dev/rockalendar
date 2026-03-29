@@ -18,7 +18,8 @@
     "noAvail": "No disponible",
     "anythingWrong": "¿Ves algo incorrecto?",
     "sendCom": "Enviar comentario",
-    "save": "Guardar"
+    "save": "Guardar",
+    "clearDate": "Limpiar fecha"
   },
   "events": {
     "title": "Título",
@@ -184,6 +185,7 @@
       "removeArtist": "Eliminar artista",
       "artistPlaceholder": "Artista",
       "artistSelectorPlaceholder": "Añade artistas (escribe y pulsa Enter)",
+      "artistSelectorHint": "Tip: pega una lista separada por punto y coma o saltos de línea para añadir varios artistas a la vez.",
       "submit": "Proponer",
       "cancel": "Cancelar",
       "titlePlaceholder": "Nombre del concierto o festival",
