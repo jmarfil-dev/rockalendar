@@ -78,7 +78,7 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    "/api/**": { proxy: "http://localhost:8080/api/**" },
+    "/api/**": { proxy: `${process.env.NUXT_BACKEND_INTERNAL_URL || "http://localhost:8080"}/api/**` },
     "/me/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
     "/moderation/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
     "/admin/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
