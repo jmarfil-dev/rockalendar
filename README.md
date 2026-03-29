@@ -36,8 +36,8 @@ Este repositorio es un **monorepo** que contiene:
 
 ## :arrow_forward: Estado del proyecto
 
-:hammer_and_wrench: En desarrollo activo :hammer_and_wrench:\
-:dart: Objetivo: **MVP 1.0** :dart:
+**MVP 1.0 en fase de pruebas**\
+:hammer_and_wrench: En desarrollo activo de nuevas funcionalidades :hammer_and_wrench:\
 
 El alcance y la hoja de ruta están definidos en la documentación.
 

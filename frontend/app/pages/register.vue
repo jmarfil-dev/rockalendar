@@ -28,6 +28,7 @@ const passwordChecks = computed(() => {
 
 const isPasswordValid = computed(() => passwordChecks.value.every((x) => x.ok));
 
+const confirmPassword = ref("");
 const privacyAccepted = ref(false);
 const honeypotWebsite = ref("");
 
@@ -55,6 +56,11 @@ onUnmounted(() => {
 async function onSubmit() {
   if (!isPasswordValid.value) {
     errorMsg.value = t("auth.pw.invalid");
+    return;
+  }
+
+  if (form.password !== confirmPassword.value) {
+    errorMsg.value = t("me.settings.passwordMismatch");
     return;
   }
 
@@ -153,6 +159,31 @@ async function onSubmit() {
 
             <Message v-show="!isPasswordValid" id="pw-hint" severity="error" variant="simple" size="small">
               {{ t("auth.pw.hint") }}
+            </Message>
+          </div>
+
+          <!-- Confirmar contraseña -->
+          <div class="flex flex-column gap-2">
+            <label for="confirm-password" class="text-sm text-color-secondary">
+              {{ t("me.settings.confirmPassword") }}
+              <span class="text-red-500" aria-hidden="true">*</span
+              ><span class="sr-only">{{ t("common.required") }}</span>
+            </label>
+            <Password
+              v-model="confirmPassword"
+              v-fix-password-aria
+              input-id="confirm-password"
+              toggle-mask
+              :feedback="false"
+              autocomplete="new-password"
+              required />
+            <Message
+              v-show="fieldErrors.confirmPassword"
+              id="confirm-password-error"
+              severity="error"
+              variant="simple"
+              size="small">
+              {{ tr(fieldErrors.confirmPassword!) }}
             </Message>
           </div>
 

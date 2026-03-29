@@ -61,7 +61,7 @@ const RockalendarPreset = definePreset(Aura, {
 });
 
 export default defineNuxtConfig({
-  compatibilityDate: '2026-03-23',
+  compatibilityDate: "2026-03-23",
   app: {
     head: {
       titleTemplate: "%s — Rockalendar",
@@ -69,7 +69,7 @@ export default defineNuxtConfig({
         {
           name: "description",
           content:
-            "Find rock, metal and punk concerts and festivals in Spain. Community-driven, no algorithms, no corporate bullshit.",
+            "Encuentra conciertos y festivales de punk, rock y metal en España. Impulsado por la comunidad, sin algoritmos ni tonterías corporativas.",
         },
         { property: "og:site_name", content: "Rockalendar" },
         { property: "og:type", content: "website" },
