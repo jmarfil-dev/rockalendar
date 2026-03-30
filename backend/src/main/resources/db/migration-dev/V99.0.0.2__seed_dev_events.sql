@@ -1,861 +1,398 @@
 -- ============================================================
 -- Seed artists
 -- ============================================================
-INSERT INTO artists (id, "name", slug, created_by_user_id) VALUES
-    ('028422f0-a8df-4540-b209-f590ab4e2e42'::uuid, 'Against You', 'against you', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('01b7cab7-0eb9-4cdb-9f39-0d730132d9b3'::uuid, 'Vagos Permanentes', 'vagos permanentes', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('e0b2ac75-2b81-4c0f-a49f-6741aa4769a5'::uuid, 'Brutus'' Daughters', 'brutus daughters', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('285b793a-4b84-47a5-a0d2-873426aa22fd'::uuid, 'No Konforme', 'no konforme', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('9871259c-a4c7-45db-b612-d1b97a515c0a'::uuid, 'Manifa', 'manifa', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('944f21a9-eef3-4375-a391-6f751c4a2de0'::uuid, 'Orri Berdea', 'orri berdea', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('0113154f-e16f-4159-ac47-8a20b679108b'::uuid, 'Narco', 'narco', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('8598fc29-ebbf-47b6-bae9-3bddf689eb4c'::uuid, 'Dubioza Kolektiv', 'dubioza kolektiv', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('0031a90f-6413-497b-ad2e-eb90ac05fb87'::uuid, 'Mocow Death Brigade', 'mocow death brigade', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('44859cef-4b07-49a0-9507-324719d9f1d0'::uuid, 'Boikot', 'boikot', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('fca0d136-3fd2-479f-b769-ae54a37c908f'::uuid, 'The Qemists', 'the qemists', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('f40a8764-c5da-464d-a4b5-efaccb18500f'::uuid, 'Sabaton', 'sabaton', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('a8ef6ceb-e0e4-45ed-bacb-752b33c9a0cf'::uuid, 'El Reno Renardo', 'el reno renardo', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('77be2405-76f3-4cdb-bf45-1829e3901725'::uuid, 'Mamá Ladilla', 'mama ladilla', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('434f0090-fd6f-4c81-9d66-6989f7cee2d5'::uuid, 'Lendakaris Muertos', 'lendakaris muertos', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('ef36d07b-63a9-45d1-bf9c-2ea7e1c21ab2'::uuid, 'Loncha Velasco', 'loncha velasco', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid),
-    ('41dbbcc8-b183-424d-82e3-7eccce5f4b99'::uuid, 'Yakovlev 42', 'yakovlev 42', 'aaaaaaaa-0000-0000-0000-000000000002'::uuid)
-;
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('a3a1844b-b27f-4671-92e9-45c6b4fa162a'::uuid, 'Quartet Tarantino', 'quartet tarantino', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.028');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('7ef5d024-3efd-47b5-92a9-6537e2c2d367'::uuid, 'Chingo Kids', 'chingo kids', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.046');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('9b3422af-01c7-486f-bf32-d2f7e4a8d88c'::uuid, 'Los de Marras', 'los de marras', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.052');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('21bdb2f2-f5b0-49df-8b1b-698c15d07563'::uuid, 'Porretas', 'porretas', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.055');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('6579b797-6334-420a-a555-3a498a8af67c'::uuid, 'Kaos Urbano', 'kaos urbano', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.057');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('151beee7-80d8-4f0f-9881-d93de7db8746'::uuid, 'Biznaga', 'biznaga', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.060');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('fe6a7416-e97c-4018-aa62-ca96dce196c5'::uuid, 'Kaos Etíliko', 'kaos etiliko', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.062');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('0beed1f0-56f3-457f-aac0-b9b3333778f0'::uuid, 'Periferia', 'periferia', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.068');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('fbdd6cd2-a498-492a-9980-4ec36c0b7e54'::uuid, 'XPresidentX', 'xpresidentx', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.071');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('bb697d57-9ef3-4626-833c-2509276861fb'::uuid, 'Maldito Matas', 'maldito matas', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.073');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('a03f2fee-6e7e-4a0a-a9f0-ceda790de5b1'::uuid, 'Afónica Naranjo', 'afonica naranjo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.076');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('e2db4796-1a0f-4972-a116-68689fe58fc1'::uuid, 'Gautxori', 'gautxori', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 20:34:05.078');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('f65e012b-684f-4a76-8682-608241b1830a'::uuid, 'Koma', 'koma', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 23:42:04.573');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('0a5ce42a-f473-4024-b300-27dbbee8ac94'::uuid, 'Kaotiko', 'kaotiko', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 23:42:04.578');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('fafd4faf-e744-467a-a480-392ea77936b8'::uuid, 'Segismundo Toxicómano', 'segismundo toxicomano', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 23:42:04.584');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('4d5f5c9d-1e74-4907-b591-3f14391c962c'::uuid, 'Sons of Aguirre', 'sons of aguirre', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 23:42:04.587');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('23e08814-4e37-4ec0-89a7-bd5724ab71c4'::uuid, 'Parabellum', 'parabellum', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 23:42:04.590');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('e8188ff8-0776-4a9a-8fd3-995497647842'::uuid, 'Def Con Dos', 'def con dos', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 23:42:04.595');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('85a7aaee-bf37-47c6-9f8d-940830dc19d0'::uuid, 'Envidia Kotxina', 'envidia kotxina', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 23:42:04.598');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('6d4f791c-5428-4f9d-bedd-fc115b6461a7'::uuid, 'Me Fritos and the Gimme Cheetos', 'me fritos and the gimme cheetos', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-29 23:42:04.600');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b92ebeec-2d69-401f-9599-c8704fdd8e09'::uuid, 'Fuckop Family', 'fuckop family', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 00:33:57.265');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('38709245-7dc8-494e-841e-5618906fb8a3'::uuid, 'Fatiga', 'fatiga', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 00:33:57.288');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('a2038c8b-3099-4bf9-903d-889e53c87991'::uuid, 'Juantxo Skalari', 'juantxo skalari', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 00:39:17.004');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('43856c37-3018-44b0-b1d1-01434e7ada38'::uuid, 'The Reimons', 'the reimons', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 00:39:17.013');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('44a7e49e-6d08-4489-8216-d50ddaf0adf4'::uuid, 'Catalina Grande Piñon Pequeño', 'catalina grande pinon pequeno', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 00:39:17.019');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('ff6678a7-321a-4dba-8206-dca31c94970a'::uuid, 'Hermana Furia', 'hermana furia', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 00:39:17.022');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('2f6448f8-0230-42a0-8542-0d2c40f2b637'::uuid, 'Mala Vida', 'mala vida', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 00:39:17.024');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('3309698c-a48d-4714-b38a-e9c6375166fa'::uuid, 'Pubic Enemy', 'pubic enemy', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:07:51.561');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('7888956a-429f-43db-9826-3b3679da8935'::uuid, 'Sentido Critico', 'sentido critico', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:07:51.566');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('166388fc-c16d-42b0-814e-38c999439579'::uuid, 'La Regadera', 'la regadera', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:07:52.115');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('cd7583e7-b46a-434b-85f2-f1241fadb461'::uuid, 'Evaristo', 'evaristo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:11:29.434');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('2aeacf58-d937-4a74-bcff-c146c989cab1'::uuid, 'Josetxu Piperrak', 'josetxu piperrak', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:11:29.437');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('70b3529b-1dad-42ca-998f-5b2aca360026'::uuid, 'Distorsión', 'distorsion', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:15:00.814');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('3812bec4-fd61-4df6-9f80-e61e6ab6cb68'::uuid, 'La misa del gayo', 'la misa del gayo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:15:00.823');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('d685680f-014e-4d61-905c-46edefc24cf6'::uuid, 'Deaf Devils', 'deaf devils', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.866');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('aa872756-24c8-4e3b-9c3f-29fe9f52f221'::uuid, 'Rat-zinger', 'rat zinger', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.872');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('732c5b9b-8f22-4894-ada6-422cbe15e0da'::uuid, 'The Eskarallas', 'the eskarallas', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.874');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('de485fda-d81d-4116-b044-718ce15c30bb'::uuid, 'Kalerizo', 'kalerizo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.876');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('ceaf2295-900f-47fa-ab8f-6280ea8724d3'::uuid, 'Skontra', 'skontra', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.878');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('7fbcafa3-dcb3-43ce-9d87-e4c61341d799'::uuid, 'Núcleo Terco', 'nucleo terco', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.881');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b8b4077a-1621-4a65-8e71-222d01a08ad4'::uuid, 'Trashtucada', 'trashtucada', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.885');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('80b8c52b-53eb-4a8a-ac66-fa3011d0d017'::uuid, 'Kop', 'kop', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.887');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('979cd163-288a-4ba4-9c78-3b55a8ea4214'::uuid, 'La Trapera', 'la trapera', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.889');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('93ba9a74-84fa-4766-bc5c-e5db3116e4fd'::uuid, 'Chuleria,Joder!', 'chuleria joder', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.891');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('851bc90d-a8c4-4856-bb27-524f5a7410a4'::uuid, 'Au d''astí', 'au d asti', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.893');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('3dee90d1-18f1-4577-aadd-bcc8112f99a7'::uuid, 'The covids', 'the covids', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.894');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('fabfa3c0-0857-411f-84b3-62604528c956'::uuid, 'Któlicos', 'ktolicos', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.896');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('99213025-18be-4d48-a527-3b07b658ecc7'::uuid, 'Diegovisión', 'diegovision', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.898');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('04bceb72-e755-4fe4-97cd-3d042c45bd42'::uuid, 'Moonshine wagon', 'moonshine wagon', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.900');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('650a0cce-1b13-4f1b-82bd-979d6a70e41f'::uuid, 'Txarangazo', 'txarangazo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.903');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('1a8af22c-cd2a-43dd-859a-b4dabf47ed2f'::uuid, 'Ketesnuko', 'ketesnuko', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:42:08.828');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('8659880e-306c-439f-9a10-be03cb29618b'::uuid, 'Bestia Parda', 'bestia parda', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:42:08.831');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('1dba1456-ade4-45da-996e-8c3adc55798c'::uuid, 'Toc de Queda', 'toc de queda', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:42:08.833');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('fc81f198-0c78-456d-b650-18f460d0bfa2'::uuid, 'Tados', 'tados', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:42:08.836');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('8a79e629-1d64-4dd6-9010-dfc9fb4707d1'::uuid, 'Espektros del kaos', 'espektros del kaos', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:42:08.838');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('accd5bb3-9fa5-4457-b5fb-7f49ae3588bf'::uuid, 'Los del Humo', 'los del humo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:49:39.389');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('9c5fd716-7ccb-4d84-b7ff-9c0426859306'::uuid, 'Delameseta', 'delameseta', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:49:39.393');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('72840b96-de0e-47ae-8a12-cc739d158d1c'::uuid, 'Itaca Band', 'itaca band', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:49:39.395');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('9a909995-ef2e-483e-a743-cbfe25dc1d8d'::uuid, 'Carlos Horros', 'carlos horros', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:49:39.399');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b5ef56db-b4cc-4cb5-8dbb-1fa58ed5a089'::uuid, 'Soziedad Alkoholika', 'soziedad alkoholika', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:56:02.669');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('19ce17ca-cbb0-44d2-a922-f49708b69c39'::uuid, 'El último ke zierre', 'el ultimo ke zierre', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:56:02.699');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('24e30a9b-4ae2-43b2-90ee-cc746a43ae33'::uuid, 'Alfredo Piedrafita', 'alfredo piedrafita', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:56:02.705');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('c1ea5486-82ee-49c0-b32b-fae8f801d1d1'::uuid, 'Dinamita', 'dinamita', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:56:02.708');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('4b088349-91c9-44ed-8dac-c35dbe8fe836'::uuid, 'Disolventex', 'disolventex', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:56:02.711');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('d6d37eb2-2d4f-497b-9200-3dd7d4b59acf'::uuid, 'N-wise Allah', 'n wise allah', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 02:02:28.086');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('61eb7cb7-15b8-4562-9190-4c1a49664c1e'::uuid, 'Nico Miseria', 'nico miseria', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 02:02:28.088');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('932fa6ac-b7cb-43b1-b841-42ef63041185'::uuid, 'La Reina Mora', 'la reina mora', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 02:02:28.090');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('efccfad9-6462-4dbc-9e66-fca2b5bf8a27'::uuid, 'Break the Senses', 'break the senses', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 02:02:28.092');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('c2ece721-0337-4e85-892b-8ee55da5dd88'::uuid, 'Mindruss', 'mindruss', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 02:02:28.094');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('1bb9fe96-6e9a-44ab-810f-01fa4abd8485'::uuid, 'Deklibe', 'deklibe', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:28:21.902');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('7e31f065-fc14-4a7b-9757-9c9a4330c832'::uuid, 'Turboterror', 'turboterror', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 02:11:50.365');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('671b33a8-459e-4252-af12-af6780d2a5ac'::uuid, 'The Toy Dolls', 'the toy dolls', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 01:56:02.691');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('7dfcb6ff-2631-4c82-8b55-f7c823d3b4f2'::uuid, 'Aimarz', 'aimarz', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:34.984');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('7613d7c1-7537-4d31-83da-5986eb7ecce1'::uuid, 'Ajoui', 'ajoui', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:34.989');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('2fa4981e-e766-47c4-b947-9f9ddfe04bc1'::uuid, 'Annekdotas', 'annekdotas', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:34.991');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('3efeb26e-5085-43d9-99cb-3a8c93ba4125'::uuid, 'Añube', 'anube', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:34.993');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('f1a9a460-8d07-46bb-9b7a-f84db18158b3'::uuid, 'Apotheke 90', 'apotheke 90', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:34.995');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('6aeae3cf-34a6-43c6-b359-9e9db0b30d40'::uuid, 'Ateri', 'ateri', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:34.996');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('c79bb212-882a-4067-9be8-a49ab390a06d'::uuid, 'Bellum', 'bellum', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:34.998');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('6ecee9cb-aea6-4fbe-8028-c1bb86c9c7a3'::uuid, 'Bull Brigade', 'bull brigade', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:34.999');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('ae093c00-6568-411e-8402-70b27719439a'::uuid, 'Edu Zardoya', 'edu zardoya', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.002');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('72f52a3c-baf4-4a8e-9f30-b4e8739591a3'::uuid, 'Etxepe', 'etxepe', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.003');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('8e45e907-58dd-4a9f-a5b7-43cf020541e8'::uuid, 'Ganibet', 'ganibet', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.005');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('2dcd4371-464a-4533-b6ed-0a207fd4b115'::uuid, 'Gozategi', 'gozategi', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.006');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('8d22f566-7cc8-4339-9689-3ac4f9584b2b'::uuid, 'Hell Beer Boys', 'hell beer boys', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.007');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('656934d4-80f5-4c92-8867-b18168412e1a'::uuid, 'Hofe', 'hofe', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.009');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('068db010-a31b-49be-88c3-4dc3397e98a5'::uuid, 'Kaparrak', 'kaparrak', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.012');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b7acc12f-79a6-45a3-97d7-2d2944fb1002'::uuid, 'Lablakie', 'lablakie', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.014');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('8117dad6-1939-4a13-ac2a-e85bcb36b23a'::uuid, 'La Élite', 'la elite', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.015');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('ad611e17-c8c6-4fa8-8ba1-d11b19e3cb57'::uuid, 'La Txama', 'la txama', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.017');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('cd24d1e1-e509-49e7-89ce-b4f09e872230'::uuid, 'Lehen Lerroa', 'lehen lerroa', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.018');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('99e090e3-1fbe-4372-a25c-32cb7c145cd9'::uuid, 'Los Zopilotes Txirriaos', 'los zopilotes txirriaos', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.020');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('96012e44-6fed-4774-ba9a-33b800c461f6'::uuid, 'Lukiek', 'lukiek', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.021');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('fa1f2493-5d5b-4804-8e4f-740d9f821738'::uuid, 'Malakias', 'malakias', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.022');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('5468a2e0-5d12-4d28-b93e-cc48b83175e8'::uuid, 'Malko', 'malko', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.023');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b30be0d7-bc86-4087-b884-570127da33a8'::uuid, 'Maruxak', 'maruxak', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.024');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('f91799db-4f0b-4505-ad58-74cb1a819c9d'::uuid, 'Metrika', 'metrika', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.026');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('a6b93f29-da40-45a1-992a-e33fe0788418'::uuid, 'Mikosis', 'mikosis', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.027');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('f7126174-7aac-4433-9750-1bdc6ce0a9bb'::uuid, 'Mirotz', 'mirotz', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.028');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('63531667-fc23-447c-90e6-93aee691c326'::uuid, 'Nafarroa 1512', 'nafarroa 1512', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.029');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b3e2c8af-49e6-480b-848f-cf5e09565f7d'::uuid, 'Nerve Agent', 'nerve agent', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.030');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('8d969ad8-6200-4836-8d70-1e9409b3a4de'::uuid, 'Nevadah', 'nevadah', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.032');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b31ec1dd-e318-42a1-a7a2-b8acaeee63ba'::uuid, 'No limits', 'no limits', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.033');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b2d6fd49-2ca6-4705-8c41-f9f06c4bfda1'::uuid, 'Roy ellis', 'roy ellis', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.034');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('575a37ab-25bc-469e-a0dd-3eac0400c4de'::uuid, 'Safu', 'safu', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.036');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('1e4b092c-b896-42bb-ab1a-799b3886bbcb'::uuid, 'Santa Salut', 'santa salut', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.037');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('6a64be91-2d0a-409b-aa45-605a08d0fcfa'::uuid, 'Sedientos de Cumbia', 'sedientos de cumbia', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.038');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('714c877d-de32-493d-96ea-79673fec2bd6'::uuid, 'Skabidean', 'skabidean', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.040');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('ceaafd2f-9f4e-42b3-9f2b-d7094f1aeaa4'::uuid, 'Sustrai Berriak', 'sustrai berriak', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.041');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('87b08520-56a2-40df-bdf0-d98fc4383d5a'::uuid, 'Tatta', 'tatta', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.043');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('1c932209-8c83-4e70-ae56-2522a4056b8c'::uuid, 'Xiber Roots', 'xiber roots', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.044');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('ac2672e3-221c-411b-b109-5cecf0146010'::uuid, 'Aida Blanco', 'aida blanco', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.045');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('8fbadc20-79a3-4735-b0e9-d516e67fde32'::uuid, 'Azken Erromantikoak', 'azken erromantikoak', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.047');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('95ee73cd-0764-42c4-a04f-a15726532de3'::uuid, 'Brava', 'brava', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.048');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('08f72f85-94a6-4b23-ab8d-669522b7fb1d'::uuid, 'Carlos Perez', 'carlos perez', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.049');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('94b6f1a4-da74-4ab7-8aed-fceeadecafc1'::uuid, 'Guate-k', 'guate k', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.050');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('0fef1170-e990-4fa5-b3b4-3045373dc2ef'::uuid, 'Iskra Selektor', 'iskra selektor', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.051');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('0b1d3939-c199-4cab-a440-05443bc97d71'::uuid, 'Lobas', 'lobas', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.053');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('e9167110-56cd-4908-8c54-52e669b7d7fb'::uuid, 'Malandro', 'malandro', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.054');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('37129a09-f004-4138-855a-5dcb94bd6df1'::uuid, 'MdM', 'mdm', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.056');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('189e9be6-023f-410e-89ad-ea2b0d2eac92'::uuid, 'Mario Boss', 'mario boss', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.057');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('f7cb0e78-ec27-42fc-8750-3413cbf8893d'::uuid, 'Nelson', 'nelson', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.058');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('e990a3ae-b41a-4d2c-aed1-b95b6da4ae0f'::uuid, 'Pineapple Sweets', 'pineapple sweets', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.059');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('47fee2dc-688a-4e56-b42a-35bbd9b3305d'::uuid, 'Posse', 'posse', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.060');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('93cef067-6b1b-487a-b50c-e91b86904dfe'::uuid, 'Noetika', 'noetika', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.062');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b95f34d4-50ee-4e34-820b-3a3dbdfaf47f'::uuid, 'Reimy', 'reimy', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.063');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('bea588c6-f223-4445-ba54-0ab84484c138'::uuid, 'Rosa Mari', 'rosa mari', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.065');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('5a3ac7f8-4893-4a40-b093-c82b9d411879'::uuid, 'Saturday''s kids', 'saturday s kids', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.066');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('a70cbfd8-768c-41f6-922a-e50825172cfe'::uuid, 'Wary', 'wary', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 12:55:35.068');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('96a23bee-71ff-4638-8d35-e742163c8ab8'::uuid, 'Galletazo', 'galletazo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 13:10:22.323');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('e2ee7e68-5ce6-4089-840d-56da95a2f93d'::uuid, 'Sentinel', 'sentinel', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 13:13:29.929');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('064821ca-a79d-4837-9c7c-410a64e8d009'::uuid, 'The bustard band', 'the bustard band', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 13:13:29.931');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('d393875a-928c-424c-be3a-03a0a590f8a6'::uuid, 'Agua rata', 'agua rata', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 13:10:22.320');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('02b98fa6-5667-4466-9b27-da07287cf437'::uuid, 'Me fritos and gimme cheetos', 'me fritos and gimme cheetos', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 13:10:22.324');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('f0d3fd8c-0c99-49d5-bd8a-ded2b68f83d4'::uuid, 'Anarkohollika', 'anarkohollika', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 13:13:29.924');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('106471e5-1690-4d1c-a8e8-674bb87cc0fb'::uuid, 'Non Servium', 'non servium', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 14:56:17.892');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('2eec50ae-2d0a-4e32-b660-e7c93315c69e'::uuid, 'O''funkillo', 'o funkillo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 14:56:17.896');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('4e9d00b7-7001-46c9-8ddf-4d8a4c4d341f'::uuid, 'Bala', 'bala', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 14:56:17.898');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('c723b709-6b2e-4b8a-939a-6e8aae6c29e6'::uuid, 'Parquesvr', 'parquesvr', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 14:56:17.899');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('63202736-dc02-4a52-b92f-a1e654ab7a2e'::uuid, 'The Casualities', 'the casualities', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 14:56:17.901');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('f8b49052-ebaf-41bf-83ed-80798ef23147'::uuid, 'Niña Coyote eta Chico Tornado', 'nina coyote eta chico tornado', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 14:56:17.902');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('8d92caf2-9980-4509-88e3-775c7af527ed'::uuid, 'Annacrusa', 'annacrusa', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 14:56:17.905');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('62081383-be08-4c74-b228-c972f487b5a3'::uuid, 'Lady Mambo', 'lady mambo', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 14:56:17.907');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('0b96c952-fa82-4e07-b19d-8aeddff1a30d'::uuid, 'Perkele', 'perkele', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 16:53:44.679');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('7a3551b4-9a5a-42fd-a858-ef9c5b721372'::uuid, 'The Rumjacks', 'the rumjacks', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 16:53:44.684');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('fb58c450-718d-45e9-b5a2-116d609e1056'::uuid, 'Cockney Rejects', 'cockney rejects', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 16:53:44.686');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('83117a78-885d-4341-89e7-83a566dfb434'::uuid, 'Arene 6', 'arene 6', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 16:53:44.687');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('41c687d8-f84d-427d-870e-335d81ceb7be'::uuid, 'Lion''s Law', 'lion s law', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 16:53:44.689');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('c6d7be28-170b-4b69-aba8-3126c7b0196b'::uuid, 'Keltoi', 'keltoi', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 16:53:44.690');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('58e9d181-b2f0-463c-8057-9cb24ffd32f3'::uuid, 'Ruxe Ruxe', 'ruxe ruxe', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 16:53:44.692');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('b0fd77b0-819e-4ed5-860d-da57deb8c703'::uuid, 'Jordi Panico', 'jordi panico', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 16:53:44.694');
+INSERT INTO artists (id, "name", slug, created_by_user_id, created_at) VALUES('15399977-71bd-4b25-8739-25710c2d4341'::uuid, 'Spidikflotes', 'spidikflotes', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, '2026-03-30 13:13:29.927');
 
 
 -- ============================================================
 -- Seed events
 -- ============================================================
-INSERT INTO events (
-    id,
-    title,
-    start_date_time,
-    end_date_time,
-    venue_name,
-    venue_slug,
-    province_id,
-    city_name,
-    city_slug,
-    status,
-    source_url,
-    created_by_user_id,
-    moderation_message,
-    submitted_at,
-    moderated_at,
-    moderated_by_user_id
-) VALUES
--- =========================
--- PENDING_MODERATION (5)
--- =========================
-    (
-        'b0000000-0000-0000-0000-000000000001',
-        'Against You en Wurlitzer Ballroom',
-        '2026-03-06T21:30:00+01:00',
-        NULL,
-        'Wurlitzer Ballroom',
-        'wurlitzer ballroom',
-        '5fa896db-2248-5328-b3a5-9e1210ed71cc',
-        'Madrid',
-        'madrid',
-        'PENDING_MODERATION',
-        'https://example.com/ay-wurlitzer',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        NULL,
-        '2026-02-10T10:15:00+01:00',
-        NULL,
-        NULL
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000002',
-        'Vagos Permanentes + No Konforme',
-        '2026-03-12T20:00:00+01:00',
-        NULL,
-        'Sala Upload',
-        'sala upload',
-        '8b3deecc-e949-5299-8916-8400146fa19c',
-        'Barcelona',
-        'barcelona',
-        'PENDING_MODERATION',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Pendiente de confirmar cartel definitivo.',
-        '2026-02-10T11:00:00+01:00',
-        NULL,
-        NULL
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000003',
-        'El Reno Renardo (show acústico)',
-        '2026-04-02T19:30:00+01:00',
-        NULL,
-        'La Riviera (Sala 2)',
-        'la riviera sala 2',
-        '5fa896db-2248-5328-b3a5-9e1210ed71cc',
-        'Madrid',
-        'madrid',
-        'PENDING_MODERATION',
-        'https://example.com/reno-acustico',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        NULL,
-        '2026-02-11T09:05:00+01:00',
-        NULL,
-        NULL
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000004',
-        'The Qemists + Yakovlev 42',
-        '2026-03-20T20:30:00+01:00',
-        NULL,
-        'Sala Gamma',
-        'sala gamma',
-        '3e7e28d8-f5e8-5678-8370-a6d4fd8eff0a',
-        'Valencia',
-        'valencia',
-        'PENDING_MODERATION',
-        'https://example.com/qemists-valencia',
-        'aaaaaaaa-0000-0000-0000-000000000001',
-        'Revisión rápida hecha, falta validar enlace.',
-        '2026-02-11T12:00:00+01:00',
-        '2026-02-11T12:30:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000005',
-        'Narco en Garaje Beat Club',
-        '2026-03-28T22:00:00+01:00',
-        NULL,
-        'Garaje Beat Club',
-        'garaje beat club',
-        'de2fdf55-ef53-58da-8378-fcc90bdb8667',
-        'Murcia',
-        'murcia',
-        'PENDING_MODERATION',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000002',
-        NULL,
-        '2026-02-12T08:20:00+01:00',
-        '2026-02-12T09:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
--- =========================
--- APPROVED (5)
--- =========================
-    (
-        'b0000000-0000-0000-0000-000000000006',
-        'Boikot en La Nau',
-        '2026-03-14T21:00:00+01:00',
-        NULL,
-        'La Nau',
-        'la nau',
-        '3e7e28d8-f5e8-5678-8370-a6d4fd8eff0a',
-        'Valencia',
-        'valencia',
-        'APPROVED',
-        'https://example.com/boikot-nau',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Aprobado. Datos correctos y enlace válido.',
-        '2026-02-10T09:10:00+01:00',
-        '2026-02-10T12:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000007',
-        'Dubioza Kolektiv en Razzmatazz',
-        '2026-03-22T20:00:00+01:00',
-        NULL,
-        'Razzmatazz',
-        'razzmatazz',
-        '8b3deecc-e949-5299-8916-8400146fa19c',
-        'Barcelona',
-        'barcelona',
-        'APPROVED',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Aprobado. Falta URL, pero no es obligatoria.',
-        '2026-02-10T10:00:00+01:00',
-        '2026-02-10T12:40:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000008',
-        'Sabaton en WiZink Center',
-        '2026-05-09T19:30:00+01:00',
-        NULL,
-        'WiZink Center',
-        'wizink center',
-        '5fa896db-2248-5328-b3a5-9e1210ed71cc',
-        'Madrid',
-        'madrid',
-        'APPROVED',
-        'https://example.com/sabaton-wizink',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Aprobado. Evento creado sin usuario asociado (import).',
-        '2026-02-09T18:00:00+01:00',
-        '2026-02-09T20:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000009',
-        'Mamá Ladilla en Hangar 48',
-        '2026-04-18T21:30:00+01:00',
-        NULL,
-        'Hangar 48',
-        'hangar 48',
-        'e1154139-7ffa-50be-825c-4bfa34083a7d',
-        'Guadalajara',
-        'guadalajara',
-        'APPROVED',
-        'https://example.com/mama-ladilla-gdl',
-        'aaaaaaaa-0000-0000-0000-000000000002',
-        'Aprobado. Correcto.',
-        '2026-02-11T08:00:00+01:00',
-        '2026-02-11T10:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000000a',
-        'Orri Berdea en Kafe Antzokia',
-        '2026-03-07T22:00:00+01:00',
-        NULL,
-        'Kafe Antzokia',
-        'kafe antzokia',
-        'aa962870-db30-5966-8550-66535f02641f',
-        'Bilbao',
-        'bilbao',
-        'APPROVED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Aprobado.',
-        '2026-02-10T16:30:00+01:00',
-        '2026-02-10T18:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
--- =========================
--- REJECTED (5)
--- =========================
-    (
-        'b0000000-0000-0000-0000-00000000000b',
-        'Mocow Death Brigade en Sala Nébula',
-        '2026-03-01T20:30:00+01:00',
-        NULL,
-        'Sala Nébula',
-        'sala nebula',
-        'be8a4759-c129-51c2-8a32-75b0c63b28b1',
-        'Albacete',
-        'albacete',
-        'REJECTED',
-        'https://example.com/mocow-albacete',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Rechazado: el enlace no corresponde al evento.',
-        '2026-02-09T10:00:00+01:00',
-        '2026-02-09T12:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000000c',
-        'Brutus'' Daughters en La Fábrica',
-        '2026-04-03T21:00:00+01:00',
-        NULL,
-        'La Fábrica',
-        'la fabrica',
-        '041ac027-1573-53eb-94f6-ff307f26fdeb',
-        'Cáceres',
-        'caceres',
-        'REJECTED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000001',
-        'Rechazado: faltan datos mínimos (sala confirmada).',
-        '2026-02-10T08:40:00+01:00',
-        '2026-02-10T09:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000000d',
-        'Manifa en Sala 12',
-        '2026-03-19T21:30:00+01:00',
-        NULL,
-        'Sala 12',
-        'sala 12',
-        '7afc87ed-2ceb-5f4f-a483-a94e8d0379a0',
-        'Almería',
-        'almeria',
-        'REJECTED',
-        'https://example.com/manifa-almeria',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Rechazado: fecha dudosa / fuente no verificable.',
-        '2026-02-10T09:00:00+01:00',
-        '2026-02-10T10:30:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000000e',
-        'No Konforme en Centro Cívico',
-        '2026-03-26T19:00:00+01:00',
-        NULL,
-        'Centro Cívico',
-        'centro civico',
-        '9806be9f-a3fd-563d-bed6-ed8488162309',
-        'Palencia',
-        'palencia',
-        'REJECTED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Rechazado: no es un evento musical (según fuente).',
-        '2026-02-11T14:10:00+01:00',
-        '2026-02-11T16:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000000f',
-        'Lendakaris Muertos en La Sala',
-        '2026-04-25T20:30:00+01:00',
-        NULL,
-        'La Sala',
-        'la sala',
-        '1c04affa-abad-5dbb-9780-67dc4d993ce2',
-        'Burgos',
-        'burgos',
-        'REJECTED',
-        'https://example.com/lendakaris-burgos',
-        'aaaaaaaa-0000-0000-0000-000000000002',
-        'Rechazado: duplicado de otro evento ya publicado.',
-        '2026-02-12T09:20:00+01:00',
-        '2026-02-12T10:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
--- =========================
--- NEEDS_CHANGES (5)
--- =========================
-    (
-        'b0000000-0000-0000-0000-000000000010',
-        'Vagos Permanentes en Totem',
-        '2026-03-15T20:30:00+01:00',
-        NULL,
-        'Totem',
-        'totem',
-        '7b181d37-4990-5e4f-9533-b914a3fd9fd1',
-        'Vitoria-Gasteiz',
-        'vitoria gasteiz',
-        'NEEDS_CHANGES',
-        'https://example.com/vagos-totem',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Necesita cambios: confirma dirección/recinto y hora.',
-        '2026-02-10T13:10:00+01:00',
-        '2026-02-10T15:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000011',
-        'Against You + Loncha Velasco',
-        '2026-03-21T21:00:00+01:00',
-        NULL,
-        'Sala Planta Baja',
-        'sala planta baja',
-        '7afc87ed-2ceb-5f4f-a483-a94e8d0379a0',
-        'Almería',
-        'almeria',
-        'NEEDS_CHANGES',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Necesita cambios: añade fuente o URL.',
-        '2026-02-11T09:30:00+01:00',
-        '2026-02-11T11:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000012',
-        'Narco en Sala Sótano',
-        '2026-04-11T22:00:00+01:00',
-        NULL,
-        'Sala Sótano',
-        'sala sotano',
-        '819c298c-deba-5d33-8080-c84e497e32f6',
-        'Alicante',
-        'alicante',
-        'NEEDS_CHANGES',
-        'https://example.com/narco-alicante',
-        'aaaaaaaa-0000-0000-0000-000000000001',
-        'Necesita cambios: el enlace no abre / revisa.',
-        '2026-02-11T12:10:00+01:00',
-        '2026-02-11T12:40:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000013',
-        'Boikot (horario por confirmar)',
-        '2026-03-30T20:00:00+01:00',
-        NULL,
-        'Sala Bunker',
-        'sala bunker',
-        '212d12cb-d66d-5c7e-b719-0445098ec896',
-        'Zamora',
-        'zamora',
-        'NEEDS_CHANGES',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Necesita cambios: indica hora exacta o rango.',
-        '2026-02-12T08:40:00+01:00',
-        '2026-02-12T09:20:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000014',
-        'Yakovlev 42 en Sala Nido',
-        '2026-03-08T19:30:00+01:00',
-        NULL,
-        'Sala Nido',
-        'sala nido',
-        '8b3deecc-e949-5299-8916-8400146fa19c',
-        'Barcelona',
-        'barcelona',
-        'NEEDS_CHANGES',
-        'https://example.com/yakovlev-nido',
-        'aaaaaaaa-0000-0000-0000-000000000002',
-        'Necesita cambios: confirma ciudad/recinto (posible error).',
-        '2026-02-12T10:10:00+01:00',
-        '2026-02-12T11:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
--- =========================
--- HIDDEN (5)
--- =========================
-    (
-        'b0000000-0000-0000-0000-000000000015',
-        'El Reno Renardo en Pub Kraken',
-        '2026-04-04T23:00:00+01:00',
-        NULL,
-        'Pub Kraken',
-        'pub kraken',
-        'e1154139-7ffa-50be-825c-4bfa34083a7d',
-        'Guadalajara',
-        'guadalajara',
-        'HIDDEN',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Oculto: evento sensible / pendiente de verificación extra.',
-        '2026-02-10T17:00:00+01:00',
-        '2026-02-10T18:30:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000016',
-        'Manifa en Sala Caverna',
-        '2026-03-29T21:30:00+01:00',
-        NULL,
-        'Sala Caverna',
-        'sala caverna',
-        'de2fdf55-ef53-58da-8378-fcc90bdb8667',
-        'Murcia',
-        'murcia',
-        'HIDDEN',
-        'https://example.com/manifa-murcia',
-        'aaaaaaaa-0000-0000-0000-000000000001',
-        'Oculto: detectado conflicto con otro listado.',
-        '2026-02-11T08:10:00+01:00',
-        '2026-02-11T09:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000017',
-        'Mocow Death Brigade en Ateneo',
-        '2026-03-18T20:00:00+01:00',
-        NULL,
-        'Ateneo',
-        'ateneo',
-        '041ac027-1573-53eb-94f6-ff307f26fdeb',
-        'Cáceres',
-        'caceres',
-        'HIDDEN',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Oculto: fuente no fiable, revisar antes de publicar.',
-        '2026-02-11T10:00:00+01:00',
-        '2026-02-11T12:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000018',
-        'Dubioza Kolektiv en Sala Delta',
-        '2026-03-27T22:00:00+01:00',
-        NULL,
-        'Sala Delta',
-        'sala delta',
-        'be8a4759-c129-51c2-8a32-75b0c63b28b1',
-        'Albacete',
-        'albacete',
-        'HIDDEN',
-        'https://example.com/dubioza-albacete',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Oculto: duplicado parcial / revisar datos.',
-        '2026-02-12T09:00:00+01:00',
-        '2026-02-12T10:30:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000019',
-        'Orri Berdea en Gaztetxe',
-        '2026-04-17T21:30:00+01:00',
-        NULL,
-        'Gaztetxe',
-        'gaztetxe',
-        'aa962870-db30-5966-8550-66535f02641f',
-        'Bilbao',
-        'bilbao',
-        'HIDDEN',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000002',
-        'Oculto: falta confirmación del recinto.',
-        '2026-02-12T12:00:00+01:00',
-        '2026-02-12T13:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
--- =========================
--- CANCELED (5)
--- =========================
-    (
-        'b0000000-0000-0000-0000-00000000001a',
-        'Narco en Sala Riff (CANCELADO)',
-        '2026-03-10T22:00:00+01:00',
-        NULL,
-        'Sala Riff',
-        'sala riff',
-        '819c298c-deba-5d33-8080-c84e497e32f6',
-        'Alicante',
-        'alicante',
-        'CANCELED',
-        'https://example.com/narco-riff',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Cancelado por el autor: cambios de gira.',
-        '2026-02-10T08:20:00+01:00',
-        '2026-02-10T09:20:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000001b',
-        'Boikot en Sala Humo (CANCELADO)',
-        '2026-04-09T21:00:00+01:00',
-        NULL,
-        'Sala Humo',
-        'sala humo',
-        '7afc87ed-2ceb-5f4f-a483-a94e8d0379a0',
-        'Almería',
-        'almeria',
-        'CANCELED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000001',
-        'Cancelado por el autor: recinto no disponible.',
-        '2026-02-11T09:00:00+01:00',
-        '2026-02-11T09:40:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000001c',
-        'Against You en El Búnker (CANCELADO)',
-        '2026-03-16T20:30:00+01:00',
-        NULL,
-        'El Búnker',
-        'el bunker',
-        '1c04affa-abad-5dbb-9780-67dc4d993ce2',
-        'Burgos',
-        'burgos',
-        'CANCELED',
-        'https://example.com/ay-bunker',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Cancelado por el autor: motivos personales.',
-        '2026-02-11T12:00:00+01:00',
-        '2026-02-11T13:30:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000001d',
-        'Vagos Permanentes en La Sala (CANCELADO)',
-        '2026-03-24T21:00:00+01:00',
-        NULL,
-        'La Sala',
-        'la sala 2',
-        '5fa896db-2248-5328-b3a5-9e1210ed71cc',
-        'Madrid',
-        'madrid',
-        'CANCELED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000002',
-        'Cancelado por el autor: cambio de fecha pendiente.',
-        '2026-02-12T08:00:00+01:00',
-        '2026-02-12T08:30:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-00000000001e',
-        'Mamá Ladilla en Sala Metrónomo (CANCELADO)',
-        '2026-04-26T20:00:00+01:00',
-        NULL,
-        'Sala Metrónomo',
-        'sala metronomo',
-        'e1154139-7ffa-50be-825c-4bfa34083a7d',
-        'Guadalajara',
-        'guadalajara',
-        'CANCELED',
-        'https://example.com/mama-metronomo',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Cancelado por el autor: se pospone a nueva fecha.',
-        '2026-02-12T09:10:00+01:00',
-        '2026-02-12T09:50:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
--- =========================
--- ERASED (5)
--- =========================
-    (
-        'b0000000-0000-0000-0000-00000000001f',
-        'Evento borrado: Sabaton (test)',
-        '2026-03-05T20:00:00+01:00',
-        NULL,
-        'Sala Test',
-        'sala test 1',
-        '212d12cb-d66d-5c7e-b719-0445098ec896',
-        'Zamora',
-        'zamora',
-        'ERASED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Borrado por el autor (ERASED).',
-        '2026-02-10T07:00:00+01:00',
-        '2026-02-10T07:30:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000020',
-        'Evento borrado: The Qemists (test)',
-        '2026-03-09T21:00:00+01:00',
-        NULL,
-        'Sala Test',
-        'sala test 2',
-        '041ac027-1573-53eb-94f6-ff307f26fdeb',
-        'Cáceres',
-        'caceres',
-        'ERASED',
-        'https://example.com/qemists-test',
-        'aaaaaaaa-0000-0000-0000-000000000001',
-        'Borrado por el autor (ERASED).',
-        '2026-02-10T07:10:00+01:00',
-        '2026-02-10T07:50:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000021',
-        'Evento borrado: No Konforme (test)',
-        '2026-03-11T19:30:00+01:00',
-        NULL,
-        'Sala Test',
-        'sala test 3',
-        '9806be9f-a3fd-563d-bed6-ed8488162309',
-        'Palencia',
-        'palencia',
-        'ERASED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Borrado por el autor (ERASED).',
-        '2026-02-10T07:20:00+01:00',
-        '2026-02-10T08:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000022',
-        'Evento borrado: Yakovlev 42 (test)',
-        '2026-03-13T20:00:00+01:00',
-        NULL,
-        'Sala Test',
-        'sala test 4',
-        '7b181d37-4990-5e4f-9533-b914a3fd9fd1',
-        'Vitoria-Gasteiz',
-        'vitoria gasteiz',
-        'ERASED',
-        'https://example.com/y42-test',
-        'aaaaaaaa-0000-0000-0000-000000000002',
-        'Borrado por el autor (ERASED).',
-        '2026-02-10T07:30:00+01:00',
-        '2026-02-10T08:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000023',
-        'Evento borrado: Loncha Velasco (test)',
-        '2026-03-17T21:30:00+01:00',
-        NULL,
-        'Sala Test',
-        'sala test 5',
-        '819c298c-deba-5d33-8080-c84e497e32f6',
-        'Alicante',
-        'alicante',
-        'ERASED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Borrado por el autor (ERASED).',
-        '2026-02-10T07:40:00+01:00',
-        '2026-02-10T08:20:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
--- =========================
--- FESTIVALES multi-día
--- =========================
-    (
-        'b0000000-0000-0000-0000-000000000024',
-        'Festival Ruido Norte 2026',
-        '2026-06-12T17:00:00+01:00',
-        '2026-06-14T23:30:00+01:00',
-        'Recinto Ferial',
-        'recinto ferial bilbao',
-        'aa962870-db30-5966-8550-66535f02641f',
-        'Bilbao',
-        'bilbao',
-        'APPROVED',
-        'https://example.com/festival-ruido-norte',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Aprobado. Festival multi-día verificado.',
-        '2026-02-11T16:00:00+01:00',
-        '2026-02-11T18:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000025',
-        'Festival Asfalto y Risas 2026',
-        '2026-07-03T18:00:00+01:00',
-        '2026-07-04T23:00:00+01:00',
-        'Parque de la Música',
-        'parque de la musica madrid',
-        '5fa896db-2248-5328-b3a5-9e1210ed71cc',
-        'Madrid',
-        'madrid',
-        'NEEDS_CHANGES',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Necesita cambios: añade fuente oficial del festival.',
-        '2026-02-12T10:00:00+01:00',
-        '2026-02-12T11:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000026',
-        'Festival Brutal Weekend 2026',
-        '2026-08-21T16:30:00+01:00',
-        '2026-08-23T23:59:00+01:00',
-        'Recinto Industrial',
-        'recinto industrial barcelona',
-        '8b3deecc-e949-5299-8916-8400146fa19c',
-        'Barcelona',
-        'barcelona',
-        'HIDDEN',
-        'https://example.com/festival-brutal-weekend',
-        'aaaaaaaa-0000-0000-0000-000000000003',
-        'Oculto: revisar edad mínima y permisos.',
-        '2026-02-12T12:30:00+01:00',
-        '2026-02-12T13:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000027',
-        'Festival Costa Distorsión 2026',
-        '2026-07-17T18:00:00+01:00',
-        '2026-07-19T23:30:00+01:00',
-        'Auditorio al Aire Libre',
-        'auditorio aire libre alicante',
-        '819c298c-deba-5d33-8080-c84e497e32f6',
-        'Alicante',
-        'alicante',
-        'CANCELED',
-        'https://example.com/festival-costa-distorsion',
-        'aaaaaaaa-0000-0000-0000-000000000001',
-        'Cancelado por el autor: cancelación de recinto.',
-        '2026-02-12T14:00:00+01:00',
-        '2026-02-12T15:00:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000002'
-    ),
-    (
-        'b0000000-0000-0000-0000-000000000028',
-        'Festival Gira Sorpresa (borrado)',
-        '2026-05-22T18:00:00+01:00',
-        '2026-05-24T23:00:00+01:00',
-        'Recinto Multiusos',
-        'recinto multiusos murcia',
-        'de2fdf55-ef53-58da-8378-fcc90bdb8667',
-        'Murcia',
-        'murcia',
-        'ERASED',
-        NULL,
-        'aaaaaaaa-0000-0000-0000-000000000002',
-        'Borrado por el autor (ERASED).',
-        '2026-02-12T15:30:00+01:00',
-        '2026-02-12T16:10:00+01:00',
-        'aaaaaaaa-0000-0000-0000-000000000001'
-    )
-;
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'Tresparock', NULL, '2026-07-16 18:22:00.000', '2026-07-19 23:22:00.000', 'Tresparock', 'tresparock', '1c04affa-abad-5dbb-9780-67dc4d993ce2'::uuid, 'Trespaderne', 'trespaderne', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 01:28:21.920', '2026-03-30 02:04:49.050', 'tresparock tresparock tresparock trespaderne trespaderne narco periferia segismundo toxicomano deaf devils rat-zinger the eskarallas kalerizo skontra nucleo terco trashtucada kop la trapera chuleria,joder! au d''asti the covids ktolicos diegovision moonshine wagon txarangazo deklibe', '''asti'':25B ''au'':23B ''chuleria'':21B ''covids'':27B ''d'':24B ''deaf'':6B ''deklibe'':33B ''devils'':7B ''diegovision'':29B ''eskarallas'':12B ''joder'':22B ''kalerizo'':13B ''kop'':18B ''ktolicos'':28B ''la'':19B ''moonshine'':30B ''narco'':2B ''nucleo'':15B ''periferia'':3B ''rat'':9B ''rat-zinger'':8B ''segismundo'':4B ''skontra'':14B ''terco'':16B ''the'':11B,26B ''toxicomano'':5B ''trapera'':20B ''trashtucada'':17B ''trespadern'':35B ''trespaderne'':37C ''tresparock'':1A,34B,36C ''txarangazo'':32B ''wagon'':31B ''zinger'':10B'::tsvector, '2026-03-30 01:28:21.919', '2026-03-30 02:04:49.043', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 2, NULL, 'https://storage.rockalendar.es/rockalendar/posters/d79cdda0-1c23-4336-8275-70a41ef1b521/f37f15aa-4b40-46e9-8715-5de015122046.jpg', 'posters/d79cdda0-1c23-4336-8275-70a41ef1b521/f37f15aa-4b40-46e9-8715-5de015122046.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('68b27c5f-22cc-403c-8185-a494fed991b4'::uuid, 'Antorcha', 'Edición somos la polla', '2026-05-09 20:07:00.000', NULL, 'Pabellón Bayas', 'pabellon bayas', '1c04affa-abad-5dbb-9780-67dc4d993ce2'::uuid, 'Miranda de Ebro', 'miranda de ebro', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 01:11:29.455', '2026-03-30 01:56:55.703', 'antorcha pabellon bayas pabellon bayas miranda de ebro miranda de ebro manifa loncha velasco maldito matas parabellum evaristo josetxu piperrak', '''antorch'':1A ''bay'':12B ''bayas'':17C ''de'':19C ''ebro'':15B,20C ''edicion'':21 ''evaristo'':8B ''josetxu'':9B ''loncha'':3B ''maldito'':5B ''manifa'':2B ''matas'':6B ''mirand'':13B ''miranda'':18C ''pabellon'':11B,16C ''parabellum'':7B ''piperrak'':10B ''poll'':24 ''velasco'':4B'::tsvector, '2026-03-30 01:11:29.455', '2026-03-30 01:56:55.687', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 2, NULL, 'https://storage.rockalendar.es/rockalendar/posters/68b27c5f-22cc-403c-8185-a494fed991b4/62e52454-7e75-4d16-88d0-094d19cd6204.jpg', 'posters/68b27c5f-22cc-403c-8185-a494fed991b4/62e52454-7e75-4d16-88d0-094d19cd6204.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, 'Miranda Urban', NULL, '2026-04-10 01:06:00.000', NULL, 'Fabrica de tornillos', 'fabrica de tornillos', '1c04affa-abad-5dbb-9780-67dc4d993ce2'::uuid, 'Miranda de Ebro', 'miranda de ebro', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 01:07:51.600', '2026-03-30 08:49:54.279', 'miranda urban fabrica de tornillos fabrica de tornillos miranda de ebro miranda de ebro boikot pubic enemy sentido critico n-wise allah nico miseria la reina mora break the senses mindruss', '''allah'':11B ''boikot'':3B ''break'':17B ''critico'':7B ''de'':28C,31C ''ebro'':26B,32C ''enemy'':5B ''fabric'':21B ''fabrica'':27C ''la'':14B ''mindruss'':20B ''mirand'':1A,24B ''miranda'':30C ''miseria'':13B ''mora'':16B ''n'':9B ''n-wise'':8B ''nico'':12B ''pubic'':4B ''reina'':15B ''senses'':19B ''sentido'':6B ''the'':18B ''tornill'':23B ''tornillos'':29C ''urban'':2A ''wise'':10B'::tsvector, '2026-03-30 02:02:28.118', '2026-03-30 08:49:54.274', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 5, NULL, 'https://storage.rockalendar.es/rockalendar/posters/d10ae205-3cf6-4bea-80c4-3c3c43f14225/7d0d9d0f-d139-4c27-ab1e-256daf429f42.jpg', 'posters/d10ae205-3cf6-4bea-80c4-3c3c43f14225/7d0d9d0f-d139-4c27-ab1e-256daf429f42.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('eb726b86-9e41-47f3-be06-060859a763de'::uuid, 'Bombartaker', NULL, '2026-04-18 12:00:00.000', NULL, 'Parque O''donnell', 'parque o donnell', '5fa896db-2248-5328-b3a5-9e1210ed71cc'::uuid, 'Alcala de Henares', 'alcala de henares', 'NEEDS_CHANGES', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, 'Rellena todos los grupos q faltan', '2026-03-30 13:10:22.341', '2026-03-30 13:15:37.659', 'bombartaker parque o''donnell parque o donnell alcala de henares alcala de henares vagos permanentes galletazo agua rata me fritos and gimme cheetos', '''agua'':5B ''alcal'':15B ''alcala'':21C ''and'':9B ''bombartak'':1A ''cheetos'':11B ''de'':22C ''donnell'':14B,20C ''fritos'':8B ''galletazo'':4B ''gimme'':10B ''henar'':17B ''henares'':23C ''me'':7B ''o'':19C ''parqu'':12B ''parque'':18C ''permanentes'':3B ''rata'':6B ''vagos'':2B'::tsvector, '2026-03-30 13:10:22.341', '2026-03-30 13:15:37.650', 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, 2, NULL, 'https://storage.rockalendar.es/rockalendar/posters/eb726b86-9e41-47f3-be06-060859a763de/4199ba1c-38dc-4656-a4fa-947129780dfa.jpg', 'posters/eb726b86-9e41-47f3-be06-060859a763de/4199ba1c-38dc-4656-a4fa-947129780dfa.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('62a1aa57-bad6-4b32-9ffc-b86a75086618'::uuid, 'San Jorge', NULL, '2026-04-11 21:11:00.000', NULL, 'Polideportivo municipal', 'polideportivo municipal', '9b9fca1d-e880-59d5-b12c-0bda1661aa50'::uuid, 'Borja', 'borja', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 01:15:00.840', '2026-03-30 02:00:42.376', 'san jorge polideportivo municipal polideportivo municipal borja borja manifa arpaviejas segismundo toxicomano distorsion la misa del gayo', '''arpaviejas'':4B ''borj'':14B ''borja'':17C ''del'':10B ''distorsion'':7B ''gayo'':11B ''jorg'':2A ''la'':8B ''manifa'':3B ''misa'':9B ''municipal'':13B,16C ''polideport'':12B ''polideportivo'':15C ''san'':1A ''segismundo'':5B ''toxicomano'':6B'::tsvector, '2026-03-30 01:15:00.840', '2026-03-30 02:00:42.369', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 2, NULL, 'https://storage.rockalendar.es/rockalendar/posters/62a1aa57-bad6-4b32-9ffc-b86a75086618/ab8d926d-6442-4bb6-a88c-92b229575941.jpg', 'posters/62a1aa57-bad6-4b32-9ffc-b86a75086618/ab8d926d-6442-4bb6-a88c-92b229575941.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('1392c270-ffcf-45a1-802e-7a3013f96977'::uuid, 'Risas refugiadas', '1:44
 
-INSERT INTO event_artists (event_id, artist_id) VALUES
--- PENDING
-	('b0000000-0000-0000-0000-000000000001','028422f0-a8df-4540-b209-f590ab4e2e42'),
-	('b0000000-0000-0000-0000-000000000002','01b7cab7-0eb9-4cdb-9f39-0d730132d9b3'),
-	('b0000000-0000-0000-0000-000000000002','285b793a-4b84-47a5-a0d2-873426aa22fd'),
-	('b0000000-0000-0000-0000-000000000003','a8ef6ceb-e0e4-45ed-bacb-752b33c9a0cf'),
-	('b0000000-0000-0000-0000-000000000004','fca0d136-3fd2-479f-b769-ae54a37c908f'),
-	('b0000000-0000-0000-0000-000000000004','41dbbcc8-b183-424d-82e3-7eccce5f4b99'),
-	('b0000000-0000-0000-0000-000000000005','0113154f-e16f-4159-ac47-8a20b679108b'),
--- APPROVED
-	('b0000000-0000-0000-0000-000000000006','44859cef-4b07-49a0-9507-324719d9f1d0'),
-	('b0000000-0000-0000-0000-000000000007','8598fc29-ebbf-47b6-bae9-3bddf689eb4c'),
-	('b0000000-0000-0000-0000-000000000008','f40a8764-c5da-464d-a4b5-efaccb18500f'),
-	('b0000000-0000-0000-0000-000000000009','77be2405-76f3-4cdb-bf45-1829e3901725'),
-	('b0000000-0000-0000-0000-00000000000a','944f21a9-eef3-4375-a391-6f751c4a2de0'),
--- REJECTED
-	('b0000000-0000-0000-0000-00000000000b','0031a90f-6413-497b-ad2e-eb90ac05fb87'),
-	('b0000000-0000-0000-0000-00000000000c','e0b2ac75-2b81-4c0f-a49f-6741aa4769a5'),
-	('b0000000-0000-0000-0000-00000000000d','9871259c-a4c7-45db-b612-d1b97a515c0a'),
-	('b0000000-0000-0000-0000-00000000000e','285b793a-4b84-47a5-a0d2-873426aa22fd'),
-	('b0000000-0000-0000-0000-00000000000f','434f0090-fd6f-4c81-9d66-6989f7cee2d5'),
--- NEEDS_CHANGES
-	('b0000000-0000-0000-0000-000000000010','01b7cab7-0eb9-4cdb-9f39-0d730132d9b3'),
-	('b0000000-0000-0000-0000-000000000011','028422f0-a8df-4540-b209-f590ab4e2e42'),
-	('b0000000-0000-0000-0000-000000000011','ef36d07b-63a9-45d1-bf9c-2ea7e1c21ab2'),
-	('b0000000-0000-0000-0000-000000000012','0113154f-e16f-4159-ac47-8a20b679108b'),
-	('b0000000-0000-0000-0000-000000000013','44859cef-4b07-49a0-9507-324719d9f1d0'),
-	('b0000000-0000-0000-0000-000000000014','41dbbcc8-b183-424d-82e3-7eccce5f4b99'),
--- HIDDEN
-	('b0000000-0000-0000-0000-000000000015','a8ef6ceb-e0e4-45ed-bacb-752b33c9a0cf'),
-	('b0000000-0000-0000-0000-000000000016','9871259c-a4c7-45db-b612-d1b97a515c0a'),
-	('b0000000-0000-0000-0000-000000000017','0031a90f-6413-497b-ad2e-eb90ac05fb87'),
-	('b0000000-0000-0000-0000-000000000018','8598fc29-ebbf-47b6-bae9-3bddf689eb4c'),
-	('b0000000-0000-0000-0000-000000000019','944f21a9-eef3-4375-a391-6f751c4a2de0'),
--- CANCELED
-	('b0000000-0000-0000-0000-00000000001a','0113154f-e16f-4159-ac47-8a20b679108b'),
-	('b0000000-0000-0000-0000-00000000001b','44859cef-4b07-49a0-9507-324719d9f1d0'),
-	('b0000000-0000-0000-0000-00000000001c','028422f0-a8df-4540-b209-f590ab4e2e42'),
-	('b0000000-0000-0000-0000-00000000001d','01b7cab7-0eb9-4cdb-9f39-0d730132d9b3'),
-	('b0000000-0000-0000-0000-00000000001e','77be2405-76f3-4cdb-bf45-1829e3901725'),
--- ERASED
-	('b0000000-0000-0000-0000-00000000001f','f40a8764-c5da-464d-a4b5-efaccb18500f'),
-	('b0000000-0000-0000-0000-000000000020','fca0d136-3fd2-479f-b769-ae54a37c908f'),
-	('b0000000-0000-0000-0000-000000000021','285b793a-4b84-47a5-a0d2-873426aa22fd'),
-	('b0000000-0000-0000-0000-000000000022','41dbbcc8-b183-424d-82e3-7eccce5f4b99'),
-	('b0000000-0000-0000-0000-000000000023','ef36d07b-63a9-45d1-bf9c-2ea7e1c21ab2'),
--- FESTIVALES multi-día
-	('b0000000-0000-0000-0000-000000000024','44859cef-4b07-49a0-9507-324719d9f1d0'),
-	('b0000000-0000-0000-0000-000000000024','0113154f-e16f-4159-ac47-8a20b679108b'),
-	('b0000000-0000-0000-0000-000000000024','434f0090-fd6f-4c81-9d66-6989f7cee2d5'),
-	('b0000000-0000-0000-0000-000000000024','77be2405-76f3-4cdb-bf45-1829e3901725'),
+2560
 
-	('b0000000-0000-0000-0000-000000000025','a8ef6ceb-e0e4-45ed-bacb-752b33c9a0cf'),
-	('b0000000-0000-0000-0000-000000000025','77be2405-76f3-4cdb-bf45-1829e3901725'),
-	('b0000000-0000-0000-0000-000000000025','434f0090-fd6f-4c81-9d66-6989f7cee2d5'),
-	('b0000000-0000-0000-0000-000000000025','41dbbcc8-b183-424d-82e3-7eccce5f4b99'),
+Publicaciones
 
-	('b0000000-0000-0000-0000-000000000026','f40a8764-c5da-464d-a4b5-efaccb18500f'),
-	('b0000000-0000-0000-0000-000000000026','fca0d136-3fd2-479f-b769-ae54a37c908f'),
-	('b0000000-0000-0000-0000-000000000026','8598fc29-ebbf-47b6-bae9-3bddf689eb4c'),
-	('b0000000-0000-0000-0000-000000000026','0031a90f-6413-497b-ad2e-eb90ac05fb87'),
+Seguir
 
-	('b0000000-0000-0000-0000-000000000027','028422f0-a8df-4540-b209-f590ab4e2e42'),
-	('b0000000-0000-0000-0000-000000000027','9871259c-a4c7-45db-b612-d1b97a515c0a'),
-	('b0000000-0000-0000-0000-000000000027','944f21a9-eef3-4375-a391-6f751c4a2de0'),
+Un año más... ya está aquí
 
-	('b0000000-0000-0000-0000-000000000028','01b7cab7-0eb9-4cdb-9f39-0d730132d9b3'),
-	('b0000000-0000-0000-0000-000000000028','285b793a-4b84-47a5-a0d2-873426aa22fd'),
-	('b0000000-0000-0000-0000-000000000028','e0b2ac75-2b81-4c0f-a49f-6741aa4769a5')
-;
+Os presentamos el cartel completo de la tercera edición, que volverá a llenar de humor, compromiso, encuentro y mucha música a *Amayuelas de Abajo el 11 de abril de 2026*
+
+Este año, la mañana del festival estará especialmente dedicada al pueblo palestino, y durante toda la jornada volveremos a alzar la voz para mostrar nuestra implicación con la acogida y la integración de personas migrantes en el medio rural
+
+Porque reír también puede ser una forma de resistir, de cuidar y de posicionarse.
+
+Recordamos que es un festival solidario, donde todo el dinero recaudado irá destinado al apoyo al pueblo palestino y a proyectos vinculados a la integración de personas migrantes en nuestros pueblos.
+
+▲ Aforo limitado
+
+Las entradas vuelan, así que no lo dejéis para última hora.
+
+Podéis conseguir vuestra entrada en formato físico o escribiéndonos por WhatsApp
+
+¡OS ESPERAMOS!', '2026-04-11 10:46:00.000', NULL, 'Recinto', 'recinto', '9806be9f-a3fd-563d-bed6-ed8488162309'::uuid, 'Amayuelas de Abajo', 'amayuelas de abajo', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 01:49:39.421', '2026-03-30 08:47:25.975', 'risas refugiadas recinto recinto amayuelas de abajo amayuelas de abajo periferia los del humo delameseta itaca band carlos horros', '''1'':20 ''11'':56 ''2026'':60 ''2560'':22 ''44'':21 ''abaj'':15B,54 ''abajo'':19C ''abril'':58 ''acog'':89 ''afor'':145 ''alzar'':80 ''amayuel'':13B,52 ''amayuelas'':17C ''ano'':26,62 ''apoy'':128 ''aqui'':30 ''asi'':150 ''band'':9B ''carlos'':10B ''cartel'':34 ''complet'':35 ''compromis'':46 ''consegu'':159 ''cuid'':110 ''de'':18C ''dedic'':69 ''dejeis'':154 ''del'':5B ''delameseta'':7B ''destin'':126 ''diner'':123 ''edicion'':39 ''encuentr'':47 ''entrad'':148,161 ''escrib'':166 ''especial'':68 ''esper'':170 ''estar'':67 ''festival'':66,118 ''fisic'':164 ''form'':106 ''format'':163 ''hor'':157 ''horros'':11B ''humo'':6B ''humor'':45 ''implicacion'':86 ''integracion'':92,138 ''ira'':125 ''itaca'':8B ''jorn'':77 ''limit'':146 ''llen'':43 ''los'':4B ''manan'':64 ''mas'':27 ''medi'':98 ''migrant'':95,141 ''mostr'':84 ''much'':49 ''music'':50 ''palestin'':72,131 ''periferia'':3B ''person'':94,140 ''podeis'':158 ''posicion'':113 ''present'':32 ''proyect'':134 ''public'':23 ''puebl'':71,130,144 ''pued'':103 ''recaud'':124 ''recint'':12B ''recinto'':16C ''record'':114 ''refugi'':2A ''reir'':101 ''resist'':108 ''ris'':1A ''rural'':99 ''segu'':24 ''ser'':104 ''solidari'':119 ''tambi'':102 ''tercer'':38 ''tod'':75 ''ultim'':156 ''vincul'':135 ''volv'':78 ''volver'':41 ''voz'':82 ''vuel'':149 ''whatsapp'':168'::tsvector, '2026-03-30 01:49:39.421', '2026-03-30 08:47:25.965', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 2, NULL, 'https://storage.rockalendar.es/rockalendar/posters/1392c270-ffcf-45a1-802e-7a3013f96977/cbf1e35e-9bcd-4876-a3b0-690d8cc73363.jpg', 'posters/1392c270-ffcf-45a1-802e-7a3013f96977/cbf1e35e-9bcd-4876-a3b0-690d8cc73363.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('6bcfaffb-583a-46e3-8074-2d1cd557d98b'::uuid, 'AdeuBatu', NULL, '2026-05-30 21:39:00.000', NULL, 'Factoría de so', 'factoria de so', 'a25c37c3-8ff1-574b-93fc-c7eb7ed1dbd9'::uuid, 'Santa Maria (Mallorca)', 'santa maria mallorca', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 01:42:08.865', '2026-03-30 08:50:16.010', 'adeubatu factoria de so factoria de so santa maria (mallorca) santa maria mallorca ketesnuko bestia parda toc de queda tados espektros del kaos turboterror', '''adeubatu'':1A ''bestia'':3B ''de'':6B,20C ''del'':10B ''espektros'':9B ''factori'':13B ''factoria'':19C ''kaos'':11B ''ketesnuko'':2B ''mallorc'':18B ''mallorca'':24C ''mari'':17B ''maria'':23C ''parda'':4B ''queda'':7B ''sant'':16B ''santa'':22C ''so'':15B,21C ''tados'':8B ''toc'':5B ''turboterror'':12B'::tsvector, '2026-03-30 02:11:50.379', '2026-03-30 08:50:16.005', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 5, NULL, 'https://storage.rockalendar.es/rockalendar/posters/6bcfaffb-583a-46e3-8074-2d1cd557d98b/684e260b-3131-4d36-a3c8-aefa03fca96d.jpg', 'posters/6bcfaffb-583a-46e3-8074-2d1cd557d98b/684e260b-3131-4d36-a3c8-aefa03fca96d.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'AbejaRock', 'Festival benéfico ciudad de Béjar. Zona de acampada y campers gratuita. Sesión vermut gratuita el sábado con Quartet Tarantino y Chingo Kids', '2026-07-31 17:30:00.000', '2026-08-02 04:30:00.000', 'Recinto ferial', 'recinto ferial', '5cf16728-025e-5938-aa33-d92954ac6fc8'::uuid, 'Béjar', 'bejar', 'APPROVED', 'https://www.abejarock.com/', 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-29 20:34:05.083', '2026-03-29 20:54:50.956', 'abejarock recinto ferial recinto ferial bejar bejar manifa narco boikot quartet tarantino chingo kids los de marras porretas kaos urbano biznaga kaos etiliko periferia xpresidentx maldito matas afonica naranjo gautxori', '''abejarock'':1A ''acamp'':38 ''afonica'':22B ''bej'':27B,35 ''bejar'':30C ''benef'':32 ''biznaga'':15B ''boikot'':4B ''campers'':40 ''ching'':51 ''chingo'':7B ''ciud'':33 ''de'':10B ''etiliko'':17B ''ferial'':26B,29C ''festival'':31 ''gautxori'':24B ''gratuit'':41,44 ''kaos'':13B,16B ''kids'':8B,52 ''los'':9B ''maldito'':20B ''manifa'':2B ''marras'':11B ''matas'':21B ''naranjo'':23B ''narco'':3B ''periferia'':18B ''porretas'':12B ''quartet'':5B,48 ''recint'':25B ''recinto'':28C ''sab'':46 ''sesion'':42 ''tarantin'':49 ''tarantino'':6B ''urbano'':14B ''vermut'':43 ''xpresidentx'':19B ''zon'':36'::tsvector, '2026-03-29 20:54:50.194', NULL, NULL, 1, NULL, 'https://storage.rockalendar.es/rockalendar/posters/f35c4588-0815-4a05-9696-4a2b595e35eb/3ce0624e-76f8-4d57-a2b6-88451034407e.jpg', 'posters/f35c4588-0815-4a05-9696-4a2b595e35eb/3ce0624e-76f8-4d57-a2b6-88451034407e.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('485eff44-e416-48c4-a94f-acdd9b9318a6'::uuid, 'Villalar 26', NULL, '2026-04-22 12:11:00.000', '2026-04-23 12:11:00.000', 'Parque municipal', 'parque municipal', '4d90761d-445e-530b-ac16-99f05c480ff2'::uuid, 'Villalar de los Comuneros', 'villalar de los comuneros', 'PENDING_MODERATION', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 13:13:29.952', '2026-03-30 13:13:30.229', 'villalar 26 parque municipal parque municipal villalar de los comuneros villalar de los comuneros anarkoholika spidikiflotes sentinel the bustard band', '''26'':2A ''anarkoholika'':3B ''band'':8B ''bustard'':7B ''comuner'':14B ''comuneros'':20C ''de'':18C ''los'':19C ''municipal'':10B,16C ''parqu'':9B ''parque'':15C ''sentinel'':5B ''spidikiflotes'':4B ''the'':6B ''villal'':1A,11B ''villalar'':17C'::tsvector, '2026-03-30 13:13:29.952', NULL, NULL, 1, NULL, 'https://storage.rockalendar.es/rockalendar/posters/485eff44-e416-48c4-a94f-acdd9b9318a6/90cf3eb1-000e-4366-9c2a-c7a91adb2b16.jpg', 'posters/485eff44-e416-48c4-a94f-acdd9b9318a6/90cf3eb1-000e-4366-9c2a-c7a91adb2b16.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, 'Vintoro', '+ grupos por confirmar', '2026-06-19 17:00:00.000', '2026-06-21 05:00:00.000', 'Polideportivo municipal', 'polideportivo municipal', '212d12cb-d66d-5c7e-b719-0445098ec896'::uuid, 'Toro', 'toro', 'APPROVED', 'https://www.instagram.com/festivalvintoro?igsh=MWh4MXBjZDZrcjBleg==', 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-29 23:42:04.606', '2026-03-29 23:42:05.136', 'vintoro polideportivo municipal polideportivo municipal toro toro narco arpaviejas kaos urbano koma kaotiko segismundo toxicomano sons of aguirre parabellum def con dos envidia kotxina me fritos and the gimme cheetos', '''aguirre'':12B ''and'':21B ''arpaviejas'':3B ''cheetos'':24B ''con'':15B ''confirm'':33 ''def'':14B ''dos'':16B ''envidia'':17B ''fritos'':20B ''gimme'':23B ''grup'':31 ''kaos'':4B ''kaotiko'':7B ''koma'':6B ''kotxina'':18B ''me'':19B ''municipal'':26B,29C ''narco'':2B ''of'':11B ''parabellum'':13B ''polideport'':25B ''polideportivo'':28C ''segismundo'':8B ''sons'':10B ''the'':22B ''tor'':27B ''toro'':30C ''toxicomano'':9B ''urbano'':5B ''vintor'':1A'::tsvector, '2026-03-29 23:42:04.605', NULL, NULL, 1, NULL, 'https://storage.rockalendar.es/rockalendar/posters/58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178/4777f65f-3552-4497-9e43-4df5e62e67dc.jpg', 'posters/58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178/4777f65f-3552-4497-9e43-4df5e62e67dc.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('6b1619d9-eca5-4d3a-88b4-d3aaa5ac2c3f'::uuid, 'UtielRock', NULL, '2026-04-25 17:32:00.000', NULL, 'Salón polivalente', 'salon polivalente', '3e7e28d8-f5e8-5678-8370-a6d4fd8eff0a'::uuid, 'Utiel', 'utiel', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 00:33:57.350', '2026-03-30 00:51:42.303', 'utielrock salon polivalente salon polivalente utiel utiel manifa los de marras fuckop family fatiga', '''de'':4B ''family'':7B ''fatiga'':8B ''fuckop'':6B ''los'':3B ''manifa'':2B ''marras'':5B ''polivalent'':10B ''polivalente'':13C ''salon'':9B,12C ''utiel'':11B,14C ''utielrock'':1A'::tsvector, '2026-03-30 00:33:57.349', '2026-03-30 00:51:42.284', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 2, NULL, 'https://storage.rockalendar.es/rockalendar/posters/6b1619d9-eca5-4d3a-88b4-d3aaa5ac2c3f/416f98ca-e435-415e-923f-96204619bc95.jpg', 'posters/6b1619d9-eca5-4d3a-88b4-d3aaa5ac2c3f/416f98ca-e435-415e-923f-96204619bc95.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, 'Kalagurri', NULL, '2026-05-08 00:35:00.000', '2026-05-09 00:35:00.000', 'Era alta', 'era alta', 'ec54b8f0-a62c-5ebd-9e7f-da52bdc0037a'::uuid, 'Calahorra', 'calahorra', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 00:39:17.035', '2026-03-30 00:53:10.493', 'kalagurri era alta era alta calahorra calahorra narco mama ladilla loncha velasco los de marras porretas koma sons of aguirre juantxo skalari the reimons catalina grande pinon pequeno hermana furia mala vida', '''aguirre'':14B ''alta'':28B,31C ''calahorr'':29B ''calahorra'':32C ''catalina'':19B ''de'':8B ''era'':30C ''furia'':24B ''grande'':20B ''hermana'':23B ''juantxo'':15B ''kalagurri'':1A ''koma'':11B ''ladilla'':4B ''loncha'':5B ''los'':7B ''mala'':25B ''mama'':3B ''marras'':9B ''narco'':2B ''of'':13B ''pequeno'':22B ''pinon'':21B ''porretas'':10B ''reimons'':18B ''skalari'':16B ''sons'':12B ''the'':17B ''velasco'':6B ''vida'':26B'::tsvector, '2026-03-30 00:39:17.034', '2026-03-30 00:53:10.484', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 2, NULL, 'https://storage.rockalendar.es/rockalendar/posters/6223beb7-d5c5-44df-bb61-7ac99e100d55/1abe464c-47f1-46f9-9254-54fccbbf5fdb.jpg', 'posters/6223beb7-d5c5-44df-bb61-7ac99e100d55/1abe464c-47f1-46f9-9254-54fccbbf5fdb.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('a691fac5-e4d7-4dad-824f-b47294b10edd'::uuid, 'Reineta Fest', 'Con la compra de la entrada colaboras con 1 euro con la Asociación de familiares de anorexia y bulimia (ADEFAB) de Burgos', '2026-04-18 19:00:00.000', '2026-04-19 02:00:00.000', 'Polideportivo municiapl', 'polideportivo municiapl', '1c04affa-abad-5dbb-9780-67dc4d993ce2'::uuid, 'Sedano', 'sedano', 'APPROVED', 'https://entradas.qr4events.com/event/reineta-fest-v-edicion', 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 01:07:52.123', '2026-03-30 01:07:52.172', 'reineta fest polideportivo municiapl polideportivo municiapl sedano sedano no konforme kaos etiliko la regadera', '''1'':23 ''adefab'':34 ''anorexi'':31 ''asociacion'':27 ''bulimi'':33 ''burg'':36 ''colabor'':21 ''compr'':17 ''entrad'':20 ''etiliko'':6B ''eur'':24 ''familiar'':29 ''fest'':2A ''kaos'':5B ''konforme'':4B ''la'':7B ''municiapl'':10B,13C ''no'':3B ''polideport'':9B ''polideportivo'':12C ''regadera'':8B ''reinet'':1A ''sedan'':11B ''sedano'':14C'::tsvector, '2026-03-30 01:07:52.123', NULL, NULL, 1, NULL, 'https://storage.rockalendar.es/rockalendar/posters/a691fac5-e4d7-4dad-824f-b47294b10edd/8d738b09-7dc2-48e6-8cc5-f4548d61306d.jpg', 'posters/a691fac5-e4d7-4dad-824f-b47294b10edd/8d738b09-7dc2-48e6-8cc5-f4548d61306d.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, 'Concerts del Pinar', NULL, '2026-06-18 14:52:00.000', '2026-06-20 14:52:00.000', 'Pinar del Grau', 'pinar del grau', 'fd91638b-63b9-598c-b4d3-70cbe7472213'::uuid, 'Castelló de la Plana', 'castello de la plana', 'PENDING_MODERATION', 'https://Concertsdelpinar.es', 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 14:56:17.926', '2026-03-30 14:56:18.053', 'concerts del pinar pinar del grau pinar del grau castello de la plana castello de la plana narco deaf devils non servium o''funkillo bala parquesvr the casualities nina coyote eta chico tornado annacrusa lady mambo', '''annacrusa'':20B ''bala'':11B ''castell'':26B ''castello'':33C ''casualities'':14B ''chico'':18B ''concerts'':1A ''coyote'':16B ''de'':34C ''deaf'':5B ''del'':31C ''devils'':6B ''eta'':17B ''funkillo'':10B ''grau'':25B,32C ''la'':35C ''lady'':21B ''mambo'':22B ''narco'':4B ''nina'':15B ''non'':7B ''o'':9B ''parquesvr'':12B ''pin'':3A,23B ''pinar'':30C ''plan'':29B ''plana'':36C ''servium'':8B ''the'':13B ''tornado'':19B'::tsvector, '2026-03-30 14:56:17.926', NULL, NULL, 1, NULL, 'https://storage.rockalendar.es/rockalendar/posters/6f2a2e39-734e-45a1-b458-94ae1d3dbe54/3582da06-4c50-42ac-8cd9-d4ed8b85e2d1.jpg', 'posters/6f2a2e39-734e-45a1-b458-94ae1d3dbe54/3582da06-4c50-42ac-8cd9-d4ed8b85e2d1.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, 'Bonus Track', NULL, '2026-04-18 10:00:00.000', NULL, 'Landako gunea', 'landako gunea', 'aa962870-db30-5966-8550-66535f02641f'::uuid, 'Durango', 'durango', 'APPROVED', NULL, 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 01:56:02.775', '2026-03-30 13:02:37.941', 'bonus track landako gunea landako gunea durango durango manifa kaos urbano kaotiko segismundo toxicomano juantxo skalari josetxu piperrak soziedad alkoholika el ultimo ke zierre alfredo piedrafita dinamita disolventex the toy dolls', '''alfredo'':19B ''alkoholika'':14B ''bonus'':1A ''dinamita'':21B ''disolventex'':22B ''dolls'':25B ''durang'':28B ''durango'':31C ''el'':15B ''gune'':27B ''gunea'':30C ''josetxu'':11B ''juantxo'':9B ''kaos'':4B ''kaotiko'':6B ''ke'':17B ''landak'':26B ''landako'':29C ''manifa'':3B ''piedrafita'':20B ''piperrak'':12B ''segismundo'':7B ''skalari'':10B ''soziedad'':13B ''the'':23B ''toxicomano'':8B ''toy'':24B ''track'':2A ''ultimo'':16B ''urbano'':5B ''zierre'':18B'::tsvector, '2026-03-30 12:37:22.969', '2026-03-30 13:02:37.936', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 5, NULL, 'https://storage.rockalendar.es/rockalendar/posters/50ae52ca-d625-455f-b3b4-c9662e3ae0e9/424f6c6a-bcd9-40ac-b28d-53670e764571.jpg', 'posters/50ae52ca-d625-455f-b3b4-c9662e3ae0e9/424f6c6a-bcd9-40ac-b28d-53670e764571.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, 'Riot Gz Fest', NULL, '2026-05-22 16:48:00.000', '2026-05-23 16:48:00.000', 'Pazo de feiras', 'pazo de feiras', 'b51a4d92-b2af-53c9-8ab3-206552a0af29'::uuid, 'Lugo', 'lugo', 'PENDING_MODERATION', 'https://www.riotgzfest.com', 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 16:53:44.713', '2026-03-30 16:53:44.799', 'riot gz fest pazo de feiras pazo de feiras lugo lugo evaristo the toy dolls bull brigade perkele the rumjacks cockney rejects arene 6 lion''s law keltoi ruxe ruxe jordi panico', '''6'':16B ''arene'':15B ''brigade'':9B ''bull'':8B ''cockney'':13B ''de'':30C ''dolls'':7B ''evaristo'':4B ''feir'':27B ''feiras'':31C ''fest'':3A ''gz'':2A ''jordi'':23B ''keltoi'':20B ''law'':19B ''lion'':17B ''lug'':28B ''lugo'':32C ''panico'':24B ''paz'':25B ''pazo'':29C ''perkele'':10B ''rejects'':14B ''riot'':1A ''rumjacks'':12B ''ruxe'':21B,22B ''s'':18B ''the'':5B,11B ''toy'':6B'::tsvector, '2026-03-30 16:53:44.712', NULL, NULL, 1, NULL, 'https://storage.rockalendar.es/rockalendar/posters/1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59/a8a11a02-c9ce-4109-82be-dfac2aaf5823.jpg', 'posters/1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59/a8a11a02-c9ce-4109-82be-dfac2aaf5823.jpg');
+INSERT INTO events (id, title, description, start_date_time, end_date_time, venue_name, venue_slug, province_id, city_name, city_slug, status, source_url, created_by_user_id, moderation_message, created_at, updated_at, search_text, search_document, submitted_at, moderated_at, moderated_by_user_id, "version", possible_duplicate_of, poster_url, poster_key) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'Bat batean', NULL, '2026-05-15 12:40:00.000', '2026-05-16 12:40:00.000', 'Mendizabala', 'mendizabala', '7b181d37-4990-5e4f-9533-b914a3fd9fd1'::uuid, 'Vitoria-Gasteiz', 'vitoria gasteiz', 'APPROVED', 'https://www.batbidean.eus', 'aaaaaaaa-0000-0000-0000-000000000003'::uuid, NULL, '2026-03-30 12:55:35.088', '2026-03-30 13:05:48.948', 'bat batean mendizabala mendizabala vitoria-gasteiz vitoria gasteiz kaos etiliko segismundo toxicomano juantxo skalari dinamita aimarz ajoui annekdotas anube apotheke 90 ateri bellum bull brigade edu zardoya etxepe ganibet gozategi hell beer boys hofe kaparrak lablakie la elite la txama lehen lerroa los zopilotes txirriaos lukiek malakias malko maruxak metrika mikosis mirotz nafarroa 1512 nerve agent nevadah no limits roy ellis safu santa salut sedientos de cumbia skabidean sustrai berriak tatta xiber roots aida blanco azken erromantikoak brava carlos perez guate-k iskra selektor lobas malandro mdm mario boss nelson pineapple sweets posse noetika reimy rosa mari saturday''s kids wary', '''1512'':48B ''90'':15B ''agent'':50B ''aida'':68B ''aimarz'':10B ''ajoui'':11B ''annekdotas'':12B ''anube'':13B ''apotheke'':14B ''ateri'':16B ''azken'':70B ''bat'':1A,2A ''beer'':26B ''bellum'':17B ''berriak'':64B ''blanco'':69B ''boss'':84B ''boys'':27B ''brava'':72B ''brigade'':19B ''bull'':18B ''carlos'':73B ''cumbia'':61B ''de'':60B ''dinamita'':9B ''edu'':20B ''elite'':32B ''ellis'':55B ''erromantikoak'':71B ''etiliko'':4B ''etxepe'':22B ''ganibet'':23B ''gasteiz'':100B,103C ''gozategi'':24B ''guate'':76B ''guate-k'':75B ''hell'':25B ''hofe'':28B ''iskra'':78B ''juantxo'':7B ''k'':77B ''kaos'':3B ''kaparrak'':29B ''kids'':95B ''la'':31B,33B ''lablakie'':30B ''lehen'':35B ''lerroa'':36B ''limits'':53B ''lobas'':80B ''los'':37B ''lukiek'':40B ''malakias'':41B ''malandro'':81B ''malko'':42B ''mari'':92B ''mario'':83B ''maruxak'':43B ''mdm'':82B ''mendizabal'':97B ''mendizabala'':101C ''metrika'':44B ''mikosis'':45B ''mirotz'':46B ''nafarroa'':47B ''nelson'':85B ''nerve'':49B ''nevadah'':51B ''no'':52B ''noetika'':89B ''perez'':74B ''pineapple'':86B ''posse'':88B ''reimy'':90B ''roots'':67B ''rosa'':91B ''roy'':54B ''s'':94B ''safu'':56B ''salut'':58B ''santa'':57B ''saturday'':93B ''sedientos'':59B ''segismundo'':5B ''selektor'':79B ''skabidean'':62B ''skalari'':8B ''sustrai'':63B ''sweets'':87B ''tatta'':65B ''toxicomano'':6B ''txama'':34B ''txirriaos'':39B ''vitori'':99B ''vitoria'':102C ''vitoria-gasteiz'':98B ''wary'':96B ''xiber'':66B ''zardoya'':21B ''zopilotes'':38B'::tsvector, '2026-03-30 12:55:35.087', '2026-03-30 13:05:48.942', 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, 2, NULL, 'https://storage.rockalendar.es/rockalendar/posters/846f2b16-19cf-4131-a533-3d7de14ee2e8/99584c3a-a7c9-4fc1-b1e5-eba150f4a767.jpg', 'posters/846f2b16-19cf-4131-a533-3d7de14ee2e8/99584c3a-a7c9-4fc1-b1e5-eba150f4a767.jpg');
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'a3a1844b-b27f-4671-92e9-45c6b4fa162a'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, '7ef5d024-3efd-47b5-92a9-6537e2c2d367'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'fcff0e41-3634-4884-b9a4-6b3e0915d6ed'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, '925102a6-9fdc-4570-9260-958208dd2dad'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, '9b3422af-01c7-486f-bf32-d2f7e4a8d88c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, '21bdb2f2-f5b0-49df-8b1b-698c15d07563'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, '6579b797-6334-420a-a555-3a498a8af67c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, '151beee7-80d8-4f0f-9881-d93de7db8746'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'fe6a7416-e97c-4018-aa62-ca96dce196c5'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'b89c8735-4f22-4840-b851-c64ef9d222e8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, '0beed1f0-56f3-457f-aac0-b9b3333778f0'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'fbdd6cd2-a498-492a-9980-4ec36c0b7e54'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'bb697d57-9ef3-4626-833c-2509276861fb'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'a03f2fee-6e7e-4a0a-a9f0-ceda790de5b1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('f35c4588-0815-4a05-9696-4a2b595e35eb'::uuid, 'e2db4796-1a0f-4972-a116-68689fe58fc1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, 'fcff0e41-3634-4884-b9a4-6b3e0915d6ed'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, 'f65e012b-684f-4a76-8682-608241b1830a'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, '6579b797-6334-420a-a555-3a498a8af67c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, '0a5ce42a-f473-4024-b300-27dbbee8ac94'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, 'fafd4faf-e744-467a-a480-392ea77936b8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, '4d5f5c9d-1e74-4907-b591-3f14391c962c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, '23e08814-4e37-4ec0-89a7-bd5724ab71c4'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, 'e8188ff8-0776-4a9a-8fd3-995497647842'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, '85a7aaee-bf37-47c6-9f8d-940830dc19d0'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, '6d4f791c-5428-4f9d-bedd-fc115b6461a7'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('58eb2da4-0c2d-4c5d-aaa1-51bc58a3f178'::uuid, '6f99e11e-b527-4e46-afe5-a44a5a3386df'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6b1619d9-eca5-4d3a-88b4-d3aaa5ac2c3f'::uuid, 'b92ebeec-2d69-401f-9599-c8704fdd8e09'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6b1619d9-eca5-4d3a-88b4-d3aaa5ac2c3f'::uuid, '38709245-7dc8-494e-841e-5618906fb8a3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6b1619d9-eca5-4d3a-88b4-d3aaa5ac2c3f'::uuid, 'b89c8735-4f22-4840-b851-c64ef9d222e8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6b1619d9-eca5-4d3a-88b4-d3aaa5ac2c3f'::uuid, '9b3422af-01c7-486f-bf32-d2f7e4a8d88c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, 'a2038c8b-3099-4bf9-903d-889e53c87991'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, 'f65e012b-684f-4a76-8682-608241b1830a'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, '9f8455cd-e52a-478e-9401-07f172f4c977'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, '21bdb2f2-f5b0-49df-8b1b-698c15d07563'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, '53b70179-83ad-48a7-9086-6ff0ac2d2aff'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, '43856c37-3018-44b0-b1d1-01434e7ada38'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, 'fcff0e41-3634-4884-b9a4-6b3e0915d6ed'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, '9b3422af-01c7-486f-bf32-d2f7e4a8d88c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, '4d5f5c9d-1e74-4907-b591-3f14391c962c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, '44a7e49e-6d08-4489-8216-d50ddaf0adf4'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, 'ff6678a7-321a-4dba-8206-dca31c94970a'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6223beb7-d5c5-44df-bb61-7ac99e100d55'::uuid, '2f6448f8-0230-42a0-8542-0d2c40f2b637'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, '925102a6-9fdc-4570-9260-958208dd2dad'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, '3309698c-a48d-4714-b38a-e9c6375166fa'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, '7888956a-429f-43db-9826-3b3679da8935'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('a691fac5-e4d7-4dad-824f-b47294b10edd'::uuid, 'fe6a7416-e97c-4018-aa62-ca96dce196c5'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('a691fac5-e4d7-4dad-824f-b47294b10edd'::uuid, '166388fc-c16d-42b0-814e-38c999439579'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('a691fac5-e4d7-4dad-824f-b47294b10edd'::uuid, '1bfcbae6-f51c-4360-93b9-8980e8e9eaa5'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('68b27c5f-22cc-403c-8185-a494fed991b4'::uuid, 'cd7583e7-b46a-434b-85f2-f1241fadb461'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('68b27c5f-22cc-403c-8185-a494fed991b4'::uuid, '2aeacf58-d937-4a74-bcff-c146c989cab1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('68b27c5f-22cc-403c-8185-a494fed991b4'::uuid, '23e08814-4e37-4ec0-89a7-bd5724ab71c4'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('68b27c5f-22cc-403c-8185-a494fed991b4'::uuid, 'b89c8735-4f22-4840-b851-c64ef9d222e8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('68b27c5f-22cc-403c-8185-a494fed991b4'::uuid, '9f8455cd-e52a-478e-9401-07f172f4c977'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('68b27c5f-22cc-403c-8185-a494fed991b4'::uuid, 'bb697d57-9ef3-4626-833c-2509276861fb'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('62a1aa57-bad6-4b32-9ffc-b86a75086618'::uuid, '70b3529b-1dad-42ca-998f-5b2aca360026'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('62a1aa57-bad6-4b32-9ffc-b86a75086618'::uuid, '6f99e11e-b527-4e46-afe5-a44a5a3386df'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('62a1aa57-bad6-4b32-9ffc-b86a75086618'::uuid, 'b89c8735-4f22-4840-b851-c64ef9d222e8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('62a1aa57-bad6-4b32-9ffc-b86a75086618'::uuid, 'fafd4faf-e744-467a-a480-392ea77936b8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('62a1aa57-bad6-4b32-9ffc-b86a75086618'::uuid, '3812bec4-fd61-4df6-9f80-e61e6ab6cb68'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'fcff0e41-3634-4884-b9a4-6b3e0915d6ed'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'd685680f-014e-4d61-905c-46edefc24cf6'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '0beed1f0-56f3-457f-aac0-b9b3333778f0'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'aa872756-24c8-4e3b-9c3f-29fe9f52f221'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '732c5b9b-8f22-4894-ada6-422cbe15e0da'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'de485fda-d81d-4116-b044-718ce15c30bb'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'ceaf2295-900f-47fa-ab8f-6280ea8724d3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '7fbcafa3-dcb3-43ce-9d87-e4c61341d799'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'fafd4faf-e744-467a-a480-392ea77936b8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'b8b4077a-1621-4a65-8e71-222d01a08ad4'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '80b8c52b-53eb-4a8a-ac66-fa3011d0d017'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '979cd163-288a-4ba4-9c78-3b55a8ea4214'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '93ba9a74-84fa-4766-bc5c-e5db3116e4fd'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '851bc90d-a8c4-4856-bb27-524f5a7410a4'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '3dee90d1-18f1-4577-aadd-bcc8112f99a7'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, 'fabfa3c0-0857-411f-84b3-62604528c956'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '99213025-18be-4d48-a527-3b07b658ecc7'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '04bceb72-e755-4fe4-97cd-3d042c45bd42'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '1bb9fe96-6e9a-44ab-810f-01fa4abd8485'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d79cdda0-1c23-4336-8275-70a41ef1b521'::uuid, '650a0cce-1b13-4f1b-82bd-979d6a70e41f'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6bcfaffb-583a-46e3-8074-2d1cd557d98b'::uuid, '1a8af22c-cd2a-43dd-859a-b4dabf47ed2f'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6bcfaffb-583a-46e3-8074-2d1cd557d98b'::uuid, '8659880e-306c-439f-9a10-be03cb29618b'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6bcfaffb-583a-46e3-8074-2d1cd557d98b'::uuid, '1dba1456-ade4-45da-996e-8c3adc55798c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6bcfaffb-583a-46e3-8074-2d1cd557d98b'::uuid, 'fc81f198-0c78-456d-b650-18f460d0bfa2'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6bcfaffb-583a-46e3-8074-2d1cd557d98b'::uuid, '8a79e629-1d64-4dd6-9010-dfc9fb4707d1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1392c270-ffcf-45a1-802e-7a3013f96977'::uuid, 'accd5bb3-9fa5-4457-b5fb-7f49ae3588bf'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1392c270-ffcf-45a1-802e-7a3013f96977'::uuid, '9c5fd716-7ccb-4d84-b7ff-9c0426859306'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1392c270-ffcf-45a1-802e-7a3013f96977'::uuid, '72840b96-de0e-47ae-8a12-cc739d158d1c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1392c270-ffcf-45a1-802e-7a3013f96977'::uuid, '0beed1f0-56f3-457f-aac0-b9b3333778f0'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1392c270-ffcf-45a1-802e-7a3013f96977'::uuid, '9a909995-ef2e-483e-a743-cbfe25dc1d8d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, 'b5ef56db-b4cc-4cb5-8dbb-1fa58ed5a089'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, '671b33a8-459e-4252-af12-af6780d2a5ac'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, 'fafd4faf-e744-467a-a480-392ea77936b8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, '0a5ce42a-f473-4024-b300-27dbbee8ac94'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, '6579b797-6334-420a-a555-3a498a8af67c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, '19ce17ca-cbb0-44d2-a922-f49708b69c39'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, '2aeacf58-d937-4a74-bcff-c146c989cab1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, 'a2038c8b-3099-4bf9-903d-889e53c87991'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, '24e30a9b-4ae2-43b2-90ee-cc746a43ae33'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, 'c1ea5486-82ee-49c0-b32b-fae8f801d1d1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, '4b088349-91c9-44ed-8dac-c35dbe8fe836'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, 'd6d37eb2-2d4f-497b-9200-3dd7d4b59acf'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, '61eb7cb7-15b8-4562-9190-4c1a49664c1e'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, '932fa6ac-b7cb-43b1-b841-42ef63041185'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, 'efccfad9-6462-4dbc-9e66-fca2b5bf8a27'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('d10ae205-3cf6-4bea-80c4-3c3c43f14225'::uuid, 'c2ece721-0337-4e85-892b-8ee55da5dd88'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6bcfaffb-583a-46e3-8074-2d1cd557d98b'::uuid, '7e31f065-fc14-4a7b-9757-9c9a4330c832'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('50ae52ca-d625-455f-b3b4-c9662e3ae0e9'::uuid, 'b89c8735-4f22-4840-b851-c64ef9d222e8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '7dfcb6ff-2631-4c82-8b55-f7c823d3b4f2'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '7613d7c1-7537-4d31-83da-5986eb7ecce1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '2fa4981e-e766-47c4-b947-9f9ddfe04bc1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '3efeb26e-5085-43d9-99cb-3a8c93ba4125'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'f1a9a460-8d07-46bb-9b7a-f84db18158b3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '6aeae3cf-34a6-43c6-b359-9e9db0b30d40'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'c79bb212-882a-4067-9be8-a49ab390a06d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '6ecee9cb-aea6-4fbe-8028-c1bb86c9c7a3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'c1ea5486-82ee-49c0-b32b-fae8f801d1d1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'ae093c00-6568-411e-8402-70b27719439a'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '72f52a3c-baf4-4a8e-9f30-b4e8739591a3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '8e45e907-58dd-4a9f-a5b7-43cf020541e8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '2dcd4371-464a-4533-b6ed-0a207fd4b115'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '8d22f566-7cc8-4339-9689-3ac4f9584b2b'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '656934d4-80f5-4c92-8867-b18168412e1a'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'a2038c8b-3099-4bf9-903d-889e53c87991'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'fe6a7416-e97c-4018-aa62-ca96dce196c5'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '068db010-a31b-49be-88c3-4dc3397e98a5'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'b7acc12f-79a6-45a3-97d7-2d2944fb1002'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '8117dad6-1939-4a13-ac2a-e85bcb36b23a'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'ad611e17-c8c6-4fa8-8ba1-d11b19e3cb57'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'cd24d1e1-e509-49e7-89ce-b4f09e872230'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '99e090e3-1fbe-4372-a25c-32cb7c145cd9'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '96012e44-6fed-4774-ba9a-33b800c461f6'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'fa1f2493-5d5b-4804-8e4f-740d9f821738'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '5468a2e0-5d12-4d28-b93e-cc48b83175e8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'b30be0d7-bc86-4087-b884-570127da33a8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'f91799db-4f0b-4505-ad58-74cb1a819c9d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'a6b93f29-da40-45a1-992a-e33fe0788418'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'f7126174-7aac-4433-9750-1bdc6ce0a9bb'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '63531667-fc23-447c-90e6-93aee691c326'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'b3e2c8af-49e6-480b-848f-cf5e09565f7d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '8d969ad8-6200-4836-8d70-1e9409b3a4de'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'b31ec1dd-e318-42a1-a7a2-b8acaeee63ba'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'b2d6fd49-2ca6-4705-8c41-f9f06c4bfda1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '575a37ab-25bc-469e-a0dd-3eac0400c4de'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '1e4b092c-b896-42bb-ab1a-799b3886bbcb'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '6a64be91-2d0a-409b-aa45-605a08d0fcfa'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'fafd4faf-e744-467a-a480-392ea77936b8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '714c877d-de32-493d-96ea-79673fec2bd6'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'ceaafd2f-9f4e-42b3-9f2b-d7094f1aeaa4'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '87b08520-56a2-40df-bdf0-d98fc4383d5a'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '1c932209-8c83-4e70-ae56-2522a4056b8c'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'ac2672e3-221c-411b-b109-5cecf0146010'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '8fbadc20-79a3-4735-b0e9-d516e67fde32'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '95ee73cd-0764-42c4-a04f-a15726532de3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '08f72f85-94a6-4b23-ab8d-669522b7fb1d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '94b6f1a4-da74-4ab7-8aed-fceeadecafc1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '0fef1170-e990-4fa5-b3b4-3045373dc2ef'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '0b1d3939-c199-4cab-a440-05443bc97d71'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'e9167110-56cd-4908-8c54-52e669b7d7fb'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '37129a09-f004-4138-855a-5dcb94bd6df1'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '189e9be6-023f-410e-89ad-ea2b0d2eac92'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'f7cb0e78-ec27-42fc-8750-3413cbf8893d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'e990a3ae-b41a-4d2c-aed1-b95b6da4ae0f'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '47fee2dc-688a-4e56-b42a-35bbd9b3305d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '93cef067-6b1b-487a-b50c-e91b86904dfe'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'b95f34d4-50ee-4e34-820b-3a3dbdfaf47f'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'bea588c6-f223-4445-ba54-0ab84484c138'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, '5a3ac7f8-4893-4a40-b093-c82b9d411879'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('846f2b16-19cf-4131-a533-3d7de14ee2e8'::uuid, 'a70cbfd8-768c-41f6-922a-e50825172cfe'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('eb726b86-9e41-47f3-be06-060859a763de'::uuid, '4922faa7-338a-453a-b1e4-9b48ed3898ac'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('eb726b86-9e41-47f3-be06-060859a763de'::uuid, 'd393875a-928c-424c-be3a-03a0a590f8a6'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('eb726b86-9e41-47f3-be06-060859a763de'::uuid, '96a23bee-71ff-4638-8d35-e742163c8ab8'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('eb726b86-9e41-47f3-be06-060859a763de'::uuid, '02b98fa6-5667-4466-9b27-da07287cf437'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('485eff44-e416-48c4-a94f-acdd9b9318a6'::uuid, 'f0d3fd8c-0c99-49d5-bd8a-ded2b68f83d4'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('485eff44-e416-48c4-a94f-acdd9b9318a6'::uuid, '15399977-71bd-4b25-8739-25710c2d4341'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('485eff44-e416-48c4-a94f-acdd9b9318a6'::uuid, 'e2ee7e68-5ce6-4089-840d-56da95a2f93d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('485eff44-e416-48c4-a94f-acdd9b9318a6'::uuid, '064821ca-a79d-4837-9c7c-410a64e8d009'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, '106471e5-1690-4d1c-a8e8-674bb87cc0fb'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, 'fcff0e41-3634-4884-b9a4-6b3e0915d6ed'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, '2eec50ae-2d0a-4e32-b660-e7c93315c69e'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, '4e9d00b7-7001-46c9-8ddf-4d8a4c4d341f'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, 'c723b709-6b2e-4b8a-939a-6e8aae6c29e6'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, '63202736-dc02-4a52-b92f-a1e654ab7a2e'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, 'f8b49052-ebaf-41bf-83ed-80798ef23147'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, 'd685680f-014e-4d61-905c-46edefc24cf6'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, '8d92caf2-9980-4509-88e3-775c7af527ed'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('6f2a2e39-734e-45a1-b458-94ae1d3dbe54'::uuid, '62081383-be08-4c74-b228-c972f487b5a3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, 'cd7583e7-b46a-434b-85f2-f1241fadb461'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, '671b33a8-459e-4252-af12-af6780d2a5ac'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, '0b96c952-fa82-4e07-b19d-8aeddff1a30d'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, '6ecee9cb-aea6-4fbe-8028-c1bb86c9c7a3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, '7a3551b4-9a5a-42fd-a858-ef9c5b721372'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, 'fb58c450-718d-45e9-b5a2-116d609e1056'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, '83117a78-885d-4341-89e7-83a566dfb434'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, '41c687d8-f84d-427d-870e-335d81ceb7be'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, 'c6d7be28-170b-4b69-aba8-3126c7b0196b'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, '58e9d181-b2f0-463c-8057-9cb24ffd32f3'::uuid);
+INSERT INTO event_artists (event_id, artist_id) VALUES('1da4a520-ffcf-4e8b-ab36-c2ac2fdc1d59'::uuid, 'b0fd77b0-819e-4ed5-860d-da57deb8c703'::uuid);

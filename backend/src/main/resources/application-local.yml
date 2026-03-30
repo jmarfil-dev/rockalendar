@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/rockalendar
+    url: jdbc:postgresql://localhost:5433/rockalendar
     username: rockalendar
     password: rockalendar
     driver-class-name: org.postgresql.Driver
