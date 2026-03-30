@@ -60,6 +60,9 @@ const RockalendarPreset = definePreset(Aura, {
   },
 });
 
+const storagePublicUrlBase = process.env.STORAGE_PUBLIC_URL_BASE || "http://localhost:9000/rockalendar";
+const storageHostname = new URL(storagePublicUrlBase).hostname;
+
 export default defineNuxtConfig({
   compatibilityDate: "2026-03-23",
   app: {
@@ -88,7 +91,10 @@ export default defineNuxtConfig({
       apiBase: "", // Se inyecta del fichero .env
     },
   },
-  modules: ["@nuxt/eslint", "@primevue/nuxt-module", "@nuxtjs/i18n"],
+  modules: ["@nuxt/image", "@nuxt/eslint", "@primevue/nuxt-module", "@nuxtjs/i18n"],
+  image: {
+    domains: [storageHostname],
+  },
   css: ["~/assets/css/main.css"],
   primevue: {
     options: {
@@ -112,6 +118,7 @@ export default defineNuxtConfig({
       // Detecta navegador (client) o Accept-Language (SSR) y recuerda con cookie
       useCookie: true,
       cookieKey: "rockalendar_locale",
+      cookieSecure: true,
       redirectOn: "root", // recomendado
       fallbackLocale: "en",
     },
