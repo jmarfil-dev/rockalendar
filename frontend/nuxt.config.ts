@@ -112,6 +112,7 @@ export default defineNuxtConfig({
       // Detecta navegador (client) o Accept-Language (SSR) y recuerda con cookie
       useCookie: true,
       cookieKey: "rockalendar_locale",
+      cookieSecure: true,
       redirectOn: "root", // recomendado
       fallbackLocale: "en",
     },
