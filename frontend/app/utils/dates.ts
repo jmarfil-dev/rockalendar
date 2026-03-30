@@ -1,7 +1,7 @@
 /**
  * Formatea un datetime ISO de evento para mostrarlo en la UI.
- * Usa la localización del navegador.
+ * Usa es-ES explícito para garantizar consistencia entre servidor y cliente (evitar hydration mismatch).
  */
 export function formatEventDate(isoString: string): string {
-  return new Date(isoString).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
+  return new Date(isoString).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" });
 }
