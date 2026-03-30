@@ -140,7 +140,7 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
 
       <!-- Listado -->
       <div v-else class="grid">
-        <div v-for="ev in events" :key="ev.id" class="col-12 md:col-6 lg:col-4">
+        <div v-for="(ev, index) in events" :key="ev.id" class="col-12 md:col-6 lg:col-4">
           <NuxtLink :to="ROUTE_PATH.eventDetail(ev.id)" class="no-underline">
             <Card
               class="h-full border-1 surface-50 surface-border cursor-pointer hover:surface-100 transition-colors transition-duration-150"
@@ -159,9 +159,11 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
                     :height="100"
                     sizes="200px"
                     format="avif,webp"
+                    :loading="index === 0 ? 'eager' : 'lazy'"
                     style="width: 40%; flex-shrink: 0; height: 100%; display: block;"
                     :img-attrs="{
-                      style: 'object-fit: cover; object-position: top; border-radius: 6px; width: 100%; height: 100%;'
+                      style: 'object-fit: cover; object-position: top; border-radius: 6px; width: 100%; height: 100%;',
+                      fetchpriority: index === 0 ? 'high' : undefined
                     }" />
                   <div
                     v-else
