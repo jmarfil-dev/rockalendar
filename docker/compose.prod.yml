@@ -83,6 +83,8 @@ services:
       - internal
     expose:
       - "8080"
+    volumes:
+      - backend-logs:/app/logs
     environment:
       # Datasource — apunta al servicio postgres por nombre de red interna
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/rockalendar"
@@ -128,3 +130,4 @@ networks:
 volumes:
   pgdata:
   miniodata:
+  backend-logs:
