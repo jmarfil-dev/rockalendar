@@ -12,6 +12,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@nuxt/image": "^2.0.0",
     "@nuxtjs/i18n": "^10.2.3",
     "@primeuix/themes": "^2.0.3",
     "nuxt": "^4.3.1",

@@ -151,18 +151,18 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
 
               <template #content>
                 <div class="flex gap-3" style="overflow: hidden; height: 100px">
-                  <img
+                  <NuxtPicture
                     v-if="ev.posterUrl"
                     :src="ev.posterUrl"
                     :alt="ev.title"
-                    style="
-                      width: 40%;
-                      flex-shrink: 0;
-                      object-fit: cover;
-                      object-position: top;
-                      border-radius: 6px;
-                      height: 100%;
-                    " >
+                    :width="200"
+                    :height="100"
+                    sizes="200px"
+                    format="avif,webp"
+                    style="width: 40%; flex-shrink: 0; height: 100%; display: block;"
+                    :img-attrs="{
+                      style: 'object-fit: cover; object-position: top; border-radius: 6px; width: 100%; height: 100%;'
+                    }" />
                   <div
                     v-else
                     class="border-1 surface-border border-round-lg surface-100 flex align-items-center justify-content-center text-center text-color-secondary"

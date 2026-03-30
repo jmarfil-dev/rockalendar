@@ -172,10 +172,15 @@ function mapsUrl(e: EventPublic): string {
               v-if="event.posterUrl"
               class="border-round-lg overflow-hidden flex align-items-center justify-content-center surface-50"
               style="min-height: 8rem">
-              <img
+              <NuxtPicture
                 :src="event.posterUrl"
                 :alt="event.title"
-                style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; margin: 0 auto" >
+                sizes="(max-width: 640px) 360px, 800px"
+                format="avif,webp"
+                style="display: block; margin: 0 auto;"
+                :img-attrs="{
+                  style: 'max-width: 100%; max-height: 480px; object-fit: contain; display: block;'
+                }" />
             </div>
             <div
               v-else
