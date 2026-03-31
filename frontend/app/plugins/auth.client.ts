@@ -1,14 +1,13 @@
 import { ROUTES } from "~/constants/routes";
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin((_nuxtApp) => {
   const auth = useAuth();
 
-  // Diferimos la carga del token al hook app:mounted para evitar hydration mismatches.
-  // Durante la hidratación, isAuthenticated = false en cliente y servidor — sin discrepancias.
-  // Tras el montaje, Vue hace un re-render reactivo normal con el estado real.
-  nuxtApp.hook("app:mounted", () => {
-    auth.loadFromStorage();
-  });
+  // Cargamos el token síncronamente para que el middleware de ruta pueda evaluar
+  // el estado de auth en la carga inicial (refresh en página privada).
+  // Los elementos dependientes de auth en páginas SSR deben estar en <ClientOnly>
+  // para evitar hydration mismatches.
+  auth.loadFromStorage();
 
   window.addEventListener("storage", (event) => {
     if (event.key !== "rk:auth:event") return;
