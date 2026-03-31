@@ -301,6 +301,8 @@ function mapsUrl(e: EventPublic): string {
             </Card>
 
             <!-- Botones de agenda (solo para usuarios autenticados) -->
+            <!-- ClientOnly: isAuthenticated depende de localStorage, no disponible en SSR -->
+            <ClientOnly>
             <Card v-if="isAuthenticated" class="border-1 surface-border">
               <template #title>
                 <div class="flex align-items-center gap-2">
@@ -329,6 +331,7 @@ function mapsUrl(e: EventPublic): string {
                 </div>
               </template>
             </Card>
+            </ClientOnly>
 
             <Card class="border-1 surface-border">
               <template #content>
