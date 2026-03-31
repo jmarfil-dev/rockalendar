@@ -1,5 +1,6 @@
 package com.jmarfildev.rockalendar.common;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -27,6 +28,15 @@ public class CommonValidations {
      */
     public static void validateDateRange(OffsetDateTime from, OffsetDateTime to) {
         if (to != null && to.isBefore(from)) {
+            throw new BadRequestException(ErrorConstants.INVALID_DATE_RANGE);
+        }
+    }
+
+    /**
+     * Lanza {@link BadRequestException} si {@code endDate} no es null y es anterior a {@code startDate}.
+     */
+    public static void validateDateRange(LocalDate startDate, LocalDate endDate) {
+        if (endDate != null && endDate.isBefore(startDate)) {
             throw new BadRequestException(ErrorConstants.INVALID_DATE_RANGE);
         }
     }

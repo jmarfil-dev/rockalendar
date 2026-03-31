@@ -89,7 +89,7 @@ const eventJsonLd = computed(() => {
       },
     },
   };
-  if (ev.endDateTime) schema.endDate = ev.endDateTime;
+  if (ev.endDate) schema.endDate = ev.endDate;
   if (ev.description) schema.description = ev.description;
   if (ev.posterUrl) schema.image = ev.posterUrl;
   if (ev.artists?.length) schema.performer = ev.artists.map((a) => ({ "@type": "MusicGroup", name: a.name }));
@@ -154,10 +154,10 @@ function mapsUrl(e: EventPublic): string {
 
         <div class="flex align-items-center gap-2 text-color-secondary">
           <i class="pi pi-calendar" />
-          <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime) }}</time>
-          <template v-if="event.endDateTime">
+          <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+          <template v-if="event.endDate">
             <span class="mx-1">→</span>
-            <time :datetime="event.endDateTime">{{ formatEventDate(event.endDateTime) }}</time>
+            <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
           </template>
         </div>
 
@@ -256,10 +256,10 @@ function mapsUrl(e: EventPublic): string {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("dates.date") }}</span>
                       <span class="text-color-secondary">
-                        <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime) }}</time>
-                        <template v-if="event.endDateTime">
+                        <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+                        <template v-if="event.endDate">
                           <span class="mx-1">→</span>
-                          <time :datetime="event.endDateTime">{{ formatEventDate(event.endDateTime) }}</time>
+                          <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
                         </template>
                       </span>
                     </div>

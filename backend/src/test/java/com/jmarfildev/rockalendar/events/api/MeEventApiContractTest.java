@@ -139,19 +139,23 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         var event = factory.approvedMadridAgainstYou();
         String api = apiMeEvents.concat("/" + event.getId());
 
+        // endDate anterior a startDate → 400
+        var startDate = TestDates.genericFuture().toLocalDate();
+        var endBefore = startDate.minusDays(1);
         String body = """
                 {
                   "title": "Nuevo título",
                   "description": "desc",
-                  "startDateTime": "2026-03-10T20:00:00Z",
-                  "endDateTime": "2026-03-10T19:00:00Z",
+                  "startDate": "%s",
+                  "startTime": "20:00:00",
+                  "endDate": "%s",
                   "venueName": "Sala X",
                   "provinceId": "%s",
                   "cityName": "Madrid",
                   "artists": ["Band A"],
                   "sourceUrl": "https://example.com"
                 }
-                """.formatted(factory.madrid().getId());
+                """.formatted(startDate, endBefore, factory.madrid().getId());
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .file(eventPart(body))
@@ -323,17 +327,19 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     private static String eventBody(String provinceId, String artists) {
+        var dt = TestDates.genericFuture();
         return """
                 {
                   "title": "Concierto de prueba en Sevilla",
                   "description": "Evento creado desde test",
-                  "startDateTime": "%s",
+                  "startDate": "%s",
+                  "startTime": "%s",
                   "venueName": "Sala Custom",
                   "provinceId": "%s",
                   "cityName": "Sevilla",
                   "artists": %s,
                   "sourceUrl": "https://example.com"
                 }
-                """.formatted(TestDates.genericFuture(), provinceId, artists);
+                """.formatted(dt.toLocalDate(), dt.toLocalTime().withNano(0), provinceId, artists);
     }
 }

@@ -88,8 +88,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 mockTitle,
                 "Desc",
-                TestDates.rangeEnd(),
-                TestDates.rangeStart(),
+                TestDates.rangeEndDate(),
+                null,
+                TestDates.rangeStartDate(),
                 mockWizink,
                 factory.madrid().getId(),
                 TestConstants.MADRID,
@@ -107,7 +108,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 mockTitle,
                 null,
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 mockWizink,
                 factory.madrid().getId(),
@@ -126,7 +128,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 mockTitle,
                 null,
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 mockWizink,
                 factory.madrid().getId(),
@@ -145,7 +148,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 mockTitle,
                 null,
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 "***",
                 factory.madrid().getId(),
@@ -164,7 +168,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 "!!!",
                 null,
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 mockWizink,
                 factory.madrid().getId(),
@@ -185,7 +190,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 mockTitle,
                 null,
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 mockWizink,
                 missingProv,
@@ -204,7 +210,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 "  Ska-P en Madrid  ",
                 "  descripcion  ",
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 "  WiZink Center  ",
                 factory.madrid().getId(),
@@ -239,7 +246,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 "Against You en Madrid",
                 null,
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 mockWizink,
                 factory.madrid().getId(),
@@ -261,7 +269,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 mockTitle,
                 null,
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 mockWizink,
                 factory.madrid().getId(),
@@ -285,7 +294,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 mockTitle,
                 "    ",
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 mockWizink,
                 factory.madrid().getId(),
@@ -307,7 +317,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 "  Against You en concierto  ",
                 "  descripcion  ",
-                TestDates.madrid(),
+                TestDates.madridDate(),
+                null,
                 null,
                 "  WiZink Center  ",
                 factory.madrid().getId(),
@@ -359,7 +370,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     void propose_admin_createsApprovedEventDirectly() {
         asAdmin();
         var req = new SubmitEventRequest(
-                mockTitle, null, TestDates.madrid(), null, mockWizink,
+                mockTitle, null, TestDates.madridDate(), null, null, mockWizink,
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of("Ska-P"), null);
 
@@ -379,7 +390,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var req = new SubmitEventRequest(
                 "%s en %s".formatted(TestConstants.MOCK_ARTIST_NAME_AY, TestConstants.MADRID),
-                null, TestDates.madrid(), null, "Sala Copérnico",
+                null, TestDates.madridDate(), null, null, "Sala Copérnico",
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
@@ -397,7 +408,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         asAdmin();
 
         var req = new SubmitEventRequest(
-                "Título editado por admin", null, TestDates.madrid(), null, mockWizink,
+                "Título editado por admin", null, TestDates.madridDate(), null, null, mockWizink,
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
@@ -414,7 +425,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         asAdmin();
 
         var req = new SubmitEventRequest(
-                "Mafalda corregido", null, TestDates.genericFuture(), null, "Sala Moon",
+                "Mafalda corregido", null, TestDates.genericFutureDate(), null, null, "Sala Moon",
                 factory.valencia().getId(), "València",
                 List.of("Mafalda"), null);
 
@@ -430,7 +441,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         asAdmin();
 
         var req = new SubmitEventRequest(
-                "Soziedad Alkoholika corregido", null, TestDates.madrid(), null, "Sala Copérnico",
+                "Soziedad Alkoholika corregido", null, TestDates.madridDate(), null, null, "Sala Copérnico",
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of("Soziedad Alkoholika"), null);
 
@@ -501,7 +512,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 .when(artistRepository).saveAndFlush(any());
 
         var req = new SubmitEventRequest(
-                mockTitle, null, TestDates.madrid(), null, mockWizink,
+                mockTitle, null, TestDates.madridDate(), null, null, mockWizink,
                 factory.madrid().getId(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 

@@ -132,7 +132,7 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
                   <div class="text-color-secondary text-sm flex flex-column gap-2">
                     <div>
                       <i class="pi pi-calendar mr-2" />
-                      {{ new Date(event.startDateTime).toLocaleDateString() }}
+                      {{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}
                     </div>
                     <div>
                       <i class="pi pi-compass mr-2" />
@@ -141,7 +141,7 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
                     </div>
                     <div>
                       <i class="pi pi-clock mr-2" />
-                      {{ t("me.submittedAt") }}: {{ new Date(event.submittedAt).toLocaleDateString() }}
+                      {{ t("me.submittedAt") }}: {{ formatDate(event.submittedAt) }}
                     </div>
                     <Message v-if="event.moderationMessage" severity="warn" :closable="false" class="mt-1">
                       {{ event.moderationMessage }}

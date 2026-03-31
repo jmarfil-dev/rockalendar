@@ -179,8 +179,9 @@
     "propose": {
       "title": "Proponer concierto",
       "venueName": "Recinto",
-      "startDate": "Fecha y hora de inicio",
-      "endDate": "Fecha y hora de fin (opcional)",
+      "startDate": "Fecha de inicio",
+      "startTimeUnknown": "No sé la hora",
+      "endDate": "Fecha de fin (opcional)",
       "addArtist": "Añadir artista",
       "removeArtist": "Eliminar artista",
       "artistPlaceholder": "Artista",

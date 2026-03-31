@@ -149,7 +149,7 @@ async function confirmDelete() {
                 <span class="font-semibold text-color">{{ event.title }}</span>
                 <div class="flex align-items-center gap-2 text-color-secondary text-sm">
                   <i class="pi pi-calendar" aria-hidden="true" />
-                  <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime) }}</time>
+                  <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
                 </div>
                 <div class="flex align-items-center gap-2 text-color-secondary text-sm">
                   <i class="pi pi-map-marker" aria-hidden="true" />

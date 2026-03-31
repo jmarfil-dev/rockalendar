@@ -1,5 +1,6 @@
 package com.jmarfildev.rockalendar.events.api.dto;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +16,8 @@ public record EventPrivateDto(UUID id,
                               String title,
                               String description,
                               OffsetDateTime startDateTime,
-                              OffsetDateTime endDateTime,
+                              boolean startTimeUnknown,
+                              LocalDate endDate,
                               String venueName,
                               UUID provinceId,
                               String provinceName,

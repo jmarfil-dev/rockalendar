@@ -1,5 +1,6 @@
 package com.jmarfildev.rockalendar.events.domain;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -55,8 +56,11 @@ public class Event {
     @Column(name = "start_date_time", nullable = false)
     private OffsetDateTime startDateTime;
 
-    @Column(name = "end_date_time")
-    private OffsetDateTime endDateTime;
+    @Column(name = "start_time_unknown", nullable = false)
+    private boolean startTimeUnknown;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "province_id", nullable = false)

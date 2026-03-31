@@ -113,10 +113,10 @@ async function onDelete() {
           </div>
           <div class="flex align-items-center gap-2 text-color-secondary text-sm">
             <i class="pi pi-calendar" />
-            <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime) }}</time>
-            <template v-if="event.endDateTime">
+            <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+            <template v-if="event.endDate">
               <span>→</span>
-              <time :datetime="event.endDateTime">{{ formatEventDate(event.endDateTime) }}</time>
+              <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
             </template>
           </div>
         </div>
@@ -228,10 +228,10 @@ async function onDelete() {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("dates.date") }}</span>
                       <span class="text-color-secondary">
-                        <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime) }}</time>
-                        <template v-if="event.endDateTime">
+                        <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+                        <template v-if="event.endDate">
                           <span class="mx-1">→</span>
-                          <time :datetime="event.endDateTime">{{ formatEventDate(event.endDateTime) }}</time>
+                          <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
                         </template>
                       </span>
                     </div>
@@ -274,7 +274,7 @@ async function onDelete() {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("me.submittedAt") }}</span>
                       <span class="text-color-secondary">
-                        {{ new Date(event.submittedAt).toLocaleDateString() }}
+                        {{ formatDate(event.submittedAt) }}
                       </span>
                     </div>
                   </div>
@@ -284,7 +284,7 @@ async function onDelete() {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("me.createdAt") }}</span>
                       <span class="text-color-secondary">
-                        {{ new Date(event.createdAt).toLocaleDateString() }}
+                        {{ formatDate(event.createdAt) }}
                       </span>
                     </div>
                   </div>
