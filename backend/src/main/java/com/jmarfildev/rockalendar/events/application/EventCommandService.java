@@ -1,6 +1,9 @@
 package com.jmarfildev.rockalendar.events.application;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -94,7 +97,7 @@ public class EventCommandService {
             // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
             var artistIds = in.artists().stream().map(Artist::getId).toList();
             var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
-            var dayEnd = dayStart.plusDays(1);
+            var dayEnd   = dayStart.plusDays(1);
             List<DuplicateEventProjection> duplicates =
                     eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
 
@@ -109,7 +112,8 @@ public class EventCommandService {
                          .title(in.title())
                          .description(in.description())
                          .startDateTime(in.startDateTime())
-                         .endDateTime(in.endDateTime())
+                         .startTimeUnknown(in.startTimeUnknown())
+                         .endDate(in.endDate())
                          .province(in.province())
                          .cityName(in.cityName())
                          .citySlug(in.citySlug())
@@ -168,7 +172,8 @@ public class EventCommandService {
         event.setTitle(in.title());
         event.setDescription(in.description());
         event.setStartDateTime(in.startDateTime());
-        event.setEndDateTime(in.endDateTime());
+        event.setStartTimeUnknown(in.startTimeUnknown());
+        event.setEndDate(in.endDate());
         event.setProvince(in.province());
         event.setCityName(in.cityName());
         event.setCitySlug(in.citySlug());
@@ -258,7 +263,13 @@ public class EventCommandService {
      * @return un record con los datos validados
      */
     private EventInputValidate validate(SubmitEventRequest req, UUID userId) {
-        CommonValidations.validateDateRange(req.startDateTime(), req.endDateTime());
+        // Construir startDateTime a partir de fecha + hora opcional (UTC)
+        // Si no se informa de la hora, se pone medianoche
+        boolean startTimeUnknown = req.startTime() == null;
+        LocalTime time = startTimeUnknown ? LocalTime.MIDNIGHT : req.startTime();
+        OffsetDateTime startDateTime = req.startDate().atTime(time).atOffset(ZoneOffset.UTC);
+
+        CommonValidations.validateDateRange(req.startDate(), req.endDate());
 
         // Artistas normalizados (descarta blancos tras trim/slug)
         var artists = new LinkedHashSet<Artist>();
@@ -302,8 +313,8 @@ public class EventCommandService {
         String description = StringUtils.blankToNull(req.description());
         String sourceUrl = StringUtils.blankToNull(req.sourceUrl());
 
-        return new EventInputValidate(title, description, req.startDateTime(), req.endDateTime(), province, cityName, citySlug, venueName,
-                                      venueSlug, sourceUrl, artists);
+        return new EventInputValidate(title, description, startDateTime, startTimeUnknown, req.endDate(), province, cityName, citySlug,
+                                      venueName, venueSlug, sourceUrl, artists);
     }
 
     /**
@@ -350,7 +361,8 @@ public class EventCommandService {
     private record EventInputValidate(String title,
                                       String description,
                                       OffsetDateTime startDateTime,
-                                      OffsetDateTime endDateTime,
+                                      boolean startTimeUnknown,
+                                      LocalDate endDate,
                                       Province province,
                                       String cityName,
                                       String citySlug,

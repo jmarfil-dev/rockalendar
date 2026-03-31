@@ -37,7 +37,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                    e.id,
                    e.title,
                    e.startDateTime,
-                   e.endDateTime,
+                   e.startTimeUnknown,
+                   e.endDate,
                    p.name,
                    e.cityName,
                    e.posterUrl
@@ -46,15 +47,15 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                JOIN e.province p
                WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
                    AND (
-                       (e.endDateTime IS NOT NULL AND e.endDateTime >= CURRENT_TIMESTAMP)
-                           OR (e.endDateTime IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
+                       (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
+                           OR (e.endDate IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
                    )
            """)
     Page<EventPublicListItemDto> findHome(Pageable pageable);
 
     @Query("""
                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                   e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
                )
                FROM Event e
                JOIN e.province p
@@ -65,7 +66,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("""
                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                   e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
                )
                FROM Event e
                JOIN e.province p
@@ -83,7 +84,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
      */
     @Query("""
                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                   e.id, e.title, e.startDateTime, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
                )
                FROM Event e
                JOIN e.province p
@@ -107,12 +108,13 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                    SELECT
                      e.id              AS id,
                      e.title           AS title,
-                     e.start_date_time AS startDateTime,
-                     e.end_date_time   AS endDateTime,
-                     p.name            AS provinceName,
-                     e.city_name       AS cityName,
-                     e.poster_url      AS posterUrl,
-                     s.score           AS score
+                     e.start_date_time    AS startDateTime,
+                     e.start_time_unknown AS startTimeUnknown,
+                     e.end_date           AS endDate,
+                     p.name               AS provinceName,
+                     e.city_name          AS cityName,
+                     e.poster_url         AS posterUrl,
+                     s.score              AS score
                    FROM search_public_events(
                      :q, :minSim, :ftsW, :trgmW,
                      :dateFrom, :dateTo,
@@ -163,12 +165,13 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                    SELECT
                      e.id              AS id,
                      e.title           AS title,
-                     e.start_date_time AS startDateTime,
-                     e.end_date_time   AS endDateTime,
-                     p.name            AS provinceName,
-                     e.city_name       AS cityName,
-                     e.poster_url      AS posterUrl,
-                     s.score           AS score
+                     e.start_date_time    AS startDateTime,
+                     e.start_time_unknown AS startTimeUnknown,
+                     e.end_date           AS endDate,
+                     p.name               AS provinceName,
+                     e.city_name          AS cityName,
+                     e.poster_url         AS posterUrl,
+                     s.score              AS score
                    FROM search_public_events_fallback(
                      :q, :minSim, :ftsW, :trgmW,
                      :dateFrom, :dateTo,

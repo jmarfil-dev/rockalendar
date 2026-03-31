@@ -156,7 +156,6 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
                     :src="ev.posterUrl"
                     :alt="ev.title"
                     :width="200"
-                    :height="100"
                     sizes="200px"
                     format="avif,webp"
                     :loading="index === 0 ? 'eager' : 'lazy'"
@@ -178,11 +177,11 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
                     <div class="flex flex-column gap-1">
                       <div>
                         <i class="pi pi-calendar mr-2" />
-                        <time :datetime="ev.startDateTime">{{ formatEventDate(ev.startDateTime) }}</time>
+                        <time :datetime="ev.startDateTime">{{ formatEventDate(ev.startDateTime, ev.startTimeUnknown) }}</time>
                       </div>
-                      <div v-if="ev.endDateTime" class="pl-4">
+                      <div v-if="ev.endDate" class="pl-4">
                         <span class="mr-1">→</span>
-                        <time :datetime="ev.endDateTime">{{ formatEventDate(ev.endDateTime) }}</time>
+                        <time :datetime="ev.endDate">{{ formatEventEndDate(ev.endDate) }}</time>
                       </div>
                     </div>
 

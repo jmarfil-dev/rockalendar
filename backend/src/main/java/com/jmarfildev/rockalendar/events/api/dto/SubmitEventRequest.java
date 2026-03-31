@@ -1,6 +1,7 @@
 package com.jmarfildev.rockalendar.events.api.dto;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,8 +20,9 @@ import com.jmarfildev.rockalendar.common.error.ErrorConstants;
  */
 public record SubmitEventRequest(@NotBlank @Size(max = 200) String title,
                                  @Size(max = 5_000) String description,
-                                 @NotNull @Future OffsetDateTime startDateTime,
-                                 OffsetDateTime endDateTime,
+                                 @NotNull @Future LocalDate startDate,
+                                 LocalTime startTime,
+                                 LocalDate endDate,
                                  @NotBlank @Size(max = 200) String venueName,
                                  @NotNull UUID provinceId,
                                  @NotBlank @Size(max = 120) String cityName,

@@ -41,8 +41,6 @@ public interface EventMapper {
 
     @Mapping(target = "startDateTime",
             expression = "java(projection.getStartDateTime() == null ? null : projection.getStartDateTime().atOffset(java.time.ZoneOffset.UTC))")
-    @Mapping(target = "endDateTime",
-            expression = "java(projection.getEndDateTime() == null ? null : projection.getEndDateTime().atOffset(java.time.ZoneOffset.UTC))")
     EventPublicListItemDto toPublicListItemDto(EventPublicSearchProjection projection);
 
     @Mapping(target = "artists", expression = "java(mapArtists(event))")

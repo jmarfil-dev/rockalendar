@@ -9,8 +9,9 @@ export const useProposeEvent = () => {
   const form = reactive({
     title: "",
     description: "",
-    startDateTime: null as Date | null,
-    endDateTime: null as Date | null,
+    startDate: null as Date | null,
+    startTimeUnknown: false,
+    endDate: null as Date | null,
     venueName: "",
     provinceId: null as string | null,
     cityName: "",
@@ -39,11 +40,13 @@ export const useProposeEvent = () => {
     submitting.value = true;
     resetErrors();
 
+    const iso = form.startDate?.toISOString(); // UTC: "2026-08-15T18:00:00.000Z"
     const eventData = {
       title: form.title,
       description: form.description || undefined,
-      startDateTime: form.startDateTime?.toISOString(),
-      endDateTime: form.endDateTime?.toISOString() || undefined,
+      startDate: iso ? iso.substring(0, 10) : undefined,
+      startTime: iso && !form.startTimeUnknown ? iso.substring(11, 19) : undefined,
+      endDate: form.endDate ? form.endDate.toISOString().substring(0, 10) : undefined,
       venueName: form.venueName,
       provinceId: form.provinceId,
       cityName: form.cityName,

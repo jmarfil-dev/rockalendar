@@ -12,6 +12,7 @@ import com.jmarfildev.rockalendar.events.domain.EventStatus;
 public record EventPrivateListItemDto(UUID id,
                                       String title,
                                       OffsetDateTime startDateTime,
+                                      boolean startTimeUnknown,
                                       String provinceName,
                                       String cityName,
                                       EventStatus status,

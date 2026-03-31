@@ -51,7 +51,7 @@ function clearNewPoster() {
 const today = new Date();
 
 const isDateRangeInvalid = computed(
-  () => !!form.startDateTime && !!form.endDateTime && form.endDateTime < form.startDateTime,
+  () => !!form.startDate && !!form.endDate && form.endDate < form.startDate,
 );
 
 const showSuccessDialog = ref(false);
@@ -133,25 +133,25 @@ async function onSuccessClose() {
           <!-- Fecha inicio / Fecha fin -->
           <div class="grid">
             <div class="col-12 md:col-6 flex flex-column gap-2">
-              <label for="startDateTime" class="text-sm text-color-secondary">
+              <label for="startDate" class="text-sm text-color-secondary">
                 {{ t("me.propose.startDate") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
               </label>
               <div class="flex align-items-center gap-2">
                 <DatePicker
-                  v-model="form.startDateTime"
-                  input-id="startDateTime"
-                  show-time
+                  v-model="form.startDate"
+                  input-id="startDate"
+                  :show-time="!form.startTimeUnknown"
                   hour-format="24"
                   date-format="dd/mm/yy"
                   :min-date="today"
-                  :invalid="!!fieldErrors['startDateTime']"
+                  :invalid="!!fieldErrors['startDate']"
                   :manual-input="false"
                   show-icon
                   icon-display="input"
                   required
                   class="flex-1" />
                 <Button
-                  v-if="form.startDateTime"
+                  v-if="form.startDate"
                   type="button"
                   icon="pi pi-times"
                   severity="secondary"
@@ -159,30 +159,37 @@ async function onSuccessClose() {
                   rounded
                   size="small"
                   :aria-label="t('common.clearDate')"
-                  @click="form.startDateTime = null" />
+                  @click="form.startDate = null" />
               </div>
-              <Message v-if="fieldErrors['startDateTime']" severity="error" variant="simple" size="small">
-                {{ t(fieldErrors["startDateTime"]) }}
+              <div class="flex align-items-center gap-2 mt-1">
+                <Checkbox
+                  v-model="form.startTimeUnknown"
+                  input-id="startTimeUnknown"
+                  :binary="true" />
+                <label for="startTimeUnknown" class="text-sm text-color-secondary cursor-pointer">
+                  {{ t("me.propose.startTimeUnknown") }}
+                </label>
+              </div>
+              <Message v-if="fieldErrors['startDate']" severity="error" variant="simple" size="small">
+                {{ t(fieldErrors["startDate"]) }}
               </Message>
             </div>
 
             <div class="col-12 md:col-6 flex flex-column gap-2">
-              <label for="endDateTime" class="text-sm text-color-secondary">{{ t("me.propose.endDate") }}</label>
+              <label for="endDate" class="text-sm text-color-secondary">{{ t("me.propose.endDate") }}</label>
               <div class="flex align-items-center gap-2">
                 <DatePicker
-                  v-model="form.endDateTime"
-                  input-id="endDateTime"
-                  show-time
-                  hour-format="24"
+                  v-model="form.endDate"
+                  input-id="endDate"
                   date-format="dd/mm/yy"
-                  :min-date="form.startDateTime ?? undefined"
-                  :invalid="!!fieldErrors['endDateTime'] || isDateRangeInvalid"
+                  :min-date="form.startDate ?? undefined"
+                  :invalid="!!fieldErrors['endDate'] || isDateRangeInvalid"
                   :manual-input="false"
                   show-icon
                   icon-display="input"
                   class="flex-1" />
                 <Button
-                  v-if="form.endDateTime"
+                  v-if="form.endDate"
                   type="button"
                   icon="pi pi-times"
                   severity="secondary"
@@ -190,10 +197,10 @@ async function onSuccessClose() {
                   rounded
                   size="small"
                   :aria-label="t('common.clearDate')"
-                  @click="form.endDateTime = null" />
+                  @click="form.endDate = null" />
               </div>
-              <Message v-if="fieldErrors['endDateTime']" severity="error" variant="simple" size="small">
-                {{ t(fieldErrors["endDateTime"]) }}
+              <Message v-if="fieldErrors['endDate']" severity="error" variant="simple" size="small">
+                {{ t(fieldErrors["endDate"]) }}
               </Message>
               <Message v-else-if="isDateRangeInvalid" severity="error" variant="simple" size="small">
                 {{ t("dates.invalidRange") }}

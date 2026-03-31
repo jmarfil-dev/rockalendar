@@ -117,7 +117,7 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
                       <div class="text-color-secondary text-sm flex flex-column gap-2">
                         <div>
                           <i class="pi pi-clock mr-2" />
-                          {{ t("me.submittedAt") }}: {{ new Date(event.submittedAt).toLocaleDateString() }}
+                          {{ t("me.submittedAt") }}: {{ formatDate(event.submittedAt) }}
                         </div>
                       </div>
                     </template>
@@ -150,7 +150,7 @@ watch([activeTab, currentPage, pageSize, sort], load, { immediate: true });
                       <div class="text-color-secondary text-sm flex flex-column gap-2">
                         <div>
                           <i class="pi pi-check-circle mr-2" />
-                          {{ t("moderation.moderatedAt") }}: {{ new Date(event.moderatedAt).toLocaleDateString() }}
+                          {{ t("moderation.moderatedAt") }}: {{ formatDate(event.moderatedAt) }}
                         </div>
                         <Message v-if="event.moderationMessage" severity="info" :closable="false" class="mt-1">
                           {{ event.moderationMessage }}

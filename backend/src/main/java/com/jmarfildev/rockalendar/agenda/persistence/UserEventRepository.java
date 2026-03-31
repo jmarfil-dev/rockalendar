@@ -17,7 +17,7 @@ public interface UserEventRepository extends JpaRepository<UserEvent, UserEventI
 
     @Query("""
                 SELECT new com.jmarfildev.rockalendar.agenda.api.dto.AgendaItemDto(
-                    e.id, e.title, e.startDateTime, e.endDateTime, e.venueName, e.cityName, p.name, ue.status, ue.createdAt
+                    e.id, e.title, e.startDateTime, e.startTimeUnknown, e.endDate, e.venueName, e.cityName, p.name, ue.status, ue.createdAt
                 )
                 FROM UserEvent ue
                 JOIN ue.event e
@@ -25,8 +25,8 @@ public interface UserEventRepository extends JpaRepository<UserEvent, UserEventI
                 WHERE ue.id.userId = :userId
                   AND e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
                   AND (
-                      (e.endDateTime IS NOT NULL AND e.endDateTime >= CURRENT_TIMESTAMP)
-                      OR (e.endDateTime IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
+                      (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
+                      OR (e.endDate IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
                   )
                 ORDER BY e.startDateTime ASC, e.title ASC
             """)

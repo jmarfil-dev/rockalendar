@@ -17,6 +17,7 @@ export type EventPrivateListItem = {
   id: string;
   title: string;
   startDateTime: string;
+  startTimeUnknown: boolean;
   provinceName: string;
   cityName: string;
   status: EventStatus;
@@ -29,7 +30,8 @@ export type EventPublicListItem = {
   id: string;
   title: string;
   startDateTime: string;
-  endDateTime?: string;
+  startTimeUnknown: boolean;
+  endDate?: string | null;
   provinceName: string;
   cityName: string;
   posterUrl?: string | null;
@@ -40,7 +42,8 @@ export type EventPublic = {
   title: string;
   description?: string | null;
   startDateTime: string;
-  endDateTime?: string | null;
+  startTimeUnknown: boolean;
+  endDate?: string | null;
   venueName: string;
   provinceId: string;
   provinceName: string;
@@ -66,7 +69,8 @@ export type EventPrivateDto = {
   title: string;
   description?: string | null;
   startDateTime: string;
-  endDateTime?: string | null;
+  startTimeUnknown: boolean;
+  endDate?: string | null;
   venueName: string;
   provinceId: string;
   provinceName: string;
@@ -104,7 +108,8 @@ export type AgendaItem = {
   eventId: string;
   title: string;
   startDateTime: string;
-  endDateTime?: string | null;
+  startTimeUnknown: boolean;
+  endDate?: string | null;
   venueName: string;
   cityName: string;
   provinceName: string;

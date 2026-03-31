@@ -1,6 +1,7 @@
 package com.jmarfildev.rockalendar.support;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 /**
@@ -48,5 +49,21 @@ public final class TestDates {
 
     public static OffsetDateTime rangeEnd() {
         return now().plusMonths(2).withDayOfMonth(28);
+    }
+
+    public static LocalDate madridDate() {
+        return madrid().toLocalDate();
+    }
+
+    public static LocalDate genericFutureDate() {
+        return genericFuture().toLocalDate();
+    }
+
+    public static LocalDate rangeStartDate() {
+        return rangeStart().toLocalDate();
+    }
+
+    public static LocalDate rangeEndDate() {
+        return rangeEnd().toLocalDate();
     }
 }

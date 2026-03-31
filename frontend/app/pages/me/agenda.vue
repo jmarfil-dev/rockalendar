@@ -87,10 +87,10 @@ onMounted(fetchAgenda);
               <div class="text-color-secondary text-sm flex flex-column gap-2">
                 <div>
                   <i class="pi pi-calendar mr-2" aria-hidden="true" />
-                  {{ new Date(item.startDateTime).toLocaleDateString() }}
-                  <template v-if="item.endDateTime">
+                  {{ formatEventDate(item.startDateTime, item.startTimeUnknown) }}
+                  <template v-if="item.endDate">
                     <span class="mx-1">→</span>
-                    {{ new Date(item.endDateTime).toLocaleDateString() }}
+                    {{ formatEventEndDate(item.endDate) }}
                   </template>
                 </div>
                 <div>

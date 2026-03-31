@@ -9,8 +9,9 @@ export const useEditEvent = (eventId: string) => {
   const form = reactive({
     title: "",
     description: "",
-    startDateTime: null as Date | null,
-    endDateTime: null as Date | null,
+    startDate: null as Date | null,
+    startTimeUnknown: false,
+    endDate: null as Date | null,
     venueName: "",
     provinceId: null as string | null,
     cityName: "",
@@ -35,8 +36,9 @@ export const useEditEvent = (eventId: string) => {
   function fillForm(event: EventPrivateDto) {
     form.title = event.title;
     form.description = event.description ?? "";
-    form.startDateTime = new Date(event.startDateTime);
-    form.endDateTime = event.endDateTime ? new Date(event.endDateTime) : null;
+    form.startDate = new Date(event.startDateTime);
+    form.startTimeUnknown = event.startTimeUnknown;
+    form.endDate = event.endDate ? new Date(`${event.endDate}T12:00:00`) : null;
     form.venueName = event.venueName;
     form.provinceId = event.provinceId;
     form.cityName = event.cityName;
@@ -65,11 +67,13 @@ export const useEditEvent = (eventId: string) => {
     submitting.value = true;
     resetErrors();
 
+    const iso = form.startDate?.toISOString();
     const eventData = {
       title: form.title,
       description: form.description || undefined,
-      startDateTime: form.startDateTime?.toISOString(),
-      endDateTime: form.endDateTime?.toISOString() || undefined,
+      startDate: iso ? iso.substring(0, 10) : undefined,
+      startTime: iso && !form.startTimeUnknown ? iso.substring(11, 19) : undefined,
+      endDate: form.endDate ? form.endDate.toISOString().substring(0, 10) : undefined,
       venueName: form.venueName,
       provinceId: form.provinceId,
       cityName: form.cityName,
