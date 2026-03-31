@@ -77,6 +77,7 @@ export default defineNuxtConfig({
         { property: "og:site_name", content: "Rockalendar" },
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "google-site-verification", content: "8otAV7tjZlORi3UnmE8swR5OGPRMvLjPgh7fKbmxC50" },
       ],
     },
   },
