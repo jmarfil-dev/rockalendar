@@ -40,9 +40,14 @@ public class TrafficLoggingInterceptor implements HandlerInterceptor {
     }
 
     private String resolveClientIp(HttpServletRequest request) {
+        // CF-Connecting-IP es inyectada por Cloudflare y no puede ser falsificada por el cliente
+        String cfIp = request.getHeader("CF-Connecting-IP");
+        if (cfIp != null && !cfIp.isBlank()) {
+            return cfIp.strip();
+        }
+        // Fallback para entornos sin Cloudflare (local, staging directo)
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isBlank()) {
-            // X-Forwarded-For puede contener varios IPs separados por comas; el primero es el cliente real
             return forwarded.split(",")[0].trim();
         }
         return request.getRemoteAddr();
