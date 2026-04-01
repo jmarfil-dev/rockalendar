@@ -1,16 +1,14 @@
 name: CI Backend
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/ci-backend.yml'
   pull_request:
     branches: [main]
     paths:
       - 'backend/**'
       - '.github/workflows/ci-backend.yml'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   test:
