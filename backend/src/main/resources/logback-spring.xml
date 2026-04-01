@@ -8,8 +8,8 @@
         </encoder>
     </appender>
 
-    <!-- Fichero rotatorio — solo en producción (no en dev ni local) -->
-    <springProfile name="!dev,!local">
+    <!-- Fichero rotatorio — solo en producción (no en dev, local ni test) -->
+    <springProfile name="!dev,!local,!test">
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>/app/logs/app.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -29,7 +29,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="dev,local">
+    <springProfile name="dev,local,test">
         <root level="INFO">
             <appender-ref ref="CONSOLE" />
         </root>
