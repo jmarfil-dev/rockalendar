@@ -45,10 +45,12 @@ Renderiza:
 
 **Layouts separados**
 
-- `layouts/public.vue` -> páginas públicas (listado, detalle, etc.)
+- `layouts/public.vue` -> páginas públicas (listado, detalle, etc.) y actualmente también `/admin/**`
 - `layouts/private.vue` -> área personal (`/me/**`)
 - `layouts/moderation.vue` -> moderación (`/moderation/**`)
-- `layouts/admin.vue` -> admin (`/admin/**`)
+- `layouts/minimal.vue` -> páginas de acceso (login, registro, recuperación de contraseña)
+
+> `layouts/admin.vue` está pendiente de crear. Por ahora `/admin/**` reutiliza el layout `public`.
 
 **Navbar como componente + composable (para centralizar)**
 

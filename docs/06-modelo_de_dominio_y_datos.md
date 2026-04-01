@@ -121,15 +121,21 @@ Reglas:
 
 ### 4.1 Estados de Event
 
-Estados mínimos del MVP:
+Estados implementados:
 
-- **PENDING**: propuesto, no visible públicamente.
+- **PENDING_MODERATION**: propuesto, en espera de revisión; no visible públicamente.
 - **APPROVED**: visible y consultable.
-- **REJECTED**: no visible; conserva motivo.
+- **REJECTED**: rechazado por moderación; no visible; conserva motivo.
+- **NEEDS_CHANGES**: el moderador solicita correcciones al autor; no visible.
+- **DRAFT**: borrador guardado por el autor antes de enviar a moderación; no visible.
+- **FLAGGED**: marcado automáticamente para revisión por el sistema de automodera­ción; no visible.
+- **HIDDEN**: ocultado manualmente por un moderador; no visible.
+- **CANCELED**: cancelado (p. ej. por el autor o un admin); no visible.
+- **ERASED**: borrado lógico; no visible ni recuperable desde la interfaz.
 
 Reglas:
 
-- Un evento solo es visible si está APPROVED.
+- Un evento solo es visible públicamente si está en estado `APPROVED`.
 - Un moderador no puede moderar su propio evento.
 - Las decisiones de moderación ajustan el score del autor.
 
@@ -261,15 +267,6 @@ Búsqueda:
 
 ### 6.6 `event_artists` (tabla puente)
 
-- `event_id` (FK → events.id)
-- `artist_id` (FK → artists.id)
-- (opcional) `role` o `order` (para artista principal vs secundarios)
-
-Índices/constraints:
-- PK compuesta: `(event_id, artist_id)`
-
-### 6.6 `event_artists`
-
 - `event_id` (FK → events.id, ON DELETE CASCADE)
 - `artist_id` (FK → artists.id)
 
@@ -283,7 +280,7 @@ Campos:
 - `id` (UUID, PK)
 - `event_id` (UUID, FK → events.id, ON DELETE CASCADE)
 - `moderator_id` (UUID, FK → users.id)
-- `action_type` (varchar(30)) con valores: `APPROVE|REJECT|HIDE|CANCEL|COMMENT`
+- `action_type` (varchar(30)) con valores: `APPROVE|REJECT|HIDE|REQUEST_CHANGES|AUTO_REJECT`
 - `reason` (text, nullable)
 - `created_at` (timestamptz)
 
@@ -291,27 +288,16 @@ Campos:
 
 Tabla que soporta la agenda personal y las marcas “me interesa / asistiré”.
 
-Campos sugeridos:
-- `user_id` (FK → users.id)
-- `event_id` (FK → events.id)
+Campos:
+- `user_id` (FK → users.id, ON DELETE CASCADE)
+- `event_id` (FK → events.id, ON DELETE CASCADE)
 - `status` (`INTERESTED|GOING`)
-- `created_at`, `updated_at`
+- `created_at` (timestamptz)
 
 Índices/constraints:
 - PK compuesta `(user_id, event_id)`
-- Actualización de `status` para cambios Interested → Going.
-
-### 6.8 `moderation_actions` (historial mínimo)
-
-- `id` (PK)
-- `event_id` (FK → events.id)
-- `moderator_user_id` (FK → users.id)
-- `decision` (APPROVED/REJECTED)
-- `reason` (text)
-- `created_at`
-
-
-- El estado actual del evento vive en `events.status`; esta tabla aporta trazabilidad.
+- `idx_user_events_user_id` para listar la agenda de un usuario eficientemente.
+- Para cambiar de `INTERESTED` a `GOING` se hace upsert actualizando el registro existente.
 
 ## 7. Internacionalización y datos
 
@@ -323,7 +309,6 @@ Regla de documentación: la existencia de este campo no implica UI ni comportami
 ## 8. Notas de evolución (post-MVP)
 
 Sin comprometer el roadmap, el modelo admite evolución hacia:
-- Estados adicionales del evento (PASSED/ARCHIVED).
 - Catálogo de lugares/recintos.
 - Aliases de artistas y normalización avanzada.
 - Dataset de ciudades y códigos externos.

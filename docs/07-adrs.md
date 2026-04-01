@@ -277,12 +277,15 @@ También existen acciones autenticadas (crear, editar, eliminar eventos) y pági
 **Decisión**
 
 Se adopta la siguiente estrategia:
-- `useApiFetch` (wrapper de useFetch + manejo de errores) es el mecanismo estándar para lectura de datos en páginas.
-  - Página que carga datos para renderizar.
-  - `useFetch` se usará cuando un error no deba lanzar página de errores (por ejemplo, al cargar un dropdown de provincias).
-- `$fetch` se utilizará exclusivamente para acciones imperativas o mutaciones.
-  - Acción iniciada por usuario (submit, delete, etc.) (POST, PUT, DELETE).
-  - Lógica en stores o composables sin SSR.
+- `useFetch` de Nuxt es el mecanismo estándar para lectura de datos en páginas con SSR/hydration.
+  - Página que carga datos para renderizar (detalle de evento, detalle de artista…).
+  - Proporciona estados de carga y error reactivos integrados con el ciclo SSR.
+- `fetchPublicResult<T>` y `fetchAuthResult<T>` (helpers en `useCustomFetch.ts`) se usan para todas las llamadas imperativas: mutaciones y cualquier llamada desde composables o event handlers.
+  - Devuelven un `ApiResult<T>` (unión discriminada `{ok: true, data}` | `{ok: false, status, pd}`), lo que evita try/catch dispersos.
+  - `fetchAuthResult` añade el header `Authorization` automáticamente y aplica la renovación silenciosa de token si el backend devuelve `X-Refresh-Token`.
+  - `fetchPublicResult` se usa para llamadas públicas sin autenticación (login, registro…).
+
+> El composable `useApiFetch` que figuraba como plan inicial no se llegó a implementar. Los patrones anteriores cubren los mismos casos de uso con menos indirección.
 
 **Alternativas consideradas**
 
@@ -296,9 +299,7 @@ Se adopta la siguiente estrategia:
 
 **Consecuencias**
 
-- Consistencia clara en el código.
-
 - SSR y SEO correcto en páginas públicas.
 - Separación clara entre lectura de datos (reactiva, declarativa) y mutaciones (imperativas).
-- Escalabilidad limpia a medida que crezca el proyecto.
-- Existen dos mecanismos en el proyecto pero es un coste asumible.
+- Manejo de errores tipado y consistente a través de `ApiResult<T>`.
+- Renovación silenciosa de token centralizada en `fetchAuthResult`.
