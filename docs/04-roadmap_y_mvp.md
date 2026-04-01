@@ -189,8 +189,8 @@ Incluye:
 - Añadir rate limiting para evitar accesos por fuerza bruta
 - Ley de protección de datos, política de privacidad, etc.
 - Mejorar agregar artistas al crear evento: pegado masivo, ¿leer desde cartel?
-- Refresh token **Rechazado / movido al backlog**
-- Logout **Rechazado / movido al backlog**
+- Refresh token silencioso **Implementado** (el backend devuelve `X-Refresh-Token` cuando el token está próximo a expirar; el frontend lo renueva de forma transparente en `fetchAuthResult`)
+- Logout **Implementado** (limpieza de sesión local; sin invalidación en servidor)
 - Captcha tras varios intentos **Rechazado / movido al backlog**
 
 ### v1.0 - MVP
