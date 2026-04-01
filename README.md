@@ -21,12 +21,12 @@ Los eventos los propone la comunidad; los publica un equipo de moderación human
 ## Capturas
 
 <p align="center">
-  <img src="assets/images/home.jpg" width="48%" alt="Búsqueda de eventos">
-  <img src="assets/images/detalle_evento.jpg" width="48%" alt="Detalle de evento">
+  <img src="assets/images/home.jpeg" width="48%" alt="Búsqueda de eventos">
+  <img src="assets/images/detalle_evento.jpeg" width="48%" alt="Detalle de evento">
 </p>
 <p align="center">
-  <img src="assets/images/proponer_evento.jpg" width="48%" alt="Proponer evento">
-  <img src="assets/images/moderacion.jpg" width="48%" alt="Panel de moderación">
+  <img src="assets/images/proponer_evento.jpeg" width="48%" alt="Proponer evento">
+  <img src="assets/images/moderacion.jpeg" width="48%" alt="Panel de moderación">
 </p>
 
 ---
