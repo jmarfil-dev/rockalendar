@@ -7,6 +7,7 @@
 ![Badge Status](https://img.shields.io/badge/STATUS-MVP%20·%20Producción-brightgreen)
 ![Badge Dev](https://img.shields.io/badge/DESARROLLO-Activo-blue)
 ![GitHub Release](https://img.shields.io/github/v/release/jmarfil-dev/rockalendar)
+![License](https://img.shields.io/github/license/jmarfil-dev/rockalendar)
 ![Static Badge](https://img.shields.io/badge/Spring_Boot-6DB33F?logo=spring-boot&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/Vue3-4FC08D?logo=vue.js&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/Nuxt.js-00DC82?logo=nuxtdotjs&logoColor=fff)
