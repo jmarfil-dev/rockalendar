@@ -1,6 +1,6 @@
 # Infraestructura de producción — Rockalendar
 
-> Documento de referencia para el despliegue a producción. Escrito para alguien que sabe conectarse por SSH con MobaXterm pero no tiene experiencia profunda en DevOps.
+> Documento de referencia para el despliegue a producción. Escrito para alguien que sabe conectarse por SSH pero no tiene experiencia profunda en DevOps.
 
 ---
 
@@ -8,11 +8,12 @@
 
 ```
 Cloudflare (DNS + protección)
-    └── Hetzner VPS CX33 (~€6/mes)
+    └── Hetzner VPS CX33
             └── Coolify (panel de gestión, gestiona Docker)
                     ├── Nuxt (frontend)
                     ├── Spring Boot (backend)
-                    └── PostgreSQL (base de datos, solo accesible internamente)
+                    ├── PostgreSQL (base de datos, solo accesible internamente)
+                    └── MinIO (Object Storage)
 
 Brevo (email transaccional — recuperación de contraseña, notificaciones)
 Zimbra OVH (buzón ruido@rockalendar.es → reenvío a Gmail)
@@ -27,6 +28,7 @@ Zimbra OVH (buzón ruido@rockalendar.es → reenvío a Gmail)
 - `rockalendar.com` → redirección al anterior (para que nadie lo ocupe) ✅ registrado en OVH, redirige a `rockalendar.es` con 301
 
 > OVH incluye Zimbra Basic con los dominios pero la suscripción (~€0.30/mes) no queda clara hasta después de contratar.
+> En principio al usar la redirección no debería contar como cuenta de suscripción.
 
 ### Después de registrar el dominio
 Los DNS (las "instrucciones" que dicen a internet dónde está tu web) se gestionan en **Cloudflare** (gratuito), no en OVH directamente.
@@ -45,8 +47,6 @@ El proceso es:
 
 ✅ Hecho. Cloudflare gestiona los DNS de `rockalendar.es`. DNSSEC activado (DS record en OVH apuntando a Cloudflare).
 
-> **Pendiente antes de desplegar:** Cloudflare importó dos registros A (`rockalendar.es` y `www`) apuntando a OVH que hay que actualizar con la IP del VPS de Hetzner.
-
 ---
 
 ## Servidor
@@ -56,12 +56,11 @@ https://www.hetzner.com/cloud
 
 Empresa alemana. Datacenters en Alemania y Finlandia (dentro de la UE, cumplimiento GDPR). Mejor relación precio/potencia del mercado europeo.
 
-### Plan recomendado: CX33
+### Plan: CX33
 - 4 vCPU, 8 GB RAM, 80 GB SSD
-- **~€6/mes** (~€72/año)
 - Ubicación: Falkenstein o Núremberg (Alemania)
 
-> El plan CX22 (~€4.5/mes) sería suficiente para solo la aplicación, pero Coolify necesita algo más de RAM. CX33 es la opción cómoda.
+> El plan CX22 sería suficiente para solo la aplicación, pero Coolify necesita algo más de RAM. CX33 es la opción cómoda.
 
 ### Coolify — el panel que te ahorra la vida
 https://coolify.io
@@ -75,22 +74,24 @@ Es un software open source que se instala en el VPS y te da una interfaz web par
 - Variables de entorno por interfaz web
 - Logs en tiempo real
 
-**Coolify usa Docker por debajo** — no lo sustituye. Tu `docker/compose.yml` actual es compatible.
+**Coolify usa Docker por debajo** — no lo sustituye.
 
 ### Instalación de Coolify
-Se instala con un solo comando en el servidor (lo ejecutas desde MobaXterm una vez conectado):
+Se instala con un solo comando en el servidor (por SSH):
 ```bash
 curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
 ```
 Después de eso todo se gestiona desde el navegador.
 
+✅ Hecho. VPS contratado y configurado, DNS de CloudFlare apuntando a IP del VPS y Coolify configurado.
+
 ---
 
 ## Email
 
-### Dos necesidades distintas
+Dos necesidades distintas
 
-#### 1. Email transaccional (el que envía el código)
+### 1. Email transaccional (el que envía el código)
 Para recuperación de contraseña, notificaciones de moderación, etc.
 
 **Servicio: Brevo** (https://www.brevo.com/es/)
@@ -106,17 +107,17 @@ Para recuperación de contraseña, notificaciones de moderación, etc.
 4. Verificar el dominio en Brevo
 5. Añadir las credenciales SMTP de Brevo como variables de entorno en el backend
 
-✅ Pasos 1-4 completados. El dominio `rockalendar.es` está verificado en Brevo.
+✅ Hecho. El dominio `rockalendar.es` está verificado en Brevo.
 
-#### 2. Buzón para leer y responder correos
-
-✅ Configurado: `ruido@rockalendar.es` via **Zimbra Basic de OVH** (~€0.30/mes).
+### 2. Buzón para leer y responder correos
 
 - Los emails que llegan a `ruido@rockalendar.es` se reenvían automáticamente a Gmail personal.
 - Gmail está configurado para enviar como `ruido@rockalendar.es` usando Brevo como SMTP relay (Ajustes → Cuentas e importación → Enviar correo como).
 - Al responder un email recibido en `ruido@`, Gmail selecciona automáticamente esa dirección como remitente.
 
 `noreply@rockalendar.es` **no necesita buzón** — Brevo envía con esa dirección como "from" una vez verificado el dominio. Si alguien responde, el email rebota (comportamiento correcto para un noreply).
+
+✅ Configurado. `ruido@rockalendar.es` via **redirección de Zimbra Basic de OVH**. Los correos llegan y se responden desde mi cuenta de Gmail.
 
 ---
 
@@ -163,7 +164,7 @@ Coolify lo gestiona automáticamente con **Let's Encrypt** (gratuito). No hay qu
 
 ---
 
-## Costes totales estimados
+## Costes totales
 
 | Concepto                             | Coste (primer año)        | Siguientes años | Notas                              |
 |--------------------------------------|---------------------------|-----------------|------------------------------------|
@@ -171,6 +172,7 @@ Coolify lo gestiona automáticamente con **Let's Encrypt** (gratuito). No hay qu
 | `rockalendar.com`                    | ~€8/año                   | ~€13,50/año     | ~€10/año con suscripción de 5 años |
 | Zimbra Basic OVH (buzón ruido@)      | ~€3.60/año (~€0.30/mes)   | Sin info        | Verificar factura el 22/04/2026    |
 | Hetzner CX33                         | ~€72/año (~€6/mes)        | Sin info        |                                    |
+| MinIO (object storage, self-hosted)  | €0 (incluido en el VPS)   | —               |                                    |
 | Cloudflare (DNS + protección básica) | €0                        | Sin info        |                                    |
 | Brevo (email transaccional)          | €0 (hasta 300/día)        | Sin info        |                                    |
 | SSL (Let's Encrypt vía Coolify)      | €0                        | Sin info        |                                    |
@@ -184,17 +186,16 @@ Coolify lo gestiona automáticamente con **Let's Encrypt** (gratuito). No hay qu
 2. ✅ **Configurar Cloudflare**: añadir dominio, cambiar nameservers, activar DNSSEC
 3. ✅ **Configurar email**: Zimbra (reenvío a Gmail) + Brevo (dominio verificado) + Gmail (enviar como ruido@)
 4. ✅ **Redirección .com → .es** (301 en OVH)
-5. **Decidir estrategia de imágenes** antes de tocar los registros A en Cloudflare
-6. **Actualizar registros A en Cloudflare** con la IP del VPS (rockalendar.es y www)
-7. **Crear VPS en Hetzner**: elegir CX33, datacenter Alemania, subir clave pública SSH
-8. **Instalar Coolify** en el VPS (un comando desde MobaXterm)
-9. **Configurar dominio en Coolify**: apuntar `rockalendar.es` al servidor
-10. **Conectar repositorio GitHub** en Coolify
-11. **Configurar servicios** (frontend, backend, PostgreSQL) en Coolify
-12. **Configurar variables de entorno** de producción (JWT_SECRET, Brevo SMTP, etc.)
-13. **Primer despliegue** desde Coolify
-14. **Verificar SSL** (Coolify lo lanza automáticamente)
-15. **Probar acceso a BD** desde DBeaver vía túnel SSH
+5. ✅ **Actualizar registros A en Cloudflare** con la IP del VPS (rockalendar.es y www)
+6. ✅ **Crear VPS en Hetzner**: elegir CX33, datacenter Alemania, subir clave pública SSH
+7. ✅ **Instalar Coolify** en el VPS (un comando desde MobaXterm)
+8. ✅ **Configurar dominio en Coolify**: apuntar `rockalendar.es` al servidor
+9. ✅ **Conectar repositorio GitHub** en Coolify
+10. ✅ **Configurar servicios** (frontend, backend, PostgreSQL, MinIO) en Coolify
+11. ✅ **Configurar variables de entorno** de producción (JWT_SECRET, Brevo SMTP, etc.)
+12. ✅ **Primer despliegue** desde Coolify
+13. ✅ **Verificar SSL** (Coolify lo lanza automáticamente)
+14. ✅ **Probar acceso a BD** desde DBeaver vía túnel SSH
 
 ---
 
