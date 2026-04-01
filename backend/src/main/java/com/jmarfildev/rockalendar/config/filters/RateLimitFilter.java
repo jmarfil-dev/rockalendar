@@ -95,9 +95,14 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     private String extractIp(HttpServletRequest request) {
+        // CF-Connecting-IP es inyectada por Cloudflare y no puede ser falsificada por el cliente
+        String cfIp = request.getHeader("CF-Connecting-IP");
+        if (cfIp != null && !cfIp.isBlank()) {
+            return cfIp.strip();
+        }
+        // Fallback para entornos sin Cloudflare (local, staging directo)
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isBlank()) {
-            // X-Forwarded-For puede contener una cadena de IPs; la primera es el cliente real
             return forwarded.split(",")[0].strip();
         }
         return request.getRemoteAddr();
