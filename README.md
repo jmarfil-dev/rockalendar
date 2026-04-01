@@ -69,7 +69,6 @@ La documentación técnica y funcional vive en [`docs/`](docs/).
 | 08 | [Guía de desarrollo](docs/08-guia_de_desarrollo.md) | Convenciones, comandos y flujo de trabajo |
 | 09 | [Arquitectura frontend](docs/09-arquitectura_frontend.md) | Estructura, layouts, composables y estrategia de fetch |
 | 10 | [Moderación y confianza](docs/10-moderacion_y_confianza.md) | Sistema de moderación, score y automoderaci­ón |
-| 11 | [Infraestructura de producción](docs/11-infraestructura_produccion.md) | Despliegue, contenedores, CI/CD y checklist |
 
 ---
 
