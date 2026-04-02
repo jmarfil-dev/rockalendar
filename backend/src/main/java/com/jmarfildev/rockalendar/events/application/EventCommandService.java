@@ -3,7 +3,7 @@ package com.jmarfildev.rockalendar.events.application;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -263,11 +263,13 @@ public class EventCommandService {
      * @return un record con los datos validados
      */
     private EventInputValidate validate(SubmitEventRequest req, UUID userId) {
-        // Construir startDateTime a partir de fecha + hora opcional (UTC)
+        // Construir startDateTime a partir de fecha + hora opcional en zona horaria española
         // Si no se informa de la hora, se pone medianoche
         boolean startTimeUnknown = req.startTime() == null;
         LocalTime time = startTimeUnknown ? LocalTime.MIDNIGHT : req.startTime();
-        OffsetDateTime startDateTime = req.startDate().atTime(time).atOffset(ZoneOffset.UTC);
+        OffsetDateTime startDateTime = req.startDate().atTime(time)
+                .atZone(ZoneId.of("Europe/Madrid"))
+                .toOffsetDateTime();
 
         CommonValidations.validateDateRange(req.startDate(), req.endDate());
 

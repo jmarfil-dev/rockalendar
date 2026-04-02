@@ -29,3 +29,25 @@ export function formatEventEndDate(isoDate: string): string {
 export function formatDate(isoString: string): string {
   return new Date(isoString).toLocaleDateString("es-ES", DATE_OPTS);
 }
+
+/**
+ * Serializa la parte de fecha de un objeto Date usando la hora local del cliente (YYYY-MM-DD).
+ * Evita el desfase que produce toISOString(), que convierte a UTC antes de serializar.
+ */
+export function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+/**
+ * Serializa la parte de hora de un objeto Date usando la hora local del cliente (HH:mm:ss).
+ * Evita el desfase que produce toISOString(), que convierte a UTC antes de serializar.
+ */
+export function toLocalTimeString(date: Date): string {
+  const h = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  const s = String(date.getSeconds()).padStart(2, "0");
+  return `${h}:${min}:${s}`;
+}

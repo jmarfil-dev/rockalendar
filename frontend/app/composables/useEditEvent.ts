@@ -67,13 +67,12 @@ export const useEditEvent = (eventId: string) => {
     submitting.value = true;
     resetErrors();
 
-    const iso = form.startDate?.toISOString();
     const eventData = {
       title: form.title,
       description: form.description || undefined,
-      startDate: iso ? iso.substring(0, 10) : undefined,
-      startTime: iso && !form.startTimeUnknown ? iso.substring(11, 19) : undefined,
-      endDate: form.endDate ? form.endDate.toISOString().substring(0, 10) : undefined,
+      startDate: form.startDate ? toLocalDateString(form.startDate) : undefined,
+      startTime: form.startDate && !form.startTimeUnknown ? toLocalTimeString(form.startDate) : undefined,
+      endDate: form.endDate ? toLocalDateString(form.endDate) : undefined,
       venueName: form.venueName,
       provinceId: form.provinceId,
       cityName: form.cityName,
