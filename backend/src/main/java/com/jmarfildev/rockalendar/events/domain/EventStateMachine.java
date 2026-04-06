@@ -40,6 +40,9 @@ public final class EventStateMachine {
                     || to == EventStatus.REJECTED
                     || to == EventStatus.NEEDS_CHANGES
                     || to == EventStatus.HIDDEN;
+            case APPROVED -> to == EventStatus.REJECTED
+                    || to == EventStatus.NEEDS_CHANGES
+                    || to == EventStatus.HIDDEN;
             default -> false;
         };
     }
