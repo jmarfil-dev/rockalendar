@@ -110,7 +110,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         var fromOpt = Optional.of(from);
         var toOpt = Optional.of(to);
         Optional<String> noQuery = Optional.empty();
-        Optional<UUID> noProvinceId = Optional.empty();
+        Optional<Short> noProvinceId = Optional.empty();
         Optional<String> noCity = Optional.empty();
         Optional<UUID> noArtistId = Optional.empty();
 
@@ -126,7 +126,7 @@ class EventQueryServiceTest extends AbstractPostgresTest {
         Optional<String> noQuery = Optional.empty();
         Optional<OffsetDateTime> noDateFrom = Optional.empty();
         Optional<OffsetDateTime> noDateTo = Optional.empty();
-        Optional<UUID> noProvinceId = Optional.empty();
+        Optional<Short> noProvinceId = Optional.empty();
         Optional<String> noCity = Optional.empty();
         Optional<UUID> noArtistId = Optional.empty();
 

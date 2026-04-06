@@ -3,7 +3,6 @@ package com.jmarfildev.rockalendar.events.api.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.hibernate.validator.constraints.URL;
 
@@ -24,7 +23,7 @@ public record SubmitEventRequest(@NotBlank @Size(max = 200) String title,
                                  LocalTime startTime,
                                  LocalDate endDate,
                                  @NotBlank @Size(max = 200) String venueName,
-                                 @NotNull UUID provinceId,
+                                 @NotNull Short provinceId,
                                  @NotBlank @Size(max = 120) String cityName,
                                  @NotNull @Size(min = 1, message = ErrorConstants.VALID_SIZE_LIST_EMPTY) List<
                                          @NotBlank @Size(max = 200) String> artists,

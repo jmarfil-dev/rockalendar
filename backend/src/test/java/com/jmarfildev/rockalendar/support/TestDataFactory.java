@@ -96,7 +96,7 @@ public class TestDataFactory {
     }
 
     public Province province(short ineCode) {
-        return provinceRepository.findByIneCode(ineCode)
+        return provinceRepository.findById(ineCode)
                                  .orElseThrow(() -> new IllegalStateException("No existe province con ine_code=" + ineCode));
     }
 

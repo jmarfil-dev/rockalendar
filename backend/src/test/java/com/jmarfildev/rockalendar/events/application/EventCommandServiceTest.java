@@ -92,7 +92,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 TestDates.rangeStartDate(),
                 mockWizink,
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 TestConstants.MADRID,
                 List.of("Ska-P"),
                 null);
@@ -112,7 +112,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 mockWizink,
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 TestConstants.MADRID,
                 List.of("   ", "!!!", "´´´"),
                 null);
@@ -132,7 +132,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 mockWizink,
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 "!!!",
                 List.of("Ska-P"),
                 null);
@@ -152,7 +152,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 "***",
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 TestConstants.MADRID,
                 List.of("Ska-P"),
                 null);
@@ -172,7 +172,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 mockWizink,
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 TestConstants.MADRID,
                 List.of("Ska-P"),
                 null);
@@ -185,7 +185,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("propose: provinceId inválida -> BadRequestException")
     void propose_invalidProvince_throws() {
-        UUID missingProv = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        short missingProv = 99; // ine_code inexistente (rango válido: 1-52)
 
         var req = new SubmitEventRequest(
                 mockTitle,
@@ -214,7 +214,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 "  WiZink Center  ",
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 "  Madrid  ",
                 List.of("  Ska-P  "),
                 "  https://example.com  ");
@@ -250,7 +250,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 mockWizink,
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 TestConstants.MADRID,
                 List.of("  AgAinST- yOU "),
                 null);
@@ -273,7 +273,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 mockWizink,
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 TestConstants.MADRID,
                 List.of("Ska-P", "  ska p  ", "Boikot"),
                 null);
@@ -298,7 +298,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 mockWizink,
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 TestConstants.MADRID,
                 List.of("Ska-P"),
                 "   ");
@@ -321,7 +321,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
                 null,
                 null,
                 "  WiZink Center  ",
-                factory.madrid().getId(),
+                factory.madrid().getIneCode(),
                 "  Madrid  ",
                 List.of("  Against You  "),
                 "  https://example.com  ");
@@ -371,7 +371,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         asAdmin();
         var req = new SubmitEventRequest(
                 mockTitle, null, TestDates.madridDate(), null, null, mockWizink,
-                factory.madrid().getId(), TestConstants.MADRID,
+                factory.madrid().getIneCode(), TestConstants.MADRID,
                 List.of("Ska-P"), null);
 
         var saved = service.propose(req, null);
@@ -391,7 +391,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var req = new SubmitEventRequest(
                 "%s en %s".formatted(TestConstants.MOCK_ARTIST_NAME_AY, TestConstants.MADRID),
                 null, TestDates.madridDate(), null, null, "Sala Copérnico",
-                factory.madrid().getId(), TestConstants.MADRID,
+                factory.madrid().getIneCode(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
         var result = service.propose(req, null);
@@ -409,7 +409,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var req = new SubmitEventRequest(
                 "Título editado por admin", null, TestDates.madridDate(), null, null, mockWizink,
-                factory.madrid().getId(), TestConstants.MADRID,
+                factory.madrid().getIneCode(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
         var updated = service.update(event.getId(), req, null, false);
@@ -442,7 +442,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var req = new SubmitEventRequest(
                 "Soziedad Alkoholika corregido", null, TestDates.madridDate(), null, null, "Sala Copérnico",
-                factory.madrid().getId(), TestConstants.MADRID,
+                factory.madrid().getIneCode(), TestConstants.MADRID,
                 List.of("Soziedad Alkoholika"), null);
 
         var updated = service.update(event.getId(), req, null, false);
@@ -513,7 +513,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var req = new SubmitEventRequest(
                 mockTitle, null, TestDates.madridDate(), null, null, mockWizink,
-                factory.madrid().getId(), TestConstants.MADRID,
+                factory.madrid().getIneCode(), TestConstants.MADRID,
                 List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
         var saved = service.propose(req, null);
