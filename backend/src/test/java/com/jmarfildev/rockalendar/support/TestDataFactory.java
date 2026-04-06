@@ -288,4 +288,11 @@ public class TestDataFactory {
                              TestDates.barcelona(), TestConstants.MOCK_USER_ID, TestDates.yesterday().minusDays(2),
                              TestConstants.MOCK_MODERATOR_ID, TestDates.now(), "Manifa");
     }
+
+    public Event erasedSevillaLaPolla() {
+        return saveEvent("La Polla Records en Sevilla (borrado)", sevilla(), "Sevilla", "Sala Custom",
+                         TestDates.genericFuture(), EventStatus.ERASED, TestConstants.MOCK_USER_ID,
+                         TestDates.yesterday().minusDays(3), TestConstants.MOCK_ADMIN_ID, TestDates.yesterday().minusDays(2),
+                         "La Polla Records");
+    }
 }

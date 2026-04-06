@@ -63,6 +63,7 @@ public final class ErrorConstants {
     public static final String ARTIST_HAS_EVENTS = "error.409.artistHasEvents";
     public static final String EMAIL_ALREADY_EXISTS = "error.409.emailExists";
     public static final String EVENT_NOT_PENDING = "error.409.eventNotPending";
+    public static final String EVENT_ERASED_TERMINAL = "error.409.eventErasedTerminal";
     public static final String MODERATOR_OWN = "error.409.moderatorOwn";
     public static final String EVENT_ALREADY_MOD = "error.409.eventAlreadyMod";
     public static final String EVENT_NOT_EDITABLE = "error.409.eventNotEditable";

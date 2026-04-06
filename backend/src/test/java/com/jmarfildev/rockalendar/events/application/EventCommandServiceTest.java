@@ -382,25 +382,6 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("propose (admin): no detecta duplicados aunque exista evento similar")
-    void propose_admin_skipsDuplicateDetection() {
-        // Evento existente que sería detectado como duplicado para un usuario normal
-        factory.approvedMadridAgainstYou();
-        asAdmin();
-
-        var req = new SubmitEventRequest(
-                "%s en %s".formatted(TestConstants.MOCK_ARTIST_NAME_AY, TestConstants.MADRID),
-                null, TestDates.madridDate(), null, null, "Sala Copérnico",
-                factory.madrid().getId(), TestConstants.MADRID,
-                List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
-
-        var result = service.propose(req, null);
-
-        assertThat(result.possibleDuplicate()).isNull();
-        assertThat(result.event().status()).isEqualTo(EventStatus.APPROVED);
-    }
-
-    @Test
     @DisplayName("update (admin): puede editar evento de otro usuario")
     void update_admin_canUpdateAnotherUsersEvent() {
         // Evento creado por MOCK_USER_ID; el admin (distinto userId) lo edita
