@@ -165,22 +165,8 @@ public class EventCommandService {
             throw new ConflictException(ErrorConstants.EVENT_NOT_EDITABLE, ErrorConstants.TYPE_409_EVENT_STATE);
         }
 
-        event.setTitle(in.title());
-        event.setDescription(in.description());
-        event.setStartDateTime(in.startDateTime());
-        event.setStartTimeUnknown(in.startTimeUnknown());
-        event.setEndDate(in.endDate());
-        event.setProvince(in.province());
-        event.setCityName(in.cityName());
-        event.setCitySlug(in.citySlug());
-        event.setVenueName(in.venueName());
-        event.setVenueSlug(in.venueSlug());
-        event.setSourceUrl(in.sourceUrl());
+        applyDataFields(event, in, poster, removePoster);
         event.setModerationMessage(null);
-
-        // Borrar lista anterior y poner nueva
-        event.getArtists().clear();
-        event.getArtists().addAll(in.artists());
 
         if (isAdmin) {
             // El admin publica directamente como APPROVED
@@ -195,15 +181,6 @@ public class EventCommandService {
             }
         }
         event.setSubmittedAt(OffsetDateTime.now());
-
-        if (poster != null && !poster.isEmpty()) {
-            uploadPosterToEvent(event, poster);
-        }
-        else if (removePoster) {
-            storageService.delete(event.getPosterKey());
-            event.setPosterUrl(null);
-            event.setPosterKey(null);
-        }
 
         // No hace falta save() porque al ser un evento administrado por JPA (viene de un find()) se actualiza al terminar la transacción.
         log.info("event updated eventId={} userId={} status={} isAdmin={}", eventId, userId, event.getStatus(), isAdmin);
@@ -220,37 +197,15 @@ public class EventCommandService {
      * @return el evento actualizado
      */
     @Transactional
-    public EventPrivateDto moderatorEditData(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster) {
-        UUID actorId = currentUser.userId();
-        EventInputValidate in = validate(req, actorId);
-
+    public EventPrivateDto moderatorEdit(UUID moderatorId,
+                                         UUID eventId,
+                                         SubmitEventRequest req,
+                                         MultipartFile poster,
+                                         boolean removePoster) {
+        EventInputValidate in = validate(req, moderatorId);
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
-
-        event.setTitle(in.title());
-        event.setDescription(in.description());
-        event.setStartDateTime(in.startDateTime());
-        event.setStartTimeUnknown(in.startTimeUnknown());
-        event.setEndDate(in.endDate());
-        event.setProvince(in.province());
-        event.setCityName(in.cityName());
-        event.setCitySlug(in.citySlug());
-        event.setVenueName(in.venueName());
-        event.setVenueSlug(in.venueSlug());
-        event.setSourceUrl(in.sourceUrl());
-
-        event.getArtists().clear();
-        event.getArtists().addAll(in.artists());
-
-        if (poster != null && !poster.isEmpty()) {
-            uploadPosterToEvent(event, poster);
-        }
-        else if (removePoster) {
-            storageService.delete(event.getPosterKey());
-            event.setPosterUrl(null);
-            event.setPosterKey(null);
-        }
-
-        log.info("moderator edited event data eventId={} moderatorId={}", eventId, actorId);
+        applyDataFields(event, in, poster, removePoster);
+        log.info("moderator edited event data eventId={} moderatorId={}", eventId, moderatorId);
         return mapper.toPrivateDto(event);
     }
 
@@ -382,7 +337,45 @@ public class EventCommandService {
         return modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION;
     }
 
-    // Procesa y sube el cartel, reemplazando el anterior si existía
+    /**
+     * Aplica los campos de datos del evento y gestiona el cartel
+     *
+     * @param event
+     * @param in
+     * @param poster
+     * @param removePoster
+     */
+    private void applyDataFields(Event event, EventInputValidate in, MultipartFile poster, boolean removePoster) {
+        event.setTitle(in.title());
+        event.setDescription(in.description());
+        event.setStartDateTime(in.startDateTime());
+        event.setStartTimeUnknown(in.startTimeUnknown());
+        event.setEndDate(in.endDate());
+        event.setProvince(in.province());
+        event.setCityName(in.cityName());
+        event.setCitySlug(in.citySlug());
+        event.setVenueName(in.venueName());
+        event.setVenueSlug(in.venueSlug());
+        event.setSourceUrl(in.sourceUrl());
+        event.getArtists().clear();
+        event.getArtists().addAll(in.artists());
+
+        if (poster != null && !poster.isEmpty()) {
+            uploadPosterToEvent(event, poster);
+        }
+        else if (removePoster) {
+            storageService.delete(event.getPosterKey());
+            event.setPosterUrl(null);
+            event.setPosterKey(null);
+        }
+    }
+
+    /**
+     * Procesa y sube el cartel, reemplazando el anterior si existía
+     *
+     * @param event
+     * @param poster
+     */
     private void uploadPosterToEvent(Event event, MultipartFile poster) {
         byte[] processed = imageProcessingService.process(poster);
         String key = "posters/" + event.getId() + "/" + UUID.randomUUID() + ".jpg";

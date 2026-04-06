@@ -46,8 +46,8 @@ public class ModerationEventController implements ModerationEventApi {
     }
 
     @Override
-    public EventPrivateDto editData(UUID eventId, SubmitEventRequest request, MultipartFile poster, boolean removePoster) {
-        return commandService.editData(eventId, request, poster, removePoster);
+    public EventPrivateDto edit(UUID eventId, SubmitEventRequest request, MultipartFile poster, boolean removePoster) {
+        return commandService.edit(eventId, request, poster, removePoster);
     }
 
     @Override

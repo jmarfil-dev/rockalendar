@@ -107,15 +107,14 @@ public interface ModerationEventApi {
     @ApiNotFound
     @ApiBadRequest
     @ApiConflict
-    EventPrivateDto editData(@Parameter(description = "ID del evento",
-                                        example = "cccccccc-0000-0000-0000-000000000001",
-                                        required = true) @PathVariable UUID eventId,
-                             @Parameter(description = "Datos nuevos del evento",
-                                        required = true) @Valid @RequestPart("event") SubmitEventRequest request,
-                             @Parameter(description = "Cartel nuevo (opcional)") @RequestPart(value = "poster",
-                                                                                              required = false) MultipartFile poster,
-                             @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(value = "removePoster",
-                                                                                                                                    defaultValue = "false") boolean removePoster);
+    EventPrivateDto edit(@Parameter(description = "ID del evento",
+                                    example = "cccccccc-0000-0000-0000-000000000001",
+                                    required = true) @PathVariable UUID eventId,
+                         @Parameter(description = "Datos nuevos del evento",
+                                    required = true) @Valid @RequestPart("event") SubmitEventRequest request,
+                         @Parameter(description = "Cartel nuevo (opcional)") @RequestPart(value = "poster",
+                                                                                          required = false) MultipartFile poster,
+                         @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(defaultValue = "false") boolean removePoster);
 
     @PostMapping("/{eventId}/approve")
     @Operation(summary = "Aprobar eventos pendientes de moderación", description = "Pasa a APPROVED un evento en PENDING_MODERATION.")

@@ -7,6 +7,7 @@ import org.hibernate.StaleObjectStateException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,6 @@ import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
@@ -78,9 +77,8 @@ public class ModerationCommandService {
     }
 
     @Transactional
-    public EventPrivateDto editData(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster) {
+    public EventPrivateDto edit(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster) {
         UUID moderatorId = currentUser.userId();
-
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
         if (event.getStatus() != EventStatus.PENDING_MODERATION) {
@@ -97,7 +95,7 @@ public class ModerationCommandService {
         action.setCreatedAt(OffsetDateTime.now());
 
         try {
-            EventPrivateDto updated = eventCommandService.moderatorEditData(eventId, req, poster, removePoster);
+            EventPrivateDto updated = eventCommandService.moderatorEdit(moderatorId, eventId, req, poster, removePoster);
             moderationActionRepository.saveAndFlush(action);
             return updated;
         }
