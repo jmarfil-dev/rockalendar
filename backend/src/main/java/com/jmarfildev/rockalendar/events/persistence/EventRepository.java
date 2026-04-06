@@ -121,7 +121,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                      :provinceId, :citySlug, :artistId
                    ) s
                    JOIN events e ON e.id = s.event_id
-                   JOIN provinces p ON p.id = e.province_id
+                   JOIN provinces p ON p.ine_code = e.province_id
                    ORDER BY
                      -- relevancia solo si se pide explícitamente
                      CASE WHEN lower(:sortKey) = 'relevance' THEN s.score END DESC,
@@ -154,7 +154,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                          @Param("trgmW") double trgmW,
                                                          @Param("dateFrom") OffsetDateTime dateFrom,
                                                          @Param("dateTo") OffsetDateTime dateTo,
-                                                         @Param("provinceId") UUID provinceId,
+                                                         @Param("provinceId") Short provinceId,
                                                          @Param("citySlug") String citySlug,
                                                          @Param("artistId") UUID artistId,
                                                          @Param("sortKey") String sortKey,
@@ -178,7 +178,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                      :provinceId, :citySlug, :artistId
                    ) s
                    JOIN events e ON e.id = s.event_id
-                   JOIN provinces p ON p.id = e.province_id
+                   JOIN provinces p ON p.ine_code = e.province_id
                    ORDER BY
                      -- relevancia solo si se pide explícitamente
                      CASE WHEN lower(:sortKey) = 'relevance' THEN s.score END DESC,
@@ -209,7 +209,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                                  @Param("trgmW") double trgmW,
                                                                  @Param("dateFrom") OffsetDateTime dateFrom,
                                                                  @Param("dateTo") OffsetDateTime dateTo,
-                                                                 @Param("provinceId") UUID provinceId,
+                                                                 @Param("provinceId") Short provinceId,
                                                                  @Param("citySlug") String citySlug,
                                                                  @Param("artistId") UUID artistId,
                                                                  @Param("sortKey") String sortKey,

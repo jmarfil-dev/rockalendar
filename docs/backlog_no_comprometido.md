@@ -167,10 +167,44 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
 
 ## Geografía y localización
 
-- Precargar ciudades desde dataset (INE / GeoNames / otro).
-- Autocompletado de direcciones y lugares.
-- Integración con Places / Geocoding (Google / Mapbox / OpenStreetMap).
-- Mapas de eventos (por ciudad / provincia).
+### Geocodificación y normalización de ubicaciones
+
+Actualmente `city_name` y `city_slug` son texto libre en `events` (ADR-006).
+
+**Decisión de diseño:** crear una tabla `locations` que crece orgánicamente con el uso, sin precarga de datos.
+
+Cuando alguien propone un evento:
+1. El usuario escribe la ciudad → autocomplete en tiempo real contra **Nominatim** (OpenStreetMap, gratuito).
+2. Se busca si la ubicación ya existe en `locations` (por slug).
+3. Si no existe: se geocodifica con Nominatim, se crea la fila y se vincula al evento.
+4. Si ya existe: se reutiliza la FK directamente.
+
+```
+locations (id, name, slug, province_id, latitude, longitude)
+events.location_id → locations.id
+```
+
+Ventajas:
+- Las coordenadas se almacenan **una sola vez** por lugar (no por evento).
+- `events` no se convierte en un cajón de sastre.
+- El catálogo solo contiene lugares que realmente tienen eventos.
+- Cubre cualquier granularidad: municipio, barrio, pedanía.
+- Permite consultas directas sobre ubicaciones ("salas / ciudades con más eventos").
+
+Nota: `city_name` y `city_slug` en `events` pueden mantenerse como caché desnormalizado para evitar JOINs en listados, a valorar en el momento de la implementación.
+
+Riesgo: dependencia de Nominatim en el flujo de creación. Mitigación: degradación elegante — guardar el evento sin coordenadas si la geocodificación falla.
+
+**Búsqueda por proximidad (consecuencia directa)**
+
+Una vez que `locations` tenga coordenadas, la búsqueda por radio queda desbloqueada:
+- Parámetros nuevos en la búsqueda pública: `lat`, `lon`, `radiusKm`.
+- Filtro mediante fórmula de Haversine en la función PostgreSQL `search_public_events`, sin necesidad de PostGIS.
+- Si en el futuro se añade PostGIS, la migración es trivial (columna `GEOGRAPHY(POINT)` + `ST_DWithin`).
+
+**Mapas de eventos**
+- Mapa interactivo por ciudad / provincia (requiere coordenadas en `locations`).
+- Candidatos: Leaflet + OpenStreetMap (sin coste), Mapbox (más pulido, freemium).
 
 ## Integraciones externas
 

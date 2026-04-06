@@ -68,7 +68,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/me/events con auth -> 201 EventPrivateDto con status PENDING_MODERATION")
     void propose_asUser_returns201WithPendingEvent() throws Exception {
-        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+        var body = eventBody(factory.sevilla().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         mockMvc.perform(multipart(apiMeEvents)
                 .file(eventPart(body))
@@ -83,7 +83,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/me/events sin auth -> 401 ProblemDetail")
     void propose_asAnon_returns401ProblemDetail() throws Exception {
-        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+        var body = eventBody(factory.sevilla().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(apiMeEvents).file(eventPart(body)));
 
@@ -93,7 +93,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/me/events con auth pero artists vacío -> 400 ProblemDetail")
     void propose_asUser_emptyArtists_returns400ProblemDetail() throws Exception {
-        var body = eventBody(factory.sevilla().getId().toString(), "[]");
+        var body = eventBody(factory.sevilla().getIneCode(), "[]");
 
         var ra = mockMvc.perform(multipart(apiMeEvents)
                 .file(eventPart(body))
@@ -107,7 +107,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void update_asOwner_returns200WithPendingEvent() throws Exception {
         var event = factory.approvedMadridAgainstYou();
         String api = apiMeEvents.concat("/" + event.getId());
-        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+        var body = eventBody(factory.sevilla().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .file(eventPart(body))
@@ -150,12 +150,12 @@ class MeEventApiContractTest extends AbstractPostgresTest {
                   "startTime": "20:00:00",
                   "endDate": "%s",
                   "venueName": "Sala X",
-                  "provinceId": "%s",
+                  "provinceId": %s,
                   "cityName": "Madrid",
                   "artists": ["Band A"],
                   "sourceUrl": "https://example.com"
                 }
-                """.formatted(startDate, endBefore, factory.madrid().getId());
+                """.formatted(startDate, endBefore, factory.madrid().getIneCode());
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .file(eventPart(body))
@@ -170,7 +170,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void update_asAnon_returns401ProblemDetail() throws Exception {
         var event = factory.approvedMadridAgainstYou();
         String api = apiMeEvents.concat("/" + event.getId());
-        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+        var body = eventBody(factory.sevilla().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .file(eventPart(body)))
@@ -185,7 +185,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         var event = factory.approvedEvent("Titulo", factory.sevilla(), "Sevilla", "Sala X", TestDates.tomorrow(),
                 TestConstants.MOCK_MODERATOR_ID, TestConstants.MOCK_ARTIST_NAME_AY);
         String api = apiMeEvents.concat("/" + event.getId());
-        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+        var body = eventBody(factory.sevilla().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .file(eventPart(body))
@@ -199,7 +199,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     @DisplayName("PUT /api/me/events/{eventId} no existe -> 404 ProblemDetail")
     void update_asOwner_notFound_returns404ProblemDetail() throws Exception {
         String api = apiMeEvents.concat("/cccccccc-0000-0000-0000-000000000099");
-        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+        var body = eventBody(factory.sevilla().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .file(eventPart(body))
@@ -214,7 +214,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     void update_asOwner_notEditableStatus_returns409ProblemDetail() throws Exception {
         var event = factory.pendingMadridAgainstYou();
         String api = apiMeEvents.concat("/" + event.getId());
-        var body = eventBody(factory.sevilla().getId().toString(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+        var body = eventBody(factory.sevilla().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .file(eventPart(body))
@@ -326,7 +326,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
         return new MockMultipartFile("event", "", MediaType.APPLICATION_JSON_VALUE, json.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static String eventBody(String provinceId, String artists) {
+    private static String eventBody(short provinceId, String artists) {
         var dt = TestDates.genericFuture();
         return """
                 {
@@ -335,7 +335,7 @@ class MeEventApiContractTest extends AbstractPostgresTest {
                   "startDate": "%s",
                   "startTime": "%s",
                   "venueName": "Sala Custom",
-                  "provinceId": "%s",
+                  "provinceId": %s,
                   "cityName": "Sevilla",
                   "artists": %s,
                   "sourceUrl": "https://example.com"

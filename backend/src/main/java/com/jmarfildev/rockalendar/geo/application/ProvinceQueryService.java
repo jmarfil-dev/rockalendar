@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import com.jmarfildev.rockalendar.common.dto.ComboItemDto;
+import com.jmarfildev.rockalendar.geo.api.dto.ProvinceDto;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
 
 /**
@@ -21,7 +21,7 @@ public class ProvinceQueryService {
 
     private final ProvinceRepository repository;
 
-    public List<ComboItemDto> listCombo() {
+    public List<ProvinceDto> listCombo() {
         return repository.findAllForCombo();
     }
 }

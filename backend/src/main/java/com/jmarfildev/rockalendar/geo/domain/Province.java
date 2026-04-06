@@ -1,7 +1,5 @@
 package com.jmarfildev.rockalendar.geo.domain;
 
-import java.util.UUID;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -26,9 +24,7 @@ import lombok.Setter;
 public class Province {
 
     @Id
-    private UUID id;
-
-    @Column(name = "ine_code", nullable = false, unique = true)
+    @Column(name = "ine_code", nullable = false)
     private short ineCode;
 
     @Column(nullable = false, length = 80)

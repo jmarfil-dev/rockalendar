@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import com.jmarfildev.rockalendar.common.dto.ComboItemDto;
+import com.jmarfildev.rockalendar.geo.api.dto.ProvinceDto;
 
 /**
  * @author jmarfil
@@ -27,6 +27,6 @@ public interface ProvinceApi {
                description = "Devuelve una lista de provincias.")
     @ApiResponse(responseCode = "200",
                  description = "Lista de provincias",
-                 content = @Content(array = @ArraySchema(schema = @Schema(implementation = ComboItemDto.class))))
-    List<ComboItemDto> listCombo();
+                 content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProvinceDto.class))))
+    List<ProvinceDto> listCombo();
 }

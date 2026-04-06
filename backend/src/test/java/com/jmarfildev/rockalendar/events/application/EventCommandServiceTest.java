@@ -45,8 +45,7 @@ import com.jmarfildev.rockalendar.support.TestDates;
  *
  */
 @DataJpaTest
-@Import({ EventCommandService.class, DatabaseCleaner.class, TestDataFactory.class, EventMapperImpl.class,
-        AutoModerationService.class })
+@Import({ EventCommandService.class, DatabaseCleaner.class, TestDataFactory.class, EventMapperImpl.class, AutoModerationService.class })
 class EventCommandServiceTest extends AbstractPostgresTest {
 
     @Autowired
@@ -85,139 +84,70 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("propose: invalid date range -> BadRequestException")
     void propose_invalidDateRange_throws() {
-        var req = new SubmitEventRequest(
-                mockTitle,
-                "Desc",
-                TestDates.rangeEndDate(),
-                null,
-                TestDates.rangeStartDate(),
-                mockWizink,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("Ska-P"),
-                null);
+        var req = new SubmitEventRequest(mockTitle, "Desc", TestDates.rangeEndDate(), null, TestDates.rangeStartDate(), mockWizink,
+                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("Ska-P"), null);
 
-        assertThatThrownBy(() -> service.propose(req, null))
-                .isInstanceOf(BadRequestException.class)
-                                                      .hasMessage(ErrorConstants.INVALID_DATE_RANGE);
+        assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
+                                                            .hasMessage(ErrorConstants.INVALID_DATE_RANGE);
     }
 
     @Test
     @DisplayName("propose: artists vacíos tras normalizar -> BadRequestException")
     void propose_artistsBecomeEmptyAfterNormalize_throws() {
-        var req = new SubmitEventRequest(
-                mockTitle,
-                null,
-                TestDates.madridDate(),
-                null,
-                null,
-                mockWizink,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("   ", "!!!", "´´´"),
-                null);
+        var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
+                                         TestConstants.MADRID, List.of("   ", "!!!", "´´´"), null);
 
-        assertThatThrownBy(() -> service.propose(req, null))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorConstants.ARTIST_REQUIRED);
+        assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
+                                                            .hasMessage(ErrorConstants.ARTIST_REQUIRED);
     }
 
     @Test
     @DisplayName("propose: citySlug se queda vacío tras normalizar -> BadRequestException")
     void propose_cityBecomesBlankAfterNormalize_throws() {
-        var req = new SubmitEventRequest(
-                mockTitle,
-                null,
-                TestDates.madridDate(),
-                null,
-                null,
-                mockWizink,
-                factory.madrid().getId(),
-                "!!!",
-                List.of("Ska-P"),
-                null);
+        var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
+                                         "!!!", List.of("Ska-P"), null);
 
-        assertThatThrownBy(() -> service.propose(req, null))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorConstants.CITY_REQUIRED);
+        assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
+                                                            .hasMessage(ErrorConstants.CITY_REQUIRED);
     }
 
     @Test
     @DisplayName("propose: venueSlug se queda vacío tras normalizar -> BadRequestException")
     void propose_venueBecomesBlankAfterNormalize_throws() {
-        var req = new SubmitEventRequest(
-                mockTitle,
-                null,
-                TestDates.madridDate(),
-                null,
-                null,
-                "***",
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("Ska-P"),
-                null);
+        var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, "***", factory.madrid().getIneCode(),
+                                         TestConstants.MADRID, List.of("Ska-P"), null);
 
-        assertThatThrownBy(() -> service.propose(req, null))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorConstants.VENUE_REQUIRED);
+        assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
+                                                            .hasMessage(ErrorConstants.VENUE_REQUIRED);
     }
 
     @Test
     @DisplayName("propose: title se queda vacío tras normalizar -> BadRequestException")
     void propose_titleBecomesBlankAfterNormalize_throws() {
-        var req = new SubmitEventRequest(
-                "!!!",
-                null,
-                TestDates.madridDate(),
-                null,
-                null,
-                mockWizink,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("Ska-P"),
-                null);
+        var req = new SubmitEventRequest("!!!", null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
+                                         TestConstants.MADRID, List.of("Ska-P"), null);
 
-        assertThatThrownBy(() -> service.propose(req, null))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorConstants.TITLE_REQUIRED);
+        assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
+                                                            .hasMessage(ErrorConstants.TITLE_REQUIRED);
     }
 
     @Test
     @DisplayName("propose: provinceId inválida -> BadRequestException")
     void propose_invalidProvince_throws() {
-        UUID missingProv = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        short missingProv = 99; // ine_code inexistente (rango válido: 1-52)
 
-        var req = new SubmitEventRequest(
-                mockTitle,
-                null,
-                TestDates.madridDate(),
-                null,
-                null,
-                mockWizink,
-                missingProv,
-                TestConstants.MADRID,
-                List.of("Ska-P"),
-                null);
+        var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, missingProv, TestConstants.MADRID,
+                                         List.of("Ska-P"), null);
 
-        assertThatThrownBy(() -> service.propose(req, null))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(ErrorConstants.INVALID_PROVINCE);
+        assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
+                                                            .hasMessage(ErrorConstants.INVALID_PROVINCE);
     }
 
     @Test
     @DisplayName("propose: ok -> crea evento PENDING_MODERATION")
     void propose_ok_createPendingEvent() {
-        var req = new SubmitEventRequest(
-                "  Ska-P en Madrid  ",
-                "  descripcion  ",
-                TestDates.madridDate(),
-                null,
-                null,
-                "  WiZink Center  ",
-                factory.madrid().getId(),
-                "  Madrid  ",
-                List.of("  Ska-P  "),
-                "  https://example.com  ");
+        var req = new SubmitEventRequest("  Ska-P en Madrid  ", "  descripcion  ", TestDates.madridDate(), null, null, "  WiZink Center  ",
+                                         factory.madrid().getIneCode(), "  Madrid  ", List.of("  Ska-P  "), "  https://example.com  ");
 
         var saved = service.propose(req, null);
 
@@ -243,17 +173,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var existing = factory.againstYou();
         long before = artistRepository.count();
 
-        var req = new SubmitEventRequest(
-                "Against You en Madrid",
-                null,
-                TestDates.madridDate(),
-                null,
-                null,
-                mockWizink,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("  AgAinST- yOU "),
-                null);
+        var req = new SubmitEventRequest("Against You en Madrid", null, TestDates.madridDate(), null, null, mockWizink,
+                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("  AgAinST- yOU "), null);
 
         var saved = service.propose(req, null);
 
@@ -266,24 +187,13 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("propose: artistas  no se duplican por slug y preservan orden (LinkedHashSet)")
     void propose_deduplicatesArtists_preservesOrder() {
-        var req = new SubmitEventRequest(
-                mockTitle,
-                null,
-                TestDates.madridDate(),
-                null,
-                null,
-                mockWizink,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("Ska-P", "  ska p  ", "Boikot"),
-                null);
+        var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
+                                         TestConstants.MADRID, List.of("Ska-P", "  ska p  ", "Boikot"), null);
 
         var saved = service.propose(req, null);
 
         var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
-        assertThat(reloaded.getArtists())
-                .extracting(Artist::getSlug)
-                .containsExactly("ska p", "boikot");
+        assertThat(reloaded.getArtists()).extracting(Artist::getSlug).containsExactly("ska p", "boikot");
 
         assertThat(artistRepository.count()).isEqualTo(2);
     }
@@ -291,17 +201,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("propose: description y sourceUrl en blanco se guardan como null")
     void propose_blankOptionalFields_becomeNull() {
-        var req = new SubmitEventRequest(
-                mockTitle,
-                "    ",
-                TestDates.madridDate(),
-                null,
-                null,
-                mockWizink,
-                factory.madrid().getId(),
-                TestConstants.MADRID,
-                List.of("Ska-P"),
-                "   ");
+        var req = new SubmitEventRequest(mockTitle, "    ", TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
+                                         TestConstants.MADRID, List.of("Ska-P"), "   ");
 
         var saved = service.propose(req, null);
 
@@ -314,17 +215,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("update: ok -> actualiza evento PENDING_MODERATION")
     void update_ok_updatePendingEvent() {
         var event = factory.approvedMadridAgainstYou();
-        var req = new SubmitEventRequest(
-                "  Against You en concierto  ",
-                "  descripcion  ",
-                TestDates.madridDate(),
-                null,
-                null,
-                "  WiZink Center  ",
-                factory.madrid().getId(),
-                "  Madrid  ",
-                List.of("  Against You  "),
-                "  https://example.com  ");
+        var req = new SubmitEventRequest("  Against You en concierto  ", "  descripcion  ", TestDates.madridDate(), null, null,
+                                         "  WiZink Center  ", factory.madrid().getIneCode(), "  Madrid  ", List.of("  Against You  "),
+                                         "  https://example.com  ");
 
         var updated = service.update(event.getId(), req, null, false);
 
@@ -369,10 +262,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose (admin): crea evento APPROVED directamente, sin moderación automática")
     void propose_admin_createsApprovedEventDirectly() {
         asAdmin();
-        var req = new SubmitEventRequest(
-                mockTitle, null, TestDates.madridDate(), null, null, mockWizink,
-                factory.madrid().getId(), TestConstants.MADRID,
-                List.of("Ska-P"), null);
+        var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
+                                         TestConstants.MADRID, List.of("Ska-P"), null);
 
         var saved = service.propose(req, null);
 
@@ -388,10 +279,9 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var event = factory.approvedMadridAgainstYou();
         asAdmin();
 
-        var req = new SubmitEventRequest(
-                "Título editado por admin", null, TestDates.madridDate(), null, null, mockWizink,
-                factory.madrid().getId(), TestConstants.MADRID,
-                List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
+        var req = new SubmitEventRequest("Título editado por admin", null, TestDates.madridDate(), null, null, mockWizink,
+                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of(TestConstants.MOCK_ARTIST_NAME_AY),
+                                         null);
 
         var updated = service.update(event.getId(), req, null, false);
 
@@ -405,10 +295,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var event = factory.rejectedValenciaMafalda();
         asAdmin();
 
-        var req = new SubmitEventRequest(
-                "Mafalda corregido", null, TestDates.genericFutureDate(), null, null, "Sala Moon",
-                factory.valencia().getId(), "València",
-                List.of("Mafalda"), null);
+        var req = new SubmitEventRequest("Mafalda corregido", null, TestDates.genericFutureDate(), null, null, "Sala Moon",
+                                         factory.valencia().getIneCode(), "València", List.of("Mafalda"), null);
 
         var updated = service.update(event.getId(), req, null, false);
 
@@ -421,10 +309,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var event = factory.hiddenMadridSoziedadAlkoholika();
         asAdmin();
 
-        var req = new SubmitEventRequest(
-                "Soziedad Alkoholika corregido", null, TestDates.madridDate(), null, null, "Sala Copérnico",
-                factory.madrid().getId(), TestConstants.MADRID,
-                List.of("Soziedad Alkoholika"), null);
+        var req = new SubmitEventRequest("Soziedad Alkoholika corregido", null, TestDates.madridDate(), null, null, "Sala Copérnico",
+                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("Soziedad Alkoholika"), null);
 
         var updated = service.update(event.getId(), req, null, false);
 
@@ -486,21 +372,15 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         String slug = SlugNormalizer.of(TestConstants.MOCK_ARTIST_NAME_AY);
 
         // Simula la condición de carrera: findBySlug vacío → saveAndFlush falla → findBySlug devuelve el ganador
-        doReturn(Optional.empty())
-                .doReturn(Optional.of(existingArtist))
-                .when(artistRepository).findBySlug(slug);
-        doThrow(new DataIntegrityViolationException("duplicate key"))
-                .when(artistRepository).saveAndFlush(any());
+        doReturn(Optional.empty()).doReturn(Optional.of(existingArtist)).when(artistRepository).findBySlug(slug);
+        doThrow(new DataIntegrityViolationException("duplicate key")).when(artistRepository).saveAndFlush(any());
 
-        var req = new SubmitEventRequest(
-                mockTitle, null, TestDates.madridDate(), null, null, mockWizink,
-                factory.madrid().getId(), TestConstants.MADRID,
-                List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
+        var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
+                                         TestConstants.MADRID, List.of(TestConstants.MOCK_ARTIST_NAME_AY), null);
 
         var saved = service.propose(req, null);
 
         var reloaded = eventRepository.findById(saved.event().id()).orElseThrow();
-        assertThat(reloaded.getArtists()).singleElement()
-                .satisfies(a -> assertThat(a.getId()).isEqualTo(existingArtist.getId()));
+        assertThat(reloaded.getArtists()).singleElement().satisfies(a -> assertThat(a.getId()).isEqualTo(existingArtist.getId()));
     }
 }
