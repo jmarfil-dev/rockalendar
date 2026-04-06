@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
@@ -40,6 +43,11 @@ public class ModerationEventController implements ModerationEventApi {
     @Override
     public Page<ModerationArchivedListItemDto> listArchived(Pageable pageable) {
         return queryService.listArchived(pageable);
+    }
+
+    @Override
+    public EventPrivateDto editData(UUID eventId, SubmitEventRequest request, MultipartFile poster, boolean removePoster) {
+        return commandService.editData(eventId, request, poster, removePoster);
     }
 
     @Override

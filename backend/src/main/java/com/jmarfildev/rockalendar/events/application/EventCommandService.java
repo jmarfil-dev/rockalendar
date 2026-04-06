@@ -210,6 +210,50 @@ public class EventCommandService {
         return mapper.toPrivateDto(event);
     }
 
+    /**
+     * Permite a un moderador editar los datos de un evento sin cambiar su estado.
+     * La validación de estado y de propiedad (moderador no puede ser el autor) se hace en el llamador.
+     * No re-ejecuta auto-moderación ni actualiza submittedAt.
+     *
+     * @param eventId id del evento
+     * @param req datos nuevos
+     * @return el evento actualizado
+     */
+    @Transactional
+    public EventPrivateDto moderatorEditData(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster) {
+        UUID actorId = currentUser.userId();
+        EventInputValidate in = validate(req, actorId);
+
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
+
+        event.setTitle(in.title());
+        event.setDescription(in.description());
+        event.setStartDateTime(in.startDateTime());
+        event.setStartTimeUnknown(in.startTimeUnknown());
+        event.setEndDate(in.endDate());
+        event.setProvince(in.province());
+        event.setCityName(in.cityName());
+        event.setCitySlug(in.citySlug());
+        event.setVenueName(in.venueName());
+        event.setVenueSlug(in.venueSlug());
+        event.setSourceUrl(in.sourceUrl());
+
+        event.getArtists().clear();
+        event.getArtists().addAll(in.artists());
+
+        if (poster != null && !poster.isEmpty()) {
+            uploadPosterToEvent(event, poster);
+        }
+        else if (removePoster) {
+            storageService.delete(event.getPosterKey());
+            event.setPosterUrl(null);
+            event.setPosterKey(null);
+        }
+
+        log.info("moderator edited event data eventId={} moderatorId={}", eventId, actorId);
+        return mapper.toPrivateDto(event);
+    }
+
     @Transactional
     public void delete(UUID eventId) {
         UUID userId = currentUser.userId();
