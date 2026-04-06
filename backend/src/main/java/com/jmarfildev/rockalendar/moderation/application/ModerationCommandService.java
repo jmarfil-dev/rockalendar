@@ -21,6 +21,7 @@ import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.Event;
+import com.jmarfildev.rockalendar.events.domain.EventStateMachine;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
@@ -47,22 +48,17 @@ public class ModerationCommandService {
     @Transactional
     public EventPrivateDto approve(UUID eventId, ModerationApproveRequest request) {
         String comment = request != null ? StringUtils.blankToNull(request.comment()) : null;
-        return moderate(eventId, ActionType.APPROVE, comment, (event, moderatorId, now, message) -> {
-            event.setStatus(EventStatus.APPROVED);
-            event.setModeratedByUserId(moderatorId);
-            event.setModeratedAt(now);
-            event.setModerationMessage(message);
-        });
+        return moderate(eventId, EventStatus.APPROVED, ActionType.APPROVE, comment);
     }
 
     @Transactional
     public EventPrivateDto reject(UUID eventId, ModerationArchiveRequest request) {
-        return archive(eventId, request.reason(), ActionType.REJECT, EventStatus.REJECTED);
+        return moderateWithReason(eventId, EventStatus.REJECTED, ActionType.REJECT, request.reason());
     }
 
     @Transactional
     public EventPrivateDto hide(UUID eventId, ModerationArchiveRequest request) {
-        return archive(eventId, request.reason(), ActionType.HIDE, EventStatus.HIDDEN);
+        return moderateWithReason(eventId, EventStatus.HIDDEN, ActionType.HIDE, request.reason());
     }
 
     @Transactional
@@ -71,27 +67,18 @@ public class ModerationCommandService {
         if (priorChanges >= 2) {
             // Tercera solicitud: rechazo automático con penalización máxima
             String reason = "Rechazado automáticamente tras tres solicitudes de cambios.";
-            return moderate(eventId, ActionType.AUTO_REJECT, reason, (event, moderatorId, now, msg) -> {
-                event.setStatus(EventStatus.REJECTED);
-                event.setModeratedByUserId(moderatorId);
-                event.setModeratedAt(now);
-                event.setModerationMessage(msg);
-            });
+            return moderate(eventId, EventStatus.REJECTED, ActionType.AUTO_REJECT, reason);
         }
-        return archive(eventId, request.reason(), ActionType.REQUEST_CHANGES, EventStatus.NEEDS_CHANGES);
+        return moderateWithReason(eventId, EventStatus.NEEDS_CHANGES, ActionType.REQUEST_CHANGES, request.reason());
     }
 
-    private EventPrivateDto archive(UUID eventId, String requestReason, ActionType action, EventStatus status) {
+    private EventPrivateDto moderateWithReason(UUID eventId, EventStatus targetStatus, ActionType actionType,
+                                               String requestReason) {
         String reason = StringUtils.blankToNull(requestReason);
         if (reason == null) {
             throw new BadRequestException(ErrorConstants.REASON_REQUIRED, ErrorConstants.TYPE_400_VALIDATION);
         }
-        return moderate(eventId, action, reason, (event, moderatorId, now, msg) -> {
-            event.setStatus(status);
-            event.setModeratedByUserId(moderatorId);
-            event.setModeratedAt(now);
-            event.setModerationMessage(msg);
-        });
+        return moderate(eventId, targetStatus, actionType, reason);
     }
 
     private void applyTrustScore(ActionType actionType, UUID creatorId, UUID eventId) {
@@ -102,32 +89,27 @@ public class ModerationCommandService {
         } else if (actionType == ActionType.AUTO_REJECT) {
             trustScoreService.onRejectAfterThirdChange(creatorId, eventId);
         }
-        // REQUEST_CHANGES y HIDE no modifican el trust score
+        // REQUEST_CHANGES, HIDE y los nuevos tipos no modifican el trust score aquí
     }
 
-    @FunctionalInterface
-    private interface EventModerationMutation {
-        void apply(Event event, UUID moderatorId, OffsetDateTime now, String message);
-    }
-
-    private EventPrivateDto moderate(UUID eventId,
-                                     ActionType actionType,
-                                     String message,
-                                     EventModerationMutation mutation) {
+    private EventPrivateDto moderate(UUID eventId, EventStatus targetStatus, ActionType actionType, String message) {
         UUID moderatorId = currentUser.userId();
         OffsetDateTime now = OffsetDateTime.now();
         log.info("moderation action={} eventId={} moderatorId={}", actionType.name(), eventId, moderatorId);
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
-        if (event.getStatus() != EventStatus.PENDING_MODERATION) {
+        if (!EventStateMachine.canModeratorTransition(event.getStatus(), targetStatus)) {
             throw new ConflictException(ErrorConstants.EVENT_NOT_PENDING, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
         if (moderatorId.equals(event.getCreatedByUserId())) {
             throw new ConflictException(ErrorConstants.MODERATOR_OWN, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
 
-        mutation.apply(event, moderatorId, now, message);
+        event.setStatus(targetStatus);
+        event.setModeratedByUserId(moderatorId);
+        event.setModeratedAt(now);
+        event.setModerationMessage(message);
 
         ModerationAction action = new ModerationAction();
         action.setEventId(eventId);

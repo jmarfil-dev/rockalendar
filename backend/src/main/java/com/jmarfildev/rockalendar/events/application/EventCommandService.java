@@ -37,6 +37,7 @@ import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.Event;
+import com.jmarfildev.rockalendar.events.domain.EventStateMachine;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.DuplicateEventProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
@@ -160,7 +161,7 @@ public class EventCommandService {
             CommonValidations.validateEventOwner(userId, event.getCreatedByUserId());
         }
         // El admin puede editar en cualquier estado (REJECTED, HIDDEN, etc.)
-        if (!isAdmin && !hasEditableStatus(event.getStatus())) {
+        if (!isAdmin && !EventStateMachine.canOwnerEdit(event.getStatus())) {
             throw new ConflictException(ErrorConstants.EVENT_NOT_EDITABLE, ErrorConstants.TYPE_409_EVENT_STATE);
         }
 
@@ -230,8 +231,7 @@ public class EventCommandService {
             if (event.getStatus() == EventStatus.APPROVED) {
                 throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED, ErrorConstants.TYPE_409_EVENT_STATE);
             }
-
-            if (event.getStatus() != EventStatus.PENDING_MODERATION && event.getStatus() != EventStatus.NEEDS_CHANGES) {
+            if (!EventStateMachine.canOwnerDelete(event.getStatus())) {
                 throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE, ErrorConstants.TYPE_409_EVENT_STATE);
             }
         }
@@ -336,10 +336,6 @@ public class EventCommandService {
             return EventStatus.APPROVED;
         }
         return modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION;
-    }
-
-    private boolean hasEditableStatus(EventStatus status) {
-        return status == EventStatus.DRAFT || status == EventStatus.NEEDS_CHANGES || status == EventStatus.APPROVED;
     }
 
     // Procesa y sube el cartel, reemplazando el anterior si existía
