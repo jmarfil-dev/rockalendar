@@ -90,23 +90,18 @@ public class EventCommandService {
         var modResult = isAdmin ? null : autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
         EventStatus initialStatus = resolveInitialStatus(isAdmin, modResult);
 
-        // El admin puede crear ediciones anuales, correcciones, etc. sin detección de duplicados
-        UUID possibleDuplicateOfId = null;
-        PossibleDuplicateDto possibleDuplicate = null;
-        if (!isAdmin) {
-            // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
-            var artistIds = in.artists().stream().map(Artist::getId).toList();
-            var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
-            var dayEnd   = dayStart.plusDays(1);
-            List<DuplicateEventProjection> duplicates =
-                    eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
+        // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
+        var artistIds = in.artists().stream().map(Artist::getId).toList();
+        var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
+        var dayEnd = dayStart.plusDays(1);
+        List<DuplicateEventProjection> duplicates =
+                eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
 
-            possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
-            possibleDuplicate = duplicates.isEmpty()
-                    ? null
-                    : new PossibleDuplicateDto(duplicates.get(0).getId(), duplicates.get(0).getTitle(),
-                                               EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
-        }
+        UUID possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
+        PossibleDuplicateDto possibleDuplicate = duplicates.isEmpty()
+                ? null
+                : new PossibleDuplicateDto(duplicates.get(0).getId(), duplicates.get(0).getTitle(),
+                                           EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
 
         var event = Event.builder()
                          .title(in.title())
@@ -267,9 +262,7 @@ public class EventCommandService {
         // Si no se informa de la hora, se pone medianoche
         boolean startTimeUnknown = req.startTime() == null;
         LocalTime time = startTimeUnknown ? LocalTime.MIDNIGHT : req.startTime();
-        OffsetDateTime startDateTime = req.startDate().atTime(time)
-                .atZone(ZoneId.of("Europe/Madrid"))
-                .toOffsetDateTime();
+        OffsetDateTime startDateTime = req.startDate().atTime(time).atZone(ZoneId.of("Europe/Madrid")).toOffsetDateTime();
 
         CommonValidations.validateDateRange(req.startDate(), req.endDate());
 
