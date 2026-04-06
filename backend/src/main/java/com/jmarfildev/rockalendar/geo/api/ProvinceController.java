@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
-import com.jmarfildev.rockalendar.common.dto.ComboItemDto;
+import com.jmarfildev.rockalendar.geo.api.dto.ProvinceDto;
 import com.jmarfildev.rockalendar.geo.application.ProvinceQueryService;
 
 /**
@@ -20,7 +20,7 @@ public class ProvinceController implements ProvinceApi {
     private final ProvinceQueryService service;
 
     @Override
-    public List<ComboItemDto> listCombo() {
+    public List<ProvinceDto> listCombo() {
         return service.listCombo();
     }
 

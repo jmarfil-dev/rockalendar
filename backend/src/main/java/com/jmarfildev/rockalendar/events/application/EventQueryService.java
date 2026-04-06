@@ -89,7 +89,7 @@ public class EventQueryService {
     public Page<EventPublicListItemDto> searchPublic(Optional<String> query,
                                                      Optional<OffsetDateTime> dateFrom,
                                                      Optional<OffsetDateTime> dateTo,
-                                                     Optional<UUID> provinceId,
+                                                     Optional<Short> provinceId,
                                                      Optional<String> city,
                                                      Optional<UUID> artistId,
                                                      Pageable pageable) {

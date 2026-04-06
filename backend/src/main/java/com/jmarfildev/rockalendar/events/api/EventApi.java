@@ -64,9 +64,8 @@ public interface EventApi {
                                               @Parameter(description = "Fecha/hora hasta (ISO-8601)",
                                                          example = "2026-04-30T23:59:59Z") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<
                                                                  OffsetDateTime> dateTo,
-                                              @Parameter(description = "Filtra por provincia",
-                                                         example = "11111111-1111-1111-1111-111111111111") @RequestParam Optional<
-                                                                 UUID> provinceId,
+                                              @Parameter(description = "Filtra por provincia (código INE, p.ej. 28 = Madrid)",
+                                                         example = "28") @RequestParam Optional<Short> provinceId,
                                               @Parameter(description = "Ciudad (texto libre); se normaliza internamente a slug",
                                                          example = "València") @RequestParam Optional<String> city,
                                               @Parameter(description = "Filtra por artista",

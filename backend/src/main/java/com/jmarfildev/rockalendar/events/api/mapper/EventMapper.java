@@ -2,7 +2,6 @@ package com.jmarfildev.rockalendar.events.api.mapper;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -31,8 +30,8 @@ public interface EventMapper {
                 .toList();
     }
 
-    default UUID mapProvinceId(Event event) {
-        return event.getProvince() == null ? null : event.getProvince().getId();
+    default short mapProvinceId(Event event) {
+        return event.getProvince() == null ? 0 : event.getProvince().getIneCode();
     }
 
     default String mapProvinceName(Event event) {
