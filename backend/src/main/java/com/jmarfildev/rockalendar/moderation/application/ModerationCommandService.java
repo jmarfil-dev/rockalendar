@@ -97,17 +97,15 @@ public class ModerationCommandService {
         try {
             EventPrivateDto updated = eventCommandService.moderatorEdit(moderatorId, eventId, req, poster, removePoster);
             moderationActionRepository.saveAndFlush(action);
+            log.info("moderator edited event data eventId={} moderatorId={}", eventId, moderatorId);
             return updated;
         }
-        catch (ObjectOptimisticLockingFailureException
-                | OptimisticLockException
-                | StaleObjectStateException e) {
+        catch (ObjectOptimisticLockingFailureException | OptimisticLockException | StaleObjectStateException e) {
             throw new ConflictException(ErrorConstants.EVENT_ALREADY_MOD, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
     }
 
-    private EventPrivateDto moderateWithReason(UUID eventId, EventStatus targetStatus, ActionType actionType,
-                                               String requestReason) {
+    private EventPrivateDto moderateWithReason(UUID eventId, EventStatus targetStatus, ActionType actionType, String requestReason) {
         String reason = StringUtils.blankToNull(requestReason);
         if (reason == null) {
             throw new BadRequestException(ErrorConstants.REASON_REQUIRED, ErrorConstants.TYPE_400_VALIDATION);
@@ -118,9 +116,11 @@ public class ModerationCommandService {
     private void applyTrustScore(ActionType actionType, UUID creatorId, UUID eventId) {
         if (actionType == ActionType.APPROVE) {
             trustScoreService.onApprove(creatorId, eventId);
-        } else if (actionType == ActionType.REJECT) {
+        }
+        else if (actionType == ActionType.REJECT) {
             trustScoreService.onReject(creatorId, eventId);
-        } else if (actionType == ActionType.AUTO_REJECT) {
+        }
+        else if (actionType == ActionType.AUTO_REJECT) {
             trustScoreService.onRejectAfterThirdChange(creatorId, eventId);
         }
         // REQUEST_CHANGES, HIDE y los nuevos tipos no modifican el trust score aquí
@@ -157,9 +157,7 @@ public class ModerationCommandService {
             applyTrustScore(actionType, event.getCreatedByUserId(), eventId);
             return eventMapper.toPrivateDto(event);
         }
-        catch (ObjectOptimisticLockingFailureException
-                | OptimisticLockException
-                | StaleObjectStateException e) {
+        catch (ObjectOptimisticLockingFailureException | OptimisticLockException | StaleObjectStateException e) {
             throw new ConflictException(ErrorConstants.EVENT_ALREADY_MOD, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
     }

@@ -3,9 +3,13 @@ package com.jmarfildev.rockalendar.admin.application;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import org.hibernate.StaleObjectStateException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +19,9 @@ import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
+import com.jmarfildev.rockalendar.events.application.EventCommandService;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStateMachine;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
@@ -35,6 +41,7 @@ public class AdminEventCommandService {
     private final ModerationActionRepository moderationActionRepository;
     private final EventMapper eventMapper;
     private final CurrentUser currentUser;
+    private final EventCommandService eventCommandService;
 
     @Transactional
     public EventPrivateDto overrideStatus(UUID eventId, AdminStatusOverrideRequest request) {
@@ -62,5 +69,31 @@ public class AdminEventCommandService {
 
         log.info("admin status override eventId={} from={} to={} adminId={}", eventId, event.getStatus(), request.targetStatus(), adminId);
         return eventMapper.toPrivateDto(event);
+    }
+
+    @Transactional
+    public EventPrivateDto edit(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster) {
+        UUID adminId = currentUser.userId();
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
+
+        if (!EventStateMachine.canAdminEdit(event.getStatus())) {
+            throw new ConflictException(ErrorConstants.EVENT_NOT_EDITABLE, ErrorConstants.TYPE_409_EVENT_STATE);
+        }
+
+        ModerationAction action = new ModerationAction();
+        action.setEventId(eventId);
+        action.setAction(ActionType.ADMIN_EDITED);
+        action.setModeratedByUserId(adminId);
+        action.setCreatedAt(OffsetDateTime.now());
+
+        try {
+            EventPrivateDto updated = eventCommandService.moderatorEdit(adminId, eventId, req, poster, removePoster);
+            moderationActionRepository.saveAndFlush(action);
+            log.info("admin edited event data eventId={} adminId={}", eventId, adminId);
+            return updated;
+        }
+        catch (ObjectOptimisticLockingFailureException | OptimisticLockException | StaleObjectStateException e) {
+            throw new ConflictException(ErrorConstants.EVENT_ALREADY_MOD, ErrorConstants.TYPE_409_MODERATION_STATE);
+        }
     }
 }

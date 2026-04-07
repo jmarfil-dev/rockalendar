@@ -14,6 +14,8 @@ public enum ActionType {
     MODERATOR_EDITED,
     /** Un administrador ha forzado un cambio de estado fuera del flujo normal. */
     ADMIN_STATE_OVERRIDE,
+    /** Un administrador ha editado los datos del evento. */
+    ADMIN_EDITED,
     /** El propietario ha editado el evento mientras estaba en PENDING_MODERATION. */
     OWNER_EDITED_PENDING;
 }

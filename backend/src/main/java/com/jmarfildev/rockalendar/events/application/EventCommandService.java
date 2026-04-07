@@ -205,7 +205,6 @@ public class EventCommandService {
         EventInputValidate in = validate(req, moderatorId);
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
         applyDataFields(event, in, poster, removePoster);
-        log.info("moderator edited event data eventId={} moderatorId={}", eventId, moderatorId);
         return mapper.toPrivateDto(event);
     }
 

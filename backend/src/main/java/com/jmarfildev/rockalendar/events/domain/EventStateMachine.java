@@ -48,6 +48,15 @@ public final class EventStateMachine {
     }
 
     /**
+     * Un administrador puede editar los datos de un evento si está en alguno de estos estados.
+     */
+    public static boolean canAdminEdit(EventStatus status) {
+        return status == EventStatus.PENDING_MODERATION
+                || status == EventStatus.NEEDS_CHANGES
+                || status == EventStatus.APPROVED;
+    }
+
+    /**
      * Un administrador puede realizar cualquier transición de estado,
      * excepto las que involucran ERASED (estado terminal e irreversible).
      */
