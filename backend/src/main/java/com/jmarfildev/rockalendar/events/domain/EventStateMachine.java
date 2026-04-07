@@ -16,6 +16,7 @@ public final class EventStateMachine {
      */
     public static boolean canOwnerEdit(EventStatus status) {
         return status == EventStatus.DRAFT
+                || status == EventStatus.PENDING_MODERATION
                 || status == EventStatus.NEEDS_CHANGES
                 || status == EventStatus.APPROVED;
     }

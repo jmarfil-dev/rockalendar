@@ -4,9 +4,11 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.hibernate.StaleObjectStateException;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -105,6 +107,18 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ex.getBody();
         pd.setProperty("timestamp", OffsetDateTime.now());
         return pd;
+    }
+
+    /**
+     * Captura modificaciones concurrentes sobre la misma entidad (optimistic locking).
+     * Devuelve 409 en lugar de 500: el cliente debe reintentar la operación.
+     */
+    @ExceptionHandler({ ObjectOptimisticLockingFailureException.class, StaleObjectStateException.class })
+    public ProblemDetail handleOptimisticLock(Exception ex, HttpServletRequest req) {
+        log.warn("Optimistic lock conflict on {} {}", req.getMethod(), req.getRequestURI());
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        return build(pd, HttpStatus.CONFLICT.getReasonPhrase(), ErrorConstants.EVENT_ALREADY_MOD, req.getRequestURI(),
+                     ErrorConstants.TYPE_409_CONFLICT);
     }
 
     /**
