@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
 import com.jmarfildev.rockalendar.events.domain.Event;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
 
@@ -25,6 +26,15 @@ public interface ModerationEventRepository extends Repository<Event, UUID> {
            WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION
            """)
     Page<ModerationPendingListItemDto> findPending(Pageable pageable);
+
+    @Query("""
+           SELECT new com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto(
+               e.id, e.title, e.moderatedAt
+           )
+           FROM Event e
+           WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
+           """)
+    Page<ModerationApprovedListItemDto> findApproved(Pageable pageable);
 
     @Query("""
            SELECT new com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto(

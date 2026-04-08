@@ -32,9 +32,11 @@ import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
+import com.jmarfildev.rockalendar.moderation.api.doc.ModerationApprovedPageDoc;
 import com.jmarfildev.rockalendar.moderation.api.doc.ModerationArchivedPageDoc;
 import com.jmarfildev.rockalendar.moderation.api.doc.ModerationPendingPageDoc;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
@@ -77,6 +79,21 @@ public interface ModerationEventApi {
     @ApiUnauthorized
     @ApiForbidden
     Page<ModerationPendingListItemDto> listPending(@PageableDefault(size = 20) Pageable pageable);
+
+    @GetMapping("/approved")
+    @Operation(summary = "Listar eventos aprobados",
+               description = """
+                             Devuelve eventos en estado APPROVED. Listado ligero para revisión y posible re-moderación.
+
+                             La ordenación por pageable permite direcciones asc y desc, y los campos title y approved (fecha de aprobación).
+                             Ignora cualquier valor distinto.
+                             """)
+    @ApiResponse(responseCode = "200",
+                 description = "Listado paginado de eventos aprobados",
+                 content = @Content(schema = @Schema(implementation = ModerationApprovedPageDoc.class)))
+    @ApiUnauthorized
+    @ApiForbidden
+    Page<ModerationApprovedListItemDto> listApproved(@PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping("/archived")
     @Operation(summary = "Listar eventos archivados de moderación",
