@@ -108,6 +108,15 @@ export type ModerationArchivedListItem = {
   moderatedAt: string;
 };
 
+export type AdminEventListItem = {
+  id: string;
+  title: string;
+  startDateTime: string;
+  startTimeUnknown: boolean;
+  provinceName: string;
+  status: EventStatus;
+};
+
 export type InteractionStatus = "INTERESTED" | "GOING";
 
 export type AgendaItem = {
