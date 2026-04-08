@@ -23,8 +23,8 @@ import com.jmarfildev.rockalendar.support.TestDataFactory;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 
 /**
- * Tests de integración del trust score. Verifica los deltas aplicados al creador del evento
- * tras cada acción de moderación.
+ * Tests de integración del trust score derivado.
+ * Verifica que el score se calcula correctamente sumando pesos desde action_weights.
  *
  * @author jmarfil
  */
@@ -33,6 +33,8 @@ class TrustScoreServiceTest extends AbstractPostgresTest {
 
     @Autowired
     ModerationCommandService moderationService;
+    @Autowired
+    TrustScoreService trustScoreService;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -43,6 +45,8 @@ class TrustScoreServiceTest extends AbstractPostgresTest {
     @MockitoBean
     CurrentUser currentUser;
 
+    private static final UUID USER_ID = UUID.fromString(TestConstants.MOCK_USER_ID);
+
     @BeforeEach
     void setup() {
         cleaner.truncateMutableTables();
@@ -50,88 +54,76 @@ class TrustScoreServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("approve sin cambios previos -> +10 al creador")
-    void approve_noPriorChanges_addsTen() {
-        Event event = factory.pendingMadridAgainstYou();
-        int scoreBefore = scoreOf(TestConstants.MOCK_USER_ID);
-
-        moderationService.approve(event.getId(), null);
-
-        assertThat(scoreOf(TestConstants.MOCK_USER_ID)).isEqualTo(scoreBefore + TrustScoreService.DELTA_APPROVED_DIRECT);
+    @DisplayName("sin acciones -> score es 0")
+    void noActions_scoreIsZero() {
+        assertThat(trustScoreService.getScore(USER_ID)).isZero();
     }
 
     @Test
-    @DisplayName("approve tras solicitar cambios -> +5 al creador")
-    void approve_afterRequestChanges_addsFive() {
+    @DisplayName("approve -> score sube +15")
+    void approve_addsApproveWeight() {
         Event event = factory.pendingMadridAgainstYou();
-        int scoreBefore = scoreOf(TestConstants.MOCK_USER_ID);
-
-        // Primero solicitar cambios, luego re-poner el evento en PENDING y aprobar
-        moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("falta info"));
-        factory.resubmitEvent(event.getId());
-
         moderationService.approve(event.getId(), null);
-
-        assertThat(scoreOf(TestConstants.MOCK_USER_ID)).isEqualTo(scoreBefore + TrustScoreService.DELTA_APPROVED_AFTER_CHANGES);
+        assertThat(trustScoreService.getScore(USER_ID)).isEqualTo(15);
     }
 
     @Test
-    @DisplayName("reject sin cambios previos -> -15 al creador")
-    void reject_noPriorChanges_subtractsFifteen() {
+    @DisplayName("reject -> score baja -20")
+    void reject_subtractsRejectWeight() {
         Event event = factory.pendingMadridAgainstYou();
-        int scoreBefore = scoreOf(TestConstants.MOCK_USER_ID);
-
         moderationService.reject(event.getId(), new ModerationArchiveRequest("contenido inadecuado"));
-
-        assertThat(scoreOf(TestConstants.MOCK_USER_ID)).isEqualTo(scoreBefore + TrustScoreService.DELTA_REJECTED);
+        assertThat(trustScoreService.getScore(USER_ID)).isEqualTo(-20);
     }
 
     @Test
-    @DisplayName("requestChanges tercera vez -> auto-rechazo y -30 al creador")
-    void requestChanges_thirdTime_autoRejectsSubtractsThirty() {
+    @DisplayName("requestChanges -> score baja -5")
+    void requestChanges_subtractsFive() {
         Event event = factory.pendingMadridAgainstYou();
-        int scoreBefore = scoreOf(TestConstants.MOCK_USER_ID);
+        moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("falta info"));
+        assertThat(trustScoreService.getScore(USER_ID)).isEqualTo(-5);
+    }
 
-        // Primera y segunda rondas: REQUEST_CHANGES normal, sin penalización
+    @Test
+    @DisplayName("requestChanges x2 + approve -> score = -5 -5 +15 = +5")
+    void requestChangesThenApprove_netScore() {
+        Event event = factory.pendingMadridAgainstYou();
+
         moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio 0"));
         factory.resubmitEvent(event.getId());
         moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio 1"));
         factory.resubmitEvent(event.getId());
+        moderationService.approve(event.getId(), null);
 
-        // Tercera vez: rechazo automático con penalización máxima
+        // -5 -5 +15 = +5
+        assertThat(trustScoreService.getScore(USER_ID)).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("requestChanges tercera vez -> auto-rechazo, score = -5 -5 -40 = -50")
+    void requestChanges_thirdTime_autoRejectScore() {
+        Event event = factory.pendingMadridAgainstYou();
+
+        moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio 0"));
+        factory.resubmitEvent(event.getId());
+        moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio 1"));
+        factory.resubmitEvent(event.getId());
         moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("cambio 2"));
 
-        assertThat(scoreOf(TestConstants.MOCK_USER_ID)).isEqualTo(scoreBefore + TrustScoreService.DELTA_REJECTED_AFTER_MANY_CHANGES);
+        // 2 × REQUEST_CHANGES (-5) + 1 × AUTO_REJECT (-40) = -50
+        assertThat(trustScoreService.getScore(USER_ID)).isEqualTo(-50);
     }
 
     @Test
-    @DisplayName("requestChanges no modifica el trust score")
-    void requestChanges_doesNotChangeScore() {
-        Event event = factory.pendingMadridAgainstYou();
-        int scoreBefore = scoreOf(TestConstants.MOCK_USER_ID);
-
-        moderationService.requestChanges(event.getId(), new ModerationArchiveRequest("falta info"));
-
-        assertThat(scoreOf(TestConstants.MOCK_USER_ID)).isEqualTo(scoreBefore);
-    }
-
-    @Test
-    @DisplayName("score llega a -200 -> usuario queda con banned=true")
+    @DisplayName("score llega a -200 (10 rechazos × -20) -> usuario queda baneado")
     void scoreReachesBanThreshold_userGetsBanned() {
-        // Ajusta el score del usuario seed a -185 (un rechazo directo de -15 llega a -200)
-        userRepository.findById(UUID.fromString(TestConstants.MOCK_USER_ID)).ifPresent(u -> {
-            u.setTrustScore(-185);
-            userRepository.save(u);
-        });
+        // 10 rechazos × -20 = -200 → ban
+        for (int i = 0; i < 10; i++) {
+            Event event = factory.pendingMadridAgainstYou();
+            moderationService.reject(event.getId(), new ModerationArchiveRequest("contenido inadecuado"));
+        }
 
-        Event event = factory.pendingMadridAgainstYou();
-        moderationService.reject(event.getId(), new ModerationArchiveRequest("contenido inadecuado"));
-
-        var user = userRepository.findById(UUID.fromString(TestConstants.MOCK_USER_ID)).orElseThrow();
+        var user = userRepository.findById(USER_ID).orElseThrow();
         assertThat(user.isBanned()).isTrue();
-    }
-
-    private int scoreOf(String userId) {
-        return userRepository.findById(UUID.fromString(userId)).orElseThrow().getTrustScore();
+        assertThat(trustScoreService.getScore(USER_ID)).isEqualTo(-200);
     }
 }

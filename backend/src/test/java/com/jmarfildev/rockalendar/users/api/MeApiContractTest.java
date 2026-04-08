@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,10 +19,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
+import com.jmarfildev.rockalendar.moderation.domain.ActionType;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
+import com.jmarfildev.rockalendar.support.TestDates;
 import com.jmarfildev.rockalendar.users.application.PromotionEligibilityService;
 import com.jmarfildev.rockalendar.users.domain.UserRole;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
@@ -78,11 +81,18 @@ class MeApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/me/promotion-request usuario elegible -> 200 con role MODERATOR")
     void requestPromotion_eligible_200AndRoleChanged() throws Exception {
-        var eligible = factory.userWithScore(
+        // Crear usuario con antigüedad suficiente y 7 aprobaciones (7 × +15 = 105 ≥ MIN_TRUST_SCORE)
+        var eligible = factory.userCreatedAt(
                 "promo@test.local",
-                PromotionEligibilityService.MIN_TRUST_SCORE,
                 OffsetDateTime.now().minusDays(PromotionEligibilityService.MIN_SENIORITY_DAYS + 1)
         );
+        for (int i = 0; i < 7; i++) {
+            var event = factory.approvedEvent("Evento " + i, factory.madrid(), TestConstants.MADRID,
+                    "Sala Única " + i, TestDates.past().minusDays(i + 1), eligible.getId().toString(),
+                    "Artista Único " + i);
+            factory.insertModerationAction(event.getId(), ActionType.APPROVE,
+                    UUID.fromString(TestConstants.MOCK_MODERATOR_ID));
+        }
 
         mockMvc.perform(post(apiPromotion)
                        .with(contractUtils.authJwt(eligible.getId().toString(),
@@ -95,7 +105,7 @@ class MeApiContractTest extends AbstractPostgresTest {
     @Test
     @DisplayName("POST /api/me/promotion-request usuario no elegible -> 409")
     void requestPromotion_notEligible_409() throws Exception {
-        // El usuario seed MOCK_USER tiene trust_score=10, insuficiente
+        // El usuario seed MOCK_USER no tiene historial de aprobaciones, score derivado = 0 < 100
         var ra = mockMvc.perform(post(apiPromotion).with(contractUtils.authJwt()))
                         .andExpect(status().isConflict());
         contractUtils.expectProblemDetail(ra, 409, apiPromotion);

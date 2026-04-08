@@ -36,6 +36,7 @@ public class PromotionEligibilityService {
 
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final TrustScoreService trustScoreService;
 
     public boolean isEligible(UUID userId) {
         User user = userRepository.findById(userId).orElse(null);
@@ -47,8 +48,8 @@ public class PromotionEligibilityService {
         // Ban permanente
         if (user.isBanned()) return false;
 
-        // Trust score mínimo
-        if (user.getTrustScore() < MIN_TRUST_SCORE) return false;
+        // Trust score mínimo (calculado desde historial de moderación)
+        if (trustScoreService.getScore(userId) < MIN_TRUST_SCORE) return false;
 
         // Antigüedad mínima
         if (user.getCreatedAt().isAfter(OffsetDateTime.now().minusDays(MIN_SENIORITY_DAYS))) return false;

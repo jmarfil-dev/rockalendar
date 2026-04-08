@@ -40,16 +40,7 @@ public class DatabaseCleaner {
                       'aaaaaaaa-0000-0000-0000-000000000003'
                     )
                 """);
-        // Restaura trust_score y banned de los usuarios seed
-        jdbc.execute("""
-                    UPDATE users SET
-                      trust_score = CASE id::text
-                        WHEN 'aaaaaaaa-0000-0000-0000-000000000001' THEN 100
-                        WHEN 'aaaaaaaa-0000-0000-0000-000000000002' THEN 80
-                        WHEN 'aaaaaaaa-0000-0000-0000-000000000003' THEN 10
-                        ELSE trust_score
-                      END,
-                      banned = false
-                """);
+        // Restaura banned de los usuarios seed (trust_score ya no se persiste)
+        jdbc.execute("UPDATE users SET banned = false");
     }
 }

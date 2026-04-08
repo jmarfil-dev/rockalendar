@@ -113,19 +113,6 @@ public class ModerationCommandService {
         return moderate(eventId, targetStatus, actionType, reason);
     }
 
-    private void applyTrustScore(ActionType actionType, UUID creatorId, UUID eventId) {
-        if (actionType == ActionType.APPROVE) {
-            trustScoreService.onApprove(creatorId, eventId);
-        }
-        else if (actionType == ActionType.REJECT) {
-            trustScoreService.onReject(creatorId, eventId);
-        }
-        else if (actionType == ActionType.AUTO_REJECT) {
-            trustScoreService.onRejectAfterThirdChange(creatorId, eventId);
-        }
-        // REQUEST_CHANGES, HIDE y los nuevos tipos no modifican el trust score aquí
-    }
-
     private EventPrivateDto moderate(UUID eventId, EventStatus targetStatus, ActionType actionType, String message) {
         UUID moderatorId = currentUser.userId();
         OffsetDateTime now = OffsetDateTime.now();
@@ -154,7 +141,10 @@ public class ModerationCommandService {
 
         try {
             moderationActionRepository.saveAndFlush(action);
-            applyTrustScore(actionType, event.getCreatedByUserId(), eventId);
+            // Comprobar autoban solo tras acciones que penalizan fuertemente
+            if (actionType == ActionType.REJECT || actionType == ActionType.AUTO_REJECT) {
+                trustScoreService.checkAutoban(event.getCreatedByUserId());
+            }
             return eventMapper.toPrivateDto(event);
         }
         catch (ObjectOptimisticLockingFailureException | OptimisticLockException | StaleObjectStateException e) {
