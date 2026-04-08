@@ -1,8 +1,15 @@
 package com.jmarfildev.rockalendar.admin.api;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +26,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto;
 import com.jmarfildev.rockalendar.admin.api.dto.AdminStatusOverrideRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
@@ -27,6 +35,7 @@ import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
+import com.jmarfildev.rockalendar.events.domain.EventStatus;
 
 /**
  * @author jmarfil
@@ -35,6 +44,29 @@ import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 @Tag(name = "Admin Events", description = "Operaciones de administración sobre eventos")
 @SecurityRequirement(name = "bearerAuth")
 public interface AdminEventApi {
+
+    @GetMapping
+    @Operation(summary = "Listar eventos (admin)",
+               description = """
+                             Lista eventos futuros con filtros opcionales.
+                             Por defecto devuelve solo eventos APPROVED.
+                             Soporta filtrado por estado (múltiple), provincia, rango de fechas y búsqueda por título.
+                             """)
+    @ApiResponse(responseCode = "200", description = "Página de eventos")
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiBadRequest
+    Page<AdminEventListItemDto> listEvents(@Parameter(description = "Estados a incluir (por defecto: APPROVED)") @RequestParam(required = false) List<
+            EventStatus> statuses,
+                                           @Parameter(description = "Código INE de provincia") @RequestParam(required = false) Optional<
+                                                   Short> provinceId,
+                                           @Parameter(description = "Fecha inicio (inclusive)") @RequestParam(required = false) Optional<
+                                                   OffsetDateTime> dateFrom,
+                                           @Parameter(description = "Fecha fin (inclusive)") @RequestParam(required = false) Optional<
+                                                   OffsetDateTime> dateTo,
+                                           @Parameter(description = "Búsqueda por título") @RequestParam(required = false) Optional<
+                                                   String> q,
+                                           @PageableDefault(size = 20, sort = "date") Pageable pageable);
 
     @PutMapping(value = "/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Editar datos de cualquier evento",
