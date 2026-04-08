@@ -62,7 +62,7 @@ public class TokenRenewalFilter extends OncePerRequestFilter {
 
                     // Verificar que el usuario sigue activo antes de renovar
                     Optional<User> userOpt = userRepository.findById(userId);
-                    if (userOpt.isEmpty() || userOpt.get().isErased() || userOpt.get().isBanned()) {
+                    if (userOpt.isEmpty() || userOpt.get().isErased()) {
                         // No renovar — dejar que el token expire naturalmente
                         filterChain.doFilter(request, response);
                         return;
