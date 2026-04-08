@@ -245,9 +245,11 @@
     },
     "tabs": {
       "PENDING": "Pending",
+      "APPROVED": "Approved",
       "ARCHIVED": "Archived"
     },
     "noEvents": "No concerts in this tab",
+    "approvedAt": "Approved",
     "moderatedAt": "Moderated",
     "actions": {
       "approve": "Approve",

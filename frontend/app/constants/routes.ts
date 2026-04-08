@@ -49,6 +49,7 @@ export const ROUTES = {
 
   apiModerationArtists: "/api/moderation/artists",
   apiModerationPending: "/api/moderation/events/pending",
+  apiModerationApproved: "/api/moderation/events/approved",
   apiModerationArchived: "/api/moderation/events/archived",
 } as const;
 

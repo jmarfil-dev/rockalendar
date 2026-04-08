@@ -84,7 +84,7 @@ export type EventPrivateDto = {
   submittedAt: string;
 };
 
-export const MODERATION_TABS = ["PENDING", "ARCHIVED"] as const;
+export const MODERATION_TABS = ["PENDING", "APPROVED", "ARCHIVED"] as const;
 export type ModerationTab = (typeof MODERATION_TABS)[number];
 
 export type ModerationPendingListItem = {
@@ -92,6 +92,12 @@ export type ModerationPendingListItem = {
   title: string;
   submittedAt: string;
   possibleDuplicateOf?: string | null;
+};
+
+export type ModerationApprovedListItem = {
+  id: string;
+  title: string;
+  approvedAt: string;
 };
 
 export type ModerationArchivedListItem = {

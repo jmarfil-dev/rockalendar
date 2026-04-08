@@ -7,6 +7,10 @@ definePageMeta({ layout: "moderation", ssr: false });
 const { t, tm, rt } = useI18n();
 const route = useRoute();
 const id = route.params.id as string;
+const fromTab = route.query.from as string | undefined;
+const backRoute = computed(() =>
+  fromTab ? { path: ROUTES.moderationEvents, query: { tab: fromTab } } : ROUTES.moderationEvents
+);
 
 // --- Carga del evento ---
 const event = ref<EventPrivateDto | null>(null);
@@ -24,7 +28,8 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
   ERASED: "danger",
 };
 
-const canModerate = computed(() => event.value?.status === "PENDING_MODERATION");
+const canModerate = computed(() => event.value?.status === "PENDING_MODERATION" || event.value?.status === "APPROVED");
+const canApprove = computed(() => event.value?.status === "PENDING_MODERATION");
 
 onMounted(async () => {
   const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiModerationEventDetail(id));
@@ -79,7 +84,7 @@ async function onConfirm() {
 
   if (ok) {
     dialogVisible.value = false;
-    await navigateTo(ROUTES.moderationEvents);
+    await navigateTo(backRoute.value);
   }
 }
 </script>
@@ -89,7 +94,7 @@ async function onConfirm() {
     <!-- Cabecera -->
     <div class="flex align-items-center justify-content-between gap-3">
       <div class="flex align-items-center gap-3">
-        <NuxtLink :to="ROUTES.moderationEvents" class="text-color-secondary" :aria-label="t('common.back')">
+        <NuxtLink :to="backRoute" class="text-color-secondary" :aria-label="t('common.back')">
           <i class="pi pi-arrow-left" aria-hidden="true" />
         </NuxtLink>
         <h1 class="text-2xl font-bold m-0">{{ t("moderation.hub.events") }}</h1>
@@ -307,11 +312,12 @@ async function onConfirm() {
               </template>
             </Card>
 
-            <!-- Acciones de moderación (solo para PENDING_MODERATION) -->
+            <!-- Acciones de moderación -->
             <Card v-if="canModerate" class="border-1 surface-border">
               <template #content>
                 <div class="flex flex-column gap-2">
                   <Button
+                    v-if="canApprove"
                     :label="t('moderation.actions.approve')"
                     icon="pi pi-check"
                     severity="success"
