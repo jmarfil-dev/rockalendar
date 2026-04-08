@@ -36,7 +36,7 @@ export function useSearchDrawer() {
 
   const searchForm = useState("searchDrawer:form", () => ({
     artistId: null as string | null,
-    provinceId: null as string | null,
+    provinceId: null as number | null,
     dateFrom: null as Date | null,
     dateTo: null as Date | null,
     city: "",
@@ -103,7 +103,8 @@ export function useSearchDrawer() {
       }
 
       searchForm.value.artistId = artistId;
-      searchForm.value.provinceId = getQueryString(q, "provinceId") || null;
+      const pId = getQueryString(q, "provinceId");
+      searchForm.value.provinceId = pId ? Number(pId) : null;
       searchForm.value.city = getQueryString(q, "city");
 
       const from = getQueryString(q, "dateFrom");
