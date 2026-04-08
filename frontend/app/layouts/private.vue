@@ -5,7 +5,7 @@ const { t } = useI18n();
 const router = useRouter();
 
 const { open: openSearch } = useSearchDrawer();
-const { isModerator } = useAuth();
+const { isModerator, isAdmin } = useAuth();
 
 const bottomItems = computed(() => {
   const items = [
@@ -35,6 +35,15 @@ const bottomItems = computed(() => {
       label: t("common.moderationV"),
       icon: "pi pi-clipboard",
       action: () => router.push(ROUTES.moderation),
+    });
+  }
+
+  if (isAdmin.value) {
+    items.push({
+      id: "admin",
+      label: t("common.adminV"),
+      icon: "pi pi-shield",
+      action: () => router.push(ROUTES.admin),
     });
   }
 

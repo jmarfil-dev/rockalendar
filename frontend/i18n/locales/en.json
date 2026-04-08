@@ -9,6 +9,7 @@
     "proposeV": "Propose",
     "myAreaV": "My area",
     "moderationV": "Moderation",
+    "adminV": "Admin",
     "returnIndex": "Return to index",
     "back": "Go back",
     "skipToContent": "Skip to content",
@@ -204,8 +205,16 @@
   "user": {
     "email": "Email",
     "password": "Password",
-    "myAccount": "User account",
-    "settings": "Settings"
+    "myAccount": "User account"
+  },
+  "admin": {
+    "title": "Administration",
+    "hub": {
+      "settings": "Settings",
+      "settingsDesc": "General system settings",
+      "events": "Manage concerts",
+      "eventsDesc": "Advanced concert management"
+    }
   },
   "moderation": {
     "title": "Moderation",

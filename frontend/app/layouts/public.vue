@@ -40,6 +40,15 @@ const bottomItems = computed(() => {
         action: () => router.push(ROUTES.moderation),
       });
     }
+
+    if (auth.isAdmin.value) {
+      items.push({
+        id: "admin",
+        label: t("common.adminV"),
+        icon: "pi pi-shield",
+        action: () => router.push(ROUTES.admin),
+      });
+    }
   }
 
   return items;

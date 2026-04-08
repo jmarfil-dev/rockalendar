@@ -18,6 +18,8 @@ export const ROUTES = {
   moderationArtistCreate: "/moderation/artists/create",
 
   admin: "/admin",
+  adminSettings: "/admin/settings",
+  adminEvents: "/admin/events",
 
   errorForbidden: "/error/forbidden",
 
