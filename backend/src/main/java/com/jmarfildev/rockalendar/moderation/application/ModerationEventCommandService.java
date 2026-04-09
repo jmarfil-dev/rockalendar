@@ -132,6 +132,19 @@ public class ModerationEventCommandService {
         event.setModeratedAt(now);
         event.setModerationMessage(message);
 
+        // Al aprobar un duplicado: limpiar su referencia y marcar el original si sigue revisable
+        if (targetStatus == EventStatus.APPROVED && event.getPossibleDuplicateOf() != null) {
+            UUID originalId = event.getPossibleDuplicateOf();
+            event.setPossibleDuplicateOf(null);
+            eventRepository.findById(originalId).ifPresent(original -> {
+                EventStatus s = original.getStatus();
+                if (s == EventStatus.PENDING_MODERATION || s == EventStatus.NEEDS_CHANGES || s == EventStatus.FLAGGED) {
+                    original.setPossibleDuplicateOf(event.getId());
+                    log.info("original event marked as duplicate of newly approved eventId={} originalId={}", event.getId(), originalId);
+                }
+            });
+        }
+
         ModerationAction action = new ModerationAction();
         action.setEventId(eventId);
         action.setAction(actionType);
