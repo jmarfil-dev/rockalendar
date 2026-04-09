@@ -39,6 +39,7 @@ import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationEventDetailDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
 
 /**
@@ -61,9 +62,9 @@ public interface ModerationEventApi {
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound
-    EventPrivateDto getForModeration(@Parameter(description = "ID del evento",
-                                                example = "cccccccc-0000-0000-0000-000000000001",
-                                                required = true) @PathVariable UUID eventId);
+    ModerationEventDetailDto getForModeration(@Parameter(description = "ID del evento",
+                                                          example = "cccccccc-0000-0000-0000-000000000001",
+                                                          required = true) @PathVariable UUID eventId);
 
     @GetMapping("/pending")
     @Operation(summary = "Listar eventos pendientes de moderación",

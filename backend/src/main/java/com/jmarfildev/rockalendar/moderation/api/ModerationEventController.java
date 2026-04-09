@@ -16,6 +16,7 @@ import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationEventDetailDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
 import com.jmarfildev.rockalendar.moderation.application.ModerationEventCommandService;
 import com.jmarfildev.rockalendar.moderation.application.ModerationEventQueryService;
@@ -32,7 +33,7 @@ public class ModerationEventController implements ModerationEventApi {
     private final ModerationEventCommandService commandService;
 
     @Override
-    public EventPrivateDto getForModeration(UUID eventId) {
+    public ModerationEventDetailDto getForModeration(UUID eventId) {
         return queryService.getForModeration(eventId);
     }
 
