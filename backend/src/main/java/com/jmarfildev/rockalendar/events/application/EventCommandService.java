@@ -165,6 +165,18 @@ public class EventCommandService {
             throw new ConflictException(ErrorConstants.EVENT_NOT_EDITABLE, ErrorConstants.TYPE_409_EVENT_STATE);
         }
 
+        // Detección de duplicados al actualizar: busca en el mismo día/artistas excluyendo el propio evento
+        var artistIds = in.artists().stream().map(Artist::getId).toList();
+        var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
+        var dayEnd = dayStart.plusDays(1);
+        List<DuplicateEventProjection> duplicates =
+                eventRepository.findPossibleDuplicateExcluding(dayStart, dayEnd, artistIds, in.venueName(), in.title(), eventId);
+        UUID possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
+        event.setPossibleDuplicateOf(possibleDuplicateOfId);
+        if (possibleDuplicateOfId != null) {
+            log.info("possible duplicate detected on update eventId={} duplicateId={}", eventId, possibleDuplicateOfId);
+        }
+
         applyDataFields(event, in, poster, removePoster);
         event.setModerationMessage(null);
 

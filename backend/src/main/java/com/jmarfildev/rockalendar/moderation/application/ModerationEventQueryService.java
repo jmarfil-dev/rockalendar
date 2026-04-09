@@ -30,7 +30,7 @@ import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDt
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ModerationQueryService {
+public class ModerationEventQueryService {
 
     private final EventRepository repository;
     private final EventMapper eventMapper;

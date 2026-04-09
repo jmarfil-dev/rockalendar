@@ -36,15 +36,13 @@ public class AdminEventQueryService {
     private final EventRepository repository;
     private final EventMapper eventMapper;
 
+    private static final String FIELD_TITLE = "title";
     private static final List<EventStatus> DEFAULT_STATUSES = List.of(EventStatus.APPROVED);
 
-    private static final Map<String, String> ADMIN_SORT_MAP = Map.of(
-            "title", "title",
-            "date", "startDateTime",
-            "province", "province.name",
-            "status", "status");
+    private static final Map<String, String> ADMIN_SORT_MAP =
+            Map.of(FIELD_TITLE, FIELD_TITLE, "date", "startDateTime", "province", "province.name", "status", "status");
     private static final Sort ADMIN_DEFAULT_SORT =
-            Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc("title"));
+            Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc(FIELD_TITLE));
 
     public EventPrivateDto getEventDetail(UUID eventId) {
         return repository.findById(eventId)
@@ -67,19 +65,12 @@ public class AdminEventQueryService {
         List<EventStatus> effectiveStatuses = (statuses == null || statuses.isEmpty()) ? DEFAULT_STATUSES : statuses;
 
         // Construye el LIKE en el servicio para evitar concatenación en JPQL
-        String titleLike = q.map(String::trim)
-                            .filter(s -> !s.isBlank())
-                            .map(s -> "%" + s.toLowerCase() + "%")
-                            .orElse(null);
+        String titleLike = q.map(String::trim).filter(s -> !s.isBlank()).map(s -> "%" + s.toLowerCase() + "%").orElse(null);
 
         Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                                                    SortUtils.toJpaSort(pageable, ADMIN_SORT_MAP, ADMIN_DEFAULT_SORT, "id"));
 
-        return repository.findAdminEvents(effectiveStatuses,
-                                          provinceId.orElse(null),
-                                          dateFrom.orElse(null),
-                                          dateTo.orElse(null),
-                                          titleLike,
+        return repository.findAdminEvents(effectiveStatuses, provinceId.orElse(null), dateFrom.orElse(null), dateTo.orElse(null), titleLike,
                                           pageableWithSort);
     }
 }

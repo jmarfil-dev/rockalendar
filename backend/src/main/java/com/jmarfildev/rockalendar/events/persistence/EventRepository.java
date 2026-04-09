@@ -305,6 +305,31 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                          @Param("venueName") String venueName,
                                                          @Param("title") String title);
 
+    /**
+     * Igual que {@link #findPossibleDuplicate} pero excluye el propio evento (para usar en update()).
+     */
+    @Query(value = """
+                   SELECT DISTINCT e.id AS id, e.title AS title, e.status AS status
+                   FROM events e
+                   JOIN event_artists ea ON ea.event_id = e.id
+                   WHERE e.start_date_time >= :dayStart
+                     AND e.start_date_time < :dayEnd
+                     AND ea.artist_id IN (:artistIds)
+                     AND e.status <> 'ERASED'
+                     AND e.id <> :excludeId
+                     AND (
+                       similarity(e.venue_name, :venueName) > 0.3
+                       OR similarity(e.title, :title) > 0.3
+                     )
+                   LIMIT 1
+                   """, nativeQuery = true)
+    List<DuplicateEventProjection> findPossibleDuplicateExcluding(@Param("dayStart") OffsetDateTime dayStart,
+                                                                   @Param("dayEnd") OffsetDateTime dayEnd,
+                                                                   @Param("artistIds") Collection<UUID> artistIds,
+                                                                   @Param("venueName") String venueName,
+                                                                   @Param("title") String title,
+                                                                   @Param("excludeId") UUID excludeId);
+
     // --- Queries para moderación automática ---
 
     /**

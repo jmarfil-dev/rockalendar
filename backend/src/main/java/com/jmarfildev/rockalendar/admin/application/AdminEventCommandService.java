@@ -72,7 +72,7 @@ public class AdminEventCommandService {
     }
 
     @Transactional
-    public EventPrivateDto edit(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster) {
+    public EventPrivateDto edit(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster, String comment) {
         UUID adminId = currentUser.userId();
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
@@ -83,6 +83,7 @@ public class AdminEventCommandService {
         ModerationAction action = new ModerationAction();
         action.setEventId(eventId);
         action.setAction(ActionType.ADMIN_EDITED);
+        action.setReason(comment);
         action.setModeratedByUserId(adminId);
         action.setCreatedAt(OffsetDateTime.now());
 

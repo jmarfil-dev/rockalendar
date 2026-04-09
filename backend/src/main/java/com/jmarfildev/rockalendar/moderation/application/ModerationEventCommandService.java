@@ -41,7 +41,7 @@ import com.jmarfildev.rockalendar.users.application.TrustScoreService;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ModerationCommandService {
+public class ModerationEventCommandService {
     private final EventRepository eventRepository;
     private final ModerationActionRepository moderationActionRepository;
     private final EventMapper eventMapper;
@@ -131,6 +131,19 @@ public class ModerationCommandService {
         event.setModeratedByUserId(moderatorId);
         event.setModeratedAt(now);
         event.setModerationMessage(message);
+
+        // Al aprobar un duplicado: limpiar su referencia y marcar el original si sigue revisable
+        if (targetStatus == EventStatus.APPROVED && event.getPossibleDuplicateOf() != null) {
+            UUID originalId = event.getPossibleDuplicateOf();
+            event.setPossibleDuplicateOf(null);
+            eventRepository.findById(originalId).ifPresent(original -> {
+                EventStatus s = original.getStatus();
+                if (s == EventStatus.PENDING_MODERATION || s == EventStatus.NEEDS_CHANGES || s == EventStatus.FLAGGED) {
+                    original.setPossibleDuplicateOf(event.getId());
+                    log.info("original event marked as duplicate of newly approved eventId={} originalId={}", event.getId(), originalId);
+                }
+            });
+        }
 
         ModerationAction action = new ModerationAction();
         action.setEventId(eventId);

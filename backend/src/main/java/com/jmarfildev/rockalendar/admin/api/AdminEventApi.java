@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 
 import com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto;
 import com.jmarfildev.rockalendar.admin.api.dto.AdminStatusOverrideRequest;
@@ -100,7 +101,8 @@ public interface AdminEventApi {
                                     required = true) @Valid @RequestPart("event") SubmitEventRequest request,
                          @Parameter(description = "Cartel nuevo (opcional)") @RequestPart(value = "poster",
                                                                                           required = false) MultipartFile poster,
-                         @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(defaultValue = "false") boolean removePoster);
+                         @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(defaultValue = "false") boolean removePoster,
+                         @Parameter(description = "Comentario opcional del administrador para el historial de auditoría") @RequestParam(required = false) @Size(max = 500) String comment);
 
     @PostMapping("/{eventId}/status")
     @Operation(summary = "Forzar cambio de estado de un evento",
