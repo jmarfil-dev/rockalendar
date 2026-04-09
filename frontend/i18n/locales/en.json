@@ -219,7 +219,18 @@
       "noEvents": "No concerts match the applied filters",
       "filterStatus": "Status",
       "filterQ": "Search by title",
-      "allStatuses": "All statuses"
+      "allStatuses": "All statuses",
+      "editTitle": "Edit concert (admin)",
+      "saveChanges": "Save changes",
+      "saveSuccessTitle": "Changes saved",
+      "saveSuccessMsg": "The concert has been updated successfully.",
+      "statusChangeTitle": "Change status",
+      "statusChangeMsg": "Confirm changing the status to \"{status}\"? This action will be recorded in the audit log.",
+      "statusChangeConfirm": "Confirm change",
+      "unsavedTitle": "Unsaved changes",
+      "unsavedMsg": "You have unsaved changes. If you leave now, they will be lost.",
+      "unsavedStay": "Keep editing",
+      "unsavedLeave": "Leave without saving"
     }
   },
   "moderation": {
@@ -349,6 +360,7 @@
     "moderationArtists": "Artists without concerts",
     "admin": "Administration",
     "adminEvents": "Manage concerts",
+    "adminEventEdit": "Edit concert (admin)",
     "forbidden": "Access denied"
   },
   "pagination": {

@@ -219,7 +219,18 @@
       "noEvents": "No hay conciertos con los filtros aplicados",
       "filterStatus": "Estado",
       "filterQ": "Buscar por título",
-      "allStatuses": "Todos los estados"
+      "allStatuses": "Todos los estados",
+      "editTitle": "Editar concierto (admin)",
+      "saveChanges": "Guardar cambios",
+      "saveSuccessTitle": "Cambios guardados",
+      "saveSuccessMsg": "El concierto se ha actualizado correctamente.",
+      "statusChangeTitle": "Cambiar estado",
+      "statusChangeMsg": "¿Confirmas el cambio de estado a «{status}»? Esta acción queda registrada en el historial.",
+      "statusChangeConfirm": "Confirmar cambio",
+      "unsavedTitle": "Cambios sin guardar",
+      "unsavedMsg": "Tienes cambios sin guardar. Si sales ahora, se perderán.",
+      "unsavedStay": "Seguir editando",
+      "unsavedLeave": "Salir sin guardar"
     }
   },
   "moderation": {
@@ -349,6 +360,7 @@
     "moderationArtists": "Artistas sin concierto",
     "admin": "Administración",
     "adminEvents": "Administrar conciertos",
+    "adminEventEdit": "Editar concierto (admin)",
     "forbidden": "Acceso denegado"
   },
   "pagination": {

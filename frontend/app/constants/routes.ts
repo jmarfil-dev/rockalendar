@@ -50,6 +50,7 @@ export const ROUTES = {
   apiContact: "/api/contact",
 
   apiAdminEvents: "/api/admin/events",
+  adminEvents: "/admin/events",
 
   apiModerationArtists: "/api/moderation/artists",
   apiModerationPending: "/api/moderation/events/pending",
@@ -65,6 +66,9 @@ export const ROUTE_PATH = {
   meEventDetail: (id: string) => `${ROUTES.meEvents}/${id}`,
   apiMeEventDetail: (id: string) => `${ROUTES.apiMeEvents}/${id}`,
   moderationEventDetail: (id: string) => `${ROUTES.moderationEvents}/${id}`,
+  adminEventEdit: (id: string) => `${ROUTES.adminEvents}/${id}/edit`,
+  apiAdminEventDetail: (id: string) => `${ROUTES.apiAdminEvents}/${id}`,
+  apiAdminEventStatus: (id: string) => `${ROUTES.apiAdminEvents}/${id}/status`,
   apiModerationEventDetail: (id: string) => `${ROUTES.apiModerationEvents}/${id}`,
   apiModerationArtistDetail: (id: string) => `${ROUTES.apiModerationArtists}/${id}`,
   apiModerationApprove: (id: string) => `${ROUTES.apiModerationEvents}/${id}/approve`,

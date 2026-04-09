@@ -1,0 +1,551 @@
+<script setup lang="ts">
+import type { EventStatus } from "~/types/events";
+import { ROUTES, ROUTE_PATH } from "~/constants/routes";
+import ArtistSelector from "~/components/events/ArtistSelector.vue";
+
+definePageMeta({ layout: "admin", ssr: false });
+
+const { t } = useI18n();
+useHead({ title: () => t("page.adminEventEdit") });
+const route = useRoute();
+const id = route.params.id as string;
+
+const { load: loadProvinces, options: provinceOptions, loading: provincesLoading } = useProvinces();
+const {
+  form,
+  posterFile,
+  existingPosterUrl,
+  removePoster,
+  loading,
+  submitting,
+  errorMsg,
+  fieldErrors,
+  artistsError,
+  load,
+  submitData,
+  submitStatus,
+} = useAdminEditEvent(id);
+
+const posterInputRef = ref<HTMLInputElement | null>(null);
+const posterPreviewUrl = computed(() => (posterFile.value ? URL.createObjectURL(posterFile.value) : null));
+const posterError = ref<string | null>(null);
+
+const POSTER_MAX_MB = 5;
+const POSTER_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+function onPosterChange(e: Event) {
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0] ?? null;
+  posterError.value = null;
+
+  if (!file) return;
+
+  if (!POSTER_ALLOWED_TYPES.includes(file.type)) {
+    posterError.value = t("events.posterInvalidType");
+    input.value = "";
+    return;
+  }
+
+  if (file.size > POSTER_MAX_MB * 1024 * 1024) {
+    posterError.value = t("events.posterTooLarge", { max: POSTER_MAX_MB });
+    input.value = "";
+    return;
+  }
+
+  posterFile.value = file;
+  removePoster.value = false;
+}
+
+function clearNewPoster() {
+  posterFile.value = null;
+  posterError.value = null;
+  if (posterInputRef.value) posterInputRef.value.value = "";
+}
+
+const today = new Date();
+
+const isDateRangeInvalid = computed(
+  () => !!form.startDate && !!form.endDate && form.endDate < form.startDate,
+);
+
+// --- Cambio de estado ---
+const ALL_STATUSES: EventStatus[] = [
+  "PENDING_MODERATION",
+  "APPROVED",
+  "REJECTED",
+  "NEEDS_CHANGES",
+  "HIDDEN",
+  "CANCELED",
+  "DRAFT",
+  "ERASED",
+];
+
+const statusOptions = computed(() =>
+  ALL_STATUSES.map((s) => ({ label: t(`me.eventStatus.${s}`), value: s })),
+);
+
+// committedStatus = estado real en backend. displayStatus = lo que muestra el Select.
+// Se separan porque v-model actualiza displayStatus antes de que @change pueda comparar.
+const committedStatus = ref<EventStatus | null>(null);
+const displayStatus = ref<EventStatus | null>(null);
+
+// --- Estado de los diálogos ---
+const showSaveDialog = ref(false);
+const showUnsavedDialog = ref(false);
+const pendingNavTarget = ref<string | null>(null);
+
+// Seguimiento de cambios para el modal de salida sin guardar
+const initialFormSnapshot = ref<string>("");
+const hasChanges = computed(() => {
+  const current = JSON.stringify({ ...form, status: undefined });
+  return current !== initialFormSnapshot.value;
+});
+
+onMounted(async () => {
+  const [loadRes] = await Promise.all([load(), loadProvinces()]);
+  if (loadRes) {
+    showError({ statusCode: loadRes.status, data: loadRes.pd });
+    return;
+  }
+  committedStatus.value = form.status;
+  displayStatus.value = form.status;
+  initialFormSnapshot.value = JSON.stringify({ ...form, status: undefined });
+});
+
+// --- Submit datos ---
+async function onSubmit() {
+  const result = await submitData();
+  if (result) {
+    initialFormSnapshot.value = JSON.stringify({ ...form, status: undefined });
+    showSaveDialog.value = true;
+  }
+}
+
+// --- Cambio de estado ---
+const pendingStatusChange = ref<EventStatus | null>(null);
+const showStatusConfirmDialog = ref(false);
+
+function requestStatusChange(newStatus: EventStatus) {
+  if (newStatus === committedStatus.value) return;
+  pendingStatusChange.value = newStatus;
+  showStatusConfirmDialog.value = true;
+}
+
+async function confirmStatusChange() {
+  showStatusConfirmDialog.value = false;
+  if (!pendingStatusChange.value) return;
+  const result = await submitStatus(pendingStatusChange.value);
+  if (result) {
+    committedStatus.value = pendingStatusChange.value;
+    showSaveDialog.value = true;
+  } else {
+    displayStatus.value = committedStatus.value;
+  }
+  pendingStatusChange.value = null;
+}
+
+function cancelStatusChange() {
+  showStatusConfirmDialog.value = false;
+  displayStatus.value = committedStatus.value;
+  pendingStatusChange.value = null;
+}
+
+// --- Navegación con aviso de cambios sin guardar ---
+function tryNavigate(target: string) {
+  if (hasChanges.value) {
+    pendingNavTarget.value = target;
+    showUnsavedDialog.value = true;
+  } else {
+    navigateTo(target);
+  }
+}
+
+function confirmLeave() {
+  showUnsavedDialog.value = false;
+  if (pendingNavTarget.value) {
+    navigateTo(pendingNavTarget.value);
+  }
+}
+</script>
+
+<template>
+  <div class="flex flex-column gap-4">
+    <div class="flex align-items-center gap-3">
+      <button
+        class="p-button-link text-color-secondary bg-transparent border-none cursor-pointer p-0"
+        :aria-label="t('common.back')"
+        @click="tryNavigate(ROUTES.adminEvents)">
+        <i class="pi pi-arrow-left" aria-hidden="true" />
+      </button>
+      <h1 class="text-2xl font-bold m-0">{{ t("admin.events.editTitle") }}</h1>
+    </div>
+
+    <!-- Cargando -->
+    <div v-if="loading" role="status" class="flex align-items-center gap-2 py-6 justify-content-center">
+      <ProgressSpinner style="width: 2rem; height: 2rem" />
+      <span class="sr-only">{{ t('common.loading') }}</span>
+    </div>
+
+    <!-- Formulario -->
+    <Card v-else class="border-1 surface-border">
+      <template #content>
+        <Message v-if="errorMsg" severity="error" :closable="false" class="mb-3">{{ errorMsg }}</Message>
+
+        <form class="flex flex-column gap-4" @submit.prevent="onSubmit">
+          <!-- Estado (solo admin) -->
+          <div class="flex flex-column gap-2">
+            <span id="admin-status-label" class="text-sm text-color-secondary">{{ t("events.status") }}</span>
+            <Select
+              v-model="displayStatus"
+              aria-labelledby="admin-status-label"
+              :options="statusOptions"
+              option-label="label"
+              option-value="value"
+              class="w-full md:w-20rem"
+              @change="requestStatusChange(displayStatus!)" />
+          </div>
+
+          <Divider />
+
+          <!-- Título -->
+          <div class="flex flex-column gap-2">
+            <label for="title" class="text-sm text-color-secondary">
+              {{ t("events.title") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+            </label>
+            <InputText
+              id="title"
+              v-model="form.title"
+              :placeholder="t('me.propose.titlePlaceholder')"
+              :invalid="!!fieldErrors['title']"
+              maxlength="200"
+              required />
+            <Message v-if="fieldErrors['title']" severity="error" variant="simple" size="small">
+              {{ t(fieldErrors["title"]) }}
+            </Message>
+          </div>
+
+          <!-- Descripción -->
+          <div class="flex flex-column gap-2">
+            <label for="description" class="text-sm text-color-secondary">{{ t("events.description") }}</label>
+            <Textarea
+              id="description"
+              v-model="form.description"
+              :placeholder="t('me.propose.descriptionPlaceholder')"
+              :invalid="!!fieldErrors['description']"
+              rows="4"
+              maxlength="5000"
+              auto-resize />
+            <Message v-if="fieldErrors['description']" severity="error" variant="simple" size="small">
+              {{ t(fieldErrors["description"]) }}
+            </Message>
+          </div>
+
+          <!-- Fecha inicio / Fecha fin -->
+          <div class="grid">
+            <div class="col-12 md:col-6 flex flex-column gap-2">
+              <label for="startDate" class="text-sm text-color-secondary">
+                {{ t("me.propose.startDate") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+              </label>
+              <div class="flex align-items-center gap-2">
+                <DatePicker
+                  v-model="form.startDate"
+                  input-id="startDate"
+                  :show-time="!form.startTimeUnknown"
+                  hour-format="24"
+                  date-format="dd/mm/yy"
+                  :min-date="today"
+                  :invalid="!!fieldErrors['startDate']"
+                  :manual-input="false"
+                  show-icon
+                  icon-display="input"
+                  required
+                  class="flex-1" />
+                <Button
+                  v-if="form.startDate"
+                  type="button"
+                  icon="pi pi-times"
+                  severity="secondary"
+                  text
+                  rounded
+                  size="small"
+                  :aria-label="t('common.clearDate')"
+                  @click="form.startDate = null" />
+              </div>
+              <div class="flex align-items-center gap-2 mt-1">
+                <Checkbox
+                  v-model="form.startTimeUnknown"
+                  input-id="startTimeUnknown"
+                  :binary="true" />
+                <label for="startTimeUnknown" class="text-sm text-color-secondary cursor-pointer">
+                  {{ t("me.propose.startTimeUnknown") }}
+                </label>
+              </div>
+              <Message v-if="fieldErrors['startDate']" severity="error" variant="simple" size="small">
+                {{ t(fieldErrors["startDate"]) }}
+              </Message>
+            </div>
+
+            <div class="col-12 md:col-6 flex flex-column gap-2">
+              <label for="endDate" class="text-sm text-color-secondary">{{ t("me.propose.endDate") }}</label>
+              <div class="flex align-items-center gap-2">
+                <DatePicker
+                  v-model="form.endDate"
+                  input-id="endDate"
+                  date-format="dd/mm/yy"
+                  :min-date="form.startDate ?? undefined"
+                  :invalid="!!fieldErrors['endDate'] || isDateRangeInvalid"
+                  :manual-input="false"
+                  show-icon
+                  icon-display="input"
+                  class="flex-1" />
+                <Button
+                  v-if="form.endDate"
+                  type="button"
+                  icon="pi pi-times"
+                  severity="secondary"
+                  text
+                  rounded
+                  size="small"
+                  :aria-label="t('common.clearDate')"
+                  @click="form.endDate = null" />
+              </div>
+              <Message v-if="fieldErrors['endDate']" severity="error" variant="simple" size="small">
+                {{ t(fieldErrors["endDate"]) }}
+              </Message>
+              <Message v-else-if="isDateRangeInvalid" severity="error" variant="simple" size="small">
+                {{ t("dates.invalidRange") }}
+              </Message>
+            </div>
+          </div>
+
+          <!-- Recinto -->
+          <div class="flex flex-column gap-2">
+            <label for="venueName" class="text-sm text-color-secondary">
+              {{ t("me.propose.venueName") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+            </label>
+            <InputText
+              id="venueName"
+              v-model="form.venueName"
+              :placeholder="t('me.propose.venuePlaceholder')"
+              :invalid="!!fieldErrors['venueName']"
+              maxlength="200"
+              required />
+            <Message v-if="fieldErrors['venueName']" severity="error" variant="simple" size="small">
+              {{ t(fieldErrors["venueName"]) }}
+            </Message>
+          </div>
+
+          <!-- Provincia / Ciudad -->
+          <div class="grid">
+            <div class="col-12 md:col-6 flex flex-column gap-2">
+              <span id="admin-province-label" class="text-sm text-color-secondary">
+                {{ t("geo.province") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+              </span>
+              <Select
+                v-model="form.provinceId"
+                input-id="provinceId"
+                aria-labelledby="admin-province-label"
+                :options="provinceOptions"
+                option-label="label"
+                option-value="value"
+                :loading="provincesLoading"
+                :invalid="!!fieldErrors['provinceId']"
+                filter
+                required />
+              <Message v-if="fieldErrors['provinceId']" severity="error" variant="simple" size="small">
+                {{ t(fieldErrors["provinceId"]) }}
+              </Message>
+            </div>
+
+            <div class="col-12 md:col-6 flex flex-column gap-2">
+              <label for="cityName" class="text-sm text-color-secondary">
+                {{ t("geo.city") }} <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only">{{ t('common.required') }}</span>
+              </label>
+              <InputText
+                id="cityName"
+                v-model="form.cityName"
+                :placeholder="t('me.propose.cityPlaceholder')"
+                :invalid="!!fieldErrors['cityName']"
+                maxlength="120"
+                required />
+              <Message v-if="fieldErrors['cityName']" severity="error" variant="simple" size="small">
+                {{ t(fieldErrors["cityName"]) }}
+              </Message>
+            </div>
+          </div>
+
+          <!-- Artistas -->
+          <ArtistSelector v-model="form.artists" :field-error="artistsError ?? undefined" />
+
+          <!-- Cartel -->
+          <div class="flex flex-column gap-2">
+            <label for="poster" class="text-sm text-color-secondary">{{ t("events.uploadPoster") }}</label>
+
+            <div v-if="existingPosterUrl && !posterFile && !removePoster" class="flex flex-column gap-2">
+              <img
+                :src="existingPosterUrl"
+                :alt="t('events.currentPoster')"
+                class="border-round-lg border-1 surface-border"
+                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" >
+              <div class="flex gap-2">
+                <Button
+                  type="button"
+                  :label="t('events.changePoster')"
+                  icon="pi pi-upload"
+                  severity="secondary"
+                  outlined
+                  size="small"
+                  @click="posterInputRef?.click()" />
+                <Button
+                  type="button"
+                  :label="t('events.removePoster')"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  outlined
+                  size="small"
+                  @click="removePoster = true" />
+              </div>
+            </div>
+
+            <div v-else-if="posterFile" class="flex flex-column gap-2">
+              <img
+                :src="posterPreviewUrl!"
+                :alt="t('events.posterPreview')"
+                class="border-round-lg border-1 surface-border"
+                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" >
+              <div class="flex align-items-center gap-2">
+                <span class="text-sm text-color-secondary flex-1 overflow-hidden text-overflow-ellipsis white-space-nowrap">{{ posterFile.name }}</span>
+                <Button
+                  type="button"
+                  :label="t('events.removePoster')"
+                  icon="pi pi-times"
+                  severity="secondary"
+                  outlined
+                  size="small"
+                  @click="clearNewPoster" />
+              </div>
+            </div>
+
+            <div v-else-if="removePoster" class="flex align-items-center gap-2 p-3 border-1 border-round-lg surface-border">
+              <i class="pi pi-info-circle text-color-secondary flex-shrink-0" aria-hidden="true" />
+              <span class="text-sm text-color-secondary flex-1">{{ t("events.posterWillBeRemoved") }}</span>
+              <Button
+                type="button"
+                icon="pi pi-undo"
+                severity="secondary"
+                text
+                size="small"
+                :aria-label="t('common.retry')"
+                @click="removePoster = false" />
+            </div>
+
+            <div v-else>
+              <Button
+                type="button"
+                :label="t('events.uploadPoster')"
+                icon="pi pi-upload"
+                severity="secondary"
+                outlined
+                @click="posterInputRef?.click()" />
+            </div>
+
+            <input id="poster" ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
+            <Message v-if="posterError" severity="error" variant="simple" size="small">{{ posterError }}</Message>
+            <small class="text-xs text-color-secondary">{{ t("events.posterHint") }}</small>
+          </div>
+
+          <!-- URL externa -->
+          <div class="flex flex-column gap-2">
+            <label for="sourceUrl" class="text-sm text-color-secondary">{{ t("events.sourceUrl") }}</label>
+            <InputText
+              id="sourceUrl"
+              v-model="form.sourceUrl"
+              :placeholder="t('me.propose.sourceUrlPlaceholder')"
+              :invalid="!!fieldErrors['sourceUrl']"
+              maxlength="2048" />
+            <Message v-if="fieldErrors['sourceUrl']" severity="error" variant="simple" size="small">
+              {{ t(fieldErrors["sourceUrl"]) }}
+            </Message>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex justify-content-end gap-3 pt-2">
+            <Button
+              type="button"
+              :label="t('common.back')"
+              severity="secondary"
+              outlined
+              @click="tryNavigate(ROUTES.adminEvents)" />
+            <Button
+              type="submit"
+              :label="t('admin.events.saveChanges')"
+              icon="pi pi-check"
+              :loading="submitting"
+              :disabled="isDateRangeInvalid" />
+          </div>
+        </form>
+      </template>
+    </Card>
+  </div>
+
+  <!-- Modal: guardado con éxito -->
+  <Dialog
+    v-model:visible="showSaveDialog"
+    :header="t('admin.events.saveSuccessTitle')"
+    modal
+    :closable="false"
+    :style="{ width: '22rem' }">
+    <p class="m-0 text-color-secondary">{{ t("admin.events.saveSuccessMsg") }}</p>
+    <template #footer>
+      <Button :label="t('common.save')" icon="pi pi-check" @click="showSaveDialog = false" />
+    </template>
+  </Dialog>
+
+  <!-- Modal: confirmar cambio de estado -->
+  <Dialog
+    v-model:visible="showStatusConfirmDialog"
+    :header="t('admin.events.statusChangeTitle')"
+    modal
+    :closable="false"
+    :style="{ width: '24rem' }">
+    <p class="m-0 text-color-secondary">
+      {{ t("admin.events.statusChangeMsg", { status: pendingStatusChange ? t(`me.eventStatus.${pendingStatusChange}`) : "" }) }}
+    </p>
+    <template #footer>
+      <div class="flex gap-2 justify-content-end">
+        <Button
+          :label="t('common.back')"
+          severity="secondary"
+          outlined
+          @click="cancelStatusChange" />
+        <Button
+          :label="t('admin.events.statusChangeConfirm')"
+          :loading="submitting"
+          @click="confirmStatusChange" />
+      </div>
+    </template>
+  </Dialog>
+
+  <!-- Modal: salir sin guardar -->
+  <Dialog
+    v-model:visible="showUnsavedDialog"
+    :header="t('admin.events.unsavedTitle')"
+    modal
+    :closable="false"
+    :style="{ width: '24rem' }">
+    <p class="m-0 text-color-secondary">{{ t("admin.events.unsavedMsg") }}</p>
+    <template #footer>
+      <div class="flex gap-2 justify-content-end">
+        <Button
+          :label="t('admin.events.unsavedStay')"
+          severity="secondary"
+          outlined
+          @click="showUnsavedDialog = false; pendingNavTarget = null" />
+        <Button
+          :label="t('admin.events.unsavedLeave')"
+          severity="danger"
+          @click="confirmLeave" />
+      </div>
+    </template>
+  </Dialog>
+</template>

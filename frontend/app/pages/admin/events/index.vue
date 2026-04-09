@@ -297,10 +297,10 @@ watch(filterQ, () => {
         <Column style="width: 3rem">
           <template #body="{ data }">
             <NuxtLink
-              :to="ROUTE_PATH.moderationEventDetail(data.id)"
+              :to="ROUTE_PATH.adminEventEdit(data.id)"
               :aria-label="t('common.details')"
               class="text-color-secondary">
-              <i class="pi pi-eye" />
+              <i class="pi pi-pencil" />
             </NuxtLink>
           </template>
         </Column>
