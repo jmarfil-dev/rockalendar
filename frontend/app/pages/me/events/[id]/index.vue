@@ -46,7 +46,7 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
   ERASED: "danger",
 };
 
-const EDITABLE_STATUSES: EventStatus[] = ["DRAFT", "NEEDS_CHANGES", "APPROVED"];
+const EDITABLE_STATUSES: EventStatus[] = ["DRAFT", "NEEDS_CHANGES", "APPROVED", "PENDING_MODERATION"];
 const DELETABLE_STATUSES: EventStatus[] = ["PENDING_MODERATION", "NEEDS_CHANGES"];
 
 const canEdit = computed(() => (event.value ? EDITABLE_STATUSES.includes(event.value.status) : false));

@@ -312,6 +312,19 @@ async function onConfirm() {
               </template>
             </Card>
 
+            <!-- Edición (solo en PENDING_MODERATION) -->
+            <Card v-if="event.status === 'PENDING_MODERATION'" class="border-1 surface-border">
+              <template #content>
+                <Button
+                  :label="t('me.editEvent')"
+                  icon="pi pi-pencil"
+                  severity="secondary"
+                  class="w-full"
+                  type="button"
+                  @click="navigateTo(ROUTE_PATH.moderationEventEdit(id))" />
+              </template>
+            </Card>
+
             <!-- Acciones de moderación -->
             <Card v-if="canModerate" class="border-1 surface-border">
               <template #content>

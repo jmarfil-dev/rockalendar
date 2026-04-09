@@ -361,6 +361,7 @@
     "admin": "Administración",
     "adminEvents": "Administrar conciertos",
     "adminEventEdit": "Editar concierto (admin)",
+    "moderationEventEdit": "Editar concierto (moderación)",
     "forbidden": "Acceso denegado"
   },
   "pagination": {

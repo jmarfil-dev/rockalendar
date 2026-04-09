@@ -66,6 +66,7 @@ export const ROUTE_PATH = {
   meEventDetail: (id: string) => `${ROUTES.meEvents}/${id}`,
   apiMeEventDetail: (id: string) => `${ROUTES.apiMeEvents}/${id}`,
   moderationEventDetail: (id: string) => `${ROUTES.moderationEvents}/${id}`,
+  moderationEventEdit: (id: string) => `${ROUTES.moderationEvents}/${id}/edit`,
   adminEventEdit: (id: string) => `${ROUTES.adminEvents}/${id}/edit`,
   apiAdminEventDetail: (id: string) => `${ROUTES.apiAdminEvents}/${id}`,
   apiAdminEventStatus: (id: string) => `${ROUTES.apiAdminEvents}/${id}/status`,
