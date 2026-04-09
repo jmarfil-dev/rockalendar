@@ -46,10 +46,10 @@ import com.jmarfildev.rockalendar.support.TestDataFactory;
  *
  */
 @SpringBootTest
-class ModerationCommandServiceTest extends AbstractPostgresTest {
+class ModerationEventCommandServiceTest extends AbstractPostgresTest {
 
     @Autowired
-    ModerationCommandService service;
+    ModerationEventCommandService service;
     @Autowired
     DatabaseCleaner cleaner;
     @Autowired

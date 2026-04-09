@@ -16,7 +16,7 @@ import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
-import com.jmarfildev.rockalendar.moderation.application.ModerationCommandService;
+import com.jmarfildev.rockalendar.moderation.application.ModerationEventCommandService;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
@@ -32,7 +32,7 @@ import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 class TrustScoreServiceTest extends AbstractPostgresTest {
 
     @Autowired
-    ModerationCommandService moderationService;
+    ModerationEventCommandService moderationService;
     @Autowired
     TrustScoreService trustScoreService;
     @Autowired

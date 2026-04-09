@@ -41,7 +41,7 @@ import com.jmarfildev.rockalendar.users.application.TrustScoreService;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ModerationCommandService {
+public class ModerationEventCommandService {
     private final EventRepository eventRepository;
     private final ModerationActionRepository moderationActionRepository;
     private final EventMapper eventMapper;
