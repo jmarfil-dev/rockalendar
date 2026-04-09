@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EventStatus } from "~/types/events";
-import { ROUTES, ROUTE_PATH } from "~/constants/routes";
+import { ROUTES } from "~/constants/routes";
 import ArtistSelector from "~/components/events/ArtistSelector.vue";
 
 definePageMeta({ layout: "admin", ssr: false });
