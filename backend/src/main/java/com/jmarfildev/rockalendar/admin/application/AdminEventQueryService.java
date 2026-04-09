@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,10 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto;
-import com.jmarfildev.rockalendar.admin.persistence.AdminEventRepository;
 import com.jmarfildev.rockalendar.common.CommonValidations;
+import com.jmarfildev.rockalendar.common.error.ErrorConstants;
+import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.SortUtils;
+import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
+import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
+import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 
 /**
  * @author jmarfil
@@ -28,7 +33,8 @@ import com.jmarfildev.rockalendar.events.domain.EventStatus;
 @Transactional(readOnly = true)
 public class AdminEventQueryService {
 
-    private final AdminEventRepository repository;
+    private final EventRepository repository;
+    private final EventMapper eventMapper;
 
     private static final List<EventStatus> DEFAULT_STATUSES = List.of(EventStatus.APPROVED);
 
@@ -39,6 +45,12 @@ public class AdminEventQueryService {
             "status", "status");
     private static final Sort ADMIN_DEFAULT_SORT =
             Sort.by(Sort.Order.asc("startDateTime"), Sort.Order.asc("province.name"), Sort.Order.asc("title"));
+
+    public EventPrivateDto getEventDetail(UUID eventId) {
+        return repository.findById(eventId)
+                         .map(eventMapper::toPrivateDto)
+                         .orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
+    }
 
     public Page<AdminEventListItemDto> listEvents(List<EventStatus> statuses,
                                                   Optional<Short> provinceId,

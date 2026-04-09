@@ -22,7 +22,6 @@ import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
-import com.jmarfildev.rockalendar.moderation.persistence.ModerationEventRepository;
 
 /**
  * @author jmarfil
@@ -33,8 +32,7 @@ import com.jmarfildev.rockalendar.moderation.persistence.ModerationEventReposito
 @Transactional(readOnly = true)
 public class ModerationQueryService {
 
-    private final ModerationEventRepository repository;
-    private final EventRepository eventRepository;
+    private final EventRepository repository;
     private final EventMapper eventMapper;
 
     private static final String FIELD_SUBMITTED_AT = "submittedAt";
@@ -55,9 +53,9 @@ public class ModerationQueryService {
     private static final Sort ARCHIVED_DEFAULT_SORT = Sort.by(Sort.Order.asc(FIELD_MODERATED_AT), Sort.Order.asc(FIELD_CREATED_AT));
 
     public EventPrivateDto getForModeration(UUID eventId) {
-        return eventRepository.findById(eventId)
-                              .map(eventMapper::toPrivateDto)
-                              .orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
+        return repository.findById(eventId)
+                         .map(eventMapper::toPrivateDto)
+                         .orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
     }
 
     public Page<ModerationPendingListItemDto> listPending(Pageable pageable) {
