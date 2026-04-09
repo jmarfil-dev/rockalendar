@@ -31,6 +31,11 @@ public class AdminEventController implements AdminEventApi {
     private final AdminEventQueryService queryService;
 
     @Override
+    public EventPrivateDto getEventDetail(UUID eventId) {
+        return queryService.getEventDetail(eventId);
+    }
+
+    @Override
     public Page<AdminEventListItemDto> listEvents(List<EventStatus> statuses,
                                                    Optional<Short> provinceId,
                                                    Optional<OffsetDateTime> dateFrom,

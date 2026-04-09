@@ -68,6 +68,17 @@ public interface AdminEventApi {
                                                    String> q,
                                            @PageableDefault(size = 20, sort = "date") Pageable pageable);
 
+    @GetMapping("/{eventId}")
+    @Operation(summary = "Obtener detalle de un evento (admin)",
+               description = "Devuelve el detalle completo de cualquier evento, independientemente de su estado.")
+    @ApiResponse(responseCode = "200", description = "Detalle del evento")
+    @ApiUnauthorized
+    @ApiForbidden
+    @ApiNotFound
+    EventPrivateDto getEventDetail(@Parameter(description = "ID del evento",
+                                              example = "cccccccc-0000-0000-0000-000000000001",
+                                              required = true) @PathVariable UUID eventId);
+
     @PutMapping(value = "/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Editar datos de cualquier evento",
                description = """
