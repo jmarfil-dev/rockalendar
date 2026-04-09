@@ -11,8 +11,9 @@ export const useProvinces = () => {
 
     loading.value = true;
     try {
-      const data = await $fetch<Province[]>(ROUTES.apiProvincesCombo);
-      provinces.value = data ?? [];
+      // El backend devuelve { ineCode, name }; lo normalizamos a { id, name }
+      const data = await $fetch<Array<{ ineCode: number; name: string }>>(ROUTES.apiProvincesCombo);
+      provinces.value = (data ?? []).map((p) => ({ id: p.ineCode, name: p.name }));
       loaded.value = true;
     } finally {
       loading.value = false;

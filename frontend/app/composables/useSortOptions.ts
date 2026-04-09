@@ -5,6 +5,7 @@ const SORT_FIELD_I18N_KEY = {
   city: "geo.city",
   status: "events.status",
   submitted: "me.submittedAt",
+  approved: "moderation.approvedAt",
   moderated: "moderation.moderatedAt",
 } as const;
 

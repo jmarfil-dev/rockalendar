@@ -39,9 +39,6 @@ public class User {
     @Column(nullable = false)
     private String role; // DB text
 
-    @Column(name = "trust_score", nullable = false)
-    private int trustScore;
-
     @Column(nullable = false)
     private boolean banned;
 

@@ -121,6 +121,22 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
+    @DisplayName("PUT /api/me/events/{eventId} desde PENDING_MODERATION -> 200 permanece en PENDING_MODERATION")
+    void update_asOwner_pendingEvent_returns200StillPending() throws Exception {
+        var event = factory.pendingMadridAgainstYou();
+        String api = apiMeEvents.concat("/" + event.getId());
+        var body = eventBody(factory.madrid().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+
+        mockMvc.perform(multipart(HttpMethod.PUT, api)
+                .file(eventPart(body))
+                .with(contractUtils.authJwt()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(event.getId().toString()))
+                .andExpect(jsonPath("$.status").value(EventStatus.PENDING_MODERATION.name()));
+    }
+
+    @Test
     @DisplayName("PUT /api/me/events/{eventId} sin parte event -> 400 ProblemDetail")
     void update_asOwner_noBody_returns400ProblemDetail() throws Exception {
         var event = factory.approvedMadridAgainstYou();
@@ -210,11 +226,11 @@ class MeEventApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("PUT /api/me/events/{eventId} estado no editable -> 409 ProblemDetail")
+    @DisplayName("PUT /api/me/events/{eventId} estado no editable (REJECTED) -> 409 ProblemDetail")
     void update_asOwner_notEditableStatus_returns409ProblemDetail() throws Exception {
-        var event = factory.pendingMadridAgainstYou();
+        var event = factory.rejectedValenciaMafalda();
         String api = apiMeEvents.concat("/" + event.getId());
-        var body = eventBody(factory.sevilla().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
+        var body = eventBody(factory.valencia().getIneCode(), "[\"%s\"]".formatted(TestConstants.MOCK_ARTIST_NAME_AY));
 
         var ra = mockMvc.perform(multipart(HttpMethod.PUT, api)
                 .file(eventPart(body))

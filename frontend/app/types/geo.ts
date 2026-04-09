@@ -1,1 +1,1 @@
-export type Province = { id: string; name: string };
+export type Province = { id: number; name: string };

@@ -57,7 +57,7 @@ onMounted(fetchMe);
               </div>
             </template>
             <template #content>
-              <p class="m-0 text-color-secondary text-sm">{{ t("user.settings") }}</p>
+              <p class="m-0 text-color-secondary text-sm">{{ t("me.settings.title") }}</p>
             </template>
           </Card>
         </NuxtLink>
@@ -71,11 +71,7 @@ onMounted(fetchMe);
             <span class="font-semibold">{{ t("me.promotion.title") }}</span>
             <span class="text-sm">{{ t("me.promotion.desc") }}</span>
           </div>
-          <Button
-            :label="t('me.promotion.cta')"
-            icon="pi pi-arrow-up"
-            :loading="promoting"
-            @click="requestPromotion" />
+          <Button :label="t('me.promotion.cta')" icon="pi pi-arrow-up" :loading="promoting" @click="requestPromotion" />
         </div>
       </Message>
     </div>

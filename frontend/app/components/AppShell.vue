@@ -39,6 +39,7 @@ const proposeItem = computed(() => bottomById.value.get("propose") ?? null);
 const searchItem = computed(() => bottomById.value.get("search") ?? null);
 const meItem = computed(() => bottomById.value.get("me") ?? null);
 const moderationItem = computed(() => bottomById.value.get("moderation") ?? null);
+const adminItem = computed(() => bottomById.value.get("admin") ?? null);
 
 // ------- Search Drawer (derecha) -------
 const {
@@ -86,13 +87,19 @@ const onLogoutClick = async () => {
 <template>
   <div class="min-h-screen flex flex-column">
     <!-- Skip link: visible solo al recibir foco (usuarios de teclado) -->
-    <a href="#main-content" class="skip-link">{{ t('common.skipToContent') }}</a>
+    <a href="#main-content" class="skip-link">{{ t("common.skipToContent") }}</a>
 
     <!-- Header -->
     <header class="surface-0 mt-2">
       <div class="mx-auto w-full max-w-7xl px-3 py-1 flex align-items-center justify-content-between gap-2">
         <NuxtLink :to="ROUTES.home" class="no-underline flex align-items-center">
-          <NuxtImg src="/banner.png" alt="Rockalendar" height="80" format="webp" style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem" fetchpriority="high" />
+          <NuxtImg
+            src="/banner.png"
+            alt="Rockalendar"
+            height="80"
+            format="webp"
+            style="margin-top: -1.5rem; margin-bottom: -1.5rem; height: 5rem"
+            fetchpriority="high" />
         </NuxtLink>
 
         <Select
@@ -112,7 +119,7 @@ const onLogoutClick = async () => {
                 :title="optionByValue(slotProps.value).label"
                 width="18"
                 height="12"
-                style="display: block" >
+                style="display: block">
             </div>
           </template>
 
@@ -124,7 +131,7 @@ const onLogoutClick = async () => {
                 :alt="slotProps.option.label"
                 width="18"
                 height="12"
-                style="display: block" >
+                style="display: block">
               <span>{{ slotProps.option.label }}</span>
             </div>
           </template>
@@ -168,7 +175,13 @@ const onLogoutClick = async () => {
         </p>
         <p class="text-xs text-color-secondary m-0 text-center">
           {{ t("footer.openSourceLine") }}
-          <a href="https://github.com/jmarfil-dev/rockalendar" target="_blank" rel="noopener noreferrer" class="inline-link">GitHub</a>
+          <a
+            href="https://github.com/jmarfil-dev/rockalendar"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-link"
+            >GitHub</a
+          >
         </p>
       </div>
     </footer>
@@ -220,6 +233,16 @@ const onLogoutClick = async () => {
             rounded
             :aria-label="moderationItem.label"
             @click="moderationItem.action" />
+
+          <Button
+            v-if="adminItem"
+            :key="adminItem.id"
+            :icon="adminItem.icon"
+            size="large"
+            text
+            rounded
+            :aria-label="adminItem.label"
+            @click="adminItem.action" />
         </div>
       </nav>
     </ClientOnly>
@@ -230,7 +253,7 @@ const onLogoutClick = async () => {
         <header class="flex align-items-center gap-3 mb-3">
           <i class="pi pi-user text-2xl" />
           <div v-if="isAuthenticated && user" class="font-medium">
-            {{ user.email.split('@')[0] }}
+            {{ user.email?.split("@")[0] ?? user.sub }}
           </div>
         </header>
 
@@ -260,7 +283,7 @@ const onLogoutClick = async () => {
               class="justify-content-start"
               @click="goToMyArea" />
             <Button
-              :label="t('user.settings')"
+              :label="t('me.settings.title')"
               icon="pi pi-cog"
               text
               class="justify-content-start"
@@ -326,8 +349,7 @@ const onLogoutClick = async () => {
               :placeholder="t('geo.province')"
               show-clear
               filter
-              class="w-full"
-              />
+              class="w-full" />
           </div>
 
           <!-- Rango de fechas -->

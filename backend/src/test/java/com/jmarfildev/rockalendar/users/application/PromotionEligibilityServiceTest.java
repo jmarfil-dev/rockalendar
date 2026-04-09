@@ -3,6 +3,7 @@ package com.jmarfildev.rockalendar.users.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
+import com.jmarfildev.rockalendar.moderation.domain.ActionType;
 import com.jmarfildev.rockalendar.support.DatabaseCleaner;
 import com.jmarfildev.rockalendar.support.TestConstants;
 import com.jmarfildev.rockalendar.support.TestDataFactory;
@@ -27,6 +29,8 @@ class PromotionEligibilityServiceTest extends AbstractPostgresTest {
     @Autowired
     PromotionEligibilityService service;
     @Autowired
+    TrustScoreService trustScoreService;
+    @Autowired
     UserRepository userRepository;
     @Autowired
     TestDataFactory factory;
@@ -38,12 +42,20 @@ class PromotionEligibilityServiceTest extends AbstractPostgresTest {
     @BeforeEach
     void setup() {
         cleaner.truncateMutableTables();
-        // Usuario con todos los requisitos cumplidos
-        eligibleUser = factory.userWithScore(
+        // Usuario con antigüedad suficiente
+        eligibleUser = factory.userCreatedAt(
                 "eligible@test.local",
-                PromotionEligibilityService.MIN_TRUST_SCORE,
                 OffsetDateTime.now().minusDays(PromotionEligibilityService.MIN_SENIORITY_DAYS + 1)
         );
+        // Darle trust score suficiente: 7 aprobaciones × +15 = 105 ≥ MIN_TRUST_SCORE (100).
+        // Se usan venue y artista distintos en cada evento para no activar los límites de concentración.
+        for (int i = 0; i < 7; i++) {
+            var event = factory.approvedEvent("Evento " + i, factory.madrid(), TestConstants.MADRID,
+                    "Sala Única " + i, TestDates.past().minusDays(i + 1), eligibleUser.getId().toString(),
+                    "Artista Único " + i);
+            factory.insertModerationAction(event.getId(), ActionType.APPROVE,
+                    UUID.fromString(TestConstants.MOCK_MODERATOR_ID));
+        }
     }
 
     @Test
@@ -53,11 +65,14 @@ class PromotionEligibilityServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("trust_score < 100 -> no elegible")
+    @DisplayName("trust score < 100 (sin historial de aprobaciones) -> no elegible")
     void lowTrustScore_notEligible() {
-        eligibleUser.setTrustScore(PromotionEligibilityService.MIN_TRUST_SCORE - 1);
-        userRepository.save(eligibleUser);
-        assertThat(service.isEligible(eligibleUser.getId())).isFalse();
+        // Un usuario sin historial tiene score derivado 0 < MIN_TRUST_SCORE
+        var userWithNoHistory = factory.userCreatedAt(
+                "nohistory@test.local",
+                OffsetDateTime.now().minusDays(PromotionEligibilityService.MIN_SENIORITY_DAYS + 1)
+        );
+        assertThat(service.isEligible(userWithNoHistory.getId())).isFalse();
     }
 
     @Test

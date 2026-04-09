@@ -9,6 +9,7 @@
     "proposeV": "Proponer",
     "myAreaV": "Mi área",
     "moderationV": "Moderación",
+    "adminV": "Admin",
     "returnIndex": "Volver al inicio",
     "back": "Volver",
     "skipToContent": "Saltar al contenido",
@@ -204,8 +205,33 @@
   "user": {
     "email": "Email",
     "password": "Contraseña",
-    "myAccount": "Cuenta de usuario",
-    "settings": "Configuración"
+    "myAccount": "Cuenta de usuario"
+  },
+  "admin": {
+    "title": "Administración",
+    "hub": {
+      "settings": "Configuración",
+      "settingsDesc": "Ajustes generales del sistema",
+      "events": "Administrar conciertos",
+      "eventsDesc": "Gestión avanzada de conciertos"
+    },
+    "events": {
+      "noEvents": "No hay conciertos con los filtros aplicados",
+      "filterStatus": "Estado",
+      "filterQ": "Buscar por título",
+      "allStatuses": "Todos los estados",
+      "editTitle": "Editar concierto (admin)",
+      "saveChanges": "Guardar cambios",
+      "saveSuccessTitle": "Cambios guardados",
+      "saveSuccessMsg": "El concierto se ha actualizado correctamente.",
+      "statusChangeTitle": "Cambiar estado",
+      "statusChangeMsg": "¿Confirmas el cambio de estado a «{status}»? Esta acción queda registrada en el historial.",
+      "statusChangeConfirm": "Confirmar cambio",
+      "unsavedTitle": "Cambios sin guardar",
+      "unsavedMsg": "Tienes cambios sin guardar. Si sales ahora, se perderán.",
+      "unsavedStay": "Seguir editando",
+      "unsavedLeave": "Salir sin guardar"
+    }
   },
   "moderation": {
     "title": "Moderación",
@@ -245,9 +271,11 @@
     },
     "tabs": {
       "PENDING": "Pendientes",
+      "APPROVED": "Aprobados",
       "ARCHIVED": "Archivados"
     },
     "noEvents": "No hay conciertos en esta pestaña",
+    "approvedAt": "Aprobado",
     "moderatedAt": "Moderado",
     "actions": {
       "approve": "Aprobar",
@@ -331,6 +359,9 @@
     "moderationEvents": "Moderar conciertos",
     "moderationArtists": "Artistas sin concierto",
     "admin": "Administración",
+    "adminEvents": "Administrar conciertos",
+    "adminEventEdit": "Editar concierto (admin)",
+    "moderationEventEdit": "Editar concierto (moderación)",
     "forbidden": "Acceso denegado"
   },
   "pagination": {

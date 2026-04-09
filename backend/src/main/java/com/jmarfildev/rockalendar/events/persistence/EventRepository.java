@@ -13,10 +13,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicListItemDto;
 import com.jmarfildev.rockalendar.events.domain.Event;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
 
 /**
  * @author jmarfil
@@ -121,7 +125,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                      :provinceId, :citySlug, :artistId
                    ) s
                    JOIN events e ON e.id = s.event_id
-                   JOIN provinces p ON p.id = e.province_id
+                   JOIN provinces p ON p.ine_code = e.province_id
                    ORDER BY
                      -- relevancia solo si se pide explícitamente
                      CASE WHEN lower(:sortKey) = 'relevance' THEN s.score END DESC,
@@ -178,7 +182,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                      :provinceId, :citySlug, :artistId
                    ) s
                    JOIN events e ON e.id = s.event_id
-                   JOIN provinces p ON p.id = e.province_id
+                   JOIN provinces p ON p.ine_code = e.province_id
                    ORDER BY
                      -- relevancia solo si se pide explícitamente
                      CASE WHEN lower(:sortKey) = 'relevance' THEN s.score END DESC,
@@ -215,6 +219,64 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                                                                  @Param("sortKey") String sortKey,
                                                                  @Param("sortDir") String sortDir,
                                                                  Pageable pageable);
+
+    // --- Queries de moderación ---
+
+    @Query("""
+           SELECT new com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto(
+               e.id, e.title, e.submittedAt, e.possibleDuplicateOf
+           )
+           FROM Event e
+           WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION
+           """)
+    Page<ModerationPendingListItemDto> findPending(Pageable pageable);
+
+    @Query("""
+           SELECT new com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto(
+               e.id, e.title, e.moderatedAt
+           )
+           FROM Event e
+           WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
+           """)
+    Page<ModerationApprovedListItemDto> findApproved(Pageable pageable);
+
+    @Query("""
+           SELECT new com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto(
+               e.id, e.title, e.status, e.moderationMessage, e.moderatedAt
+           )
+           FROM Event e
+           WHERE e.status IN (
+               com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED,
+               com.jmarfildev.rockalendar.events.domain.EventStatus.HIDDEN,
+               com.jmarfildev.rockalendar.events.domain.EventStatus.CANCELED
+           )
+           """)
+    Page<ModerationArchivedListItemDto> findArchived(Pageable pageable);
+
+    // --- Queries de administración ---
+
+    @Query("""
+           SELECT new com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto(
+               e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.status
+           )
+           FROM Event e
+           JOIN e.province p
+           WHERE e.status IN :statuses
+             AND (:provinceId IS NULL OR e.province.ineCode = :provinceId)
+             AND e.startDateTime >= COALESCE(:dateFrom, e.startDateTime)
+             AND e.startDateTime <= COALESCE(:dateTo,   e.startDateTime)
+             AND (:titleLike  IS NULL OR LOWER(e.title) LIKE :titleLike)
+             AND (
+                 (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
+                 OR (e.endDate IS NULL  AND e.startDateTime >= CURRENT_TIMESTAMP)
+             )
+           """)
+    Page<AdminEventListItemDto> findAdminEvents(@Param("statuses") Collection<EventStatus> statuses,
+                                                @Param("provinceId") Short provinceId,
+                                                @Param("dateFrom") OffsetDateTime dateFrom,
+                                                @Param("dateTo") OffsetDateTime dateTo,
+                                                @Param("titleLike") String titleLike,
+                                                Pageable pageable);
 
     // --- Detección de posibles duplicados ---
 

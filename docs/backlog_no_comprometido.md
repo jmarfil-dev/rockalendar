@@ -67,14 +67,11 @@ Cuándo hacerlo:
 ## Gestión del ciclo de vida de eventos
 
 - Lista de eventos públicos pasados.
-- Cron job cada 24 horas para cerrar eventos pasados.
 - EventAutoRejectionScheduler.REJECTION_MESSAGE configurable y traducible.
 - Desarrollar estado `DRAFT`.
-- Nuevo estado `REALIZADO` o `PASADO` (nombre por decidir). ¿Merece la pena?
 - Historial de estados para auditoría.
 - Estado `REQUEST_CANCEL` para solicitar cancelación de evento.
-  - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED` o `PENDING_MODERATION`.
-- Enviar correcciones sobre un evento aprobado. El flujo sería: usuario reporta corrección → va al sistema de moderación como cualquier otra acción → el evento del promotor aparece marcado con "hay observaciones" en su panel.
+  - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED`.
 
 ## Eventos (otros)
 

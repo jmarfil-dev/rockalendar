@@ -37,6 +37,7 @@ import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.Event;
+import com.jmarfildev.rockalendar.events.domain.EventStateMachine;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.DuplicateEventProjection;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
@@ -90,23 +91,18 @@ public class EventCommandService {
         var modResult = isAdmin ? null : autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
         EventStatus initialStatus = resolveInitialStatus(isAdmin, modResult);
 
-        // El admin puede crear ediciones anuales, correcciones, etc. sin detección de duplicados
-        UUID possibleDuplicateOfId = null;
-        PossibleDuplicateDto possibleDuplicate = null;
-        if (!isAdmin) {
-            // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
-            var artistIds = in.artists().stream().map(Artist::getId).toList();
-            var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
-            var dayEnd   = dayStart.plusDays(1);
-            List<DuplicateEventProjection> duplicates =
-                    eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
+        // Detección de posibles duplicados antes de guardar (así el nuevo evento no se encuentra a sí mismo)
+        var artistIds = in.artists().stream().map(Artist::getId).toList();
+        var dayStart = in.startDateTime().truncatedTo(ChronoUnit.DAYS);
+        var dayEnd = dayStart.plusDays(1);
+        List<DuplicateEventProjection> duplicates =
+                eventRepository.findPossibleDuplicate(dayStart, dayEnd, artistIds, in.venueName(), in.title());
 
-            possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
-            possibleDuplicate = duplicates.isEmpty()
-                    ? null
-                    : new PossibleDuplicateDto(duplicates.get(0).getId(), duplicates.get(0).getTitle(),
-                                               EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
-        }
+        UUID possibleDuplicateOfId = duplicates.isEmpty() ? null : duplicates.get(0).getId();
+        PossibleDuplicateDto possibleDuplicate = duplicates.isEmpty()
+                ? null
+                : new PossibleDuplicateDto(duplicates.get(0).getId(), duplicates.get(0).getTitle(),
+                                           EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
 
         var event = Event.builder()
                          .title(in.title())
@@ -165,26 +161,12 @@ public class EventCommandService {
             CommonValidations.validateEventOwner(userId, event.getCreatedByUserId());
         }
         // El admin puede editar en cualquier estado (REJECTED, HIDDEN, etc.)
-        if (!isAdmin && !hasEditableStatus(event.getStatus())) {
+        if (!isAdmin && !EventStateMachine.canOwnerEdit(event.getStatus())) {
             throw new ConflictException(ErrorConstants.EVENT_NOT_EDITABLE, ErrorConstants.TYPE_409_EVENT_STATE);
         }
 
-        event.setTitle(in.title());
-        event.setDescription(in.description());
-        event.setStartDateTime(in.startDateTime());
-        event.setStartTimeUnknown(in.startTimeUnknown());
-        event.setEndDate(in.endDate());
-        event.setProvince(in.province());
-        event.setCityName(in.cityName());
-        event.setCitySlug(in.citySlug());
-        event.setVenueName(in.venueName());
-        event.setVenueSlug(in.venueSlug());
-        event.setSourceUrl(in.sourceUrl());
+        applyDataFields(event, in, poster, removePoster);
         event.setModerationMessage(null);
-
-        // Borrar lista anterior y poner nueva
-        event.getArtists().clear();
-        event.getArtists().addAll(in.artists());
 
         if (isAdmin) {
             // El admin publica directamente como APPROVED
@@ -200,17 +182,29 @@ public class EventCommandService {
         }
         event.setSubmittedAt(OffsetDateTime.now());
 
-        if (poster != null && !poster.isEmpty()) {
-            uploadPosterToEvent(event, poster);
-        }
-        else if (removePoster) {
-            storageService.delete(event.getPosterKey());
-            event.setPosterUrl(null);
-            event.setPosterKey(null);
-        }
-
         // No hace falta save() porque al ser un evento administrado por JPA (viene de un find()) se actualiza al terminar la transacción.
         log.info("event updated eventId={} userId={} status={} isAdmin={}", eventId, userId, event.getStatus(), isAdmin);
+        return mapper.toPrivateDto(event);
+    }
+
+    /**
+     * Permite a un moderador editar los datos de un evento sin cambiar su estado.
+     * La validación de estado y de propiedad (moderador no puede ser el autor) se hace en el llamador.
+     * No re-ejecuta auto-moderación ni actualiza submittedAt.
+     *
+     * @param eventId id del evento
+     * @param req datos nuevos
+     * @return el evento actualizado
+     */
+    @Transactional
+    public EventPrivateDto moderatorEdit(UUID moderatorId,
+                                         UUID eventId,
+                                         SubmitEventRequest req,
+                                         MultipartFile poster,
+                                         boolean removePoster) {
+        EventInputValidate in = validate(req, moderatorId);
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
+        applyDataFields(event, in, poster, removePoster);
         return mapper.toPrivateDto(event);
     }
 
@@ -235,8 +229,7 @@ public class EventCommandService {
             if (event.getStatus() == EventStatus.APPROVED) {
                 throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE_APPROVED, ErrorConstants.TYPE_409_EVENT_STATE);
             }
-
-            if (event.getStatus() != EventStatus.PENDING_MODERATION && event.getStatus() != EventStatus.NEEDS_CHANGES) {
+            if (!EventStateMachine.canOwnerDelete(event.getStatus())) {
                 throw new ConflictException(ErrorConstants.EVENT_NOT_ERASABLE, ErrorConstants.TYPE_409_EVENT_STATE);
             }
         }
@@ -267,9 +260,7 @@ public class EventCommandService {
         // Si no se informa de la hora, se pone medianoche
         boolean startTimeUnknown = req.startTime() == null;
         LocalTime time = startTimeUnknown ? LocalTime.MIDNIGHT : req.startTime();
-        OffsetDateTime startDateTime = req.startDate().atTime(time)
-                .atZone(ZoneId.of("Europe/Madrid"))
-                .toOffsetDateTime();
+        OffsetDateTime startDateTime = req.startDate().atTime(time).atZone(ZoneId.of("Europe/Madrid")).toOffsetDateTime();
 
         CommonValidations.validateDateRange(req.startDate(), req.endDate());
 
@@ -345,11 +336,45 @@ public class EventCommandService {
         return modResult.flagged() ? EventStatus.FLAGGED : EventStatus.PENDING_MODERATION;
     }
 
-    private boolean hasEditableStatus(EventStatus status) {
-        return status == EventStatus.DRAFT || status == EventStatus.NEEDS_CHANGES || status == EventStatus.APPROVED;
+    /**
+     * Aplica los campos de datos del evento y gestiona el cartel
+     *
+     * @param event
+     * @param in
+     * @param poster
+     * @param removePoster
+     */
+    private void applyDataFields(Event event, EventInputValidate in, MultipartFile poster, boolean removePoster) {
+        event.setTitle(in.title());
+        event.setDescription(in.description());
+        event.setStartDateTime(in.startDateTime());
+        event.setStartTimeUnknown(in.startTimeUnknown());
+        event.setEndDate(in.endDate());
+        event.setProvince(in.province());
+        event.setCityName(in.cityName());
+        event.setCitySlug(in.citySlug());
+        event.setVenueName(in.venueName());
+        event.setVenueSlug(in.venueSlug());
+        event.setSourceUrl(in.sourceUrl());
+        event.getArtists().clear();
+        event.getArtists().addAll(in.artists());
+
+        if (poster != null && !poster.isEmpty()) {
+            uploadPosterToEvent(event, poster);
+        }
+        else if (removePoster) {
+            storageService.delete(event.getPosterKey());
+            event.setPosterUrl(null);
+            event.setPosterKey(null);
+        }
     }
 
-    // Procesa y sube el cartel, reemplazando el anterior si existía
+    /**
+     * Procesa y sube el cartel, reemplazando el anterior si existía
+     *
+     * @param event
+     * @param poster
+     */
     private void uploadPosterToEvent(Event event, MultipartFile poster) {
         byte[] processed = imageProcessingService.process(poster);
         String key = "posters/" + event.getId() + "/" + UUID.randomUUID() + ".jpg";

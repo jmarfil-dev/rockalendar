@@ -19,6 +19,7 @@ import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
+import com.jmarfildev.rockalendar.moderation.domain.ActionType;
 import com.jmarfildev.rockalendar.users.domain.User;
 import com.jmarfildev.rockalendar.users.domain.UserRole;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
@@ -62,17 +63,27 @@ public class TestDataFactory {
      */
 
     /**
-     * Crea un usuario con trust_score y created_at personalizados para tests de elegibilidad.
+     * Crea un usuario con created_at personalizado para tests de elegibilidad.
+     * El trust score se calcula de forma derivada desde moderation_actions.
      * No corresponde a ninguno de los usuarios seed; se limpia con truncateMutableTables.
      */
-    public User userWithScore(String email, int trustScore, OffsetDateTime createdAt) {
+    public User userCreatedAt(String email, OffsetDateTime createdAt) {
         User user = new User();
         user.setEmail(email);
         user.setPasswordHash("{noop}test");
         user.setRole(UserRole.USER.name());
-        user.setTrustScore(trustScore);
         user.setCreatedAt(createdAt);
         return userRepository.save(user);
+    }
+
+    /**
+     * Inserta directamente una acción de moderación en la BD (via JDBC) para tests
+     * que necesitan construir un historial de moderación sin pasar por el servicio.
+     */
+    public void insertModerationAction(UUID eventId, ActionType actionType, UUID moderatorId) {
+        jdbc.update(
+                "INSERT INTO moderation_actions (id, event_id, action_type, moderated_by_user_id, created_at) VALUES (gen_random_uuid(), ?, ?, ?, now())",
+                eventId, actionType.name(), moderatorId);
     }
 
     /*
@@ -287,5 +298,12 @@ public class TestDataFactory {
         return canceledEvent("Manifa en %s".formatted(TestConstants.BARCELONA), barcelona(), TestConstants.BARCELONA, "Palau Sant Jordi",
                              TestDates.barcelona(), TestConstants.MOCK_USER_ID, TestDates.yesterday().minusDays(2),
                              TestConstants.MOCK_MODERATOR_ID, TestDates.now(), "Manifa");
+    }
+
+    public Event erasedSevillaLaPolla() {
+        return saveEvent("La Polla Records en Sevilla (borrado)", sevilla(), "Sevilla", "Sala Custom",
+                         TestDates.genericFuture(), EventStatus.ERASED, TestConstants.MOCK_USER_ID,
+                         TestDates.yesterday().minusDays(3), TestConstants.MOCK_ADMIN_ID, TestDates.yesterday().minusDays(2),
+                         "La Polla Records");
     }
 }

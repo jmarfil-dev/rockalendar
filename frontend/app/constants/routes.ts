@@ -18,6 +18,8 @@ export const ROUTES = {
   moderationArtistCreate: "/moderation/artists/create",
 
   admin: "/admin",
+  adminSettings: "/admin/settings",
+  adminEvents: "/admin/events",
 
   errorForbidden: "/error/forbidden",
 
@@ -47,8 +49,12 @@ export const ROUTES = {
   apiModerationEvents: "/api/moderation/events",
   apiContact: "/api/contact",
 
+  apiAdminEvents: "/api/admin/events",
+  adminEvents: "/admin/events",
+
   apiModerationArtists: "/api/moderation/artists",
   apiModerationPending: "/api/moderation/events/pending",
+  apiModerationApproved: "/api/moderation/events/approved",
   apiModerationArchived: "/api/moderation/events/archived",
 } as const;
 
@@ -60,6 +66,10 @@ export const ROUTE_PATH = {
   meEventDetail: (id: string) => `${ROUTES.meEvents}/${id}`,
   apiMeEventDetail: (id: string) => `${ROUTES.apiMeEvents}/${id}`,
   moderationEventDetail: (id: string) => `${ROUTES.moderationEvents}/${id}`,
+  moderationEventEdit: (id: string) => `${ROUTES.moderationEvents}/${id}/edit`,
+  adminEventEdit: (id: string) => `${ROUTES.adminEvents}/${id}/edit`,
+  apiAdminEventDetail: (id: string) => `${ROUTES.apiAdminEvents}/${id}`,
+  apiAdminEventStatus: (id: string) => `${ROUTES.apiAdminEvents}/${id}/status`,
   apiModerationEventDetail: (id: string) => `${ROUTES.apiModerationEvents}/${id}`,
   apiModerationArtistDetail: (id: string) => `${ROUTES.apiModerationArtists}/${id}`,
   apiModerationApprove: (id: string) => `${ROUTES.apiModerationEvents}/${id}/approve`,

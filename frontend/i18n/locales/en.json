@@ -9,6 +9,7 @@
     "proposeV": "Propose",
     "myAreaV": "My area",
     "moderationV": "Moderation",
+    "adminV": "Admin",
     "returnIndex": "Return to index",
     "back": "Go back",
     "skipToContent": "Skip to content",
@@ -204,8 +205,33 @@
   "user": {
     "email": "Email",
     "password": "Password",
-    "myAccount": "User account",
-    "settings": "Settings"
+    "myAccount": "User account"
+  },
+  "admin": {
+    "title": "Administration",
+    "hub": {
+      "settings": "Settings",
+      "settingsDesc": "General system settings",
+      "events": "Manage concerts",
+      "eventsDesc": "Advanced concert management"
+    },
+    "events": {
+      "noEvents": "No concerts match the applied filters",
+      "filterStatus": "Status",
+      "filterQ": "Search by title",
+      "allStatuses": "All statuses",
+      "editTitle": "Edit concert (admin)",
+      "saveChanges": "Save changes",
+      "saveSuccessTitle": "Changes saved",
+      "saveSuccessMsg": "The concert has been updated successfully.",
+      "statusChangeTitle": "Change status",
+      "statusChangeMsg": "Confirm changing the status to \"{status}\"? This action will be recorded in the audit log.",
+      "statusChangeConfirm": "Confirm change",
+      "unsavedTitle": "Unsaved changes",
+      "unsavedMsg": "You have unsaved changes. If you leave now, they will be lost.",
+      "unsavedStay": "Keep editing",
+      "unsavedLeave": "Leave without saving"
+    }
   },
   "moderation": {
     "title": "Moderation",
@@ -245,9 +271,11 @@
     },
     "tabs": {
       "PENDING": "Pending",
+      "APPROVED": "Approved",
       "ARCHIVED": "Archived"
     },
     "noEvents": "No concerts in this tab",
+    "approvedAt": "Approved",
     "moderatedAt": "Moderated",
     "actions": {
       "approve": "Approve",
@@ -331,6 +359,9 @@
     "moderationEvents": "Moderate concerts",
     "moderationArtists": "Artists without concerts",
     "admin": "Administration",
+    "adminEvents": "Manage concerts",
+    "adminEventEdit": "Edit concert (admin)",
+    "moderationEventEdit": "Edit concert (moderation)",
     "forbidden": "Access denied"
   },
   "pagination": {
