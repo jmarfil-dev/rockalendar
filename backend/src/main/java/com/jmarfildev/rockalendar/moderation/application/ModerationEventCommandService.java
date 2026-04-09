@@ -81,7 +81,7 @@ public class ModerationEventCommandService {
         UUID moderatorId = currentUser.userId();
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
-        if (event.getStatus() != EventStatus.PENDING_MODERATION) {
+        if (event.getStatus() != EventStatus.PENDING_MODERATION && event.getStatus() != EventStatus.FLAGGED) {
             throw new ConflictException(ErrorConstants.EVENT_NOT_PENDING, ErrorConstants.TYPE_409_MODERATION_STATE);
         }
         if (moderatorId.equals(event.getCreatedByUserId())) {

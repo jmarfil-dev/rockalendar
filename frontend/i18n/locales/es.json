@@ -241,6 +241,15 @@
   "moderation": {
     "title": "Moderación",
     "possibleDuplicate": "Posible duplicado",
+    "flagged": "Contenido marcado",
+    "flagReason": "Motivo del marcado",
+    "flagMatchedValue": "Valor detectado",
+    "flagRuleType": {
+      "TEXT_TERM": "Regla: término de texto bloqueado",
+      "ARTIST_SLUG": "Regla: artista bloqueado",
+      "REGEX": "Regla: patrón de expresión regular",
+      "SPAM": "Regla: detección automática de spam"
+    },
     "hub": {
       "events": "Moderar conciertos",
       "eventsDesc": "Revisar conciertos pendientes de moderación y archivados",

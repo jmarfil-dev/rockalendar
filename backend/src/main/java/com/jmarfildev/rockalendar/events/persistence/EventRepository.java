@@ -224,10 +224,11 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("""
            SELECT new com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto(
-               e.id, e.title, e.submittedAt, e.possibleDuplicateOf
+               e.id, e.title, e.submittedAt, e.possibleDuplicateOf, e.status
            )
            FROM Event e
            WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION
+              OR e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.FLAGGED
            """)
     Page<ModerationPendingListItemDto> findPending(Pageable pageable);
 

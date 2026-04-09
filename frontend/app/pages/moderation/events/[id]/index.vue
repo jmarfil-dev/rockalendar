@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EventStatus, EventPrivateDto } from "~/types/events";
+import type { EventStatus, EventPrivateDto, FlagInfoDto, ModerationEventDetailResponse } from "~/types/events";
 import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 
 definePageMeta({ layout: "moderation", ssr: false });
@@ -14,11 +14,13 @@ const backRoute = computed(() =>
 
 // --- Carga del evento ---
 const event = ref<EventPrivateDto | null>(null);
+const flagInfo = ref<FlagInfoDto | null>(null);
 useHead({ title: () => event.value?.title ?? t("page.moderationEvents") });
 const loading = ref(true);
 
 const STATUS_SEVERITY: Record<EventStatus, string> = {
   PENDING_MODERATION: "warn",
+  FLAGGED: "danger",
   APPROVED: "success",
   REJECTED: "danger",
   NEEDS_CHANGES: "contrast",
@@ -28,14 +30,19 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
   ERASED: "danger",
 };
 
-const canModerate = computed(() => event.value?.status === "PENDING_MODERATION" || event.value?.status === "APPROVED");
-const canApprove = computed(() => event.value?.status === "PENDING_MODERATION");
+const canModerate = computed(() =>
+  event.value?.status === "PENDING_MODERATION" ||
+  event.value?.status === "FLAGGED" ||
+  event.value?.status === "APPROVED"
+);
+const canApprove = computed(() => event.value?.status === "PENDING_MODERATION" || event.value?.status === "FLAGGED");
 
 onMounted(async () => {
-  const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiModerationEventDetail(id));
+  const res = await fetchAuthResult<ModerationEventDetailResponse>(ROUTE_PATH.apiModerationEventDetail(id));
   loading.value = false;
   if (res.ok) {
-    event.value = res.data;
+    event.value = res.data.event;
+    flagInfo.value = res.data.flagInfo ?? null;
   } else {
     showError({ statusCode: res.status, data: res.pd });
   }
@@ -140,13 +147,31 @@ async function onConfirm() {
             </template>
           </div>
         </div>
-        <Tag
-          :value="t(`me.eventStatus.${event.status}`)"
-          :severity="STATUS_SEVERITY[event.status]"
-          class="flex-shrink-0 text-base" />
+        <div class="flex gap-2 flex-shrink-0 align-items-center">
+          <Tag
+            v-if="event.flagged"
+            :value="t('moderation.flagged')"
+            severity="danger"
+            icon="pi pi-exclamation-triangle" />
+          <Tag
+            :value="t(`me.eventStatus.${event.status}`)"
+            :severity="STATUS_SEVERITY[event.status]"
+            class="text-base" />
+        </div>
       </div>
 
       <Divider class="my-1" />
+
+      <!-- Panel de auto-moderación (solo visible para eventos FLAGGED) -->
+      <Message v-if="flagInfo" severity="error" :closable="false" class="mb-1">
+        <div class="flex flex-column gap-1">
+          <span class="font-semibold">{{ t('moderation.flagReason') }}: {{ flagInfo.reason }}</span>
+          <span v-if="flagInfo.matchedValue" class="text-sm">
+            {{ t('moderation.flagMatchedValue') }}: <code class="font-bold">{{ flagInfo.matchedValue }}</code>
+          </span>
+          <span class="text-sm text-color-secondary">{{ t(`moderation.flagRuleType.${flagInfo.ruleType}`) }}</span>
+        </div>
+      </Message>
 
       <!-- Poster -->
       <section :aria-label="t('events.poster')">

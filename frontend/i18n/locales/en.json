@@ -241,6 +241,15 @@
   "moderation": {
     "title": "Moderation",
     "possibleDuplicate": "Possible duplicate",
+    "flagged": "Flagged content",
+    "flagReason": "Flag reason",
+    "flagMatchedValue": "Detected value",
+    "flagRuleType": {
+      "TEXT_TERM": "Rule: blocked text term",
+      "ARTIST_SLUG": "Rule: blocked artist",
+      "REGEX": "Rule: regex pattern match",
+      "SPAM": "Rule: automatic spam detection"
+    },
     "hub": {
       "events": "Concerts",
       "eventsDesc": "Review pending concerts and moderation archive",
