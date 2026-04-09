@@ -21,6 +21,7 @@ const {
   errorMsg,
   fieldErrors,
   artistsError,
+  moderationMessage,
   load,
   submitData,
   submitStatus,
@@ -90,6 +91,8 @@ const committedStatus = ref<EventStatus | null>(null);
 const displayStatus = ref<EventStatus | null>(null);
 
 // --- Estado de los diálogos ---
+const showSaveConfirmDialog = ref(false);
+const saveComment = ref("");
 const showSaveDialog = ref(false);
 const showUnsavedDialog = ref(false);
 const pendingNavTarget = ref<string | null>(null);
@@ -113,9 +116,15 @@ onMounted(async () => {
 });
 
 // --- Submit datos ---
-async function onSubmit() {
-  const result = await submitData();
+function onSubmit() {
+  saveComment.value = "";
+  showSaveConfirmDialog.value = true;
+}
+
+async function confirmSave() {
+  const result = await submitData(saveComment.value);
   if (result) {
+    showSaveConfirmDialog.value = false;
     initialFormSnapshot.value = JSON.stringify({ ...form, status: undefined });
     showSaveDialog.value = true;
   }
@@ -124,18 +133,20 @@ async function onSubmit() {
 // --- Cambio de estado ---
 const pendingStatusChange = ref<EventStatus | null>(null);
 const showStatusConfirmDialog = ref(false);
+const statusComment = ref("");
 
 function requestStatusChange(newStatus: EventStatus) {
   if (newStatus === committedStatus.value) return;
   pendingStatusChange.value = newStatus;
+  statusComment.value = "";
   showStatusConfirmDialog.value = true;
 }
 
 async function confirmStatusChange() {
-  showStatusConfirmDialog.value = false;
   if (!pendingStatusChange.value) return;
-  const result = await submitStatus(pendingStatusChange.value);
+  const result = await submitStatus(pendingStatusChange.value, statusComment.value);
   if (result) {
+    showStatusConfirmDialog.value = false;
     committedStatus.value = pendingStatusChange.value;
     showSaveDialog.value = true;
   } else {
@@ -192,6 +203,12 @@ function confirmLeave() {
         <Message v-if="errorMsg" severity="error" :closable="false" class="mb-3">{{ errorMsg }}</Message>
 
         <form class="flex flex-column gap-4" @submit.prevent="onSubmit">
+          <!-- Mensaje de moderación -->
+          <Message v-if="moderationMessage" severity="warn" :closable="false" class="mb-1">
+            <span class="font-semibold">{{ t('admin.events.moderationMessageLabel') }}:</span>
+            {{ moderationMessage }}
+          </Message>
+
           <!-- Estado (solo admin) -->
           <div class="flex flex-column gap-2">
             <span id="admin-status-label" class="text-sm text-color-secondary">{{ t("events.status") }}</span>
@@ -501,22 +518,72 @@ function confirmLeave() {
     </template>
   </Dialog>
 
-  <!-- Modal: confirmar cambio de estado -->
+  <!-- Modal: confirmar guardado de datos -->
   <Dialog
-    v-model:visible="showStatusConfirmDialog"
-    :header="t('admin.events.statusChangeTitle')"
+    v-model:visible="showSaveConfirmDialog"
+    :header="t('admin.events.saveConfirmTitle')"
     modal
     :closable="false"
-    :style="{ width: '24rem' }">
-    <p class="m-0 text-color-secondary">
-      {{ t("admin.events.statusChangeMsg", { status: pendingStatusChange ? t(`me.eventStatus.${pendingStatusChange}`) : "" }) }}
-    </p>
+    :style="{ width: '26rem' }">
+    <div class="flex flex-column gap-3">
+      <p class="m-0 text-color-secondary">{{ t("admin.events.saveConfirmMsg") }}</p>
+      <div class="flex flex-column gap-1">
+        <label for="save-comment" class="text-sm text-color-secondary">{{ t("admin.events.auditCommentLabel") }}</label>
+        <Textarea
+          id="save-comment"
+          v-model="saveComment"
+          :placeholder="t('admin.events.auditCommentPlaceholder')"
+          rows="3"
+          maxlength="500"
+          auto-resize />
+      </div>
+    </div>
     <template #footer>
       <div class="flex gap-2 justify-content-end">
         <Button
           :label="t('common.back')"
           severity="secondary"
           outlined
+          :disabled="submitting"
+          @click="showSaveConfirmDialog = false" />
+        <Button
+          :label="t('admin.events.saveChanges')"
+          icon="pi pi-check"
+          :loading="submitting"
+          @click="confirmSave" />
+      </div>
+    </template>
+  </Dialog>
+
+  <!-- Modal: confirmar cambio de estado -->
+  <Dialog
+    v-model:visible="showStatusConfirmDialog"
+    :header="t('admin.events.statusChangeTitle')"
+    modal
+    :closable="false"
+    :style="{ width: '26rem' }">
+    <div class="flex flex-column gap-3">
+      <p class="m-0 text-color-secondary">
+        {{ t("admin.events.statusChangeMsg", { status: pendingStatusChange ? t(`me.eventStatus.${pendingStatusChange}`) : "" }) }}
+      </p>
+      <div class="flex flex-column gap-1">
+        <label for="status-comment" class="text-sm text-color-secondary">{{ t("admin.events.auditCommentLabel") }}</label>
+        <Textarea
+          id="status-comment"
+          v-model="statusComment"
+          :placeholder="t('admin.events.auditCommentPlaceholder')"
+          rows="3"
+          maxlength="500"
+          auto-resize />
+      </div>
+    </div>
+    <template #footer>
+      <div class="flex gap-2 justify-content-end">
+        <Button
+          :label="t('common.back')"
+          severity="secondary"
+          outlined
+          :disabled="submitting"
           @click="cancelStatusChange" />
         <Button
           :label="t('admin.events.statusChangeConfirm')"

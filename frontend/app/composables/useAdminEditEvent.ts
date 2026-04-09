@@ -27,6 +27,7 @@ export const useAdminEditEvent = (eventId: string) => {
   const submitting = ref(false);
   const errorMsg = ref<string | null>(null);
   const fieldErrors = ref<Record<string, string>>({});
+  const moderationMessage = ref<string | null>(null);
 
   const artistsError = computed(() => {
     const keys = Object.keys(fieldErrors.value);
@@ -47,6 +48,7 @@ export const useAdminEditEvent = (eventId: string) => {
     form.sourceUrl = event.sourceUrl ?? "";
     form.status = event.status;
     existingPosterUrl.value = event.posterUrl ?? null;
+    moderationMessage.value = event.moderationMessage ?? null;
   }
 
   async function load() {
@@ -65,7 +67,7 @@ export const useAdminEditEvent = (eventId: string) => {
     fieldErrors.value = {};
   }
 
-  async function submitData(): Promise<EventPrivateDto | null> {
+  async function submitData(comment?: string): Promise<EventPrivateDto | null> {
     submitting.value = true;
     resetErrors();
 
@@ -92,7 +94,7 @@ export const useAdminEditEvent = (eventId: string) => {
       const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiAdminEventDetail(eventId), {
         method: "PUT",
         body: formData,
-        query: { removePoster: removePoster.value },
+        query: { removePoster: removePoster.value, ...(comment?.trim() ? { comment: comment.trim() } : {}) },
       });
 
       if (res.ok) {
@@ -107,13 +109,13 @@ export const useAdminEditEvent = (eventId: string) => {
     }
   }
 
-  async function submitStatus(targetStatus: EventStatus): Promise<EventPrivateDto | null> {
+  async function submitStatus(targetStatus: EventStatus, comment?: string): Promise<EventPrivateDto | null> {
     submitting.value = true;
     resetErrors();
     try {
       const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiAdminEventStatus(eventId), {
         method: "POST",
-        body: { targetStatus },
+        body: { targetStatus, reason: comment?.trim() || undefined },
       });
 
       if (res.ok) {
@@ -138,6 +140,7 @@ export const useAdminEditEvent = (eventId: string) => {
     errorMsg,
     fieldErrors,
     artistsError,
+    moderationMessage,
     load,
     submitData,
     submitStatus,
