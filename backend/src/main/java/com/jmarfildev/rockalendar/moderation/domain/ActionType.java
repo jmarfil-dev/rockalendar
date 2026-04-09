@@ -17,5 +17,7 @@ public enum ActionType {
     /** Un administrador ha editado los datos del evento. */
     ADMIN_EDITED,
     /** El propietario ha editado el evento mientras estaba en PENDING_MODERATION. */
-    OWNER_EDITED_PENDING;
+    OWNER_EDITED_PENDING,
+    /** El evento fue rechazado automáticamente por llevar demasiado tiempo en NEEDS_CHANGES sin respuesta del autor. */
+    STALE_REJECT;
 }
