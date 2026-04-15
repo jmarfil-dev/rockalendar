@@ -241,6 +241,7 @@
   "moderation": {
     "title": "Moderation",
     "possibleDuplicate": "Possible duplicate",
+    "viewDuplicate": "View duplicate event",
     "flagged": "Flagged content",
     "flagReason": "Flag reason",
     "flagMatchedValue": "Detected value",
@@ -317,6 +318,12 @@
       "requestChangesItems": [
         "There are identifiable errors in the data.",
         "There is a discrepancy between the submitted data and the real data (on the poster or at the URL)."
+      ],
+      "hideTitle": "Hide the concert if:",
+      "hideItems": [
+        "The event is a duplicate of one already approved.",
+        "The festival poster explicitly requests it not be shared, common in events organised in social centres (CSOs).",
+        "It is not suitable for approval for other reasons."
       ]
     }
   },

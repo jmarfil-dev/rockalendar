@@ -97,6 +97,7 @@ export type FlagInfoDto = {
 export type ModerationEventDetailResponse = {
   event: EventPrivateDto;
   flagInfo?: FlagInfoDto | null;
+  possibleDuplicateOf?: string | null;
 };
 
 export const MODERATION_TABS = ["PENDING", "APPROVED", "ARCHIVED"] as const;

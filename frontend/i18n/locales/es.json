@@ -241,6 +241,7 @@
   "moderation": {
     "title": "Moderación",
     "possibleDuplicate": "Posible duplicado",
+    "viewDuplicate": "Ver el evento duplicado",
     "flagged": "Contenido marcado",
     "flagReason": "Motivo del marcado",
     "flagMatchedValue": "Valor detectado",
@@ -310,13 +311,18 @@
         "Festi non grato: festivales asociados al eje del mal (Superstruct, KKR) o con prácticas empresariales poco éticas (cobrar reacceso, explotar trabajadores en la barra). Ejemplos: Viña Rock, Resurrection, Tsunami. El Pirata se salva por los pelos, de momento.",
         "Festi mainstream: los eventos de pop ya tienen publicidad más que de sobra y ocupan espacio en otras plataformas, los pijos al Mad Cool.",
         "Artista fascista: alguno de los grupos hace apología del fascismo (racismo, sexismo, lgtbifobia, etc), discursos de odio o es claramente de derechas. Ejemplos: Sherpa, grupos nazis.",
-        "Concierto malintencionado: el evento tiene datos malintencionados. Ejemplos: la url que no lleva al evento, anuncia grupos que no tocan para llamar la atención.",
-        "El cartel del festi pide expresamente que no se comparta, habitual en eventos organizados en CSOs."
+        "Concierto malintencionado: el evento tiene datos malintencionados. Ejemplos: la url que no lleva al evento, anuncia grupos que no tocan para llamar la atención."
       ],
       "requestChangesTitle": "Solicita cambios al usuario en estos casos:",
       "requestChangesItems": [
         "Hay errores identificables en los datos.",
         "Hay discrepancia entre los datos introducidos y los reales (en el cartel o en la url)."
+      ],
+      "hideTitle": "Oculta el conci si:",
+      "hideItems": [
+        "El evento está duplicado con otro ya aprobado.",
+        "El cartel del festi pide expresamente que no se comparta, habitual en eventos organizados en CSOs.",
+        "No es apto para aprobar por otros motivos."
       ]
     }
   },

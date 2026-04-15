@@ -9,12 +9,13 @@ const route = useRoute();
 const id = route.params.id as string;
 const fromTab = route.query.from as string | undefined;
 const backRoute = computed(() =>
-  fromTab ? { path: ROUTES.moderationEvents, query: { tab: fromTab } } : ROUTES.moderationEvents
+  fromTab ? { path: ROUTES.moderationEvents, query: { tab: fromTab } } : ROUTES.moderationEvents,
 );
 
 // --- Carga del evento ---
 const event = ref<EventPrivateDto | null>(null);
 const flagInfo = ref<FlagInfoDto | null>(null);
+const possibleDuplicateOf = ref<string | null>(null);
 useHead({ title: () => event.value?.title ?? t("page.moderationEvents") });
 const loading = ref(true);
 
@@ -30,10 +31,11 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
   ERASED: "danger",
 };
 
-const canModerate = computed(() =>
-  event.value?.status === "PENDING_MODERATION" ||
-  event.value?.status === "FLAGGED" ||
-  event.value?.status === "APPROVED"
+const canModerate = computed(
+  () =>
+    event.value?.status === "PENDING_MODERATION" ||
+    event.value?.status === "FLAGGED" ||
+    event.value?.status === "APPROVED",
 );
 const canApprove = computed(() => event.value?.status === "PENDING_MODERATION" || event.value?.status === "FLAGGED");
 
@@ -43,6 +45,7 @@ onMounted(async () => {
   if (res.ok) {
     event.value = res.data.event;
     flagInfo.value = res.data.flagInfo ?? null;
+    possibleDuplicateOf.value = res.data.possibleDuplicateOf ?? null;
   } else {
     showError({ statusCode: res.status, data: res.pd });
   }
@@ -140,7 +143,9 @@ async function onConfirm() {
           </div>
           <div class="flex align-items-center gap-2 text-color-secondary text-sm">
             <i class="pi pi-calendar" aria-hidden="true" />
-            <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+            <time :datetime="event.startDateTime">{{
+              formatEventDate(event.startDateTime, event.startTimeUnknown)
+            }}</time>
             <template v-if="event.endDate">
               <span>→</span>
               <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
@@ -165,11 +170,22 @@ async function onConfirm() {
       <!-- Panel de auto-moderación (solo visible para eventos FLAGGED) -->
       <Message v-if="flagInfo" severity="error" :closable="false" class="mb-1">
         <div class="flex flex-column gap-1">
-          <span class="font-semibold">{{ t('moderation.flagReason') }}: {{ flagInfo.reason }}</span>
+          <span class="font-semibold">{{ t("moderation.flagReason") }}: {{ flagInfo.reason }}</span>
           <span v-if="flagInfo.matchedValue" class="text-sm">
-            {{ t('moderation.flagMatchedValue') }}: <code class="font-bold">{{ flagInfo.matchedValue }}</code>
+            {{ t("moderation.flagMatchedValue") }}: <code class="font-bold">{{ flagInfo.matchedValue }}</code>
           </span>
           <span class="text-sm text-color-secondary">{{ t(`moderation.flagRuleType.${flagInfo.ruleType}`) }}</span>
+        </div>
+      </Message>
+
+      <!-- Posible duplicado -->
+      <Message v-if="possibleDuplicateOf" severity="warn" :closable="false" class="mb-1">
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-copy" aria-hidden="true" />
+          <span>{{ t("moderation.possibleDuplicate") }}:</span>
+          <NuxtLink :to="ROUTE_PATH.moderationEventDetail(possibleDuplicateOf)" class="font-semibold underline">
+            {{ t("moderation.viewDuplicate") }}
+          </NuxtLink>
         </div>
       </Message>
 
@@ -186,9 +202,9 @@ async function onConfirm() {
                 :alt="event.title"
                 sizes="(max-width: 640px) 360px, 800px"
                 format="avif,webp"
-                style="display: block; margin: 0 auto;"
+                style="display: block; margin: 0 auto"
                 :img-attrs="{
-                  style: 'max-width: 100%; max-height: 480px; object-fit: contain; display: block;'
+                  style: 'max-width: 100%; max-height: 480px; object-fit: contain; display: block;',
                 }" />
             </div>
             <div
@@ -273,7 +289,9 @@ async function onConfirm() {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("dates.date") }}</span>
                       <span class="text-color-secondary">
-                        <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+                        <time :datetime="event.startDateTime">{{
+                          formatEventDate(event.startDateTime, event.startTimeUnknown)
+                        }}</time>
                         <template v-if="event.endDate">
                           <span class="mx-1">→</span>
                           <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
@@ -401,7 +419,7 @@ async function onConfirm() {
       <section>
         <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.rejectTitle") }}</p>
         <ul class="m-0 pl-3 flex flex-column gap-2">
-          <li v-for="(item, i) in (tm('moderation.tips.rejectItems') as string[])" :key="i" class="text-color-secondary">
+          <li v-for="(item, i) in tm('moderation.tips.rejectItems') as string[]" :key="i" class="text-color-secondary">
             {{ rt(item) }}
           </li>
         </ul>
@@ -410,7 +428,19 @@ async function onConfirm() {
       <section>
         <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.requestChangesTitle") }}</p>
         <ul class="m-0 pl-3 flex flex-column gap-2">
-          <li v-for="(item, i) in (tm('moderation.tips.requestChangesItems') as string[])" :key="i" class="text-color-secondary">
+          <li
+            v-for="(item, i) in tm('moderation.tips.requestChangesItems') as string[]"
+            :key="i"
+            class="text-color-secondary">
+            {{ rt(item) }}
+          </li>
+        </ul>
+      </section>
+      <Divider class="my-1" />
+      <section>
+        <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.hideTitle") }}</p>
+        <ul class="m-0 pl-3 flex flex-column gap-2">
+          <li v-for="(item, i) in tm('moderation.tips.hideItems') as string[]" :key="i" class="text-color-secondary">
             {{ rt(item) }}
           </li>
         </ul>

@@ -83,7 +83,7 @@ public class ModerationEventQueryService {
                     .orElse(null);
         }
 
-        return new ModerationEventDetailDto(dto, flagInfo);
+        return new ModerationEventDetailDto(dto, flagInfo, event.getPossibleDuplicateOf());
     }
 
     public Page<ModerationPendingListItemDto> listPending(Pageable pageable) {
