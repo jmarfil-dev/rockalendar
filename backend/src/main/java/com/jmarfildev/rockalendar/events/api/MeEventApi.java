@@ -116,8 +116,7 @@ public interface MeEventApi {
                                       required = true) @Valid @RequestPart("event") SubmitEventRequest request,
                            @Parameter(description = "Cartel nuevo (opcional; si se omite se conserva el actual)") @RequestPart(value = "poster",
                                                                                                                                required = false) MultipartFile poster,
-                           @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(value = "removePoster",
-                                                                                                                                  defaultValue = "false") boolean removePoster);
+                           @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(defaultValue = "false") boolean removePoster);
 
     @DeleteMapping("/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
