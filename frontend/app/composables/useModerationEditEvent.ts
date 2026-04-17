@@ -1,4 +1,4 @@
-import type { EventPrivateDto } from "~/types/events";
+import type { EventPrivateDto, ModerationEventDetailResponse } from "~/types/events";
 import type { ArtistChip } from "~/types/artist";
 import { ROUTE_PATH } from "~/constants/routes";
 import { applyFormErrors } from "~/utils/formErrors";
@@ -49,10 +49,10 @@ export const useModerationEditEvent = (eventId: string) => {
 
   async function load() {
     loading.value = true;
-    const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiModerationEventDetail(eventId));
+    const res = await fetchAuthResult<ModerationEventDetailResponse>(ROUTE_PATH.apiModerationEventDetail(eventId));
     loading.value = false;
     if (res.ok) {
-      fillForm(res.data);
+      fillForm(res.data.event);
       return null;
     }
     return res;
