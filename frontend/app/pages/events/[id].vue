@@ -283,17 +283,17 @@ function mapsUrl(e: EventPublic): string {
 
                   <div v-if="event.sourceUrl" class="flex align-items-start gap-2">
                     <i class="pi pi-link text-color-secondary mt-1" />
-                    <div class="flex flex-column">
+                    <div class="flex flex-column min-w-0 flex-1">
                       <span class="font-medium">{{ t("events.sourceUrl") }}</span>
                       <a
                         v-if="isSafeUrl(event.sourceUrl)"
                         :href="event.sourceUrl"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-primary underline text-xs break-all">
+                        class="text-primary underline text-xs block white-space-nowrap overflow-hidden text-overflow-ellipsis">
                         {{ event.sourceUrl }}
                       </a>
-                      <span v-else class="text-color-secondary text-xs break-all">{{ event.sourceUrl }}</span>
+                      <span v-else class="text-color-secondary text-xs block white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ event.sourceUrl }}</span>
                     </div>
                   </div>
                 </div>
