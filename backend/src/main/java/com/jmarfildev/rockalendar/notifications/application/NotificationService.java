@@ -28,6 +28,9 @@ import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 @Slf4j
 public class NotificationService {
 
+    public static final String PAYLOAD_TITLE = "title";
+    public static final String PAYLOAD_REASON = "reason";
+
     private final List<NotificationChannel> channels;
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
@@ -62,24 +65,23 @@ public class NotificationService {
      */
     @Transactional
     public void notifyModeratorsDedup(NotificationType type, UUID eventId, Map<String, String> payload) {
-        userRepository.findByRoleAndBannedFalseAndErasedFalse(UserRole.MODERATOR.name())
-                .forEach(moderator -> {
-                    boolean alreadyNotified = notificationRepository
-                            .existsByRecipientIdAndTypeAndEventIdAndIsReadFalse(moderator.getId(), type, eventId);
-                    if (!alreadyNotified) {
-                        dispatch(buildNotification(moderator.getId(), type, eventId, payload));
-                    } else {
-                        log.debug("notificación deduplicada omitida type={} recipientId={} eventId={}",
-                                type, moderator.getId(), eventId);
-                    }
-                });
+        userRepository.findByRoleAndBannedFalseAndErasedFalse(UserRole.MODERATOR.name()).forEach(moderator -> {
+            boolean alreadyNotified =
+                    notificationRepository.existsByRecipientIdAndTypeAndEventIdAndIsReadFalse(moderator.getId(), type, eventId);
+            if (!alreadyNotified) {
+                dispatch(buildNotification(moderator.getId(), type, eventId, payload));
+            }
+            else {
+                log.debug("notificación deduplicada omitida type={} recipientId={} eventId={}", type, moderator.getId(), eventId);
+            }
+        });
     }
 
     // -------------------------------------------------------------------------
 
     private void fanOut(UserRole role, NotificationType type, UUID eventId, Map<String, String> payload) {
         userRepository.findByRoleAndBannedFalseAndErasedFalse(role.name())
-                .forEach(user -> dispatch(buildNotification(user.getId(), type, eventId, payload)));
+                      .forEach(user -> dispatch(buildNotification(user.getId(), type, eventId, payload)));
     }
 
     private void dispatch(Notification notification) {
@@ -88,10 +90,10 @@ public class NotificationService {
 
     private Notification buildNotification(UUID recipientId, NotificationType type, UUID eventId, Map<String, String> payload) {
         return Notification.builder()
-                .recipientId(recipientId)
-                .type(type)
-                .eventId(eventId)
-                .payload(payload != null ? payload : Map.of())
-                .build();
+                           .recipientId(recipientId)
+                           .type(type)
+                           .eventId(eventId)
+                           .payload(payload != null ? payload : Map.of())
+                           .build();
     }
 }
