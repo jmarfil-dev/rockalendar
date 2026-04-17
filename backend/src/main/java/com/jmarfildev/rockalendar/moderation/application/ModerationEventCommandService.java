@@ -1,6 +1,7 @@
 package com.jmarfildev.rockalendar.moderation.application;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 import org.hibernate.StaleObjectStateException;
@@ -32,6 +33,8 @@ import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.domain.ActionType;
 import com.jmarfildev.rockalendar.moderation.domain.ModerationAction;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationActionRepository;
+import com.jmarfildev.rockalendar.notifications.application.NotificationService;
+import com.jmarfildev.rockalendar.notifications.domain.NotificationType;
 import com.jmarfildev.rockalendar.users.application.TrustScoreService;
 
 /**
@@ -48,6 +51,7 @@ public class ModerationEventCommandService {
     private final CurrentUser currentUser;
     private final TrustScoreService trustScoreService;
     private final EventCommandService eventCommandService;
+    private final NotificationService notificationService;
 
     @Transactional
     public EventPrivateDto approve(UUID eventId, ModerationApproveRequest request) {
@@ -158,10 +162,25 @@ public class ModerationEventCommandService {
             if (actionType == ActionType.REJECT || actionType == ActionType.AUTO_REJECT) {
                 trustScoreService.checkAutoban(event.getCreatedByUserId());
             }
+            notifyOwner(actionType, event, message);
             return eventMapper.toPrivateDto(event);
         }
         catch (ObjectOptimisticLockingFailureException | OptimisticLockException | StaleObjectStateException e) {
             throw new ConflictException(ErrorConstants.EVENT_ALREADY_MOD, ErrorConstants.TYPE_409_MODERATION_STATE);
+        }
+    }
+
+    private void notifyOwner(ActionType actionType, Event event, String message) {
+        UUID recipientId = event.getCreatedByUserId();
+        UUID eventId = event.getId();
+        String reason = message != null ? message : "";
+        Map<String, String> payload =
+                Map.of(NotificationService.PAYLOAD_TITLE, event.getTitle(), NotificationService.PAYLOAD_REASON, reason);
+        switch (actionType) {
+            case APPROVE -> notificationService.notifyUser(recipientId, NotificationType.EVENT_APPROVED, eventId, payload);
+            case REJECT, AUTO_REJECT -> notificationService.notifyUser(recipientId, NotificationType.EVENT_REJECTED, eventId, payload);
+            case REQUEST_CHANGES -> notificationService.notifyUser(recipientId, NotificationType.EVENT_NEEDS_CHANGES, eventId, payload);
+            default -> { /* HIDE y MODERATOR_EDITED no generan notificación al autor */ }
         }
     }
 }
