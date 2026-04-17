@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,6 +46,8 @@ import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
 import com.jmarfildev.rockalendar.moderation.application.AutoModerationResult;
 import com.jmarfildev.rockalendar.moderation.application.AutoModerationService;
+import com.jmarfildev.rockalendar.notifications.application.NotificationService;
+import com.jmarfildev.rockalendar.notifications.domain.NotificationType;
 
 /**
  *
@@ -73,6 +76,7 @@ public class EventCommandService {
     private final AutoModerationService autoModerationService;
     private final StorageService storageService;
     private final ImageProcessingService imageProcessingService;
+    private final NotificationService notificationService;
 
     /**
      * Propone un evento que queda en estado PENDING_MODERATION si todos los datos se validan correctamente.
@@ -136,6 +140,7 @@ public class EventCommandService {
             log.info("possible duplicate detected eventId={} duplicateId={}", saved.getId(), possibleDuplicateOfId);
         }
 
+        notifyModeratorsOnSubmit(initialStatus, possibleDuplicateOfId, saved.getId(), saved.getTitle());
         log.info("event proposed eventId={} userId={} status={} isAdmin={}", saved.getId(), userId, initialStatus, isAdmin);
         return new ProposeEventResponse(mapper.toPrivateDto(saved), possibleDuplicate);
     }
@@ -195,6 +200,7 @@ public class EventCommandService {
         event.setSubmittedAt(OffsetDateTime.now());
 
         // No hace falta save() porque al ser un evento administrado por JPA (viene de un find()) se actualiza al terminar la transacción.
+        notifyModeratorsOnSubmit(event.getStatus(), possibleDuplicateOfId, eventId, event.getTitle());
         log.info("event updated eventId={} userId={} status={} isAdmin={}", eventId, userId, event.getStatus(), isAdmin);
         return mapper.toPrivateDto(event);
     }
@@ -395,6 +401,19 @@ public class EventCommandService {
         event.setPosterUrl(publicUrl);
         event.setPosterKey(key);
         log.debug("poster subido eventId={} key={}", event.getId(), key);
+    }
+
+    private void notifyModeratorsOnSubmit(EventStatus status, UUID possibleDuplicateOfId, UUID eventId, String title) {
+        var payload = Map.of(NotificationService.PAYLOAD_TITLE, title);
+        if (status == EventStatus.PENDING_MODERATION) {
+            notificationService.notifyModeratorsDedup(NotificationType.EVENT_PENDING_MODERATION, eventId, payload);
+        }
+        else if (status == EventStatus.FLAGGED) {
+            notificationService.notifyModeratorsDedup(NotificationType.EVENT_FLAGGED, eventId, payload);
+        }
+        if (possibleDuplicateOfId != null) {
+            notificationService.notifyModeratorsDedup(NotificationType.POSSIBLE_DUPLICATE_DETECTED, eventId, payload);
+        }
     }
 
     private record EventInputValidate(String title,
