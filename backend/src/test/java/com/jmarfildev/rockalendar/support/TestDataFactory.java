@@ -20,6 +20,9 @@ import com.jmarfildev.rockalendar.events.persistence.EventRepository;
 import com.jmarfildev.rockalendar.geo.domain.Province;
 import com.jmarfildev.rockalendar.geo.persistence.ProvinceRepository;
 import com.jmarfildev.rockalendar.moderation.domain.ActionType;
+import com.jmarfildev.rockalendar.notifications.domain.Notification;
+import com.jmarfildev.rockalendar.notifications.domain.NotificationType;
+import com.jmarfildev.rockalendar.notifications.persistence.NotificationRepository;
 import com.jmarfildev.rockalendar.users.domain.User;
 import com.jmarfildev.rockalendar.users.domain.UserRole;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
@@ -36,18 +39,45 @@ public class TestDataFactory {
     private final ArtistRepository artistRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
     private final JdbcTemplate jdbc;
 
     public TestDataFactory(ProvinceRepository provinceRepository,
                            ArtistRepository artistRepository,
                            EventRepository eventRepository,
                            UserRepository userRepository,
+                           NotificationRepository notificationRepository,
                            JdbcTemplate jdbc) {
         this.provinceRepository = provinceRepository;
         this.artistRepository = artistRepository;
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
         this.jdbc = jdbc;
+    }
+
+    /*
+     * Notifications
+     */
+
+    public Notification notification(UUID recipientId, NotificationType type, UUID eventId, boolean isRead) {
+        return notificationRepository.save(Notification.builder()
+                                                       .recipientId(recipientId)
+                                                       .type(type)
+                                                       .eventId(eventId)
+                                                       .isRead(isRead)
+                                                       .build());
+    }
+
+    public Notification notification(UUID recipientId, NotificationType type, UUID eventId, boolean isRead,
+                                     java.time.OffsetDateTime createdAt) {
+        return notificationRepository.save(Notification.builder()
+                                                       .recipientId(recipientId)
+                                                       .type(type)
+                                                       .eventId(eventId)
+                                                       .isRead(isRead)
+                                                       .createdAt(createdAt)
+                                                       .build());
     }
 
     /**
