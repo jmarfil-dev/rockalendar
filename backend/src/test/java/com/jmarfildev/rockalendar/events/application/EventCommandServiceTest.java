@@ -29,6 +29,7 @@ import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.storage.ImageProcessingService;
 import com.jmarfildev.rockalendar.common.storage.StorageService;
+import com.jmarfildev.rockalendar.notifications.application.NotificationService;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapperImpl;
@@ -65,6 +66,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     StorageService storageService;
     @MockitoBean
     ImageProcessingService imageProcessingService;
+    @MockitoBean
+    NotificationService notificationService;
 
     private final String mockTitle = "Concierto";
     private final String mockWizink = "WiZink Center";
