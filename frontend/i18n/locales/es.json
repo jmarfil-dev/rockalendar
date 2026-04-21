@@ -382,7 +382,10 @@
     "adminEvents": "Administrar conciertos",
     "adminEventEdit": "Editar concierto (admin)",
     "moderationEventEdit": "Editar concierto (moderación)",
-    "forbidden": "Acceso denegado"
+    "forbidden": "Acceso denegado",
+    "meNotifications": "Mis notificaciones",
+    "moderationNotifications": "Notificaciones de moderación",
+    "adminNotifications": "Notificaciones de administración"
   },
   "pagination": {
     "sortedBy": "Ordenado por"
@@ -466,10 +469,23 @@
     "title": "Notificaciones",
     "allRead": "Al día",
     "markAllRead": "Marcar todo como leído",
+    "empty": "No tienes notificaciones",
+    "loadMore": "Cargar más",
     "bandeja": {
       "user": "Mis notificaciones",
       "moderation": "Moderación",
       "admin": "Administración"
+    },
+    "types": {
+      "EVENT_APPROVED": "Tu concierto «{title}» ha sido aprobado",
+      "EVENT_REJECTED": "Tu concierto «{title}» ha sido rechazado",
+      "EVENT_NEEDS_CHANGES": "El moderador solicita cambios en «{title}»",
+      "EVENT_COMMENT": "Nuevo comentario en «{title}»",
+      "EVENT_PENDING_MODERATION": "Nuevo concierto pendiente de moderación: «{title}»",
+      "EVENT_FLAGGED": "Concierto marcado automáticamente: «{title}»",
+      "POSSIBLE_DUPLICATE_DETECTED": "Posible duplicado detectado en «{title}»",
+      "PROMOTION_REQUEST": "Nueva solicitud de ascenso a moderador/a",
+      "USER_AUTOBANNED": "El usuario {email} ha sido baneado automáticamente"
     }
   }
 }

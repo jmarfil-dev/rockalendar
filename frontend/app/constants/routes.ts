@@ -11,8 +11,10 @@ export const ROUTES = {
   meEvents: "/me/events",
   meEventPropose: "/me/events/propose",
   meSettings: "/me/settings",
+  meNotifications: "/me/notifications",
 
   moderation: "/moderation",
+  moderationNotifications: "/moderation/notifications",
   moderationEvents: "/moderation/events",
   moderationArtists: "/moderation/artists",
   moderationArtistCreate: "/moderation/artists/create",
@@ -20,6 +22,7 @@ export const ROUTES = {
   admin: "/admin",
   adminSettings: "/admin/settings",
   adminEvents: "/admin/events",
+  adminNotifications: "/admin/notifications",
 
   errorForbidden: "/error/forbidden",
 
@@ -57,6 +60,7 @@ export const ROUTES = {
   apiModerationApproved: "/api/moderation/events/approved",
   apiModerationArchived: "/api/moderation/events/archived",
 
+  apiNotifications: "/api/notifications",
   apiNotificationsUnreadCount: "/api/notifications/unread-count",
   apiNotificationsReadAll: "/api/notifications/read-all",
 } as const;
@@ -80,4 +84,5 @@ export const ROUTE_PATH = {
   apiModerationHide: (id: string) => `${ROUTES.apiModerationEvents}/${id}/hide`,
   apiModerationRequestChanges: (id: string) => `${ROUTES.apiModerationEvents}/${id}/request-changes`,
   apiMeAgendaItem: (id: string) => `${ROUTES.apiMeAgenda}/${id}`,
+  apiNotificationMarkRead: (id: string) => `${ROUTES.apiNotifications}/${id}/read`,
 } as const;

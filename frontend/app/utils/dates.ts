@@ -42,6 +42,26 @@ export function toLocalDateString(date: Date): string {
 }
 
 /**
+ * Devuelve una fecha relativa legible ("hace 5 minutos", "ayer"…).
+ * Para fechas de más de 30 días cae en formatDate absoluto.
+ */
+export function formatRelativeDate(isoString: string, locale = "es"): string {
+  const now = new Date();
+  const date = new Date(isoString);
+  const diffMs = now.getTime() - date.getTime();
+  const diffSecs = Math.floor(diffMs / 1000);
+  const diffMins = Math.floor(diffSecs / 60);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  if (diffSecs < 60) return rtf.format(-diffSecs, "second");
+  if (diffMins < 60) return rtf.format(-diffMins, "minute");
+  if (diffHours < 24) return rtf.format(-diffHours, "hour");
+  if (diffDays < 30) return rtf.format(-diffDays, "day");
+  return formatDate(isoString);
+}
+
+/**
  * Serializa la parte de hora de un objeto Date usando la hora local del cliente (HH:mm:ss).
  * Evita el desfase que produce toISOString(), que convierte a UTC antes de serializar.
  */

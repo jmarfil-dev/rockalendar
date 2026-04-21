@@ -383,7 +383,10 @@
     "adminEvents": "Manage concerts",
     "adminEventEdit": "Edit concert (admin)",
     "moderationEventEdit": "Edit concert (moderation)",
-    "forbidden": "Access denied"
+    "forbidden": "Access denied",
+    "meNotifications": "My notifications",
+    "moderationNotifications": "Moderation notifications",
+    "adminNotifications": "Administration notifications"
   },
   "pagination": {
     "sortedBy": "Sorted by"
@@ -467,10 +470,23 @@
     "title": "Notifications",
     "allRead": "Up to date",
     "markAllRead": "Mark all as read",
+    "empty": "No notifications",
+    "loadMore": "Load more",
     "bandeja": {
       "user": "My notifications",
       "moderation": "Moderation",
       "admin": "Administration"
+    },
+    "types": {
+      "EVENT_APPROVED": "Your concert «{title}» has been approved",
+      "EVENT_REJECTED": "Your concert «{title}» has been rejected",
+      "EVENT_NEEDS_CHANGES": "A moderator requests changes on «{title}»",
+      "EVENT_COMMENT": "New comment on «{title}»",
+      "EVENT_PENDING_MODERATION": "New concert pending moderation: «{title}»",
+      "EVENT_FLAGGED": "Concert automatically flagged: «{title}»",
+      "POSSIBLE_DUPLICATE_DETECTED": "Possible duplicate detected on «{title}»",
+      "PROMOTION_REQUEST": "New moderator promotion request",
+      "USER_AUTOBANNED": "User {email} has been automatically banned"
     }
   }
 }

@@ -40,5 +40,9 @@ export function useNotifications() {
     window.addEventListener("beforeunload", () => clearInterval(intervalId), { once: true });
   }
 
-  return { unreadCount, fetchUnreadCount, markAllRead, initPolling };
+  async function markAsRead(id: string) {
+    return fetchAuthResult(`/api/notifications/${id}/read`, { method: "POST" });
+  }
+
+  return { unreadCount, fetchUnreadCount, markAllRead, markAsRead, initPolling };
 }

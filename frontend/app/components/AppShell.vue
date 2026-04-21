@@ -66,6 +66,11 @@ const onMarkAllRead = async () => {
   closeNotifDrawer();
 };
 
+const goToNotifications = async (route: string) => {
+  closeNotifDrawer();
+  await navigateTo(route);
+};
+
 // ------- User Drawer (izquierda) -------
 const { isOpen: isUserDrawerOpen, open: openUserDrawer, close: closeUserDrawer } = useUserDrawer();
 
@@ -331,7 +336,12 @@ const onLogoutClick = async () => {
       @hide="closeNotifDrawer">
       <aside class="flex flex-column h-full gap-3">
         <ul class="list-none p-0 m-0 flex flex-column gap-2">
-          <li class="flex align-items-center justify-content-between py-2 border-bottom-1 surface-border">
+          <li
+            class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
+            role="button"
+            tabindex="0"
+            @click="goToNotifications(ROUTES.meNotifications)"
+            @keydown.enter="goToNotifications(ROUTES.meNotifications)">
             <div class="flex align-items-center gap-2">
               <span class="inline-block border-round-full bg-red-500" style="width:0.65rem;height:0.65rem" />
               <span>{{ t('notifications.bandeja.user') }}</span>
@@ -339,7 +349,13 @@ const onLogoutClick = async () => {
             <Badge v-if="unreadCount.user > 0" :value="unreadCount.user" severity="danger" />
             <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
           </li>
-          <li v-if="isModerator" class="flex align-items-center justify-content-between py-2 border-bottom-1 surface-border">
+          <li
+            v-if="isModerator"
+            class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
+            role="button"
+            tabindex="0"
+            @click="goToNotifications(ROUTES.moderationNotifications)"
+            @keydown.enter="goToNotifications(ROUTES.moderationNotifications)">
             <div class="flex align-items-center gap-2">
               <span class="inline-block border-round-full bg-green-500" style="width:0.65rem;height:0.65rem" />
               <span>{{ t('notifications.bandeja.moderation') }}</span>
@@ -347,7 +363,13 @@ const onLogoutClick = async () => {
             <Badge v-if="unreadCount.moderation > 0" :value="unreadCount.moderation" severity="success" />
             <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
           </li>
-          <li v-if="isAdmin" class="flex align-items-center justify-content-between py-2 border-bottom-1 surface-border">
+          <li
+            v-if="isAdmin"
+            class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
+            role="button"
+            tabindex="0"
+            @click="goToNotifications(ROUTES.adminNotifications)"
+            @keydown.enter="goToNotifications(ROUTES.adminNotifications)">
             <div class="flex align-items-center gap-2">
               <span class="inline-block border-round-full bg-yellow-500" style="width:0.65rem;height:0.65rem" />
               <span>{{ t('notifications.bandeja.admin') }}</span>
