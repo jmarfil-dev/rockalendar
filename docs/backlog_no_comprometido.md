@@ -67,6 +67,7 @@ Cuándo hacerlo:
 ## Gestión del ciclo de vida de eventos
 
 - Lista de eventos públicos pasados.
+- Permitir eventos pasados en Administración.
 - EventAutoRejectionScheduler.REJECTION_MESSAGE configurable y traducible.
 - Desarrollar estado `DRAFT`.
 - Historial de estados para auditoría.
