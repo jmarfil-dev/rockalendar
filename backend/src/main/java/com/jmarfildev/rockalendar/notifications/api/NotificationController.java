@@ -28,8 +28,8 @@ public class NotificationController implements NotificationApi {
     private final CurrentUser currentUser;
 
     @Override
-    public Page<NotificationDto> list(List<NotificationType> types, Pageable pageable) {
-        return queryService.list(currentUser.userId(), types, pageable);
+    public Page<NotificationDto> list(NotificationType.Bandeja bandeja, List<NotificationType> types, Pageable pageable) {
+        return queryService.list(currentUser.userId(), bandeja, types, pageable);
     }
 
     @Override

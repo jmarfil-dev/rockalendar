@@ -97,6 +97,30 @@ class NotificationApiContractTest extends AbstractPostgresTest {
                .andExpect(jsonPath("$.content[0].type").value("EVENT_APPROVED"));
     }
 
+    @Test
+    @DisplayName("GET /api/notifications?bandeja=USER -> 200 filtrado por bandeja")
+    void list_withBandejaFilter_returnsOnlyBandejaNotifications() throws Exception {
+        factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);          // USER
+        factory.notification(USER_ID, NotificationType.EVENT_PENDING_MODERATION, null, false); // MODERATION
+
+        mockMvc.perform(get(BASE).param("bandeja", "USER").with(contractUtils.authJwt()))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.content", hasSize(1)))
+               .andExpect(jsonPath("$.content[0].type").value("EVENT_APPROVED"));
+    }
+
+    @Test
+    @DisplayName("GET /api/notifications?bandeja=USER&types=EVENT_PENDING_MODERATION -> bandeja tiene precedencia")
+    void list_bandejaAndTypes_bandejaWins() throws Exception {
+        factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);          // USER
+        factory.notification(USER_ID, NotificationType.EVENT_PENDING_MODERATION, null, false); // MODERATION
+
+        mockMvc.perform(get(BASE).param("bandeja", "USER").param("types", "EVENT_PENDING_MODERATION").with(contractUtils.authJwt()))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.content", hasSize(1)))
+               .andExpect(jsonPath("$.content[0].type").value("EVENT_APPROVED"));
+    }
+
     // -------------------------------------------------------------------------
     // GET /api/notifications/unread-count
     // -------------------------------------------------------------------------

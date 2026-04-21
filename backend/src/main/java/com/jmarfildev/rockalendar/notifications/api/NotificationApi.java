@@ -41,13 +41,15 @@ public interface NotificationApi {
     @GetMapping
     @Operation(summary = "Listar notificaciones",
                description = "Devuelve las notificaciones del usuario autenticado, ordenadas por fecha descendente. "
-                       + "Opcionalmente filtradas por tipo mediante el parámetro `types`.")
+                       + "Filtro por `bandeja` (resuelve automáticamente los tipos de esa bandeja) o por `types` para selección fina. "
+                       + "Si se especifican ambos, `bandeja` tiene precedencia.")
     @ApiResponse(responseCode = "200",
                  description = "Listado paginado de notificaciones",
                  content = @Content(schema = @Schema(implementation = NotificationPageDoc.class)))
     @ApiUnauthorized
-    Page<NotificationDto> list(@Parameter(description = "Filtro por tipos de notificación (varios valores separados por coma o parámetro repetido)") @RequestParam(required = false) List<
-            NotificationType> types, @PageableDefault(size = 20) Pageable pageable);
+    Page<NotificationDto> list(@Parameter(description = "Bandeja (USER, MODERATION, ADMIN): resuelve automáticamente los tipos correspondientes") @RequestParam(required = false) NotificationType.Bandeja bandeja,
+                               @Parameter(description = "Filtro explícito por tipos (ignorado si se especifica bandeja)") @RequestParam(required = false) List<NotificationType> types,
+                               @PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping("/unread-count")
     @Operation(summary = "Contador de notificaciones no leídas",

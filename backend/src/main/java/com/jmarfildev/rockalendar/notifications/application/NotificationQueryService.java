@@ -32,12 +32,19 @@ public class NotificationQueryService {
     private final NotificationRepository repository;
     private final NotificationMapper mapper;
 
-    public Page<NotificationDto> list(UUID recipientId, List<NotificationType> types, Pageable pageable) {
+    public Page<NotificationDto> list(UUID recipientId, NotificationType.Bandeja bandeja, List<NotificationType> types, Pageable pageable) {
         CommonValidations.validatePageable(pageable);
         Pageable fixed = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), DEFAULT_SORT);
 
-        if (types != null && !types.isEmpty()) {
-            return repository.findByRecipientIdAndTypeInOrderByCreatedAtDescIdDesc(recipientId, types, fixed).map(mapper::toDto);
+        List<NotificationType> effectiveTypes = null;
+        if (bandeja != null) {
+            effectiveTypes = NotificationType.ofBandeja(bandeja);
+        } else if (types != null && !types.isEmpty()) {
+            effectiveTypes = types;
+        }
+
+        if (effectiveTypes != null) {
+            return repository.findByRecipientIdAndTypeInOrderByCreatedAtDescIdDesc(recipientId, effectiveTypes, fixed).map(mapper::toDto);
         }
         return repository.findByRecipientIdOrderByCreatedAtDescIdDesc(recipientId, fixed).map(mapper::toDto);
     }

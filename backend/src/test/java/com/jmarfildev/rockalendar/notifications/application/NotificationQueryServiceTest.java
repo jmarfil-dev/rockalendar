@@ -44,7 +44,7 @@ class NotificationQueryServiceTest extends AbstractPostgresTest {
     @Test
     @DisplayName("list: sin notificaciones devuelve página vacía")
     void list_empty_returnsEmptyPage() {
-        var page = queryService.list(USER_ID, null, PageRequest.of(0, 20));
+        var page = queryService.list(USER_ID, null, null, PageRequest.of(0, 20));
         assertThat(page.getContent()).isEmpty();
         assertThat(page.getTotalElements()).isZero();
     }
@@ -57,7 +57,7 @@ class NotificationQueryServiceTest extends AbstractPostgresTest {
         factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false, older);
         factory.notification(USER_ID, NotificationType.EVENT_REJECTED, null, true, newer);
 
-        var page = queryService.list(USER_ID, null, PageRequest.of(0, 20));
+        var page = queryService.list(USER_ID, null, null, PageRequest.of(0, 20));
 
         assertThat(page.getContent()).hasSize(2);
         // La más reciente primero (EVENT_REJECTED)
@@ -66,13 +66,42 @@ class NotificationQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("list: con filtro por tipo devuelve solo notificaciones del tipo indicado")
+    @DisplayName("list: con filtro por bandeja devuelve solo los tipos de esa bandeja")
+    void list_withBandejaFilter_returnsOnlyBandejaTypes() {
+        factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);          // USER
+        factory.notification(USER_ID, NotificationType.EVENT_REJECTED, null, false);          // USER
+        factory.notification(USER_ID, NotificationType.EVENT_PENDING_MODERATION, null, false); // MODERATION
+
+        var page = queryService.list(USER_ID, NotificationType.Bandeja.USER, null, PageRequest.of(0, 20));
+
+        assertThat(page.getContent()).hasSize(2)
+                                     .extracting(NotificationDto::type)
+                                     .containsExactlyInAnyOrder(NotificationType.EVENT_APPROVED, NotificationType.EVENT_REJECTED);
+    }
+
+    @Test
+    @DisplayName("list: bandeja tiene precedencia sobre types cuando se especifican ambos")
+    void list_bandejaAndTypes_bandejaWins() {
+        factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);          // USER
+        factory.notification(USER_ID, NotificationType.EVENT_PENDING_MODERATION, null, false); // MODERATION
+
+        var page = queryService.list(USER_ID, NotificationType.Bandeja.USER,
+                                     List.of(NotificationType.EVENT_PENDING_MODERATION), PageRequest.of(0, 20));
+
+        assertThat(page.getContent()).hasSize(1)
+                                     .extracting(NotificationDto::type)
+                                     .containsOnly(NotificationType.EVENT_APPROVED);
+    }
+
+    @Test
+    @DisplayName("list: con filtro por tipo (sin bandeja) devuelve solo notificaciones del tipo indicado")
     void list_withTypeFilter_returnsOnlyMatchingType() {
         factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);
         factory.notification(USER_ID, NotificationType.EVENT_REJECTED, null, false);
         factory.notification(USER_ID, NotificationType.EVENT_NEEDS_CHANGES, null, false);
 
-        var page = queryService.list(USER_ID, List.of(NotificationType.EVENT_APPROVED, NotificationType.EVENT_REJECTED),
+        var page = queryService.list(USER_ID, null,
+                                     List.of(NotificationType.EVENT_APPROVED, NotificationType.EVENT_REJECTED),
                                      PageRequest.of(0, 20));
 
         assertThat(page.getContent()).hasSize(2)
@@ -86,7 +115,7 @@ class NotificationQueryServiceTest extends AbstractPostgresTest {
         factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);
         factory.notification(OTHER_USER_ID, NotificationType.EVENT_APPROVED, null, false);
 
-        var page = queryService.list(USER_ID, null, PageRequest.of(0, 20));
+        var page = queryService.list(USER_ID, null, null, PageRequest.of(0, 20));
 
         assertThat(page.getContent()).hasSize(1);
         assertThat(page.getContent().get(0).type()).isEqualTo(NotificationType.EVENT_APPROVED);
