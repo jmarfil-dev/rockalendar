@@ -39,7 +39,8 @@ public class NotificationQueryService {
         List<NotificationType> effectiveTypes = null;
         if (bandeja != null) {
             effectiveTypes = NotificationType.ofBandeja(bandeja);
-        } else if (types != null && !types.isEmpty()) {
+        }
+        else if (types != null && !types.isEmpty()) {
             effectiveTypes = types;
         }
 

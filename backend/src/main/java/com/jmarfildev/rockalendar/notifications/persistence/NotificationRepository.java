@@ -22,17 +22,13 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
      * Comprueba si ya existe una notificación no leída del mismo tipo y evento
      * para el destinatario. Usado por el mecanismo de deduplicación.
      */
-    boolean existsByRecipientIdAndTypeAndEventIdAndIsReadFalse(
-            UUID recipientId,
-            NotificationType type,
-            UUID eventId);
+    boolean existsByRecipientIdAndTypeAndEventIdAndIsReadFalse(UUID recipientId, NotificationType type, UUID eventId);
 
     Page<Notification> findByRecipientIdOrderByCreatedAtDescIdDesc(UUID recipientId, Pageable pageable);
 
-    Page<Notification> findByRecipientIdAndTypeInOrderByCreatedAtDescIdDesc(
-            UUID recipientId,
-            List<NotificationType> types,
-            Pageable pageable);
+    Page<Notification> findByRecipientIdAndTypeInOrderByCreatedAtDescIdDesc(UUID recipientId,
+                                                                            List<NotificationType> types,
+                                                                            Pageable pageable);
 
     long countByRecipientIdAndIsReadFalse(UUID recipientId);
 
