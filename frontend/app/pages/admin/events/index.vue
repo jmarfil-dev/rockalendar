@@ -26,27 +26,25 @@ const statusOptions = computed(() =>
   ALL_STATUSES.map((s) => ({ label: t(`me.eventStatus.${s}`), value: s })),
 );
 
-const filterStatuses = ref<EventStatus[]>(["APPROVED"]);
-const filterQ = ref("");
-const filterProvinceId = ref<number | null>(null);
-const filterDateFrom = ref<Date | null>(null);
-const filterDateTo = ref<Date | null>(null);
+const filterStatuses = useState<EventStatus[]>("adminEvents:filterStatuses", () => []);
+const filterQ = useState("adminEvents:filterQ", () => "");
+const filterProvinceId = useState<number | null>("adminEvents:filterProvinceId", () => null);
+const filterDateFrom = useState<Date | null>("adminEvents:filterDateFrom", () => null);
+const filterDateTo = useState<Date | null>("adminEvents:filterDateTo", () => null);
 const today = new Date();
 
 // --- Paginación ---
-const currentPage = ref(0);
-const pageSize = ref(20);
+const currentPage = useState("adminEvents:currentPage", () => 0);
+const pageSize = useState("adminEvents:pageSize", () => 20);
 const initialized = ref(false);
 
 const total = computed(() => pageMeta.value?.totalElements ?? 0);
 const first = computed(() => currentPage.value * pageSize.value);
 
 // --- Ordenación via DataTable ---
-// El campo que DataTable renderiza como activo y la dirección actual
-const dtSortField = ref<string | null>(null);
-const dtSortOrder = ref<number | null>(null);
-// Param que se envía al backend ("date,asc", "title,desc", etc.)
-const sortParam = ref("date,asc");
+const dtSortField = useState<string | null>("adminEvents:dtSortField", () => null);
+const dtSortOrder = useState<number | null>("adminEvents:dtSortOrder", () => null);
+const sortParam = useState("adminEvents:sortParam", () => "date,asc");
 
 const FIELD_TO_SORT_KEY: Record<string, string> = {
   startDateTime: "date",
@@ -162,7 +160,8 @@ watch(filterQ, () => {
           :placeholder="t('admin.events.allStatuses')"
           display="chip"
           class="w-full"
-          :max-selected-labels="2" />
+          :max-selected-labels="2"
+          :show-toggle-all="false" />
       </div>
 
       <!-- Provincia -->
