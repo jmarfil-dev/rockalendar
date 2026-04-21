@@ -56,6 +56,7 @@
     "goRegister": "Crear cuenta",
     "noAccount": "Sin vicio no puedo estar🤘",
     "logout": "Salgo a la calle para no pensar",
+    "logoutDesc": "Cerrar sesión en este dispositivo",
     "pw": {
       "title": "La contraseña debe incluir:",
       "length": "Al menos 8 caracteres",

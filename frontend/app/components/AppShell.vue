@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import { ROUTES } from "~/constants/routes";
 import type { AppLocale, LocaleOption } from "~/types/languages";
-import type { BottomItem } from "~/types/components";
-
-// ------- Props -------
-const props = defineProps<{
-  bottomItems?: BottomItem[];
-}>();
 
 const { t, locale, setLocale } = useI18n({ useScope: "global" });
 const { isAuthenticated, isModerator, isAdmin, user, logout } = useAuth();
 const { unreadCount, markAllRead } = useNotifications();
+const router = useRouter();
 
 const totalUnread = computed(() => unreadCount.value.user + unreadCount.value.moderation + unreadCount.value.admin);
 
@@ -27,26 +22,10 @@ const currentLocale = computed<AppLocale>({
   set: (val) => setLocale(val),
 });
 
-const onUserClick = () => {
-  openUserDrawer();
-};
-
-// ------- Navbar -------
-const bottomById = computed(() => {
-  const m = new Map<string, BottomItem>();
-  for (const it of props.bottomItems ?? []) m.set(it.id, it);
-  return m;
-});
-
-const proposeItem = computed(() => bottomById.value.get("propose") ?? null);
-const searchItem = computed(() => bottomById.value.get("search") ?? null);
-const meItem = computed(() => bottomById.value.get("me") ?? null);
-const moderationItem = computed(() => bottomById.value.get("moderation") ?? null);
-const adminItem = computed(() => bottomById.value.get("admin") ?? null);
-
 // ------- Search Drawer (derecha) -------
 const {
   isOpen: isSearchOpen,
+  open: openSearch,
   close: closeSearch,
   runSearch,
   searchForm,
@@ -58,21 +37,15 @@ const {
   searchArtists,
 } = useSearchDrawer();
 
-// ------- Notifications Drawer -------
-const { isOpen: isNotifDrawerOpen, open: openNotifDrawer, close: closeNotifDrawer } = useNotificationsDrawer();
-
-const onMarkAllRead = async () => {
-  await markAllRead();
-  closeNotifDrawer();
-};
-
-const goToNotifications = async (route: string) => {
-  closeNotifDrawer();
-  await navigateTo(route);
-};
-
-// ------- User Drawer (izquierda) -------
+// ------- User Drawer -------
 const { isOpen: isUserDrawerOpen, open: openUserDrawer, close: closeUserDrawer } = useUserDrawer();
+
+const userDrawerHeader = computed(() => {
+  if (isAuthenticated.value && user.value) {
+    return user.value.email?.split("@")[0] ?? user.value.sub;
+  }
+  return undefined;
+});
 
 const goToLogin = async () => {
   closeUserDrawer();
@@ -84,20 +57,53 @@ const goToRegister = async () => {
   await navigateTo(ROUTES.register);
 };
 
-const goToMyArea = async () => {
+const goToNotifications = async (route: string) => {
   closeUserDrawer();
-  await navigateTo(ROUTES.me);
+  await navigateTo(route);
 };
 
-const onSettingsClick = async () => {
+const onMarkAllRead = async () => {
+  await markAllRead();
   closeUserDrawer();
-  await navigateTo(ROUTES.meSettings);
 };
 
-const onLogoutClick = async () => {
-  closeUserDrawer();
-  await logout();
-};
+// ------- Bottom nav -------
+const bottomItems = computed(() => {
+  const homeItem = {
+    id: "home",
+    label: t("page.home"),
+    icon: "pi pi-home",
+    action: () => router.push(ROUTES.home),
+  };
+
+  const searchItem = {
+    id: "search",
+    label: t("common.searchV"),
+    icon: "pi pi-search",
+    action: () => openSearch(),
+  };
+
+  if (!isAuthenticated.value) {
+    return [searchItem, homeItem];
+  }
+
+  return [
+    {
+      id: "propose",
+      label: t("common.proposeV"),
+      icon: "pi pi-plus",
+      action: () => router.push(ROUTES.meEventPropose),
+    },
+    searchItem,
+    {
+      id: "me",
+      label: t("common.myAreaV"),
+      icon: "pi pi-user",
+      action: () => router.push(ROUTES.me),
+    },
+    homeItem,
+  ];
+});
 </script>
 
 <template>
@@ -154,23 +160,20 @@ const onLogoutClick = async () => {
         </Select>
 
         <ClientOnly>
-          <Button
-            v-if="isAuthenticated"
-            icon="pi pi-bell"
-            rounded
-            text
-            :badge="totalUnread > 0 ? String(totalUnread) : undefined"
-            badge-severity="danger"
-            :aria-label="t('notifications.title')"
-            @click="openNotifDrawer" />
+          <div class="relative inline-flex">
+            <Button
+              icon="pi pi-user"
+              rounded
+              outlined
+              :aria-label="isAuthenticated ? t('user.myAccount') : t('auth.login')"
+              @click="openUserDrawer" />
+            <span
+              v-if="isAuthenticated && totalUnread > 0"
+              class="absolute bg-red-500"
+              style="width: 0.85rem; height: 0.85rem; top: -0.15rem; right: -0.15rem; border-radius: 50%"
+              aria-hidden="true" />
+          </div>
         </ClientOnly>
-
-        <Button
-          icon="pi pi-user"
-          rounded
-          outlined
-          :aria-label="isAuthenticated ? t('user.myAccount') : t('auth.login')"
-          @click="onUserClick" />
       </div>
     </header>
 
@@ -182,7 +185,7 @@ const onLogoutClick = async () => {
     </main>
 
     <!-- Footer: pb-6 cuando hay bottom nav fixed para no quedar tapado -->
-    <footer class="surface-0 border-top-1 surface-border" :class="{ 'pb-6': props.bottomItems?.length }">
+    <footer class="surface-0 border-top-1 surface-border pb-6">
       <div class="mx-auto w-full max-w-7xl px-3 py-3 flex flex-column align-items-center gap-2">
         <!-- Navegación: dos columnas -->
         <div class="flex justify-content-center gap-4">
@@ -218,77 +221,32 @@ const onLogoutClick = async () => {
          que en SSR siempre es false (token solo disponible en cliente vía localStorage) -->
     <ClientOnly>
       <nav
-        v-if="props.bottomItems && props.bottomItems.length"
         class="surface-900 border-top-1 surface-border fixed bottom-0 left-0 right-0"
         :aria-label="t('common.bottomNav')">
         <div class="mx-auto w-full max-w-7xl flex justify-content-around">
           <Button
-            v-if="proposeItem"
-            :key="proposeItem.id"
-            :icon="proposeItem.icon"
+            v-for="item in bottomItems"
+            :key="item.id"
+            :icon="item.icon"
             size="large"
             text
             rounded
-            :aria-label="proposeItem.label"
-            @click="proposeItem.action" />
-
-          <Button
-            v-if="searchItem"
-            :key="searchItem.id"
-            :icon="searchItem.icon"
-            size="large"
-            text
-            rounded
-            :aria-label="searchItem.label"
-            @click="searchItem.action" />
-
-          <Button
-            v-if="meItem"
-            :key="meItem.id"
-            :icon="meItem.icon"
-            size="large"
-            text
-            rounded
-            :aria-label="meItem.label"
-            @click="meItem.action" />
-
-          <Button
-            v-if="moderationItem"
-            :key="moderationItem.id"
-            :icon="moderationItem.icon"
-            size="large"
-            text
-            rounded
-            :aria-label="moderationItem.label"
-            @click="moderationItem.action" />
-
-          <Button
-            v-if="adminItem"
-            :key="adminItem.id"
-            :icon="adminItem.icon"
-            size="large"
-            text
-            rounded
-            :aria-label="adminItem.label"
-            @click="adminItem.action" />
+            :aria-label="item.label"
+            @click="item.action" />
         </div>
       </nav>
     </ClientOnly>
 
-    <!-- User drawer (derecha) -->
-    <Drawer v-model:visible="isUserDrawerOpen" position="right" :style="{ width: '340px' }" @hide="closeUserDrawer">
-      <aside class="flex flex-column h-full">
-        <header class="flex align-items-center gap-3 mb-3">
-          <i class="pi pi-user text-2xl" />
-          <div v-if="isAuthenticated && user" class="font-medium">
-            {{ user.email?.split("@")[0] ?? user.sub }}
-          </div>
-        </header>
-
-        <Divider class="my-2" />
-
-        <section class="flex flex-column gap-2">
-          <template v-if="!isAuthenticated">
+    <!-- User drawer -->
+    <Drawer
+      v-model:visible="isUserDrawerOpen"
+      position="right"
+      :header="userDrawerHeader"
+      :style="{ width: '340px' }"
+      @hide="closeUserDrawer">
+      <aside class="flex flex-column h-full gap-3">
+        <template v-if="!isAuthenticated">
+          <div class="flex flex-column gap-2">
             <Button
               :label="t('auth.login')"
               icon="pi pi-sign-in"
@@ -301,95 +259,89 @@ const onLogoutClick = async () => {
               text
               class="justify-content-start"
               @click="goToRegister" />
-          </template>
+          </div>
+        </template>
 
-          <template v-else>
+        <template v-else>
+          <Divider class="my-0" />
+
+          <!-- Sección de notificaciones -->
+          <ul class="list-none p-0 m-0 flex flex-column gap-2">
+            <li
+              class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
+              role="button"
+              tabindex="0"
+              @click="goToNotifications(ROUTES.meNotifications)"
+              @keydown.enter="goToNotifications(ROUTES.meNotifications)">
+              <div class="flex align-items-center gap-2">
+                <span class="inline-block border-round-full bg-red-500" style="width:0.65rem;height:0.65rem" />
+                <span>{{ t('notifications.bandeja.user') }}</span>
+              </div>
+              <Badge v-if="unreadCount.user > 0" :value="unreadCount.user" severity="danger" />
+              <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
+            </li>
+            <li
+              v-if="isModerator"
+              class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
+              role="button"
+              tabindex="0"
+              @click="goToNotifications(ROUTES.moderationNotifications)"
+              @keydown.enter="goToNotifications(ROUTES.moderationNotifications)">
+              <div class="flex align-items-center gap-2">
+                <span class="inline-block border-round-full bg-green-500" style="width:0.65rem;height:0.65rem" />
+                <span>{{ t('notifications.bandeja.moderation') }}</span>
+              </div>
+              <Badge v-if="unreadCount.moderation > 0" :value="unreadCount.moderation" severity="success" />
+              <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
+            </li>
+            <li
+              v-if="isAdmin"
+              class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
+              role="button"
+              tabindex="0"
+              @click="goToNotifications(ROUTES.adminNotifications)"
+              @keydown.enter="goToNotifications(ROUTES.adminNotifications)">
+              <div class="flex align-items-center gap-2">
+                <span class="inline-block border-round-full bg-yellow-500" style="width:0.65rem;height:0.65rem" />
+                <span>{{ t('notifications.bandeja.admin') }}</span>
+              </div>
+              <Badge v-if="unreadCount.admin > 0" :value="unreadCount.admin" severity="warn" />
+              <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
+            </li>
+          </ul>
+
+          <Button
+            v-if="totalUnread > 0"
+            :label="t('notifications.markAllRead')"
+            icon="pi pi-check-circle"
+            text
+            class="align-self-start p-0"
+            @click="onMarkAllRead" />
+
+          <Divider class="my-0" />
+
+          <!-- Accesos a paneles de moderación y administración -->
+          <div class="flex flex-column gap-2">
             <Button
-              :label="t('user.myAccount')"
-              icon="pi pi-user"
+              v-if="isModerator"
+              :label="t('common.moderationV')"
+              icon="pi pi-clipboard"
               text
               class="justify-content-start"
-              @click="goToMyArea" />
+              @click="async () => { closeUserDrawer(); await navigateTo(ROUTES.moderation); }" />
             <Button
-              :label="t('me.settings.title')"
-              icon="pi pi-cog"
+              v-if="isAdmin"
+              :label="t('common.adminV')"
+              icon="pi pi-shield"
               text
               class="justify-content-start"
-              @click="onSettingsClick" />
-            <Button
-              :label="t('auth.logout')"
-              icon="pi pi-sign-out"
-              text
-              class="justify-content-start"
-              @click="onLogoutClick" />
-          </template>
-        </section>
+              @click="async () => { closeUserDrawer(); await navigateTo(ROUTES.admin); }" />
+          </div>
+        </template>
       </aside>
     </Drawer>
 
-    <!-- Notifications drawer -->
-    <Drawer
-      v-model:visible="isNotifDrawerOpen"
-      position="right"
-      :header="t('notifications.title')"
-      :style="{ width: '340px' }"
-      @hide="closeNotifDrawer">
-      <aside class="flex flex-column h-full gap-3">
-        <ul class="list-none p-0 m-0 flex flex-column gap-2">
-          <li
-            class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
-            role="button"
-            tabindex="0"
-            @click="goToNotifications(ROUTES.meNotifications)"
-            @keydown.enter="goToNotifications(ROUTES.meNotifications)">
-            <div class="flex align-items-center gap-2">
-              <span class="inline-block border-round-full bg-red-500" style="width:0.65rem;height:0.65rem" />
-              <span>{{ t('notifications.bandeja.user') }}</span>
-            </div>
-            <Badge v-if="unreadCount.user > 0" :value="unreadCount.user" severity="danger" />
-            <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
-          </li>
-          <li
-            v-if="isModerator"
-            class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
-            role="button"
-            tabindex="0"
-            @click="goToNotifications(ROUTES.moderationNotifications)"
-            @keydown.enter="goToNotifications(ROUTES.moderationNotifications)">
-            <div class="flex align-items-center gap-2">
-              <span class="inline-block border-round-full bg-green-500" style="width:0.65rem;height:0.65rem" />
-              <span>{{ t('notifications.bandeja.moderation') }}</span>
-            </div>
-            <Badge v-if="unreadCount.moderation > 0" :value="unreadCount.moderation" severity="success" />
-            <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
-          </li>
-          <li
-            v-if="isAdmin"
-            class="flex align-items-center justify-content-between py-2 px-2 border-bottom-1 surface-border cursor-pointer border-round hover:surface-hover transition-colors transition-duration-150"
-            role="button"
-            tabindex="0"
-            @click="goToNotifications(ROUTES.adminNotifications)"
-            @keydown.enter="goToNotifications(ROUTES.adminNotifications)">
-            <div class="flex align-items-center gap-2">
-              <span class="inline-block border-round-full bg-yellow-500" style="width:0.65rem;height:0.65rem" />
-              <span>{{ t('notifications.bandeja.admin') }}</span>
-            </div>
-            <Badge v-if="unreadCount.admin > 0" :value="unreadCount.admin" severity="warn" />
-            <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
-          </li>
-        </ul>
-
-        <Button
-          v-if="totalUnread > 0"
-          :label="t('notifications.markAllRead')"
-          icon="pi pi-check-circle"
-          text
-          class="align-self-start p-0"
-          @click="onMarkAllRead" />
-      </aside>
-    </Drawer>
-
-    <!-- Search sidebar (Izquiera) -->
+    <!-- Search sidebar (Izquierda) -->
     <Drawer
       v-model:visible="isSearchOpen"
       position="left"
