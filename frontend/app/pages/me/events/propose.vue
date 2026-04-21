@@ -6,7 +6,17 @@ import type { PossibleDuplicateDto } from "~/types/events";
 definePageMeta({ layout: "private", ssr: false });
 
 const { t } = useI18n();
+const router = useRouter();
 useHead({ title: () => t("page.mePropose") });
+
+function goBack() {
+  const prev = window.history.state?.back as string | undefined;
+  if (prev && prev !== ROUTES.meEventPropose) {
+    router.back();
+  } else {
+    navigateTo(ROUTES.meEvents);
+  }
+}
 const { load: loadProvinces, options: provinceOptions, loading: provincesLoading } = useProvinces();
 const { form, posterFile, submitting, errorMsg, fieldErrors, artistsError, submit } = useProposeEvent();
 
@@ -73,9 +83,9 @@ async function onSuccessClose() {
 <template>
   <div class="flex flex-column gap-4">
     <div class="flex align-items-center gap-3">
-      <NuxtLink :to="ROUTES.meEvents" class="text-color-secondary" :aria-label="t('common.back')">
+      <button type="button" class="p-0 border-none bg-transparent cursor-pointer text-color-secondary" :aria-label="t('common.back')" @click="goBack">
         <i class="pi pi-arrow-left" aria-hidden="true" />
-      </NuxtLink>
+      </button>
       <h1 class="text-2xl font-bold m-0">{{ t("me.propose.title") }}</h1>
     </div>
 
@@ -323,7 +333,7 @@ async function onSuccessClose() {
               :label="t('me.propose.cancel')"
               severity="secondary"
               outlined
-              @click="navigateTo(ROUTES.meEvents)" />
+              @click="goBack" />
             <Button
               type="submit"
               :label="t('me.propose.submit')"
