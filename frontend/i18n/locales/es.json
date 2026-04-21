@@ -461,5 +461,15 @@
     "500": {
       "server": "Error inesperado del servidor"
     }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "allRead": "Al día",
+    "markAllRead": "Marcar todo como leído",
+    "bandeja": {
+      "user": "Mis notificaciones",
+      "moderation": "Moderación",
+      "admin": "Administración"
+    }
   }
 }

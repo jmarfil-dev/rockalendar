@@ -462,5 +462,15 @@
     "500": {
       "server": "Unexpected server error"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "allRead": "Up to date",
+    "markAllRead": "Mark all as read",
+    "bandeja": {
+      "user": "My notifications",
+      "moderation": "Moderation",
+      "admin": "Administration"
+    }
   }
 }

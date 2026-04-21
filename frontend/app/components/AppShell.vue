@@ -9,7 +9,10 @@ const props = defineProps<{
 }>();
 
 const { t, locale, setLocale } = useI18n({ useScope: "global" });
-const { isAuthenticated, user, logout } = useAuth();
+const { isAuthenticated, isModerator, isAdmin, user, logout } = useAuth();
+const { unreadCount, markAllRead } = useNotifications();
+
+const totalUnread = computed(() => unreadCount.value.user + unreadCount.value.moderation + unreadCount.value.admin);
 
 // ------- Header -------
 const localeOptions: LocaleOption[] = [
@@ -54,6 +57,14 @@ const {
   isDateRangeInvalid,
   searchArtists,
 } = useSearchDrawer();
+
+// ------- Notifications Drawer -------
+const { isOpen: isNotifDrawerOpen, open: openNotifDrawer, close: closeNotifDrawer } = useNotificationsDrawer();
+
+const onMarkAllRead = async () => {
+  await markAllRead();
+  closeNotifDrawer();
+};
 
 // ------- User Drawer (izquierda) -------
 const { isOpen: isUserDrawerOpen, open: openUserDrawer, close: closeUserDrawer } = useUserDrawer();
@@ -136,6 +147,18 @@ const onLogoutClick = async () => {
             </div>
           </template>
         </Select>
+
+        <ClientOnly>
+          <Button
+            v-if="isAuthenticated"
+            icon="pi pi-bell"
+            rounded
+            text
+            :badge="totalUnread > 0 ? String(totalUnread) : undefined"
+            badge-severity="danger"
+            :aria-label="t('notifications.title')"
+            @click="openNotifDrawer" />
+        </ClientOnly>
 
         <Button
           icon="pi pi-user"
@@ -296,6 +319,51 @@ const onLogoutClick = async () => {
               @click="onLogoutClick" />
           </template>
         </section>
+      </aside>
+    </Drawer>
+
+    <!-- Notifications drawer -->
+    <Drawer
+      v-model:visible="isNotifDrawerOpen"
+      position="right"
+      :header="t('notifications.title')"
+      :style="{ width: '340px' }"
+      @hide="closeNotifDrawer">
+      <aside class="flex flex-column h-full gap-3">
+        <ul class="list-none p-0 m-0 flex flex-column gap-2">
+          <li class="flex align-items-center justify-content-between py-2 border-bottom-1 surface-border">
+            <div class="flex align-items-center gap-2">
+              <span class="inline-block border-round-full bg-red-500" style="width:0.65rem;height:0.65rem" />
+              <span>{{ t('notifications.bandeja.user') }}</span>
+            </div>
+            <Badge v-if="unreadCount.user > 0" :value="unreadCount.user" severity="danger" />
+            <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
+          </li>
+          <li v-if="isModerator" class="flex align-items-center justify-content-between py-2 border-bottom-1 surface-border">
+            <div class="flex align-items-center gap-2">
+              <span class="inline-block border-round-full bg-green-500" style="width:0.65rem;height:0.65rem" />
+              <span>{{ t('notifications.bandeja.moderation') }}</span>
+            </div>
+            <Badge v-if="unreadCount.moderation > 0" :value="unreadCount.moderation" severity="success" />
+            <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
+          </li>
+          <li v-if="isAdmin" class="flex align-items-center justify-content-between py-2 border-bottom-1 surface-border">
+            <div class="flex align-items-center gap-2">
+              <span class="inline-block border-round-full bg-yellow-500" style="width:0.65rem;height:0.65rem" />
+              <span>{{ t('notifications.bandeja.admin') }}</span>
+            </div>
+            <Badge v-if="unreadCount.admin > 0" :value="unreadCount.admin" severity="warn" />
+            <span v-else class="text-color-secondary text-sm">{{ t('notifications.allRead') }}</span>
+          </li>
+        </ul>
+
+        <Button
+          v-if="totalUnread > 0"
+          :label="t('notifications.markAllRead')"
+          icon="pi pi-check-circle"
+          text
+          class="align-self-start p-0"
+          @click="onMarkAllRead" />
       </aside>
     </Drawer>
 

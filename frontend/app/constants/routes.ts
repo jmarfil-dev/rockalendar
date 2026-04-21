@@ -56,6 +56,9 @@ export const ROUTES = {
   apiModerationPending: "/api/moderation/events/pending",
   apiModerationApproved: "/api/moderation/events/approved",
   apiModerationArchived: "/api/moderation/events/archived",
+
+  apiNotificationsUnreadCount: "/api/notifications/unread-count",
+  apiNotificationsReadAll: "/api/notifications/read-all",
 } as const;
 
 export const ROUTE_PATH = {
