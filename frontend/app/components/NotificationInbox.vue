@@ -32,6 +32,20 @@ async function load(page = 0) {
   loading.value = false;
 }
 
+const MODERATION_EVENT_TYPES = new Set<NotificationType>([
+  "EVENT_PENDING_MODERATION",
+  "EVENT_FLAGGED",
+  "EVENT_COMMENT",
+  "POSSIBLE_DUPLICATE_DETECTED",
+]);
+
+function eventRoute(item: Notification): string | null {
+  if (!item.eventId) return null;
+  return MODERATION_EVENT_TYPES.has(item.type)
+    ? ROUTE_PATH.moderationEventDetail(item.eventId)
+    : ROUTE_PATH.eventDetail(item.eventId);
+}
+
 async function onItemClick(item: Notification) {
   if (!item.isRead) {
     const res = await markAsRead(item.id);
@@ -42,9 +56,8 @@ async function onItemClick(item: Notification) {
       }
     }
   }
-  if (item.eventId) {
-    await navigateTo(ROUTE_PATH.eventDetail(item.eventId));
-  }
+  const route = eventRoute(item);
+  if (route) await navigateTo(route);
 }
 
 function notificationText(item: Notification): string {
@@ -95,10 +108,10 @@ onMounted(() => load(0));
         :key="item.id"
         :class="[
           'flex align-items-start gap-3 p-3 border-round transition-colors transition-duration-150',
-          item.eventId || !item.isRead ? 'cursor-pointer hover:surface-hover' : '',
+          eventRoute(item) || !item.isRead ? 'cursor-pointer hover:surface-hover' : '',
         ]"
-        :role="item.eventId ? 'button' : undefined"
-        :tabindex="item.eventId ? 0 : undefined"
+        :role="eventRoute(item) ? 'button' : undefined"
+        :tabindex="eventRoute(item) ? 0 : undefined"
         @click="onItemClick(item)"
         @keydown.enter="onItemClick(item)">
         <i :class="[ICON_BY_TYPE[item.type] ?? 'pi pi-bell', ICON_COLOR_BY_TYPE[item.type], 'text-xl mt-1 flex-shrink-0']" />
