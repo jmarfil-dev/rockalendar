@@ -5,6 +5,10 @@ import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 definePageMeta({ layout: "moderation", ssr: false });
 
 const { t, tm, rt } = useI18n();
+
+// --- Comentarios ---
+const { comments, loading: commentsLoading, deleteLoading, fetchComments, deleteComment } = useModerationComments();
+const deleteConfirmId = ref<string | null>(null);
 const route = useRoute();
 const id = route.params.id as string;
 const fromTab = route.query.from as string | undefined;
@@ -40,7 +44,10 @@ const canModerate = computed(
 const canApprove = computed(() => event.value?.status === "PENDING_MODERATION" || event.value?.status === "FLAGGED");
 
 onMounted(async () => {
-  const res = await fetchAuthResult<ModerationEventDetailResponse>(ROUTE_PATH.apiModerationEventDetail(id));
+  const [res] = await Promise.all([
+    fetchAuthResult<ModerationEventDetailResponse>(ROUTE_PATH.apiModerationEventDetail(id)),
+    fetchComments(id),
+  ]);
   loading.value = false;
   if (res.ok) {
     event.value = res.data.event;
@@ -410,8 +417,72 @@ async function onConfirm() {
           </div>
         </aside>
       </div>
+      <!-- Sección de comentarios recibidos -->
+      <section :aria-label="t('comments.moderationTitle')" class="mt-2">
+        <Card class="border-1 surface-border">
+          <template #title>
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-comments" aria-hidden="true" />
+              <h3 class="m-0 text-base font-semibold">{{ t("comments.moderationTitle") }}</h3>
+              <span v-if="comments.length" class="text-color-secondary text-sm font-normal">({{ comments.length }})</span>
+            </div>
+          </template>
+          <template #content>
+            <div v-if="commentsLoading" class="flex justify-content-center py-3">
+              <ProgressSpinner style="width: 1.5rem; height: 1.5rem" />
+            </div>
+            <p v-else-if="!comments.length" class="m-0 text-color-secondary text-sm">{{ t("comments.noComments") }}</p>
+            <div v-else class="flex flex-column gap-3">
+              <div
+                v-for="comment in comments"
+                :key="comment.id"
+                class="border-1 surface-border border-round p-3 flex flex-column gap-2">
+                <div class="flex align-items-start justify-content-between gap-2">
+                  <div class="flex flex-column gap-1 text-sm">
+                    <span class="font-medium">{{ comment.authorName || comment.authorEmail }}</span>
+                    <span v-if="comment.authorName" class="text-color-secondary text-xs">{{ comment.authorEmail }}</span>
+                    <time class="text-color-secondary text-xs" :datetime="comment.createdAt">
+                      {{ formatDate(comment.createdAt) }}
+                    </time>
+                  </div>
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    text
+                    size="small"
+                    :loading="deleteLoading === comment.id"
+                    :aria-label="t('comments.deleteBtn')"
+                    type="button"
+                    @click="deleteConfirmId = comment.id" />
+                </div>
+                <p class="m-0 text-sm white-space-pre-line line-height-3">{{ comment.body }}</p>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </section>
+
     </template>
   </article>
+
+  <!-- Diálogo confirmación de borrado de comentario -->
+  <Dialog
+    :visible="!!deleteConfirmId"
+    :header="t('comments.deleteBtn')"
+    modal
+    :style="{ width: '22rem' }"
+    @update:visible="deleteConfirmId = null">
+    <p class="m-0 text-color-secondary">{{ t("comments.deleteConfirm") }}</p>
+    <template #footer>
+      <Button :label="t('comments.deleteCancel')" severity="secondary" outlined @click="deleteConfirmId = null" />
+      <Button
+        :label="t('comments.deleteOk')"
+        severity="danger"
+        icon="pi pi-trash"
+        :loading="!!deleteLoading"
+        @click="async () => { if (deleteConfirmId) { await deleteComment(id, deleteConfirmId); deleteConfirmId = null; } }" />
+    </template>
+  </Dialog>
 
   <!-- Drawer de consejos de moderación -->
   <Drawer v-model:visible="tipsVisible" :header="t('moderation.tips.title')" position="right" style="width: 22rem">

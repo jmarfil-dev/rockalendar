@@ -68,6 +68,9 @@ public class SecurityConfig {
                                                // Público (lectura)
                                                .requestMatchers(HttpMethod.GET, "/api/events/**", "/api/artists/**", "/api/provinces/**")
                                                .permitAll()
+                                               // Comentarios de eventos (autenticado o anónimo)
+                                               .requestMatchers(HttpMethod.POST, "/api/events/*/comment")
+                                               .permitAll()
 
                                                // Moderación y admin
                                                .requestMatchers("/api/moderation/**")

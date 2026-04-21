@@ -466,6 +466,26 @@
       "server": "Error inesperado del servidor"
     }
   },
+  "comments": {
+    "dialogTitle": "Enviar comentario a moderación",
+    "dialogDesc": "Tu comentario llegará a los moderadores para que revisen la información del evento.",
+    "nameLabel": "Nombre (opcional)",
+    "emailLabel": "Email",
+    "emailPlaceholder": "nombre{'@'}dominio.com",
+    "bodyLabel": "Comentario",
+    "bodyPlaceholder": "¿Qué quieres comentar sobre este evento?",
+    "submit": "Enviar comentario",
+    "cancel": "Cancelar",
+    "ok": "Aceptar",
+    "successMsg": "¡Comentario enviado! Los moderadores lo revisarán en breve.",
+    "emailRequired": "El email es obligatorio si no estás autenticado/a",
+    "moderationTitle": "Comentarios recibidos",
+    "noComments": "No hay comentarios para este evento",
+    "deleteBtn": "Eliminar comentario",
+    "deleteConfirm": "¿Seguro que quieres eliminar este comentario? Esta acción no se puede deshacer.",
+    "deleteOk": "Sí, eliminar",
+    "deleteCancel": "Cancelar"
+  },
   "notifications": {
     "title": "Notificaciones",
     "allRead": "Al día",

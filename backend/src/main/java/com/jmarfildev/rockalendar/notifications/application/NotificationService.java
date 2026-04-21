@@ -30,6 +30,7 @@ public class NotificationService {
 
     public static final String PAYLOAD_TITLE = "title";
     public static final String PAYLOAD_REASON = "reason";
+    public static final String PAYLOAD_PREVIEW = "preview";
 
     private final List<NotificationChannel> channels;
     private final UserRepository userRepository;

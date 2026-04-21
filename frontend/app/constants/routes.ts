@@ -65,6 +65,7 @@ export const ROUTES = {
   apiNotificationsReadAll: "/api/notifications/read-all",
 } as const;
 
+
 export const ROUTE_PATH = {
   eventDetail: (id: string) => `${ROUTES.events}/${id}`,
   artistDetail: (id: string) => `${ROUTES.artists}/${id}`,
@@ -85,4 +86,7 @@ export const ROUTE_PATH = {
   apiModerationRequestChanges: (id: string) => `${ROUTES.apiModerationEvents}/${id}/request-changes`,
   apiMeAgendaItem: (id: string) => `${ROUTES.apiMeAgenda}/${id}`,
   apiNotificationMarkRead: (id: string) => `${ROUTES.apiNotifications}/${id}/read`,
+  apiEventComment: (id: string) => `${ROUTES.apiEvents}/${id}/comment`,
+  apiModerationEventComments: (id: string) => `${ROUTES.apiModerationEvents}/${id}/comments`,
+  apiModerationEventCommentDelete: (eventId: string, commentId: string) => `${ROUTES.apiModerationEvents}/${eventId}/comments/${commentId}`,
 } as const;
