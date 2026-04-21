@@ -93,22 +93,30 @@ class NotificationQueryServiceTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("countUnread: devuelve 0 cuando no hay notificaciones no leídas")
+    @DisplayName("countUnread: devuelve 0 en todas las bandejas cuando no hay notificaciones no leídas")
     void countUnread_allRead_returnsZero() {
         factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, true);
         factory.notification(USER_ID, NotificationType.EVENT_REJECTED, null, true);
 
-        assertThat(queryService.countUnread(USER_ID).count()).isZero();
+        var result = queryService.countUnread(USER_ID);
+        assertThat(result.user()).isZero();
+        assertThat(result.moderation()).isZero();
+        assertThat(result.admin()).isZero();
     }
 
     @Test
-    @DisplayName("countUnread: cuenta solo las no leídas del usuario, ignorando otros usuarios")
-    void countUnread_mixedReadAndOtherUser_returnsCorrectCount() {
-        factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);
-        factory.notification(USER_ID, NotificationType.EVENT_REJECTED, null, false);
-        factory.notification(USER_ID, NotificationType.EVENT_NEEDS_CHANGES, null, true);
-        factory.notification(OTHER_USER_ID, NotificationType.EVENT_APPROVED, null, false);
+    @DisplayName("countUnread: cuenta por bandeja, ignorando leídas y otros usuarios")
+    void countUnread_mixedReadAndOtherUser_returnsCorrectCountPerBandeja() {
+        factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);           // user
+        factory.notification(USER_ID, NotificationType.EVENT_REJECTED, null, false);           // user
+        factory.notification(USER_ID, NotificationType.EVENT_NEEDS_CHANGES, null, true);       // user, leída
+        factory.notification(USER_ID, NotificationType.EVENT_PENDING_MODERATION, null, false); // moderation
+        factory.notification(USER_ID, NotificationType.USER_AUTOBANNED, null, false);          // admin
+        factory.notification(OTHER_USER_ID, NotificationType.EVENT_APPROVED, null, false);     // otro usuario
 
-        assertThat(queryService.countUnread(USER_ID).count()).isEqualTo(2);
+        var result = queryService.countUnread(USER_ID);
+        assertThat(result.user()).isEqualTo(2);
+        assertThat(result.moderation()).isEqualTo(1);
+        assertThat(result.admin()).isEqualTo(1);
     }
 }

@@ -43,6 +43,13 @@ public class NotificationQueryService {
     }
 
     public UnreadCountDto countUnread(UUID recipientId) {
-        return new UnreadCountDto(repository.countByRecipientIdAndIsReadFalse(recipientId));
+        long user = repository.countByRecipientIdAndTypeInAndIsReadFalse(recipientId,
+                                                                         NotificationType.ofBandeja(NotificationType.Bandeja.USER));
+        long moderation =
+                repository.countByRecipientIdAndTypeInAndIsReadFalse(recipientId,
+                                                                     NotificationType.ofBandeja(NotificationType.Bandeja.MODERATION));
+        long admin = repository.countByRecipientIdAndTypeInAndIsReadFalse(recipientId,
+                                                                          NotificationType.ofBandeja(NotificationType.Bandeja.ADMIN));
+        return new UnreadCountDto(user, moderation, admin);
     }
 }

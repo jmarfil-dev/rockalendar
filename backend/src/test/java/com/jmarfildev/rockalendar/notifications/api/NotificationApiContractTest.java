@@ -111,15 +111,18 @@ class NotificationApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("GET /api/notifications/unread-count con auth -> 200 devuelve conteo correcto")
-    void unreadCount_withAuth_returnsCount() throws Exception {
-        factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);
-        factory.notification(USER_ID, NotificationType.EVENT_REJECTED, null, false);
-        factory.notification(USER_ID, NotificationType.EVENT_NEEDS_CHANGES, null, true);
+    @DisplayName("GET /api/notifications/unread-count con auth -> 200 devuelve conteo por bandeja")
+    void unreadCount_withAuth_returnsCountPerBandeja() throws Exception {
+        factory.notification(USER_ID, NotificationType.EVENT_APPROVED, null, false);       // user
+        factory.notification(USER_ID, NotificationType.EVENT_REJECTED, null, false);       // user
+        factory.notification(USER_ID, NotificationType.EVENT_NEEDS_CHANGES, null, true);   // user, leída
+        factory.notification(USER_ID, NotificationType.EVENT_PENDING_MODERATION, null, false); // moderation
 
         mockMvc.perform(get(BASE + "/unread-count").with(contractUtils.authJwt()))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.count").value(2));
+               .andExpect(jsonPath("$.user").value(2))
+               .andExpect(jsonPath("$.moderation").value(1))
+               .andExpect(jsonPath("$.admin").value(0));
     }
 
     // -------------------------------------------------------------------------
