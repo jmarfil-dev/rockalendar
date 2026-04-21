@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 import type { Notification, NotificationBandeja, NotificationType } from "~/types/notification";
-import { NOTIFICATION_TYPES_BY_BANDEJA } from "~/types/notification";
 import type { PageResponse } from "~/types/pagination";
 
 const props = defineProps<{ bandeja: NotificationBandeja }>();
@@ -19,9 +18,7 @@ const hasMore = computed(() => currentPage.value < totalPages.value - 1);
 
 async function load(page = 0) {
   loading.value = true;
-  const types = NOTIFICATION_TYPES_BY_BANDEJA[props.bandeja];
-  const params = new URLSearchParams({ page: String(page), size: "20" });
-  types.forEach((type) => params.append("types", type));
+  const params = new URLSearchParams({ bandeja: props.bandeja, page: String(page), size: "20" });
   const res = await fetchAuthResult<PageResponse<Notification>>(`${ROUTES.apiNotifications}?${params}`);
   if (res.ok) {
     if (page === 0) {

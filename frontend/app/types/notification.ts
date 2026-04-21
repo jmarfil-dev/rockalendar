@@ -20,8 +20,3 @@ export interface Notification {
   createdAt: string;
 }
 
-export const NOTIFICATION_TYPES_BY_BANDEJA: Record<NotificationBandeja, NotificationType[]> = {
-  USER: ["EVENT_APPROVED", "EVENT_REJECTED", "EVENT_NEEDS_CHANGES", "EVENT_COMMENT"],
-  MODERATION: ["EVENT_PENDING_MODERATION", "EVENT_FLAGGED", "POSSIBLE_DUPLICATE_DETECTED"],
-  ADMIN: ["PROMOTION_REQUEST", "USER_AUTOBANNED"],
-};
