@@ -50,14 +50,14 @@ public interface AdminEventApi {
     @Operation(summary = "Listar eventos (admin)",
                description = """
                              Lista eventos futuros con filtros opcionales.
-                             Por defecto devuelve solo eventos APPROVED.
+                             Por defecto devuelve todos los estados (sin filtro de estado).
                              Soporta filtrado por estado (múltiple), provincia, rango de fechas y búsqueda por título.
                              """)
     @ApiResponse(responseCode = "200", description = "Página de eventos")
     @ApiUnauthorized
     @ApiForbidden
     @ApiBadRequest
-    Page<AdminEventListItemDto> listEvents(@Parameter(description = "Estados a incluir (por defecto: APPROVED)") @RequestParam(required = false) List<
+    Page<AdminEventListItemDto> listEvents(@Parameter(description = "Estados a incluir (por defecto: todos)") @RequestParam(required = false) List<
             EventStatus> statuses,
                                            @Parameter(description = "Código INE de provincia") @RequestParam(required = false) Optional<
                                                    Short> provinceId,
