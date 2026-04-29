@@ -94,8 +94,8 @@
       "title": "You can become a moderator",
       "desc": "You've earned enough trust on the platform. If you'd like to help moderate content, request a promotion.",
       "cta": "Request moderator role",
-      "successTitle": "Congratulations!",
-      "successDetail": "You are now a moderator. Log out and back in to activate your new permissions.",
+      "successTitle": "Request submitted",
+      "successDetail": "Your promotion request has been submitted. An administrator will review it shortly.",
       "errorTitle": "Not possible right now",
       "errorDetail": "You don't meet the requirements at this time."
     },
@@ -454,7 +454,8 @@
       "dbConstraint": "Violated DB Constraint",
       "accountPendingDeletion": "Your account already has a pending deletion request",
       "accountNotPendingDeletion": "There is no active deletion request",
-      "promotionNotEligible": "You do not meet the requirements to request a moderator promotion"
+      "promotionNotEligible": "You do not meet the requirements to request a moderator promotion",
+      "promotionAlreadyRequested": "You already have a pending promotion request under review"
     },
     "422": {
       "invalidImage": "The file is not a valid image or exceeds the maximum allowed size (10 MB)",

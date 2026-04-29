@@ -94,8 +94,8 @@
       "title": "Puedes ser moderador/a",
       "desc": "Has ganado suficiente confianza en la plataforma. Si quieres contribuir moderando contenido, solicita el ascenso.",
       "cta": "Solicitar ser moderador/a",
-      "successTitle": "¡Enhorabuena!",
-      "successDetail": "Ya eres moderador/a. Cierra sesión y vuelve a entrar para activar tus nuevos permisos.",
+      "successTitle": "Solicitud enviada",
+      "successDetail": "Tu solicitud de ascenso ha sido enviada. Un administrador la revisará pronto.",
       "errorTitle": "No ha sido posible",
       "errorDetail": "No cumples los requisitos en este momento."
     },
@@ -453,7 +453,8 @@
       "dbConstraint": "Restricción de BD violada",
       "accountPendingDeletion": "Tu cuenta ya tiene una solicitud de eliminación pendiente",
       "accountNotPendingDeletion": "No hay ninguna solicitud de eliminación activa",
-      "promotionNotEligible": "No cumples los requisitos para solicitar el ascenso a moderador/a"
+      "promotionNotEligible": "No cumples los requisitos para solicitar el ascenso a moderador/a",
+      "promotionAlreadyRequested": "Ya tienes una solicitud de ascenso pendiente de revisión"
     },
     "422": {
       "invalidImage": "El archivo no es una imagen válida o supera el tamaño máximo permitido (10 MB)",

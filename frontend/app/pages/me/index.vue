@@ -92,5 +92,11 @@ onMounted(fetchMe);
         </div>
       </Message>
     </div>
+
+    <div v-else-if="me?.promotionRequestedAt" class="col-12">
+      <Message severity="success" :closable="false" class="m-0">
+        <span class="font-semibold">{{ t("me.promotion.successDetail") }}</span>
+      </Message>
+    </div>
   </div>
 </template>
