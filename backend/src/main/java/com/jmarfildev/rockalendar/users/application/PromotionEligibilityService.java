@@ -25,7 +25,7 @@ import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 public class PromotionEligibilityService {
 
     public static final int MIN_TRUST_SCORE = 100;
-    public static final int MIN_SENIORITY_DAYS = 90;
+    public static final int MIN_SENIORITY_DAYS = 10;
     public static final int MAX_SAME_VENUE_RECENT = 3;
     public static final int MAX_SAME_ARTIST_RECENT = 3;
     public static final int MAX_SAME_VENUE_TOTAL = 10;
@@ -40,19 +40,34 @@ public class PromotionEligibilityService {
 
     public boolean isEligible(UUID userId) {
         User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return false;
+        if (user == null) {
+            return false;
+        }
 
         // Solo usuarios con rol USER pueden ascender
-        if (user.roleEnum() != UserRole.USER) return false;
+        if (user.roleEnum() != UserRole.USER) {
+            return false;
+        }
+
+        // Solicitud ya enviada y pendiente
+        if (user.getPromotionRequestedAt() != null) {
+            return false;
+        }
 
         // Ban permanente
-        if (user.isBanned()) return false;
+        if (user.isBanned()) {
+            return false;
+        }
 
         // Trust score mínimo (calculado desde historial de moderación)
-        if (trustScoreService.getScore(userId) < MIN_TRUST_SCORE) return false;
+        if (trustScoreService.getScore(userId) < MIN_TRUST_SCORE) {
+            return false;
+        }
 
         // Antigüedad mínima
-        if (user.getCreatedAt().isAfter(OffsetDateTime.now().minusDays(MIN_SENIORITY_DAYS))) return false;
+        if (user.getCreatedAt().isAfter(OffsetDateTime.now().minusDays(MIN_SENIORITY_DAYS))) {
+            return false;
+        }
 
         OffsetDateTime since = OffsetDateTime.now().minusDays(RECENT_PERIOD_DAYS);
 

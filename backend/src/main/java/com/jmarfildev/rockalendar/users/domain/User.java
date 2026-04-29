@@ -54,6 +54,9 @@ public class User {
     @Column(name = "deletion_requested_at")
     private OffsetDateTime deletionRequestedAt;
 
+    @Column(name = "promotion_requested_at")
+    private OffsetDateTime promotionRequestedAt;
+
     @Column(nullable = false)
     private boolean erased;
 

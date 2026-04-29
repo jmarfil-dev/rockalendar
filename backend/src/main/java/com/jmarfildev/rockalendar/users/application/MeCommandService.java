@@ -1,6 +1,7 @@
 package com.jmarfildev.rockalendar.users.application;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,12 +14,13 @@ import com.jmarfildev.rockalendar.common.error.BadRequestException;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
+import com.jmarfildev.rockalendar.notifications.application.NotificationService;
+import com.jmarfildev.rockalendar.notifications.domain.NotificationType;
 import com.jmarfildev.rockalendar.users.api.dto.ChangeLocaleRequest;
 import com.jmarfildev.rockalendar.users.api.dto.ChangePasswordRequest;
 import com.jmarfildev.rockalendar.users.api.dto.MeDto;
 import com.jmarfildev.rockalendar.users.api.mapper.UserMapper;
 import com.jmarfildev.rockalendar.users.domain.User;
-import com.jmarfildev.rockalendar.users.domain.UserRole;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 
 /**
@@ -34,20 +36,30 @@ public class MeCommandService {
     private final PromotionEligibilityService eligibilityService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     @Transactional
     public MeDto requestPromotion() {
         var userId = currentUser.userId();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        if (user.getPromotionRequestedAt() != null) {
+            throw new ConflictException(ErrorConstants.PROMOTION_ALREADY_REQUESTED);
+        }
 
         if (!eligibilityService.isEligible(userId)) {
             throw new ConflictException(ErrorConstants.PROMOTION_NOT_ELIGIBLE);
         }
 
-        User user = userRepository.findById(userId).orElseThrow();
-        user.setRole(UserRole.MODERATOR.name());
-        log.info("user promoted to MODERATOR userId={}", userId);
+        user.setPromotionRequestedAt(OffsetDateTime.now());
+        log.info("promotion request submitted userId={}", userId);
 
-        // El usuario ya es MODERATOR: promotionEligible es siempre false
+        notificationService.notifyAllAdmins(
+                NotificationType.PROMOTION_REQUEST,
+                null,
+                Map.of("email", user.getEmail())
+        );
+
         return userMapper.toMeDto(user, false);
     }
 

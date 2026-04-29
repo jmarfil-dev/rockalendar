@@ -40,8 +40,8 @@ public interface MeApi {
 
     @PostMapping("/promotion-request")
     @Operation(summary = "Solicitar ascenso a moderador",
-               description = "Si el usuario cumple todos los requisitos internos, el rol cambia a MODERATOR de forma inmediata.")
-    @ApiResponse(responseCode = "200", description = "Ascenso realizado correctamente")
+               description = "Si el usuario cumple todos los requisitos internos, registra la solicitud de ascenso y notifica a los administradores. El rol no cambia hasta que un administrador apruebe la solicitud.")
+    @ApiResponse(responseCode = "200", description = "Solicitud de ascenso registrada correctamente")
     @ApiUnauthorized
     @ApiConflict
     MeDto requestPromotion();

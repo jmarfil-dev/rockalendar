@@ -12,5 +12,6 @@ public record MeDto(
         String role,
         String preferredLanguage,
         boolean promotionEligible,
+        OffsetDateTime promotionRequestedAt,
         OffsetDateTime deletionRequestedAt
 ) {}
