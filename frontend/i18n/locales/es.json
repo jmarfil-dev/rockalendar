@@ -153,6 +153,7 @@
     },
     "eventStatus": {
       "PENDING_MODERATION": "Pendiente",
+      "FLAGGED": "Marcado",
       "APPROVED": "Aprobado",
       "REJECTED": "Rechazado",
       "NEEDS_CHANGES": "Necesita cambios",

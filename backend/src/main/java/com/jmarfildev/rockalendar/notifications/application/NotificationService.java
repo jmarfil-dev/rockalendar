@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.jmarfildev.rockalendar.users.domain.UserRole.ADMIN;
+import static com.jmarfildev.rockalendar.users.domain.UserRole.MODERATOR;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,9 @@ public class NotificationService {
     public static final String PAYLOAD_REASON = "reason";
     public static final String PAYLOAD_PREVIEW = "preview";
 
+    // Los ADMIN son también moderadores: reciben las mismas notificaciones de moderación
+    private static final List<String> MODERATOR_ROLES = List.of(MODERATOR.name(), ADMIN.name());
+
     private final List<NotificationChannel> channels;
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
@@ -45,11 +51,12 @@ public class NotificationService {
     }
 
     /**
-     * Envía una notificación en fan-out a todos los moderadores activos.
+     * Envía una notificación en fan-out a todos los moderadores y administradores activos.
      */
     @Transactional
     public void notifyAllModerators(NotificationType type, UUID eventId, Map<String, String> payload) {
-        fanOut(UserRole.MODERATOR, type, eventId, payload);
+        userRepository.findByRoleInAndBannedFalseAndErasedFalse(MODERATOR_ROLES)
+                      .forEach(user -> dispatch(buildNotification(user.getId(), type, eventId, payload)));
     }
 
     /**
@@ -66,7 +73,7 @@ public class NotificationService {
      */
     @Transactional
     public void notifyModeratorsDedup(NotificationType type, UUID eventId, Map<String, String> payload) {
-        userRepository.findByRoleAndBannedFalseAndErasedFalse(UserRole.MODERATOR.name()).forEach(moderator -> {
+        userRepository.findByRoleInAndBannedFalseAndErasedFalse(MODERATOR_ROLES).forEach(moderator -> {
             boolean alreadyNotified =
                     notificationRepository.existsByRecipientIdAndTypeAndEventIdAndIsReadFalse(moderator.getId(), type, eventId);
             if (!alreadyNotified) {

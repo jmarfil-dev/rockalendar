@@ -275,9 +275,9 @@ public class EventCommandService {
      */
     private EventInputValidate validate(SubmitEventRequest req, UUID userId) {
         // Construir startDateTime a partir de fecha + hora opcional en zona horaria española
-        // Si no se informa de la hora, se pone medianoche
+        // Si no se informa de la hora, se pone el final del día para que el evento sea visible durante toda la jornada
         boolean startTimeUnknown = req.startTime() == null;
-        LocalTime time = startTimeUnknown ? LocalTime.MIDNIGHT : req.startTime();
+        LocalTime time = startTimeUnknown ? LocalTime.of(23, 59, 0) : req.startTime();
         OffsetDateTime startDateTime = req.startDate().atTime(time).atZone(ZoneId.of("Europe/Madrid")).toOffsetDateTime();
 
         CommonValidations.validateDateRange(req.startDate(), req.endDate());
