@@ -107,8 +107,9 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
 
 ## Administración
 
-- Gestión de perfiles:
-  - Ascender a moderador
+- Gestión de usuarios y perfiles:
+  - Página detalle de usuario con historial de eventos y acciones sobre dichos eventos.
+  - Ascender a moderador -> ya se envía la notificación con email del usuario en el payload (no se muestra en el mensaje de la app).
   - Banear moderador
   - Ascender a admin
 - Historial de moderación en detalle de eventos.
