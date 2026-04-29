@@ -55,7 +55,7 @@ public class EventAutoRejectionScheduler {
     private final TrustScoreService trustScoreService;
     private final NotificationService notificationService;
 
-    @Scheduled(fixedDelay = 21_600_000) // cada 6 horas
+    @Scheduled(fixedDelay = 43_200_000) // cada 12 horas
     @Transactional
     public void rejectFlaggedEvents() {
         int delayHours = getConfigInt("flagged_rejection_delay_hours", DEFAULT_FLAGGED_DELAY_HOURS);
