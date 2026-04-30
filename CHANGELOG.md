@@ -3,6 +3,47 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v1.1.0]
+
+### Added
+- [BACK] Sistema de notificaciones in-app: fan-out por roles, bandejas (USER / MODERATION / ADMIN), conteo de no leídas y endpoints REST (`GET /api/notifications`, `/unread-count`, mark-read).
+- [BACK] Panel de administración: endpoint de listado con filtros múltiples (`GET /api/admin/events`), detalle (`GET /api/admin/events/{id}`), edición (`PUT`) y cambio de estado forzado (`POST /api/admin/events/{id}/status`).
+- [BACK] Ciclo de vida de eventos ampliado: moderación desde estado APPROVED, nuevos tipos de acción (MODERATOR_EDITED, ADMIN_EDITED, ADMIN_STATE_OVERRIDE, STALE_REJECT) y restricciones de flujo en EventStateMachine.
+- [BACK] Solicitud de ascenso a moderador como flujo pendiente de aprobación por administrador.
+- [BACK] Sistema de comentarios en eventos.
+- [BACK] Rechazo automático de eventos en NEEDS_CHANGES por abandono (scheduler con intervalo de 12h); trust score aplicado al auto-rechazo de eventos FLAGGED.
+- [BACK] Edición de eventos en PENDING_MODERATION por moderadores y administradores con registro de auditoría.
+- [BACK] CI en GitHub Actions para backend y frontend.
+- [FRONT] Panel de administración: listado con filtros (estado, provincia, fechas, título), tabla ordenable y edición completa con cambio de estado y modales de confirmación.
+- [FRONT] Sistema de notificaciones: campana en AppShell, drawer por bandeja y polling de no leídas.
+- [FRONT] Solicitud de ascenso a moderador en área privada `/me`.
+- [FRONT] Comentarios de usuarios en el detalle de evento.
+- [FRONT] Soporte de eventos con hora de inicio desconocida: formateo diferenciado y campo en formularios.
+
+### Fixed
+- [BACK+FRONT] Eventos con hora desconocida desaparecían el día del evento al almacenarse a medianoche (ahora se guardan a las 23:59 hora Madrid); migración V2.12 corrige datos existentes.
+- [BACK] Fechas de eventos guardadas con dos horas menos por conversión UTC incorrecta.
+- [BACK] Notificaciones de moderación no llegaban a usuarios con rol ADMIN.
+- [BACK] Panel admin devolvía solo eventos futuros cuando no se filtraba por estado.
+- [BACK] Detección de duplicados no se ejecutaba al editar un evento; el original se marca al aprobar el duplicado.
+- [BACK] Eventos FLAGGED excluidos de la cola de moderación y sin acciones disponibles.
+- [BACK] `moderated_by_user_id` no admitía nulo en acciones automáticas del sistema.
+- [FRONT] Búsqueda con mismo día en "desde" y "hasta" no devolvía resultados (dateTo enviado como 00:00).
+- [FRONT] Validación `@Future` en propuesta de eventos impedía crear eventos para el día en curso.
+- [FRONT] Notificaciones de moderación enlazaban al detalle público en lugar del área de moderación.
+- [FRONT] Al eliminar un artista del formulario se eliminaban dos por error en la inicialización de claves de chips.
+- [FRONT] El botón "atrás" al proponer un evento siempre navegaba a mis conciertos en lugar de la página anterior.
+- [FRONT] Recargar la página cerraba la sesión incorrectamente por error de hidratación SSR.
+
+### Changed
+- [BACK] Province `ine_code` promovido a clave primaria; eliminada la PK UUID artificial.
+- [BACK] Queries de eventos consolidadas en `EventRepository`; eliminados `AdminEventRepository` y `ModerationEventRepository`.
+- [BACK] Eliminados `TrafficLoggingInterceptor` y `WebMvcConfig` innecesarios.
+- [BACK] `@Content` añadido a todas las respuestas de las interfaces Api (documentación OpenAPI).
+- [FRONT] Navbar consolidada en `AppShell`; drawer de notificaciones fusionado en el drawer de usuario.
+- [FRONT] Filtrado de notificaciones por bandeja resuelto en el backend (antes se expandían los tipos en el cliente).
+- [FRONT] Estado FLAGGED añadido al filtro del panel de administración de eventos.
+
 ## [v0.5.0]
 ### Added
 - [BACK] Cartel de evento: subida de imagen con almacenamiento en S3.
