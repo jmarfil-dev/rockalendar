@@ -37,7 +37,7 @@ public final class EventStateMachine {
      */
     public static boolean canModeratorTransition(EventStatus from, EventStatus to) {
         return switch (from) {
-            case PENDING_MODERATION -> to == EventStatus.APPROVED
+            case PENDING_MODERATION, FLAGGED -> to == EventStatus.APPROVED
                     || to == EventStatus.REJECTED
                     || to == EventStatus.NEEDS_CHANGES
                     || to == EventStatus.HIDDEN;
@@ -53,6 +53,7 @@ public final class EventStateMachine {
      */
     public static boolean canAdminEdit(EventStatus status) {
         return status == EventStatus.PENDING_MODERATION
+                || status == EventStatus.FLAGGED
                 || status == EventStatus.NEEDS_CHANGES
                 || status == EventStatus.APPROVED;
     }

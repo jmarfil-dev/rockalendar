@@ -39,6 +39,7 @@ import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchiveRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationEventDetailDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
 
 /**
@@ -57,13 +58,15 @@ public interface ModerationEventApi {
     @GetMapping("/{eventId}")
     @Operation(summary = "Obtener detalle de un evento para moderación",
                description = "Devuelve el detalle completo de cualquier evento, independientemente de su estado.")
-    @ApiResponse(responseCode = "200", description = "Detalle del evento")
+    @ApiResponse(responseCode = "200",
+                 description = "Detalle del evento",
+                 content = @Content(schema = @Schema(implementation = ModerationEventDetailDto.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound
-    EventPrivateDto getForModeration(@Parameter(description = "ID del evento",
-                                                example = "cccccccc-0000-0000-0000-000000000001",
-                                                required = true) @PathVariable UUID eventId);
+    ModerationEventDetailDto getForModeration(@Parameter(description = "ID del evento",
+                                                          example = "cccccccc-0000-0000-0000-000000000001",
+                                                          required = true) @PathVariable UUID eventId);
 
     @GetMapping("/pending")
     @Operation(summary = "Listar eventos pendientes de moderación",
@@ -118,7 +121,9 @@ public interface ModerationEventApi {
     @Operation(summary = "Editar datos de un evento pendiente",
                description = "Permite al moderador corregir los datos de un evento en PENDING_MODERATION sin cambiar su estado. "
                        + "Registra una acción MODERATOR_EDITED en el historial de moderación.")
-    @ApiResponse(responseCode = "200", description = "Evento actualizado correctamente")
+    @ApiResponse(responseCode = "200",
+                 description = "Evento actualizado correctamente",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound
@@ -135,7 +140,9 @@ public interface ModerationEventApi {
 
     @PostMapping("/{eventId}/approve")
     @Operation(summary = "Aprobar eventos pendientes de moderación", description = "Pasa a APPROVED un evento en PENDING_MODERATION.")
-    @ApiResponse(responseCode = "200", description = "Evento aprobado con éxito")
+    @ApiResponse(responseCode = "200",
+                 description = "Evento aprobado con éxito",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound
@@ -147,7 +154,9 @@ public interface ModerationEventApi {
 
     @PostMapping("/{eventId}/reject")
     @Operation(summary = "Rechazar un evento", description = "Pasa a REJECTED un evento en PENDING_MODERATION o APPROVED.")
-    @ApiResponse(responseCode = "200", description = "Evento rechazado con éxito")
+    @ApiResponse(responseCode = "200",
+                 description = "Evento rechazado con éxito",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiBadRequest
     @ApiUnauthorized
     @ApiForbidden
@@ -161,7 +170,9 @@ public interface ModerationEventApi {
 
     @PostMapping("/{eventId}/hide")
     @Operation(summary = "Ocultar un evento", description = "Pasa a HIDDEN un evento en PENDING_MODERATION o APPROVED.")
-    @ApiResponse(responseCode = "200", description = "Evento ocultado con éxito")
+    @ApiResponse(responseCode = "200",
+                 description = "Evento ocultado con éxito",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiBadRequest
     @ApiUnauthorized
     @ApiForbidden
@@ -176,7 +187,9 @@ public interface ModerationEventApi {
     @PostMapping("/{eventId}/request-changes")
     @Operation(summary = "Devolver evento al autor solicitando cambios",
                description = "Pasa a NEEDS_CHANGES un evento en PENDING_MODERATION o APPROVED.")
-    @ApiResponse(responseCode = "200", description = "Evento cambiado de estado con éxito")
+    @ApiResponse(responseCode = "200",
+                 description = "Evento cambiado de estado con éxito",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiBadRequest
     @ApiUnauthorized
     @ApiForbidden

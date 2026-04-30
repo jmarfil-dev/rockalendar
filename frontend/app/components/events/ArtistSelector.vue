@@ -26,6 +26,15 @@ const canAdd = computed(
 let keyCounter = 0;
 const chipKeys = ref<number[]>([]);
 
+// En modo edición el modelValue llega ya cargado, hay que inicializar chipKeys para esos chips.
+watch(
+  () => props.modelValue.length,
+  (len) => {
+    while (chipKeys.value.length < len) chipKeys.value.push(keyCounter++);
+  },
+  { immediate: true },
+);
+
 function addChip(chip: ArtistChip) {
   chipKeys.value = [...chipKeys.value, keyCounter++];
   emit("update:modelValue", [...props.modelValue, chip]);

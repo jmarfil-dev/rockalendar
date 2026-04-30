@@ -50,5 +50,6 @@ public interface EventMapper {
     @Mapping(target = "artists", expression = "java(mapArtists(event))")
     @Mapping(target = "provinceId", expression = "java(mapProvinceId(event))")
     @Mapping(target = "provinceName", expression = "java(mapProvinceName(event))")
+    @Mapping(target = "flagged", constant = "false") // sobreescrito por el compact constructor de EventPrivateDto
     EventPrivateDto toPrivateDto(Event event);
 }

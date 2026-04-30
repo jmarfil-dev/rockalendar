@@ -77,17 +77,17 @@ class AdminEventListApiContractTest extends AbstractPostgresTest {
     // --- Comportamiento por defecto ---
 
     @Test
-    @DisplayName("GET " + API + " sin filtros -> solo APPROVED futuros, estructura de respuesta correcta")
-    void list_asAdmin_noFilters_returnsOnlyApprovedFuture() throws Exception {
+    @DisplayName("GET " + API + " sin filtros -> todos los estados futuros, estructura de respuesta correcta")
+    void list_asAdmin_noFilters_returnsAllStatusesFuture() throws Exception {
         var event = factory.approvedMadridAgainstYou();
-        factory.approvedValenciaPast();       // pasado: no debe aparecer
-        factory.pendingMadridAgainstYou();    // PENDING: no está en el filtro por defecto
-        factory.hiddenMadridSoziedadAlkoholika();  // HIDDEN: no está en el filtro por defecto
+        factory.approvedValenciaPast();            // pasado: no debe aparecer
+        factory.pendingMadridAgainstYou();         // PENDING futuro: debe aparecer
+        factory.hiddenMadridSoziedadAlkoholika();  // HIDDEN futuro: debe aparecer
 
         mockMvc.perform(get(API)
                 .with(contractUtils.authJwtAdmin()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content.length()").value(3))
                 .andExpect(jsonPath("$.content[0].id").value(event.getId().toString()))
                 .andExpect(jsonPath("$.content[0].title").exists())
                 .andExpect(jsonPath("$.content[0].startDateTime").exists())

@@ -9,6 +9,32 @@ const route = useRoute();
 const router = useRouter();
 const { isAuthenticated } = useAuth();
 
+// --- Comentarios ---
+const commentDialogVisible = ref(false);
+const commentSent = ref(false);
+const commentName = ref("");
+const commentEmail = ref("");
+const commentBody = ref("");
+const { loading: commentLoading, error: commentError, postComment } = useEventComments();
+
+function openCommentDialog() {
+  commentSent.value = false;
+  commentName.value = "";
+  commentEmail.value = "";
+  commentBody.value = "";
+  commentError.value = null;
+  commentDialogVisible.value = true;
+}
+
+async function submitComment() {
+  const ok = await postComment(id, {
+    authorEmail: commentEmail.value || undefined,
+    authorName: commentName.value || undefined,
+    body: commentBody.value,
+  });
+  if (ok) commentSent.value = true;
+}
+
 const id = route.params.id as string;
 
 const { saving, getInteraction, setInteraction, removeInteraction, fetchAgenda } = useAgenda();
@@ -283,17 +309,17 @@ function mapsUrl(e: EventPublic): string {
 
                   <div v-if="event.sourceUrl" class="flex align-items-start gap-2">
                     <i class="pi pi-link text-color-secondary mt-1" />
-                    <div class="flex flex-column">
+                    <div class="flex flex-column min-w-0 flex-1">
                       <span class="font-medium">{{ t("events.sourceUrl") }}</span>
                       <a
                         v-if="isSafeUrl(event.sourceUrl)"
                         :href="event.sourceUrl"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-primary underline text-xs break-all">
+                        class="text-primary underline text-xs block white-space-nowrap overflow-hidden text-overflow-ellipsis">
                         {{ event.sourceUrl }}
                       </a>
-                      <span v-else class="text-color-secondary text-xs break-all">{{ event.sourceUrl }}</span>
+                      <span v-else class="text-color-secondary text-xs block white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ event.sourceUrl }}</span>
                     </div>
                   </div>
                 </div>
@@ -343,7 +369,7 @@ function mapsUrl(e: EventPublic): string {
                       <span class="text-color-secondary text-sm">{{ t("moderation.sendCom") }}</span>
                     </div>
                   </div>
-                  <Button :label="t('common.sendCom')" icon="pi pi-send" class="w-full" type="button" @click="navigateTo(ROUTES.contact)" />
+                  <Button :label="t('common.sendCom')" icon="pi pi-send" class="w-full" type="button" @click="openCommentDialog" />
                 </div>
               </template>
             </Card>
@@ -358,6 +384,57 @@ function mapsUrl(e: EventPublic): string {
     <template #footer>
       <Button :label="t('me.agenda.removeCancel')" severity="secondary" outlined @click="removeDialogVisible = false" />
       <Button :label="t('me.agenda.removeOk')" severity="danger" icon="pi pi-trash" :loading="saving === id" @click="confirmRemove" />
+    </template>
+  </Dialog>
+
+  <!-- Diálogo para enviar comentario a moderación -->
+  <Dialog v-model:visible="commentDialogVisible" :header="t('comments.dialogTitle')" modal :closable="!commentSent" :style="{ width: '28rem' }">
+    <div v-if="commentSent" class="flex flex-column align-items-center gap-3 py-3 text-center">
+      <i class="pi pi-check-circle text-4xl text-green-500" />
+      <p class="m-0">{{ t("comments.successMsg") }}</p>
+    </div>
+    <div v-else class="flex flex-column gap-3">
+      <p class="m-0 text-sm text-color-secondary">{{ t("comments.dialogDesc") }}</p>
+      <div class="flex flex-column gap-1">
+        <label for="comment-name" class="text-sm font-medium">{{ t("comments.nameLabel") }}</label>
+        <InputText id="comment-name" v-model="commentName" class="w-full" />
+      </div>
+      <ClientOnly>
+        <div v-if="!isAuthenticated" class="flex flex-column gap-1">
+          <label for="comment-email" class="text-sm font-medium">
+            {{ t("comments.emailLabel") }} <span class="text-color-secondary text-xs">({{ t("common.required") }})</span>
+          </label>
+          <InputText id="comment-email" v-model="commentEmail" type="email" :placeholder="t('comments.emailPlaceholder')" class="w-full" />
+        </div>
+      </ClientOnly>
+      <div class="flex flex-column gap-1">
+        <label for="comment-body" class="text-sm font-medium">{{ t("comments.bodyLabel") }}</label>
+        <Textarea
+          id="comment-body"
+          v-model="commentBody"
+          rows="4"
+          :maxlength="2000"
+          :placeholder="t('comments.bodyPlaceholder')"
+          class="w-full"
+          autofocus />
+        <span class="text-xs text-color-secondary text-right">{{ commentBody.length }}/2000</span>
+      </div>
+      <Message v-if="commentError" severity="error" :closable="false">{{ commentError }}</Message>
+    </div>
+    <template #footer>
+      <Button
+        v-if="commentSent"
+        :label="t('comments.ok')"
+        @click="commentDialogVisible = false" />
+      <template v-else>
+        <Button :label="t('comments.cancel')" severity="secondary" outlined @click="commentDialogVisible = false" />
+        <Button
+          :label="t('comments.submit')"
+          icon="pi pi-send"
+          :loading="commentLoading"
+          :disabled="!commentBody.trim()"
+          @click="submitComment" />
+      </template>
     </template>
   </Dialog>
 </template>

@@ -42,7 +42,7 @@ public class ModerationAction {
     @Column(columnDefinition = "text")
     private String reason;
 
-    @Column(name = "moderated_by_user_id", nullable = false)
+    @Column(name = "moderated_by_user_id")
     private UUID moderatedByUserId;
 
     @Column(name = "created_at", nullable = false)

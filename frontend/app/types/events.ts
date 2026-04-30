@@ -2,6 +2,7 @@ import type { Artist } from "~/types/artist";
 
 export type EventStatus =
   | "PENDING_MODERATION"
+  | "FLAGGED"
   | "APPROVED"
   | "REJECTED"
   | "DRAFT"
@@ -79,9 +80,24 @@ export type EventPrivateDto = {
   sourceUrl?: string | null;
   posterUrl?: string | null;
   status: EventStatus;
+  flagged: boolean;
   moderationMessage?: string | null;
   createdAt: string;
   submittedAt: string;
+};
+
+export type ModerationRuleType = "TEXT_TERM" | "ARTIST_SLUG" | "REGEX" | "SPAM";
+
+export type FlagInfoDto = {
+  ruleType: ModerationRuleType;
+  reason: string;
+  matchedValue?: string | null;
+};
+
+export type ModerationEventDetailResponse = {
+  event: EventPrivateDto;
+  flagInfo?: FlagInfoDto | null;
+  possibleDuplicateOf?: string | null;
 };
 
 export const MODERATION_TABS = ["PENDING", "APPROVED", "ARCHIVED"] as const;
@@ -92,6 +108,7 @@ export type ModerationPendingListItem = {
   title: string;
   submittedAt: string;
   possibleDuplicateOf?: string | null;
+  status: EventStatus;
 };
 
 export type ModerationApprovedListItem = {

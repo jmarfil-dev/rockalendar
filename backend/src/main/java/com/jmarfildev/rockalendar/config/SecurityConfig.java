@@ -47,7 +47,7 @@ public class SecurityConfig {
         http.headers(headers -> headers.httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
                                                                                 .maxAgeInSeconds(31_536_000) // 1 año
                                                                                 .preload(true)))
-            .csrf(csrf -> csrf.disable())// Para APIs REST en dev
+            .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(eh -> eh.authenticationEntryPoint(unauthorizedError())
                                        // Token válido pero sin Rol adecuado o acceso denegado por configuración
@@ -67,6 +67,9 @@ public class SecurityConfig {
                                                .permitAll()
                                                // Público (lectura)
                                                .requestMatchers(HttpMethod.GET, "/api/events/**", "/api/artists/**", "/api/provinces/**")
+                                               .permitAll()
+                                               // Comentarios de eventos (autenticado o anónimo)
+                                               .requestMatchers(HttpMethod.POST, "/api/events/*/comment")
                                                .permitAll()
 
                                                // Moderación y admin

@@ -18,10 +18,16 @@ import com.jmarfildev.rockalendar.common.error.NotFoundException;
 import com.jmarfildev.rockalendar.common.helper.SortUtils;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
+import com.jmarfildev.rockalendar.events.domain.EventStatus;
 import com.jmarfildev.rockalendar.events.persistence.EventRepository;
+import com.jmarfildev.rockalendar.moderation.api.dto.FlagInfoDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApprovedListItemDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationArchivedListItemDto;
+import com.jmarfildev.rockalendar.moderation.api.dto.ModerationEventDetailDto;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationPendingListItemDto;
+import com.jmarfildev.rockalendar.moderation.domain.ModerationRuleType;
+import com.jmarfildev.rockalendar.moderation.persistence.AutoModerationLogRepository;
+import com.jmarfildev.rockalendar.moderation.persistence.ModerationRuleRepository;
 
 /**
  * @author jmarfil
@@ -34,6 +40,8 @@ public class ModerationEventQueryService {
 
     private final EventRepository repository;
     private final EventMapper eventMapper;
+    private final AutoModerationLogRepository autoModerationLogRepository;
+    private final ModerationRuleRepository ruleRepository;
 
     private static final String FIELD_SUBMITTED_AT = "submittedAt";
     private static final String FIELD_MODERATED_AT = "moderatedAt";
@@ -52,10 +60,30 @@ public class ModerationEventQueryService {
             Map.of("moderated", FIELD_MODERATED_AT, FIELD_CREATED, FIELD_CREATED_AT, FIELD_TITLE, FIELD_TITLE, FIELD_STATUS, FIELD_STATUS);
     private static final Sort ARCHIVED_DEFAULT_SORT = Sort.by(Sort.Order.asc(FIELD_MODERATED_AT), Sort.Order.asc(FIELD_CREATED_AT));
 
-    public EventPrivateDto getForModeration(UUID eventId) {
-        return repository.findById(eventId)
-                         .map(eventMapper::toPrivateDto)
-                         .orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
+    public ModerationEventDetailDto getForModeration(UUID eventId) {
+        var event = repository.findById(eventId)
+                              .orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
+        EventPrivateDto dto = eventMapper.toPrivateDto(event);
+
+        // Si el evento está FLAGGED, recuperar el motivo del log de auto-moderación
+        FlagInfoDto flagInfo = null;
+        if (event.getStatus() == EventStatus.FLAGGED) {
+            flagInfo = autoModerationLogRepository.findByEventId(eventId)
+                    .map(log -> {
+                        String reason = log.getRuleId() != null
+                                ? ruleRepository.findById(log.getRuleId()).map(r -> r.getReason()).orElse(null)
+                                : null;
+                        if (reason == null) {
+                            reason = log.getRuleType() == ModerationRuleType.SPAM
+                                    ? "Posible comportamiento de spam detectado automáticamente."
+                                    : "Contenido marcado por la auto-moderación.";
+                        }
+                        return new FlagInfoDto(log.getRuleType(), reason, log.getMatchedValue());
+                    })
+                    .orElse(null);
+        }
+
+        return new ModerationEventDetailDto(dto, flagInfo, event.getPossibleDuplicateOf());
     }
 
     public Page<ModerationPendingListItemDto> listPending(Pageable pageable) {

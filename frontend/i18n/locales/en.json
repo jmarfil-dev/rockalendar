@@ -56,6 +56,7 @@
     "goRegister": "Create account",
     "noAccount": "Don't have an account yet?",
     "logout": "Logout",
+    "logoutDesc": "Sign out of this device",
     "pw": {
       "title": "Password must include:",
       "length": "At least 8 characters",
@@ -93,8 +94,8 @@
       "title": "You can become a moderator",
       "desc": "You've earned enough trust on the platform. If you'd like to help moderate content, request a promotion.",
       "cta": "Request moderator role",
-      "successTitle": "Congratulations!",
-      "successDetail": "You are now a moderator. Log out and back in to activate your new permissions.",
+      "successTitle": "Request submitted",
+      "successDetail": "Your promotion request has been submitted. An administrator will review it shortly.",
       "errorTitle": "Not possible right now",
       "errorDetail": "You don't meet the requirements at this time."
     },
@@ -152,6 +153,7 @@
     },
     "eventStatus": {
       "PENDING_MODERATION": "Pending",
+      "FLAGGED": "Flagged",
       "APPROVED": "Approved",
       "REJECTED": "Rejected",
       "NEEDS_CHANGES": "Needs changes",
@@ -241,6 +243,16 @@
   "moderation": {
     "title": "Moderation",
     "possibleDuplicate": "Possible duplicate",
+    "viewDuplicate": "View duplicate event",
+    "flagged": "Flagged content",
+    "flagReason": "Flag reason",
+    "flagMatchedValue": "Detected value",
+    "flagRuleType": {
+      "TEXT_TERM": "Rule: blocked text term",
+      "ARTIST_SLUG": "Rule: blocked artist",
+      "REGEX": "Rule: regex pattern match",
+      "SPAM": "Rule: automatic spam detection"
+    },
     "hub": {
       "events": "Concerts",
       "eventsDesc": "Review pending concerts and moderation archive",
@@ -308,6 +320,12 @@
       "requestChangesItems": [
         "There are identifiable errors in the data.",
         "There is a discrepancy between the submitted data and the real data (on the poster or at the URL)."
+      ],
+      "hideTitle": "Hide the concert if:",
+      "hideItems": [
+        "The event is a duplicate of one already approved.",
+        "The festival poster explicitly requests it not be shared, common in events organised in social centres (CSOs).",
+        "It is not suitable for approval for other reasons."
       ]
     }
   },
@@ -367,7 +385,10 @@
     "adminEvents": "Manage concerts",
     "adminEventEdit": "Edit concert (admin)",
     "moderationEventEdit": "Edit concert (moderation)",
-    "forbidden": "Access denied"
+    "forbidden": "Access denied",
+    "meNotifications": "My notifications",
+    "moderationNotifications": "Moderation notifications",
+    "adminNotifications": "Administration notifications"
   },
   "pagination": {
     "sortedBy": "Sorted by"
@@ -434,7 +455,8 @@
       "dbConstraint": "Violated DB Constraint",
       "accountPendingDeletion": "Your account already has a pending deletion request",
       "accountNotPendingDeletion": "There is no active deletion request",
-      "promotionNotEligible": "You do not meet the requirements to request a moderator promotion"
+      "promotionNotEligible": "You do not meet the requirements to request a moderator promotion",
+      "promotionAlreadyRequested": "You already have a pending promotion request under review"
     },
     "422": {
       "invalidImage": "The file is not a valid image or exceeds the maximum allowed size (10 MB)",
@@ -445,6 +467,49 @@
     },
     "500": {
       "server": "Unexpected server error"
+    }
+  },
+  "comments": {
+    "dialogTitle": "Send comment to moderation",
+    "dialogDesc": "Your comment will reach the moderators so they can review the event information.",
+    "nameLabel": "Name (optional)",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name{'@'}domain.com",
+    "bodyLabel": "Comment",
+    "bodyPlaceholder": "What do you want to comment about this event?",
+    "submit": "Send comment",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "successMsg": "Comment sent! Moderators will review it shortly.",
+    "emailRequired": "Email is required if you are not authenticated",
+    "moderationTitle": "Received comments",
+    "noComments": "No comments for this event",
+    "deleteBtn": "Delete comment",
+    "deleteConfirm": "Are you sure you want to delete this comment? This action cannot be undone.",
+    "deleteOk": "Yes, delete",
+    "deleteCancel": "Cancel"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "allRead": "Up to date",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications",
+    "loadMore": "Load more",
+    "bandeja": {
+      "user": "My notifications",
+      "moderation": "Moderation",
+      "admin": "Administration"
+    },
+    "types": {
+      "EVENT_APPROVED": "Your concert «{title}» has been approved",
+      "EVENT_REJECTED": "Your concert «{title}» has been rejected",
+      "EVENT_NEEDS_CHANGES": "A moderator requests changes on «{title}»",
+      "EVENT_COMMENT": "New comment on «{title}»",
+      "EVENT_PENDING_MODERATION": "New concert pending moderation: «{title}»",
+      "EVENT_FLAGGED": "Concert automatically flagged: «{title}»",
+      "POSSIBLE_DUPLICATE_DETECTED": "Possible duplicate detected on «{title}»",
+      "PROMOTION_REQUEST": "New moderator promotion request",
+      "USER_AUTOBANNED": "User {email} has been automatically banned"
     }
   }
 }

@@ -2,6 +2,7 @@ package com.jmarfildev.rockalendar.moderation.application;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,8 @@ import com.jmarfildev.rockalendar.moderation.persistence.AutoModerationLogReposi
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationActionRepository;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationConfigRepository;
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationRuleRepository;
+import com.jmarfildev.rockalendar.notifications.application.NotificationService;
+import com.jmarfildev.rockalendar.notifications.domain.NotificationType;
 import com.jmarfildev.rockalendar.users.application.TrustScoreService;
 
 /**
@@ -50,8 +53,9 @@ public class EventAutoRejectionScheduler {
     private final ModerationRuleRepository ruleRepository;
     private final ModerationActionRepository moderationActionRepository;
     private final TrustScoreService trustScoreService;
+    private final NotificationService notificationService;
 
-    @Scheduled(fixedDelay = 21_600_000) // cada 6 horas
+    @Scheduled(fixedDelay = 43_200_000) // cada 12 horas
     @Transactional
     public void rejectFlaggedEvents() {
         int delayHours = getConfigInt("flagged_rejection_delay_hours", DEFAULT_FLAGGED_DELAY_HOURS);
@@ -87,6 +91,9 @@ public class EventAutoRejectionScheduler {
             moderationActionRepository.saveAndFlush(action);
 
             trustScoreService.checkAutoban(event.getCreatedByUserId());
+            notificationService.notifyUser(event.getCreatedByUserId(), NotificationType.EVENT_REJECTED, event.getId(),
+                                           Map.of(NotificationService.PAYLOAD_TITLE, event.getTitle(), NotificationService.PAYLOAD_REASON,
+                                                  message));
             log.info("auto-rejected FLAGGED eventId={}", event.getId());
         }
     }
@@ -118,7 +125,9 @@ public class EventAutoRejectionScheduler {
             action.setReason(STALE_REJECTION_MESSAGE);
             action.setCreatedAt(now);
             moderationActionRepository.save(action);
-
+            notificationService.notifyUser(event.getCreatedByUserId(), NotificationType.EVENT_REJECTED, event.getId(),
+                                           Map.of(NotificationService.PAYLOAD_TITLE, event.getTitle(), NotificationService.PAYLOAD_REASON,
+                                                  STALE_REJECTION_MESSAGE));
             log.info("stale-rejected NEEDS_CHANGES eventId={}", event.getId());
         }
     }

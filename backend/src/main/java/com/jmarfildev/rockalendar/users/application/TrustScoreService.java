@@ -1,5 +1,6 @@
 package com.jmarfildev.rockalendar.users.application;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.moderation.persistence.ModerationActionRepository;
+import com.jmarfildev.rockalendar.notifications.application.NotificationService;
+import com.jmarfildev.rockalendar.notifications.domain.NotificationType;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 
 /**
@@ -26,6 +29,7 @@ public class TrustScoreService {
 
     private final UserRepository userRepository;
     private final ModerationActionRepository moderationActionRepository;
+    private final NotificationService notificationService;
 
     /**
      * Devuelve el trust score derivado del usuario: suma de pesos de todas
@@ -47,6 +51,8 @@ public class TrustScoreService {
                 if (!user.isBanned()) {
                     user.setBanned(true);
                     log.warn("trust score ban userId={} score={}", userId, score);
+                    notificationService.notifyAllAdmins(NotificationType.USER_AUTOBANNED, null,
+                            Map.of("userId", userId.toString(), "email", user.getEmail()));
                 }
             });
         }

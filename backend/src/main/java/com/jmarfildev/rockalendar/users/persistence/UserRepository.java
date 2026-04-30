@@ -1,6 +1,7 @@
 package com.jmarfildev.rockalendar.users.persistence;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
     List<User> findByDeletionRequestedAtBeforeAndErasedFalse(OffsetDateTime threshold);
+
+    List<User> findByRoleAndBannedFalseAndErasedFalse(String role);
+
+    List<User> findByRoleInAndBannedFalseAndErasedFalse(Collection<String> roles);
 }

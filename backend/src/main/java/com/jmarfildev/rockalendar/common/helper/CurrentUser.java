@@ -1,12 +1,14 @@
 package com.jmarfildev.rockalendar.common.helper;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import com.jmarfildev.rockalendar.users.domain.UserRole;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
+
+import com.jmarfildev.rockalendar.common.Constants;
+import com.jmarfildev.rockalendar.users.domain.UserRole;
 
 /**
  * @author jmarfil
@@ -24,6 +26,27 @@ public class CurrentUser {
             return UUID.fromString(sub);
         }
         throw new IllegalStateException("No JWT authentication in security context");
+    }
+
+    public boolean isAuthenticated() {
+        return SecurityContextHolder.getContext().getAuthentication() instanceof JwtAuthenticationToken;
+    }
+
+    public Optional<UUID> tryGetUserId() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof JwtAuthenticationToken jwtAuth) {
+            var sub = jwtAuth.getToken().getSubject();
+            return sub != null ? Optional.of(UUID.fromString(sub)) : Optional.empty();
+        }
+        return Optional.empty();
+    }
+
+    public Optional<String> tryGetEmail() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof JwtAuthenticationToken jwtAuth) {
+            return Optional.ofNullable(jwtAuth.getToken().getClaimAsString(Constants.JWT_CLAIM_EMAIL));
+        }
+        return Optional.empty();
     }
 
     public boolean isAdmin() {

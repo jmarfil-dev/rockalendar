@@ -67,6 +67,7 @@ Cuándo hacerlo:
 ## Gestión del ciclo de vida de eventos
 
 - Lista de eventos públicos pasados.
+- Permitir eventos pasados en Administración.
 - EventAutoRejectionScheduler.REJECTION_MESSAGE configurable y traducible.
 - Desarrollar estado `DRAFT`.
 - Historial de estados para auditoría.
@@ -76,6 +77,7 @@ Cuándo hacerlo:
 ## Eventos (otros)
 
 - Opción: cartel de evento mediante URL externa. En lugar de subir una imagen, aceptar url y referenciarla sin guardarla.
+- Varios carteles por evento.
 - Agregar lista de artistas desde cartel mediante Vision API (Claude/GPT-4o).
 
 ### Explicación de Vision API
@@ -105,16 +107,16 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
 
 ## Administración
 
-- Panel de administrador.
-- Cambiar el ascenso a moderador. Ahora se modifica el rol automáticamente, pero lo que tiene que hacer es enviar un mensaje a la bandeja de admin.
-- Gestión de perfiles:
-  - Ascender a moderador
+- Gestión de usuarios y perfiles:
+  - Página detalle de usuario con historial de eventos y acciones sobre dichos eventos.
+  - Ascender a moderador -> ya se envía la notificación con email del usuario en el payload (no se muestra en el mensaje de la app).
   - Banear moderador
   - Ascender a admin
+- Historial de moderación en detalle de eventos.
+- Agregar reglas de automoderación
+- Configurar action_weights
 
 ## Moderación
-
-- Bandeja de mensajes??
 
 **Sistema disciplinario de moderadores**
 - Tabla moderator_warnings (id, user_id, assigned_by, reason, created_at): warnings asignados manualmente por admin.
@@ -147,12 +149,11 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
 - Confirmar cuenta al registrarse.
   - Para usuarios ya registrado, confirmar cuenta la primera vez que se logueen tras implementar la funcionalidad de notificaciones o en la configuración de cuenta que salgan todas las notificaciones deshabilitadas por defecto y que para activarlas sea necesario confirmar la cuenta.
   - Modificación de email en settings (depende de la confirmación de cuenta).
-- Preferencias de notificaciones por usuario.
-- Canales:
+- Canales: para esto se crea la interfaz NotificationChannel, hay que agregar un @Component nuevo por cada canal.
   - Email
-  - Notificaciones in-app
   - Push (prioridad muy baja)
-- Recordatorios cuando se acerca la fecha del evento.
+- Preferencias de notificaciones por usuario para nuevos canales, las in-app no se pueden quitar.
+- Recordatorios cuando se acerca la fecha de un evento marcado como interés o asistencia.
 
 ## Crews (grupos)
 
@@ -226,5 +227,6 @@ Una vez que `locations` tenga coordenadas, la búsqueda por radio queda desbloqu
 
 ## Funciones sociales avanzadas
 
+- Darle una vuelta a que un usuario pueda poner que tiene plazas libres en el coche para ir a un evento y su ciudad de partida.
 - Recomendaciones personalizadas.
 - Comentarios y valoraciones.

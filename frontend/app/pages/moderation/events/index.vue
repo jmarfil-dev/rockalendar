@@ -57,6 +57,7 @@ function onPageChange(e: { page: number; rows: number }) {
 
 const STATUS_SEVERITY: Record<EventStatus, string> = {
   PENDING_MODERATION: "warn",
+  FLAGGED: "danger",
   APPROVED: "success",
   REJECTED: "danger",
   NEEDS_CHANGES: "contrast",
@@ -125,12 +126,18 @@ watch([activeTab, currentPage, pageSize, sort], () => {
                     <template #title>
                       <div class="flex align-items-start justify-content-between gap-3">
                         <span>{{ event.title }}</span>
-                        <Tag
-                          v-if="event.possibleDuplicateOf"
-                          :value="t('moderation.possibleDuplicate')"
-                          severity="warn"
-                          icon="pi pi-copy"
-                          class="flex-shrink-0" />
+                        <div class="flex gap-1 flex-shrink-0">
+                          <Tag
+                            v-if="event.status === 'FLAGGED'"
+                            :value="t('moderation.flagged')"
+                            severity="danger"
+                            icon="pi pi-exclamation-triangle" />
+                          <Tag
+                            v-if="event.possibleDuplicateOf"
+                            :value="t('moderation.possibleDuplicate')"
+                            severity="warn"
+                            icon="pi pi-copy" />
+                        </div>
                       </div>
                     </template>
                     <template #content>

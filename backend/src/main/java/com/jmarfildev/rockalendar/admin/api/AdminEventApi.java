@@ -21,12 +21,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
+import com.jmarfildev.rockalendar.admin.api.doc.AdminEventPageDoc;
 import com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto;
 import com.jmarfildev.rockalendar.admin.api.dto.AdminStatusOverrideRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
@@ -50,14 +53,16 @@ public interface AdminEventApi {
     @Operation(summary = "Listar eventos (admin)",
                description = """
                              Lista eventos futuros con filtros opcionales.
-                             Por defecto devuelve solo eventos APPROVED.
+                             Por defecto devuelve todos los estados (sin filtro de estado).
                              Soporta filtrado por estado (múltiple), provincia, rango de fechas y búsqueda por título.
                              """)
-    @ApiResponse(responseCode = "200", description = "Página de eventos")
+    @ApiResponse(responseCode = "200",
+                 description = "Página de eventos",
+                 content = @Content(schema = @Schema(implementation = AdminEventPageDoc.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiBadRequest
-    Page<AdminEventListItemDto> listEvents(@Parameter(description = "Estados a incluir (por defecto: APPROVED)") @RequestParam(required = false) List<
+    Page<AdminEventListItemDto> listEvents(@Parameter(description = "Estados a incluir (por defecto: todos)") @RequestParam(required = false) List<
             EventStatus> statuses,
                                            @Parameter(description = "Código INE de provincia") @RequestParam(required = false) Optional<
                                                    Short> provinceId,
@@ -72,7 +77,9 @@ public interface AdminEventApi {
     @GetMapping("/{eventId}")
     @Operation(summary = "Obtener detalle de un evento (admin)",
                description = "Devuelve el detalle completo de cualquier evento, independientemente de su estado.")
-    @ApiResponse(responseCode = "200", description = "Detalle del evento")
+    @ApiResponse(responseCode = "200",
+                 description = "Detalle del evento",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound
@@ -88,7 +95,9 @@ public interface AdminEventApi {
 
                              No cambia el estado del evento. Registra una acción ADMIN_EDITED en el historial de moderación.
                              """)
-    @ApiResponse(responseCode = "200", description = "Evento actualizado correctamente")
+    @ApiResponse(responseCode = "200",
+                 description = "Evento actualizado correctamente",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiBadRequest
     @ApiUnauthorized
     @ApiForbidden
@@ -115,7 +124,9 @@ public interface AdminEventApi {
 
                              Registra una acción ADMIN_STATE_OVERRIDE en el historial de moderación.
                              """)
-    @ApiResponse(responseCode = "200", description = "Estado actualizado correctamente")
+    @ApiResponse(responseCode = "200",
+                 description = "Estado actualizado correctamente",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiBadRequest
     @ApiUnauthorized
     @ApiForbidden

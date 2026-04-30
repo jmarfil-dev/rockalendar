@@ -20,7 +20,7 @@ import com.jmarfildev.rockalendar.config.properties.StorageProperties;
 public class StorageConfig {
 
     @Bean
-    public S3Client s3Client(StorageProperties props) {
+    S3Client s3Client(StorageProperties props) {
         return S3Client.builder()
                 .endpointOverride(URI.create(props.endpoint()))
                 .credentialsProvider(StaticCredentialsProvider.create(

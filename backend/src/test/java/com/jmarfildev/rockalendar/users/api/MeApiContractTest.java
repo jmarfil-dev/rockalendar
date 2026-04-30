@@ -79,8 +79,8 @@ class MeApiContractTest extends AbstractPostgresTest {
     // --- POST /api/me/promotion-request ---
 
     @Test
-    @DisplayName("POST /api/me/promotion-request usuario elegible -> 200 con role MODERATOR")
-    void requestPromotion_eligible_200AndRoleChanged() throws Exception {
+    @DisplayName("POST /api/me/promotion-request usuario elegible -> 200 con solicitud pendiente y rol sin cambiar")
+    void requestPromotion_eligible_200AndRequestPending() throws Exception {
         // Crear usuario con antigüedad suficiente y 7 aprobaciones (7 × +15 = 105 ≥ MIN_TRUST_SCORE)
         var eligible = factory.userCreatedAt(
                 "promo@test.local",
@@ -98,8 +98,35 @@ class MeApiContractTest extends AbstractPostgresTest {
                        .with(contractUtils.authJwt(eligible.getId().toString(),
                                eligible.getEmail(), "ROLE_USER")))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.role").value(UserRole.MODERATOR.name()))
-               .andExpect(jsonPath("$.promotionEligible").value(false));
+               .andExpect(jsonPath("$.role").value(UserRole.USER.name()))
+               .andExpect(jsonPath("$.promotionEligible").value(false))
+               .andExpect(jsonPath("$.promotionRequestedAt").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("POST /api/me/promotion-request solicitud duplicada -> 409")
+    void requestPromotion_alreadyRequested_409() throws Exception {
+        var eligible = factory.userCreatedAt(
+                "promo2@test.local",
+                OffsetDateTime.now().minusDays(PromotionEligibilityService.MIN_SENIORITY_DAYS + 1)
+        );
+        for (int i = 0; i < 7; i++) {
+            var event = factory.approvedEvent("Evento B" + i, factory.madrid(), TestConstants.MADRID,
+                    "Sala B " + i, TestDates.past().minusDays(i + 1), eligible.getId().toString(),
+                    "Artista B " + i);
+            factory.insertModerationAction(event.getId(), ActionType.APPROVE,
+                    UUID.fromString(TestConstants.MOCK_MODERATOR_ID));
+        }
+
+        var jwt = contractUtils.authJwt(eligible.getId().toString(), eligible.getEmail(), "ROLE_USER");
+
+        // Primera solicitud: OK
+        mockMvc.perform(post(apiPromotion).with(jwt)).andExpect(status().isOk());
+
+        // Segunda solicitud: conflicto
+        var ra = mockMvc.perform(post(apiPromotion).with(jwt))
+                        .andExpect(status().isConflict());
+        contractUtils.expectProblemDetail(ra, 409, apiPromotion);
     }
 
     @Test

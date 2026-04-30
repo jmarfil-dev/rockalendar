@@ -25,6 +25,7 @@ public class DatabaseCleaner {
     public void truncateMutableTables() {
         jdbc.execute("""
                     TRUNCATE TABLE
+                      notifications,
                       moderation_actions,
                       event_artists,
                       events,

@@ -37,7 +37,7 @@ public class AdminEventQueryService {
     private final EventMapper eventMapper;
 
     private static final String FIELD_TITLE = "title";
-    private static final List<EventStatus> DEFAULT_STATUSES = List.of(EventStatus.APPROVED);
+    private static final List<EventStatus> ALL_STATUSES = List.of(EventStatus.values());
 
     private static final Map<String, String> ADMIN_SORT_MAP =
             Map.of(FIELD_TITLE, FIELD_TITLE, "date", "startDateTime", "province", "province.name", "status", "status");
@@ -62,7 +62,7 @@ public class AdminEventQueryService {
             CommonValidations.validateDateRange(dateFrom.get(), dateTo.get());
         }
 
-        List<EventStatus> effectiveStatuses = (statuses == null || statuses.isEmpty()) ? DEFAULT_STATUSES : statuses;
+        List<EventStatus> effectiveStatuses = (statuses == null || statuses.isEmpty()) ? ALL_STATUSES : statuses;
 
         // Construye el LIKE en el servicio para evitar concatenación en JPQL
         String titleLike = q.map(String::trim).filter(s -> !s.isBlank()).map(s -> "%" + s.toLowerCase() + "%").orElse(null);

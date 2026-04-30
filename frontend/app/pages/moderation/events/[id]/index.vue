@@ -1,24 +1,31 @@
 <script setup lang="ts">
-import type { EventStatus, EventPrivateDto } from "~/types/events";
+import type { EventStatus, EventPrivateDto, FlagInfoDto, ModerationEventDetailResponse } from "~/types/events";
 import { ROUTES, ROUTE_PATH } from "~/constants/routes";
 
 definePageMeta({ layout: "moderation", ssr: false });
 
 const { t, tm, rt } = useI18n();
+
+// --- Comentarios ---
+const { comments, loading: commentsLoading, deleteLoading, fetchComments, deleteComment } = useModerationComments();
+const deleteConfirmId = ref<string | null>(null);
 const route = useRoute();
 const id = route.params.id as string;
 const fromTab = route.query.from as string | undefined;
 const backRoute = computed(() =>
-  fromTab ? { path: ROUTES.moderationEvents, query: { tab: fromTab } } : ROUTES.moderationEvents
+  fromTab ? { path: ROUTES.moderationEvents, query: { tab: fromTab } } : ROUTES.moderationEvents,
 );
 
 // --- Carga del evento ---
 const event = ref<EventPrivateDto | null>(null);
+const flagInfo = ref<FlagInfoDto | null>(null);
+const possibleDuplicateOf = ref<string | null>(null);
 useHead({ title: () => event.value?.title ?? t("page.moderationEvents") });
 const loading = ref(true);
 
 const STATUS_SEVERITY: Record<EventStatus, string> = {
   PENDING_MODERATION: "warn",
+  FLAGGED: "danger",
   APPROVED: "success",
   REJECTED: "danger",
   NEEDS_CHANGES: "contrast",
@@ -28,14 +35,24 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
   ERASED: "danger",
 };
 
-const canModerate = computed(() => event.value?.status === "PENDING_MODERATION" || event.value?.status === "APPROVED");
-const canApprove = computed(() => event.value?.status === "PENDING_MODERATION");
+const canModerate = computed(
+  () =>
+    event.value?.status === "PENDING_MODERATION" ||
+    event.value?.status === "FLAGGED" ||
+    event.value?.status === "APPROVED",
+);
+const canApprove = computed(() => event.value?.status === "PENDING_MODERATION" || event.value?.status === "FLAGGED");
 
 onMounted(async () => {
-  const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiModerationEventDetail(id));
+  const [res] = await Promise.all([
+    fetchAuthResult<ModerationEventDetailResponse>(ROUTE_PATH.apiModerationEventDetail(id)),
+    fetchComments(id),
+  ]);
   loading.value = false;
   if (res.ok) {
-    event.value = res.data;
+    event.value = res.data.event;
+    flagInfo.value = res.data.flagInfo ?? null;
+    possibleDuplicateOf.value = res.data.possibleDuplicateOf ?? null;
   } else {
     showError({ statusCode: res.status, data: res.pd });
   }
@@ -133,20 +150,51 @@ async function onConfirm() {
           </div>
           <div class="flex align-items-center gap-2 text-color-secondary text-sm">
             <i class="pi pi-calendar" aria-hidden="true" />
-            <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+            <time :datetime="event.startDateTime">{{
+              formatEventDate(event.startDateTime, event.startTimeUnknown)
+            }}</time>
             <template v-if="event.endDate">
               <span>→</span>
               <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
             </template>
           </div>
         </div>
-        <Tag
-          :value="t(`me.eventStatus.${event.status}`)"
-          :severity="STATUS_SEVERITY[event.status]"
-          class="flex-shrink-0 text-base" />
+        <div class="flex gap-2 flex-shrink-0 align-items-center">
+          <Tag
+            v-if="event.flagged"
+            :value="t('moderation.flagged')"
+            severity="danger"
+            icon="pi pi-exclamation-triangle" />
+          <Tag
+            :value="t(`me.eventStatus.${event.status}`)"
+            :severity="STATUS_SEVERITY[event.status]"
+            class="text-base" />
+        </div>
       </div>
 
       <Divider class="my-1" />
+
+      <!-- Panel de auto-moderación (solo visible para eventos FLAGGED) -->
+      <Message v-if="flagInfo" severity="error" :closable="false" class="mb-1">
+        <div class="flex flex-column gap-1">
+          <span class="font-semibold">{{ t("moderation.flagReason") }}: {{ flagInfo.reason }}</span>
+          <span v-if="flagInfo.matchedValue" class="text-sm">
+            {{ t("moderation.flagMatchedValue") }}: <code class="font-bold">{{ flagInfo.matchedValue }}</code>
+          </span>
+          <span class="text-sm text-color-secondary">{{ t(`moderation.flagRuleType.${flagInfo.ruleType}`) }}</span>
+        </div>
+      </Message>
+
+      <!-- Posible duplicado -->
+      <Message v-if="possibleDuplicateOf" severity="warn" :closable="false" class="mb-1">
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-copy" aria-hidden="true" />
+          <span>{{ t("moderation.possibleDuplicate") }}:</span>
+          <NuxtLink :to="ROUTE_PATH.moderationEventDetail(possibleDuplicateOf)" class="font-semibold underline">
+            {{ t("moderation.viewDuplicate") }}
+          </NuxtLink>
+        </div>
+      </Message>
 
       <!-- Poster -->
       <section :aria-label="t('events.poster')">
@@ -161,9 +209,9 @@ async function onConfirm() {
                 :alt="event.title"
                 sizes="(max-width: 640px) 360px, 800px"
                 format="avif,webp"
-                style="display: block; margin: 0 auto;"
+                style="display: block; margin: 0 auto"
                 :img-attrs="{
-                  style: 'max-width: 100%; max-height: 480px; object-fit: contain; display: block;'
+                  style: 'max-width: 100%; max-height: 480px; object-fit: contain; display: block;',
                 }" />
             </div>
             <div
@@ -248,7 +296,9 @@ async function onConfirm() {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("dates.date") }}</span>
                       <span class="text-color-secondary">
-                        <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+                        <time :datetime="event.startDateTime">{{
+                          formatEventDate(event.startDateTime, event.startTimeUnknown)
+                        }}</time>
                         <template v-if="event.endDate">
                           <span class="mx-1">→</span>
                           <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
@@ -273,17 +323,17 @@ async function onConfirm() {
 
                   <div v-if="event.sourceUrl" class="flex align-items-start gap-2">
                     <i class="pi pi-link text-color-secondary mt-1" aria-hidden="true" />
-                    <div class="flex flex-column">
+                    <div class="flex flex-column min-w-0 flex-1">
                       <span class="font-medium">{{ t("events.sourceUrl") }}</span>
                       <a
                         v-if="isSafeUrl(event.sourceUrl)"
                         :href="event.sourceUrl"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-primary underline text-xs break-all">
+                        class="text-primary underline text-xs block white-space-nowrap overflow-hidden text-overflow-ellipsis">
                         {{ event.sourceUrl }}
                       </a>
-                      <span v-else class="text-color-secondary text-xs break-all">{{ event.sourceUrl }}</span>
+                      <span v-else class="text-color-secondary text-xs block white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ event.sourceUrl }}</span>
                     </div>
                   </div>
 
@@ -367,8 +417,72 @@ async function onConfirm() {
           </div>
         </aside>
       </div>
+      <!-- Sección de comentarios recibidos -->
+      <section :aria-label="t('comments.moderationTitle')" class="mt-2">
+        <Card class="border-1 surface-border">
+          <template #title>
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-comments" aria-hidden="true" />
+              <h3 class="m-0 text-base font-semibold">{{ t("comments.moderationTitle") }}</h3>
+              <span v-if="comments.length" class="text-color-secondary text-sm font-normal">({{ comments.length }})</span>
+            </div>
+          </template>
+          <template #content>
+            <div v-if="commentsLoading" class="flex justify-content-center py-3">
+              <ProgressSpinner style="width: 1.5rem; height: 1.5rem" />
+            </div>
+            <p v-else-if="!comments.length" class="m-0 text-color-secondary text-sm">{{ t("comments.noComments") }}</p>
+            <div v-else class="flex flex-column gap-3">
+              <div
+                v-for="comment in comments"
+                :key="comment.id"
+                class="border-1 surface-border border-round p-3 flex flex-column gap-2">
+                <div class="flex align-items-start justify-content-between gap-2">
+                  <div class="flex flex-column gap-1 text-sm">
+                    <span class="font-medium">{{ comment.authorName || comment.authorEmail }}</span>
+                    <span v-if="comment.authorName" class="text-color-secondary text-xs">{{ comment.authorEmail }}</span>
+                    <time class="text-color-secondary text-xs" :datetime="comment.createdAt">
+                      {{ formatDate(comment.createdAt) }}
+                    </time>
+                  </div>
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    text
+                    size="small"
+                    :loading="deleteLoading === comment.id"
+                    :aria-label="t('comments.deleteBtn')"
+                    type="button"
+                    @click="deleteConfirmId = comment.id" />
+                </div>
+                <p class="m-0 text-sm white-space-pre-line line-height-3">{{ comment.body }}</p>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </section>
+
     </template>
   </article>
+
+  <!-- Diálogo confirmación de borrado de comentario -->
+  <Dialog
+    :visible="!!deleteConfirmId"
+    :header="t('comments.deleteBtn')"
+    modal
+    :style="{ width: '22rem' }"
+    @update:visible="deleteConfirmId = null">
+    <p class="m-0 text-color-secondary">{{ t("comments.deleteConfirm") }}</p>
+    <template #footer>
+      <Button :label="t('comments.deleteCancel')" severity="secondary" outlined @click="deleteConfirmId = null" />
+      <Button
+        :label="t('comments.deleteOk')"
+        severity="danger"
+        icon="pi pi-trash"
+        :loading="!!deleteLoading"
+        @click="async () => { if (deleteConfirmId) { await deleteComment(id, deleteConfirmId); deleteConfirmId = null; } }" />
+    </template>
+  </Dialog>
 
   <!-- Drawer de consejos de moderación -->
   <Drawer v-model:visible="tipsVisible" :header="t('moderation.tips.title')" position="right" style="width: 22rem">
@@ -376,7 +490,7 @@ async function onConfirm() {
       <section>
         <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.rejectTitle") }}</p>
         <ul class="m-0 pl-3 flex flex-column gap-2">
-          <li v-for="(item, i) in (tm('moderation.tips.rejectItems') as string[])" :key="i" class="text-color-secondary">
+          <li v-for="(item, i) in tm('moderation.tips.rejectItems') as string[]" :key="i" class="text-color-secondary">
             {{ rt(item) }}
           </li>
         </ul>
@@ -385,7 +499,19 @@ async function onConfirm() {
       <section>
         <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.requestChangesTitle") }}</p>
         <ul class="m-0 pl-3 flex flex-column gap-2">
-          <li v-for="(item, i) in (tm('moderation.tips.requestChangesItems') as string[])" :key="i" class="text-color-secondary">
+          <li
+            v-for="(item, i) in tm('moderation.tips.requestChangesItems') as string[]"
+            :key="i"
+            class="text-color-secondary">
+            {{ rt(item) }}
+          </li>
+        </ul>
+      </section>
+      <Divider class="my-1" />
+      <section>
+        <p class="m-0 mb-3 font-semibold">{{ t("moderation.tips.hideTitle") }}</p>
+        <ul class="m-0 pl-3 flex flex-column gap-2">
+          <li v-for="(item, i) in tm('moderation.tips.hideItems') as string[]" :key="i" class="text-color-secondary">
             {{ rt(item) }}
           </li>
         </ul>

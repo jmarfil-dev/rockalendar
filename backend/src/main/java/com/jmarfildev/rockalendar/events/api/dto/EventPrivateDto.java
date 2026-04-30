@@ -26,12 +26,15 @@ public record EventPrivateDto(UUID id,
                               String sourceUrl,
                               String posterUrl,
                               EventStatus status,
+                              boolean flagged,
                               String moderationMessage,
                               OffsetDateTime createdAt,
                               OffsetDateTime submittedAt) {
 
-    // FLAGGED es un estado interno: el usuario lo ve como PENDING_MODERATION
+    // FLAGGED es un estado interno: el usuario lo ve como PENDING_MODERATION.
+    // El campo 'flagged' se calcula antes del enmascaramiento para que moderadores/admin puedan distinguirlo.
     public EventPrivateDto {
+        flagged = (status == EventStatus.FLAGGED);
         if (status == EventStatus.FLAGGED) {
             status = EventStatus.PENDING_MODERATION;
         }

@@ -7,6 +7,7 @@ const { t } = useI18n();
 useHead({ title: () => t("page.me") });
 
 const { me, promoting, fetchMe, requestPromotion } = useMe();
+const { logout } = useAuth();
 onMounted(fetchMe);
 </script>
 
@@ -62,6 +63,22 @@ onMounted(fetchMe);
           </Card>
         </NuxtLink>
       </div>
+
+      <div class="col-12 md:col-6">
+        <div class="block h-full cursor-pointer" @click="logout">
+          <Card class="h-full border-1 surface-border hover:surface-hover transition-colors transition-duration-150">
+            <template #title>
+              <div class="flex align-items-center gap-3">
+                <i class="pi pi-sign-out text-3xl text-primary" />
+                <span>{{ t("auth.logout") }}</span>
+              </div>
+            </template>
+            <template #content>
+              <p class="m-0 text-color-secondary text-sm">{{ t("auth.logoutDesc") }}</p>
+            </template>
+          </Card>
+        </div>
+      </div>
     </div>
 
     <div v-if="me?.promotionEligible" class="col-12">
@@ -73,6 +90,12 @@ onMounted(fetchMe);
           </div>
           <Button :label="t('me.promotion.cta')" icon="pi pi-arrow-up" :loading="promoting" @click="requestPromotion" />
         </div>
+      </Message>
+    </div>
+
+    <div v-else-if="me?.promotionRequestedAt" class="col-12">
+      <Message severity="success" :closable="false" class="m-0">
+        <span class="font-semibold">{{ t("me.promotion.successDetail") }}</span>
       </Message>
     </div>
   </div>

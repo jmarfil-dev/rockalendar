@@ -52,11 +52,13 @@ public final class ErrorConstants {
     // Forbidden 403
     public static final String ACCESS_DENIED = "error.403.message";
     public static final String EVENT_NOT_OWNER = "error.403.eventNotOwner";
+    public static final String NOTIFICATION_NOT_OWNER = "error.403.notificationNotOwner";
 
     // Not found 404
     public static final String EVENT_NOT_FOUND = "error.404.eventNotFound";
     public static final String ARTIST_NOT_FOUND = "error.404.artistNotFound";
     public static final String USER_NOT_FOUND = "error.404.userNotFound";
+    public static final String NOTIFICATION_NOT_FOUND = "error.404.notificationNotFound";
 
     // Conflict 409
     public static final String ARTIST_ALREADY_EXISTS = "error.409.artistExists";
@@ -71,6 +73,7 @@ public final class ErrorConstants {
     public static final String EVENT_NOT_ERASABLE_APPROVED = "error.409.eventNotErasableAppr";
     public static final String AGENDA_EVENT_NOT_AVAILABLE = "error.409.agendaEventNotAvailable";
     public static final String PROMOTION_NOT_ELIGIBLE = "error.409.promotionNotEligible";
+    public static final String PROMOTION_ALREADY_REQUESTED = "error.409.promotionAlreadyRequested";
     public static final String ACCOUNT_PENDING_DELETION = "error.409.accountPendingDeletion";
     public static final String ACCOUNT_NOT_PENDING_DELETION = "error.409.accountNotPendingDeletion";
 
