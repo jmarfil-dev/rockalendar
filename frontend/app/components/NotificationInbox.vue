@@ -39,11 +39,17 @@ const MODERATION_EVENT_TYPES = new Set<NotificationType>([
   "POSSIBLE_DUPLICATE_DETECTED",
 ]);
 
+const USER_EVENT_TYPES = new Set<NotificationType>([
+  "EVENT_APPROVED",
+  "EVENT_REJECTED",
+  "EVENT_NEEDS_CHANGES",
+]);
+
 function eventRoute(item: Notification): string | null {
   if (!item.eventId) return null;
-  return MODERATION_EVENT_TYPES.has(item.type)
-    ? ROUTE_PATH.moderationEventDetail(item.eventId)
-    : ROUTE_PATH.eventDetail(item.eventId);
+  if (MODERATION_EVENT_TYPES.has(item.type)) return ROUTE_PATH.moderationEventDetail(item.eventId);
+  if (USER_EVENT_TYPES.has(item.type)) return ROUTE_PATH.meEventDetail(item.eventId);
+  return ROUTE_PATH.eventDetail(item.eventId);
 }
 
 async function onItemClick(item: Notification) {
