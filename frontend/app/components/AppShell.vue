@@ -3,7 +3,7 @@ import { ROUTES } from "~/constants/routes";
 import type { AppLocale, LocaleOption } from "~/types/languages";
 
 const { t, locale, setLocale } = useI18n({ useScope: "global" });
-const { isAuthenticated, isModerator, isAdmin, user, logout } = useAuth();
+const { isAuthenticated, isModerator, isAdmin, user } = useAuth();
 const { unreadCount, markAllRead } = useNotifications();
 const router = useRouter();
 
