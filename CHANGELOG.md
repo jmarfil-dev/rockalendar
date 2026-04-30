@@ -41,8 +41,38 @@ El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 - [BACK] Eliminados `TrafficLoggingInterceptor` y `WebMvcConfig` innecesarios.
 - [BACK] `@Content` añadido a todas las respuestas de las interfaces Api (documentación OpenAPI).
 - [FRONT] Navbar consolidada en `AppShell`; drawer de notificaciones fusionado en el drawer de usuario.
-- [FRONT] Filtrado de notificaciones por bandeja resuelto en el backend (antes se expandían los tipos en el cliente).
 - [FRONT] Estado FLAGGED añadido al filtro del panel de administración de eventos.
+
+## [v1.0.1]
+
+### Added
+- [BACK] Endpoint de healthcheck (`/actuator/health`) no interceptado por el filtro de seguridad.
+- [BACK] Logs en ficheros rotativos con Logback.
+- [BACK] Interceptor de logging de tráfico público y autenticado.
+- [FRONT] `NuxtImage` para optimización automática de imágenes y mejora de rendimiento.
+
+### Fixed
+- [BACK] Cookie `secure` flag incorrecta en producción.
+- [BACK] Llamadas SSR a `/api` que fallaban en producción.
+- [BACK] Auto-moderación usaba un mensaje de reason genérico en lugar del definido en la regla.
+- [FRONT] Diversas correcciones detectadas tras pruebas en producción.
+- [FRONT] Aspa de cierre ausente en el modal de artista creado.
+
+### Changed
+- [BACK+FRONT] Dockerfiles y Docker Compose ajustados para el entorno de producción.
+- [BACK] Normalización de tildes en el contenido antes de evaluar reglas de auto-moderación.
+- [FRONT] Normalización de URLs sin protocolo al proponer o editar un evento.
+- [FRONT] Botones para limpiar fechas en formularios, hint de artistas y mejoras de accesibilidad.
+- [FRONT] Correcciones de PageSpeed Insights (rendimiento, accesibilidad, SEO).
+
+## [v1.0.0]
+
+### Added
+- [BACK+FRONT] Primera versión desplegada en producción: configuración de Docker Compose y Dockerfiles para el entorno productivo.
+- [BACK] Semillas iniciales de blacklist para auto-moderación en producción.
+
+### Fixed
+- [BACK] Migración `NOT NULL` en `created_by_user_id` de eventos.
 
 ## [v0.5.0]
 ### Added
