@@ -54,7 +54,9 @@ public interface NotificationApi {
     @GetMapping("/unread-count")
     @Operation(summary = "Contador de notificaciones no leídas",
                description = "Devuelve el número de notificaciones no leídas del usuario autenticado. Pensado para polling periódico.")
-    @ApiResponse(responseCode = "200", description = "Número de notificaciones no leídas")
+    @ApiResponse(responseCode = "200",
+                 description = "Número de notificaciones no leídas",
+                 content = @Content(schema = @Schema(implementation = UnreadCountDto.class)))
     @ApiUnauthorized
     UnreadCountDto unreadCount();
 

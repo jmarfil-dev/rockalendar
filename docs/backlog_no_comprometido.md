@@ -113,6 +113,8 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
   - Banear moderador
   - Ascender a admin
 - Historial de moderación en detalle de eventos.
+- Agregar reglas de automoderación
+- Configurar action_weights
 
 ## Moderación
 

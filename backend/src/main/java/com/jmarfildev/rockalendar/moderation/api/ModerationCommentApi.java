@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,8 +33,11 @@ import com.jmarfildev.rockalendar.events.api.dto.EventCommentDto;
 public interface ModerationCommentApi {
 
     @GetMapping("/{eventId}/comments")
-    @Operation(summary = "Listar comentarios de un evento", description = "Devuelve todos los comentarios de usuarios sobre un evento, ordenados por fecha.")
-    @ApiResponse(responseCode = "200", description = "Lista de comentarios")
+    @Operation(summary = "Listar comentarios de un evento",
+               description = "Devuelve todos los comentarios de usuarios sobre un evento, ordenados por fecha.")
+    @ApiResponse(responseCode = "200",
+                 description = "Lista de comentarios",
+                 content = @Content(array = @ArraySchema(schema = @Schema(implementation = EventCommentDto.class))))
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound

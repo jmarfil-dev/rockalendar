@@ -28,7 +28,10 @@ export function useAdminEvents() {
     // provinceId puede llegar como undefined cuando el Select se limpia
     if (provinceId != null) params.set("provinceId", String(provinceId));
     if (dateFrom) params.set("dateFrom", dateFrom.toISOString());
-    if (dateTo) params.set("dateTo", dateTo.toISOString());
+    if (dateTo) {
+      const endOfDay = new Date(dateTo.getFullYear(), dateTo.getMonth(), dateTo.getDate(), 23, 59, 59);
+      params.set("dateTo", endOfDay.toISOString());
+    }
 
     const res = await fetchAuthResult<PageResponse<AdminEventListItem>>(
       `${ROUTES.apiAdminEvents}?${params.toString()}`,

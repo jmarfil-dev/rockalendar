@@ -56,7 +56,9 @@ public interface MeEventApi {
     @Operation(summary = "Proponer un nuevo evento",
                description = "Permite al usuario autenticado proponer un nuevo evento. El evento queda en PENDING_MODERATION antes de ser visible públicamente. "
                        + "El cartel es opcional; si se incluye se redimensiona a máximo 1200px y se convierte a JPEG.")
-    @ApiResponse(responseCode = "201", description = "Evento propuesto correctamente")
+    @ApiResponse(responseCode = "201",
+                 description = "Evento propuesto correctamente",
+                 content = @Content(schema = @Schema(implementation = ProposeEventResponse.class)))
     @ApiUnauthorized
     @ApiBadRequest
     ProposeEventResponse propose(@Parameter(description = "Datos del evento a proponer",
@@ -87,7 +89,9 @@ public interface MeEventApi {
     @GetMapping("/{eventId}")
     @Operation(summary = "Obtener detalle de un evento propio",
                description = "Devuelve el detalle completo de un evento del usuario autenticado.")
-    @ApiResponse(responseCode = "200", description = "Detalle del evento")
+    @ApiResponse(responseCode = "200",
+                 description = "Detalle del evento",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound
@@ -103,7 +107,9 @@ public interface MeEventApi {
                        + "Si se incluye un cartel nuevo, reemplaza al anterior. "
                        + "Si se omite y removePoster=false (por defecto), el cartel existente se conserva. "
                        + "Si se omite y removePoster=true, el cartel existente se elimina del servidor.")
-    @ApiResponse(responseCode = "200", description = "Evento actualizado correctamente")
+    @ApiResponse(responseCode = "200",
+                 description = "Evento actualizado correctamente",
+                 content = @Content(schema = @Schema(implementation = EventPrivateDto.class)))
     @ApiUnauthorized
     @ApiForbidden
     @ApiNotFound

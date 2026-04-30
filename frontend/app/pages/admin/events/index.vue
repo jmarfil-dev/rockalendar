@@ -13,6 +13,7 @@ const { options: provinceOptions, load: loadProvinces } = useProvinces();
 // --- Filtros ---
 const ALL_STATUSES: EventStatus[] = [
   "PENDING_MODERATION",
+  "FLAGGED",
   "APPROVED",
   "REJECTED",
   "NEEDS_CHANGES",
@@ -71,6 +72,7 @@ function onSort(e: { sortField: string; sortOrder: number | null }) {
 // --- Status badge ---
 const STATUS_SEVERITY: Record<EventStatus, string> = {
   PENDING_MODERATION: "warn",
+  FLAGGED: "danger",
   APPROVED: "success",
   REJECTED: "danger",
   NEEDS_CHANGES: "contrast",

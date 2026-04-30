@@ -3,14 +3,17 @@ import type { LocationQuery } from "vue-router";
 import type { Artist } from "~/types/artist";
 
 function toMidnightOffsetString(date: Date): string {
-  // "fecha local" a medianoche
-  const localMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
-
-  const y = localMidnight.getFullYear();
-  const m = String(localMidnight.getMonth() + 1).padStart(2, "0");
-  const d = String(localMidnight.getDate()).padStart(2, "0");
-
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}T00:00:00Z`;
+}
+
+function toEndOfDayOffsetString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}T23:59:59Z`;
 }
 
 function getQueryString(q: LocationQuery, key: string): string {
@@ -21,7 +24,7 @@ function getQueryString(q: LocationQuery, key: string): string {
 }
 
 function parseDateOnly(s: string): Date | null {
-  const m = /^(\d{4})-(\d{2})-(\d{2})T00:00:00Z$/.exec(s);
+  const m = /^(\d{4})-(\d{2})-(\d{2})T/.exec(s);
   if (!m) return null;
   const y = Number(m[1]);
   const mo = Number(m[2]) - 1;
@@ -69,12 +72,12 @@ export function useSearchDrawer() {
     nextQuery.page = "0";
 
     nextQuery.artistId = searchForm.value.artistId || undefined;
-    nextQuery.provinceId = searchForm.value.provinceId || undefined;
+    nextQuery.provinceId = searchForm.value.provinceId != null ? String(searchForm.value.provinceId) : undefined;
     nextQuery.city = searchForm.value.city?.trim() || undefined;
     nextQuery.query = searchForm.value.query?.trim() || undefined;
 
     nextQuery.dateFrom = searchForm.value.dateFrom ? toMidnightOffsetString(searchForm.value.dateFrom) : undefined;
-    nextQuery.dateTo = searchForm.value.dateTo ? toMidnightOffsetString(searchForm.value.dateTo) : undefined;
+    nextQuery.dateTo = searchForm.value.dateTo ? toEndOfDayOffsetString(searchForm.value.dateTo) : undefined;
 
     isOpen.value = false;
 
