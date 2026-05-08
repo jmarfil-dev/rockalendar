@@ -2,7 +2,6 @@ package com.jmarfildev.rockalendar.events.api;
 
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
@@ -40,8 +40,8 @@ public class MeEventController implements MeEventApi {
     }
 
     @Override
-    public Page<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {
-        return queryService.listMine(tab, pageable);
+    public PageResponse<EventPrivateListItemDto> listMine(MeEventTabEnum tab, Pageable pageable) {
+        return PageResponse.of(queryService.listMine(tab, pageable));
     }
 
     @Override

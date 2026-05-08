@@ -2,7 +2,6 @@ package com.jmarfildev.rockalendar.moderation.api;
 
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -26,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
 import com.jmarfildev.rockalendar.common.annotations.ApiForbidden;
 import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
@@ -81,7 +81,7 @@ public interface ModerationEventApi {
                  content = @Content(schema = @Schema(implementation = ModerationPendingPageDoc.class)))
     @ApiUnauthorized
     @ApiForbidden
-    Page<ModerationPendingListItemDto> listPending(@PageableDefault(size = 20) Pageable pageable);
+    PageResponse<ModerationPendingListItemDto> listPending(@PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping("/approved")
     @Operation(summary = "Listar eventos aprobados",
@@ -96,7 +96,7 @@ public interface ModerationEventApi {
                  content = @Content(schema = @Schema(implementation = ModerationApprovedPageDoc.class)))
     @ApiUnauthorized
     @ApiForbidden
-    Page<ModerationApprovedListItemDto> listApproved(@PageableDefault(size = 20) Pageable pageable);
+    PageResponse<ModerationApprovedListItemDto> listApproved(@PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping("/archived")
     @Operation(summary = "Listar eventos archivados de moderación",
@@ -111,7 +111,7 @@ public interface ModerationEventApi {
                  content = @Content(schema = @Schema(implementation = ModerationArchivedPageDoc.class)))
     @ApiUnauthorized
     @ApiForbidden
-    Page<ModerationArchivedListItemDto> listArchived(@PageableDefault(size = 20) Pageable pageable);
+    PageResponse<ModerationArchivedListItemDto> listArchived(@PageableDefault(size = 20) Pageable pageable);
 
     /*
      * Command endpoints

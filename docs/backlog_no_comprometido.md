@@ -20,14 +20,12 @@ Estas implementaciones tienen prioridad sobre las demás.
 
 ### Backend
 
-- Cuando el tráfico crezca y no haga falta monitoriear: eliminar TrafficLoggingInterceptor y WebMvcConfig.
 - Base común para búsquedas, filtros y mapas.
 - Reemplazar `Page<T>` por un DTO propio de paginación: `PageResponse`:
   - Control total del contrato JSON
   - Desacoplar API pública de Spring Data
   - Mantener `@EnableSpringDataWebSupport(VIA_DTO)` solo como solución temporal
   - Estructura estable: `content`, `page`, `size`, `totalElements`, `totalPages`
-- Devolver `ResponseEntity` en los controladores y en `GlobalExceptionHandler` (`@ControllerAdvice`).
 - Anotaciones de validación compuestas si hay repetición real.
 - Validators propios solo si hay reglas reutilizables.
 - TRGM para Autocompletar de `artist`.
@@ -68,8 +66,6 @@ Cuándo hacerlo:
 
 - Lista de eventos públicos pasados.
 - Permitir eventos pasados en Administración.
-- EventAutoRejectionScheduler.REJECTION_MESSAGE configurable y traducible.
-- Desarrollar estado `DRAFT`.
 - Historial de estados para auditoría.
 - Estado `REQUEST_CANCEL` para solicitar cancelación de evento.
   - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED`.
@@ -103,6 +99,7 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
 ## Artistas
 
 - Agregar al detalle de artista enlaces útiles (spoty, youtube, redes sociales).
+  - Analizar este tema en profundidad. Spotify y Meta tienen lazos con el sionismo, de verdad queremos eso en Rockalendar?
 - Formulario para usuarios de "sugerir cambios".
 
 ## Administración
@@ -143,6 +140,7 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
   - X
   - Instagram
   - Facebook
+  - Analizar este tema en profundidad. Spotify y Meta tienen lazos con el sionismo, de verdad queremos eso en Rockalendar?
 
 ## Notificaciones
 
