@@ -488,6 +488,14 @@
     "deleteOk": "Sí, eliminar",
     "deleteCancel": "Cancelar"
   },
+  "share": {
+    "title": "Compartir",
+    "whatsapp": "WhatsApp",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "copied": "¡Copiado!",
+    "instagramHint": "Enlace copiado. Pégalo en Instagram."
+  },
   "notifications": {
     "title": "Notificaciones",
     "allRead": "Al día",

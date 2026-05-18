@@ -121,13 +121,11 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
 
 ## Funciones sociales (base)
 
+- Auto publicar en nuestras redes eventos al aporbarse.
 - Seguir artistas.
 - Notificación cuando se publica un nuevo evento de un artista seguido.
-- Compartir eventos / artistas por:
-  - WhatsApp
-  - X
-  - Instagram
-  - Facebook
+- Compartir eventos por:
+  - X (twitter)
 
 ## Notificaciones
 

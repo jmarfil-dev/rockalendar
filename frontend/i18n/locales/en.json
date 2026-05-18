@@ -489,6 +489,14 @@
     "deleteOk": "Yes, delete",
     "deleteCancel": "Cancel"
   },
+  "share": {
+    "title": "Share",
+    "whatsapp": "WhatsApp",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "copied": "Copied!",
+    "instagramHint": "Link copied. Paste it on Instagram."
+  },
   "notifications": {
     "title": "Notifications",
     "allRead": "Up to date",

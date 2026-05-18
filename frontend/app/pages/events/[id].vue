@@ -326,6 +326,13 @@ function mapsUrl(e: EventPublic): string {
               </template>
             </Card>
 
+            <!-- Compartir en redes sociales -->
+            <Card class="border-1 surface-border">
+              <template #content>
+                <EventsShareEventButtons :event-title="event.title" />
+              </template>
+            </Card>
+
             <!-- Botones de agenda (solo para usuarios autenticados) -->
             <!-- ClientOnly: isAuthenticated depende de localStorage, no disponible en SSR -->
             <ClientOnly>
