@@ -12,23 +12,13 @@ Estas implementaciones tienen prioridad sobre las demás.
 
 ### Seguridad
 
-- Guardar token en httpOnly cookies: al parecer es un agujero de seguridad importante.
 - Agregar rate limiting a todas las Request no GET.
-- Refresh token + httpOnly cookies: si almacenamos más datos personales y/o sensibles.
-  - Si alguien roba un token tiene acceso al email y puede proponer conciertos en su nombre. No es catastrófico.
-  - Logout en backend para evitar tokens robados.
+- El Logout de backend no hace blacklist de tokens. Habría que hacerlo para evitar tokens robados cuando haya más datos personales y/o sensibles. Por ahora no es necesario, si alguien roba un token tiene acceso al email y puede proponer conciertos en su nombre. No es catastrófico.
 
 ### Backend
 
-- Base común para búsquedas, filtros y mapas.
-- Reemplazar `Page<T>` por un DTO propio de paginación: `PageResponse`:
-  - Control total del contrato JSON
-  - Desacoplar API pública de Spring Data
-  - Mantener `@EnableSpringDataWebSupport(VIA_DTO)` solo como solución temporal
-  - Estructura estable: `content`, `page`, `size`, `totalElements`, `totalPages`
 - Anotaciones de validación compuestas si hay repetición real.
 - Validators propios solo si hay reglas reutilizables.
-- TRGM para Autocompletar de `artist`.
 
 ### Mejora de búsquedas
 
@@ -36,7 +26,7 @@ Estas implementaciones tienen prioridad sobre las demás.
 
 **PRIORITARIO:** cuando haya volumen alto de datos:
 - Medir con `EXPLAIN ANALYZE` sobre 2–3 consultas reales (búsqueda + listados)
-- Si hay muchos eventos REJECTED acumulados:
+- Si hay muchos eventos no APPROVED acumulados:
   - Migrar GIN global → GIN parcial APPROVED (y borrar el global)
 
 ~~~
