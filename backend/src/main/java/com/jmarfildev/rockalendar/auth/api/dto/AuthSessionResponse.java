@@ -6,4 +6,4 @@ import java.time.Instant;
  * @author jmarfil
  *
  */
-public record AuthTokenResponse(String accessToken, Instant expiresAt) {}
+public record AuthSessionResponse(Instant expiresAt) {}

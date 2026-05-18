@@ -14,8 +14,7 @@ public final class Constants {
     public static final String JWT_CLAIM_EMAIL = "email";
     public static final String JWT_CLAIM_ROLES = "roles";
 
-    // HTTP headers de renovación de token
-    public static final String HEADER_REFRESH_TOKEN = "X-Refresh-Token";
+    // HTTP header de renovación de token
     public static final String HEADER_REFRESH_TOKEN_EXPIRES_AT = "X-Refresh-Token-Expires-At";
 
     // Imagen / almacenamiento

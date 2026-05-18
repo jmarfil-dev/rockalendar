@@ -52,6 +52,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String uri = request.getRequestURI();
+        if (uri.endsWith("/logout")) return true;
         return !uri.startsWith(authPathPrefix) && !uri.equals(contactPath);
     }
 

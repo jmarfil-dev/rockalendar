@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.jmarfildev.rockalendar.auth.application.JwtTokenService;
 import com.jmarfildev.rockalendar.common.Constants;
+import com.jmarfildev.rockalendar.config.AuthCookieHelper;
 import com.jmarfildev.rockalendar.users.domain.User;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
 
@@ -38,6 +40,7 @@ public class TokenRenewalFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
     private final UserRepository userRepository;
+    private final AuthCookieHelper cookieHelper;
 
     @Value("${security.jwt.ttl-minutes}")
     private long ttlMinutes;
@@ -72,7 +75,7 @@ public class TokenRenewalFilter extends OncePerRequestFilter {
                     User user = userOpt.get();
                     List<String> freshRoles = List.of(user.roleEnum().asAuthority());
                     var newToken = jwtTokenService.renewToken(subject, user.getEmail(), freshRoles);
-                    response.setHeader(Constants.HEADER_REFRESH_TOKEN, newToken.token());
+                    response.addHeader(HttpHeaders.SET_COOKIE, cookieHelper.buildAuthCookie(newToken.token(), newToken.expiresAt()).toString());
                     response.setHeader(Constants.HEADER_REFRESH_TOKEN_EXPIRES_AT, newToken.expiresAt().toString());
                     log.debug("Token renovado para subject={} remainingSeconds={}", subject, remainingSeconds);
                 }
