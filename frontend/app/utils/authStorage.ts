@@ -1,11 +1,13 @@
-const STORAGE_TOKEN = "rockalendar_token";
-const STORAGE_EXPIRES = "rockalendar_token_expires_at";
+const STORAGE_SESSION = "rk:auth:session";
 const STORAGE_EVENT_KEY = "rk:auth:event";
 
-/**
- * Convierte una fecha ISO (string) a milisegundos.
- * Devuelve null si viene vacío o no es parseable.
- */
+export interface StoredSession {
+  userId: string;
+  email: string;
+  role: string;
+  expiresAtMs: number;
+}
+
 export function parseExpiresAt(expiresAt: string | null): number | null {
   if (!expiresAt) return null;
 
@@ -19,16 +21,11 @@ export function parseExpiresAt(expiresAt: string | null): number | null {
   return Number.isFinite(ms) ? ms : null;
 }
 
-export function getExpiresAtMsFromToken(token: string): number | null {
-  const payload = decodeJwtPayload(token);
-  return extractExpiresAtMs(payload);
-}
-
 /**
  * Emite un "evento" en localStorage para que otras pestañas puedan reaccionar
  * con el listener que se inicia en auth.client.ts
  */
-export function broadcastAuthEvent(type: "login" | "logout") {
+export function broadcastAuthEvent(type: "login" | "logout"): void {
   if (!import.meta.client) return;
   localStorage.setItem(STORAGE_EVENT_KEY, JSON.stringify({ type, at: Date.now() }));
 }
@@ -36,14 +33,13 @@ export function broadcastAuthEvent(type: "login" | "logout") {
 /**
  * Persiste token + expiración en localStorage (solo cliente).
  */
-export function writeAuthToStorage(token: string | null, expiresAtMs: number | null) {
+export function writeSessionToStorage(session: StoredSession | null): void {
   if (!import.meta.client) return;
-
-  if (token) localStorage.setItem(STORAGE_TOKEN, token);
-  else localStorage.removeItem(STORAGE_TOKEN);
-
-  if (expiresAtMs) localStorage.setItem(STORAGE_EXPIRES, new Date(expiresAtMs).toISOString());
-  else localStorage.removeItem(STORAGE_EXPIRES);
+  if (session) {
+    localStorage.setItem(STORAGE_SESSION, JSON.stringify(session));
+  } else {
+    localStorage.removeItem(STORAGE_SESSION);
+  }
 }
 
 /**
@@ -51,11 +47,13 @@ export function writeAuthToStorage(token: string | null, expiresAtMs: number | n
  * - Si falta expires, intenta extraerlo del JWT.
  * - Si está expirado, limpia.
  */
-export function readAuthFromStorage() {
-  if (!import.meta.client) return { token: null as string | null, expiresAtMs: null as number | null };
-
-  return {
-    token: localStorage.getItem(STORAGE_TOKEN),
-    expiresAtMs: parseExpiresAt(localStorage.getItem(STORAGE_EXPIRES)),
-  };
+export function readSessionFromStorage(): StoredSession | null {
+  if (!import.meta.client) return null;
+  const raw = localStorage.getItem(STORAGE_SESSION);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as StoredSession;
+  } catch {
+    return null;
+  }
 }

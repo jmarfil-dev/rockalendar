@@ -35,6 +35,7 @@ export const ROUTES = {
   // api
   apiLogin: "/api/auth/login",
   apiRegister: "/api/auth/register",
+  apiLogout: "/api/auth/logout",
   apiForgotPassword: "/api/auth/forgot-password",
   apiResetPassword: "/api/auth/reset-password",
   apiHome: "/api/events/home",

@@ -1,15 +1,17 @@
 import { ROUTES } from "~/constants/routes";
+import { ME_STATE_KEY } from "~/composables/useAuth";
 import type { MeDto } from "~/types/user";
 
 export function useMe() {
   const { t } = useI18n();
   const toast = useToast();
 
-  const me = ref<MeDto | null>(null);
+  const me = useState<MeDto | null>(ME_STATE_KEY, () => null);
   const loading = ref(false);
   const promoting = ref(false);
 
   async function fetchMe() {
+    if (me.value) return; // ya cargado desde login, evitar doble petición
     loading.value = true;
     const result = await fetchAuthResult<MeDto>(ROUTES.apiMe);
     loading.value = false;

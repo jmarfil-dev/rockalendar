@@ -1,138 +1,131 @@
 import {
   broadcastAuthEvent,
   parseExpiresAt,
-  getExpiresAtMsFromToken,
-  writeAuthToStorage,
-  readAuthFromStorage,
+  writeSessionToStorage,
+  readSessionFromStorage,
 } from "~/utils/authStorage";
 import { ROUTES } from "~/constants/routes";
-import type { AuthTokenResponse, LoginRequest, RegisterRequest } from "~/types/auth";
+import type { AuthSessionResponse, LoginRequest, RegisterRequest } from "~/types/auth";
 import type { ApiResult } from "~/types/api";
 import type { Role } from "~/types/user-roles";
-import { decodeJwtPayload, extractRoles } from "~/utils/jwt";
+import type { MeDto } from "~/types/user";
+
+// Clave compartida con useMe para evitar doble llamada al montar páginas tras login
+export const ME_STATE_KEY = "auth:me";
 
 export function useAuth() {
   // Estado global, compartido en toda la app
-  const token = useState<string | null>("auth:token", () => null);
+  const userId = useState<string | null>("auth:userId", () => null);
+  const email = useState<string | null>("auth:email", () => null);
+  const role = useState<string | null>("auth:role", () => null);
   const expiresAtMs = useState<number | null>("auth:expiresAtMs", () => null);
 
-  // Derivados del token: se recalculan (no se guardan en storage)
-  const jwtPayload = computed(() => (token.value ? decodeJwtPayload(token.value) : null));
-  const roles = computed<Role[]>(() => extractRoles(jwtPayload.value));
+  // MeDto completo compartido con useMe para evitar doble petición al montar páginas tras login
+  const cachedMe = useState<MeDto | null>(ME_STATE_KEY, () => null);
 
-  // Datos para guardar algo visible (username/email) para UI:
+  // role en BD es "USER" / "MODERATOR" / "ADMIN" (sin prefijo ROLE_)
+  const roles = computed<Role[]>(() => (role.value ? [`ROLE_${role.value}` as Role] : []));
+
   const user = computed(() => {
-    const p = jwtPayload.value;
-    if (!p) return null;
-
-    return {
-      sub: typeof p.sub === "string" ? p.sub : null,
-      email:
-        // Si en el futuro ponemos username o similar, agregarlo aquí
-        (typeof p.email === "string" && p.email) || null,
-    };
+    if (!userId.value) return null;
+    return { sub: userId.value, email: email.value };
   });
 
-  // Sesión válida si hay token y no ha expirado
   const isAuthenticated = computed(() => {
-    if (!token.value || !expiresAtMs.value) return false;
+    if (!expiresAtMs.value) return false;
     return Date.now() < expiresAtMs.value;
   });
 
-  const isModerator = computed(() => roles.value.includes("ROLE_MODERATOR") || roles.value.includes("ROLE_ADMIN"));
-  const isAdmin = computed(() => roles.value.includes("ROLE_ADMIN"));
+  const isModerator = computed(() => role.value === "MODERATOR" || role.value === "ADMIN");
+  const isAdmin = computed(() => role.value === "ADMIN");
 
-  function saveToStorage(t: string | null, exp: number | null) {
-    writeAuthToStorage(t, exp);
+  function setSession(expiresAt: string, me: MeDto) {
+    const ms = parseExpiresAt(expiresAt);
+    if (!ms) return;
+
+    userId.value = me.id;
+    email.value = me.email;
+    role.value = me.role;
+    expiresAtMs.value = ms;
+    cachedMe.value = me;
+
+    writeSessionToStorage({ userId: me.id, email: me.email, role: me.role, expiresAtMs: ms });
   }
 
-  /**
-   * Limpia estado + storage.
-   */
+  function updateExpiry(expiresAt: string) {
+    const ms = parseExpiresAt(expiresAt);
+    if (!ms) return;
+    expiresAtMs.value = ms;
+    const session = readSessionFromStorage();
+    if (session) writeSessionToStorage({ ...session, expiresAtMs: ms });
+  }
+
   function clearSession() {
-    token.value = null;
+    userId.value = null;
+    email.value = null;
+    role.value = null;
     expiresAtMs.value = null;
-    saveToStorage(null, null);
+    cachedMe.value = null;
+    writeSessionToStorage(null);
   }
 
-  /**
-   * Establece sesión desde respuesta del backend.
-   * Prioridad: expiresAt del backend. Fallback: claim exp del JWT.
-   */
-  function setSession(res: AuthTokenResponse) {
-    token.value = res.accessToken;
+  function loadFromStorage() {
+    const session = readSessionFromStorage();
+    if (!session) return;
 
-    // Backend decide el tiempo
-    let expMs = parseExpiresAt(res.expiresAt);
-
-    // Si no se puede leer de back, usa el claim exp de JWT
-    if (!expMs) {
-      expMs = getExpiresAtMsFromToken(res.accessToken);
-    }
-
-    expiresAtMs.value = expMs;
-
-    // Si no se puede determinar expiración, mejor limpiar para evitar estados raros
-    if (!expiresAtMs.value) {
-      clearSession();
+    if (Date.now() >= session.expiresAtMs) {
+      writeSessionToStorage(null);
       return;
     }
 
-    saveToStorage(token.value, expiresAtMs.value);
-    broadcastAuthEvent("login");
-  }
-
-  /**
-   * Carga desde localStorage al iniciar (solo cliente).
-   * - Si falta expires, intenta extraerlo del JWT.
-   * - Si está expirado, limpia.
-   */
-  function loadFromStorage() {
-    const { token: t, expiresAtMs: expMs } = readAuthFromStorage();
-
-    token.value = t;
-    expiresAtMs.value = expMs;
-
-    // Si hay token pero no expires, intenta sacarlo del jwt
-    if (token.value && !expiresAtMs.value) {
-      expiresAtMs.value = getExpiresAtMsFromToken(token.value);
-      saveToStorage(token.value, expiresAtMs.value);
-    }
-
-    // Si ya está expirado, se limpia
-    if (token.value && expiresAtMs.value && Date.now() >= expiresAtMs.value) {
-      clearSession();
-    }
+    userId.value = session.userId;
+    email.value = session.email;
+    role.value = session.role;
+    expiresAtMs.value = session.expiresAtMs;
   }
 
   async function logout() {
+    await fetchPublicResult(ROUTES.apiLogout, { method: "POST" });
     clearSession();
     broadcastAuthEvent("logout");
     await navigateTo(ROUTES.home);
   }
 
-  async function login(req: LoginRequest): Promise<ApiResult<AuthTokenResponse>> {
-    const res = await fetchPublicResult<AuthTokenResponse>(ROUTES.apiLogin, {
+  async function login(req: LoginRequest): Promise<ApiResult<void>> {
+    const loginRes = await fetchPublicResult<AuthSessionResponse>(ROUTES.apiLogin, {
       method: "POST",
       body: req,
     });
 
-    if (res.ok) setSession(res.data); // Crea sesión si login va bien
-    return res;
+    if (!loginRes.ok) return { ok: false, status: loginRes.status, pd: loginRes.pd, raw: loginRes.raw };
+
+    const meRes = await fetchAuthResult<MeDto>(ROUTES.apiMe);
+    if (meRes.ok) {
+      setSession(loginRes.data.expiresAt, meRes.data);
+      broadcastAuthEvent("login");
+    }
+
+    return { ok: true, data: undefined };
   }
 
-  async function register(req: RegisterRequest): Promise<ApiResult<AuthTokenResponse>> {
-    const res = await fetchPublicResult<AuthTokenResponse>(ROUTES.apiRegister, {
+  async function register(req: RegisterRequest): Promise<ApiResult<void>> {
+    const registerRes = await fetchPublicResult<AuthSessionResponse>(ROUTES.apiRegister, {
       method: "POST",
       body: req,
     });
 
-    if (res.ok) setSession(res.data);
-    return res;
+    if (!registerRes.ok) return { ok: false, status: registerRes.status, pd: registerRes.pd, raw: registerRes.raw };
+
+    const meRes = await fetchAuthResult<MeDto>(ROUTES.apiMe);
+    if (meRes.ok) {
+      setSession(registerRes.data.expiresAt, meRes.data);
+      broadcastAuthEvent("login");
+    }
+
+    return { ok: true, data: undefined };
   }
 
   return {
-    token,
     expiresAtMs,
     isAuthenticated,
     isModerator,
@@ -141,7 +134,7 @@ export function useAuth() {
     user,
 
     loadFromStorage,
-    setSession,
+    updateExpiry,
     clearSession,
 
     login,
