@@ -69,13 +69,15 @@ onMounted(fetchAgenda);
 
     <!-- Lista de ítems -->
     <div v-else class="grid">
-      <div v-for="item in items" :key="item.eventId" class="col-12 md:col-6">
-        <Card class="h-full border-1 surface-50 surface-border">
+      <div
+        v-for="item in items"
+        :key="item.eventId"
+        class="col-12 md:col-6 cursor-pointer"
+        @click="navigateTo(ROUTE_PATH.eventDetail(item.eventId))">
+        <Card class="h-full border-1 surface-50 surface-border hover:surface-100 transition-colors transition-duration-150">
           <template #title>
             <div class="flex align-items-start justify-content-between gap-3">
-              <NuxtLink :to="ROUTE_PATH.eventDetail(item.eventId)" class="no-underline text-color">
-                <span>{{ item.title }}</span>
-              </NuxtLink>
+              <span class="text-color">{{ item.title }}</span>
               <Tag
                 :value="t(`me.agenda.status.${item.status}`)"
                 :severity="STATUS_SEVERITY[item.status]"
@@ -100,7 +102,7 @@ onMounted(fetchAgenda);
               </div>
 
               <!-- Botones de interacción -->
-              <div class="flex gap-2">
+              <div class="flex gap-2" @click.stop>
                 <Button
                   :label="t('me.agenda.interested')"
                   :icon="item.status === 'INTERESTED' ? 'pi pi-heart-fill' : 'pi pi-heart'"
