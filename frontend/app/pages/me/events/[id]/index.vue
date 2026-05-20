@@ -267,6 +267,22 @@ async function onDelete() {
                     </div>
                   </div>
 
+                  <div v-if="event.ticketUrl" class="flex align-items-start gap-2">
+                    <i class="pi pi-ticket text-color-secondary mt-1" />
+                    <div class="flex flex-column min-w-0 flex-1">
+                      <span class="font-medium">{{ t("events.ticketUrl") }}</span>
+                      <a
+                        v-if="isSafeUrl(event.ticketUrl)"
+                        :href="event.ticketUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-primary underline text-xs block white-space-nowrap overflow-hidden text-overflow-ellipsis">
+                        {{ event.ticketUrl }}
+                      </a>
+                      <span v-else class="text-color-secondary text-xs block white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ event.ticketUrl }}</span>
+                    </div>
+                  </div>
+
                   <Divider class="my-1" />
 
                   <div class="flex align-items-start gap-2">

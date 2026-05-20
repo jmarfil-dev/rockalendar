@@ -17,6 +17,7 @@ export const useAdminEditEvent = (eventId: string) => {
     cityName: "",
     artists: [] as ArtistChip[],
     sourceUrl: "",
+    ticketUrl: "",
     status: null as EventStatus | null,
   });
 
@@ -46,6 +47,7 @@ export const useAdminEditEvent = (eventId: string) => {
     form.cityName = event.cityName;
     form.artists = event.artists.map((a) => ({ name: a.name }));
     form.sourceUrl = event.sourceUrl ?? "";
+    form.ticketUrl = event.ticketUrl ?? "";
     form.status = event.status;
     existingPosterUrl.value = event.posterUrl ?? null;
     moderationMessage.value = event.moderationMessage ?? null;
@@ -82,6 +84,7 @@ export const useAdminEditEvent = (eventId: string) => {
       cityName: form.cityName,
       artists: form.artists.map((a) => a.name),
       sourceUrl: normalizeUrl(form.sourceUrl) || undefined,
+      ticketUrl: normalizeUrl(form.ticketUrl) || undefined,
     };
 
     const formData = new FormData();

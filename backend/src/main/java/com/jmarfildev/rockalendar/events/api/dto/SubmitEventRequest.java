@@ -27,4 +27,5 @@ public record SubmitEventRequest(@NotBlank @Size(max = 200) String title,
                                  @NotBlank @Size(max = 120) String cityName,
                                  @NotNull @Size(min = 1, message = ErrorConstants.VALID_SIZE_LIST_EMPTY) List<
                                          @NotBlank @Size(max = 200) String> artists,
-                                 @URL(protocol = "https") @Size(max = 2_048) String sourceUrl) {}
+                                 @URL(protocol = "https") @Size(max = 2_048) String sourceUrl,
+                                 @URL(protocol = "https") @Size(max = 2_048) String ticketUrl) {}

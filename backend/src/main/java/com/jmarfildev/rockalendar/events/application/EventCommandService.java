@@ -120,6 +120,7 @@ public class EventCommandService {
                          .venueName(in.venueName())
                          .venueSlug(in.venueSlug())
                          .sourceUrl(in.sourceUrl())
+                         .ticketUrl(in.ticketUrl())
                          .status(initialStatus)
                          .createdByUserId(userId)
                          .submittedAt(OffsetDateTime.now())
@@ -323,9 +324,10 @@ public class EventCommandService {
 
         String description = StringUtils.blankToNull(req.description());
         String sourceUrl = StringUtils.blankToNull(req.sourceUrl());
+        String ticketUrl = StringUtils.blankToNull(req.ticketUrl());
 
         return new EventInputValidate(title, description, startDateTime, startTimeUnknown, req.endDate(), province, cityName, citySlug,
-                                      venueName, venueSlug, sourceUrl, artists);
+                                      venueName, venueSlug, sourceUrl, ticketUrl, artists);
     }
 
     /**
@@ -374,6 +376,7 @@ public class EventCommandService {
         event.setVenueName(in.venueName());
         event.setVenueSlug(in.venueSlug());
         event.setSourceUrl(in.sourceUrl());
+        event.setTicketUrl(in.ticketUrl());
         event.getArtists().clear();
         event.getArtists().addAll(in.artists());
 
@@ -427,5 +430,6 @@ public class EventCommandService {
                                       String venueName,
                                       String venueSlug,
                                       String sourceUrl,
+                                      String ticketUrl,
                                       Set<Artist> artists) {}
 }

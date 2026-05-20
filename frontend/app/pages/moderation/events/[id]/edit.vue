@@ -358,6 +358,20 @@ async function onSuccessClose() {
             </Message>
           </div>
 
+          <!-- Entradas (URL externa) -->
+          <div class="flex flex-column gap-2">
+            <label for="ticketUrl" class="text-sm text-color-secondary">{{ t("events.ticketUrl") }}</label>
+            <InputText
+              id="ticketUrl"
+              v-model="form.ticketUrl"
+              :placeholder="t('me.propose.ticketUrlPlaceholder')"
+              :invalid="!!fieldErrors['ticketUrl']"
+              maxlength="2048" />
+            <Message v-if="fieldErrors['ticketUrl']" severity="error" variant="simple" size="small">
+              {{ t(fieldErrors["ticketUrl"]) }}
+            </Message>
+          </div>
+
           <!-- Acciones -->
           <div class="flex justify-content-end gap-3 pt-2">
             <Button
