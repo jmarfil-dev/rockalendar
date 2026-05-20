@@ -51,6 +51,7 @@ export type EventPublic = {
   cityName: string;
   artists: Artist[];
   sourceUrl?: string | null;
+  ticketUrl?: string | null;
   posterUrl?: string | null;
 };
 
@@ -78,6 +79,7 @@ export type EventPrivateDto = {
   cityName: string;
   artists: Artist[];
   sourceUrl?: string | null;
+  ticketUrl?: string | null;
   posterUrl?: string | null;
   status: EventStatus;
   flagged: boolean;

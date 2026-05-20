@@ -17,6 +17,7 @@ export const useProposeEvent = () => {
     cityName: "",
     artists: [] as ArtistChip[],
     sourceUrl: "",
+    ticketUrl: "",
   });
 
   const posterFile = ref<File | null>(null);
@@ -51,6 +52,7 @@ export const useProposeEvent = () => {
       cityName: form.cityName,
       artists: form.artists.map((a) => a.name),
       sourceUrl: normalizeUrl(form.sourceUrl) || undefined,
+      ticketUrl: normalizeUrl(form.ticketUrl) || undefined,
     };
 
     const formData = new FormData();

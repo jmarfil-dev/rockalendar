@@ -199,7 +199,6 @@ Una vez que `locations` tenga coordenadas, la búsqueda por radio queda desbloqu
   - Enlazar artista
   - Mostrar canciones populares
   - Verificación de artista
-- Plataformas de venta de entradas (Ticketmaster, Entradium, etc.).
 - Enlaces externos desde eventos.
 
 ## Monetización y sostenibilidad
