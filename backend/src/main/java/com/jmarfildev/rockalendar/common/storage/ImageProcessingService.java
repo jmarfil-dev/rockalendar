@@ -1,6 +1,7 @@
 package com.jmarfildev.rockalendar.common.storage;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -44,25 +45,46 @@ public class ImageProcessingService {
 
         try {
             BufferedImage img = ImageIO.read(file.getInputStream());
-            if (img == null) {
-                throw new StorageException(ErrorConstants.INVALID_IMAGE);
-            }
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            var builder = Thumbnails.of(img).outputFormat(Constants.IMAGE_OUTPUT_FORMAT).outputQuality(JPEG_QUALITY);
-
-            if (img.getWidth() > MAX_DIMENSION || img.getHeight() > MAX_DIMENSION) {
-                builder.size(MAX_DIMENSION, MAX_DIMENSION).keepAspectRatio(true);
-            } else {
-                builder.scale(1.0);
-            }
-
-            builder.toOutputStream(out);
-            return out.toByteArray();
+            return processImage(img);
         } catch (StorageException e) {
             throw e;
         } catch (IOException e) {
             throw new StorageException(ErrorConstants.INVALID_IMAGE, e);
         }
+    }
+
+    /**
+     * Versión para bytes crudos, usada cuando la imagen proviene de una descarga externa
+     * (p. ej. scraping de og:image) y no de un upload multipart.
+     *
+     * @throws StorageException si los bytes no representan una imagen válida
+     */
+    public byte[] process(byte[] rawBytes) {
+        try {
+            BufferedImage img = ImageIO.read(new ByteArrayInputStream(rawBytes));
+            return processImage(img);
+        } catch (StorageException e) {
+            throw e;
+        } catch (IOException e) {
+            throw new StorageException(ErrorConstants.INVALID_IMAGE, e);
+        }
+    }
+
+    private byte[] processImage(BufferedImage img) throws IOException {
+        if (img == null) {
+            throw new StorageException(ErrorConstants.INVALID_IMAGE);
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        var builder = Thumbnails.of(img).outputFormat(Constants.IMAGE_OUTPUT_FORMAT).outputQuality(JPEG_QUALITY);
+
+        if (img.getWidth() > MAX_DIMENSION || img.getHeight() > MAX_DIMENSION) {
+            builder.size(MAX_DIMENSION, MAX_DIMENSION).keepAspectRatio(true);
+        } else {
+            builder.scale(1.0);
+        }
+
+        builder.toOutputStream(out);
+        return out.toByteArray();
     }
 }

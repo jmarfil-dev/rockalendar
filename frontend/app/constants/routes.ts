@@ -48,6 +48,7 @@ export const ROUTES = {
   apiMeLocale: "/api/me/locale",
   apiMeCancelDeletion: "/api/me/cancel-deletion",
   apiMeEvents: "/api/me/events",
+  apiMeEventScrapePoster: "/api/me/events/scrape-poster",
   apiMeAgenda: "/api/me/agenda",
 
   apiModerationEvents: "/api/moderation/events",

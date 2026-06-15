@@ -13,6 +13,8 @@ import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
+import com.jmarfildev.rockalendar.events.api.dto.ScrapeEventPosterRequest;
+import com.jmarfildev.rockalendar.events.api.dto.ScrapeEventPosterResponse;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.application.EventCommandService;
 import com.jmarfildev.rockalendar.events.application.EventQueryService;
@@ -47,6 +49,16 @@ public class MeEventController implements MeEventApi {
     @Override
     public EventPrivateDto update(UUID eventId, SubmitEventRequest request, MultipartFile poster, boolean removePoster) {
         return commandService.update(eventId, request, poster, removePoster);
+    }
+
+    @Override
+    public ScrapeEventPosterResponse scrapePoster(ScrapeEventPosterRequest request) {
+        return commandService.scrapePoster(request.sourceUrl());
+    }
+
+    @Override
+    public void deleteScrapedPoster(String key) {
+        commandService.deleteScrapedPoster(key);
     }
 
     @Override

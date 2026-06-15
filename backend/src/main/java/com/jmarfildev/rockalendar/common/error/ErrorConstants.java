@@ -87,6 +87,10 @@ public final class ErrorConstants {
     public static final String TYPE_422_STORAGE = "storage-error";
     public static final String INVALID_IMAGE = "error.422.invalidImage";
     public static final String STORAGE_UPLOAD_FAILED = "error.422.storageUploadFailed";
+    public static final String SCRAPE_INVALID_URL = "error.422.scrapeInvalidUrl";
+    public static final String SCRAPE_UNREACHABLE = "error.422.scrapeUnreachable";
+    public static final String SCRAPE_NO_OG_IMAGE = "error.422.scrapeNoOgImage";
+    public static final String SCRAPE_FACEBOOK_BLOCKED = "error.422.scrapeFacebookBlocked";
 
     // Server Error 500
     public static final String SERVER = "error.500.server";
