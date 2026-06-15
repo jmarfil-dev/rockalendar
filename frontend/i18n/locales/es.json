@@ -31,6 +31,7 @@
     "description": "Descripción",
     "noDescription": "Hay poco Rock 'n' Roll (No hay descripción disponible)",
     "sourceUrl": "Más info (link externo)",
+    "ticketUrl": "Entradas (link externo)",
     "searchPlaceholder": "Festival, grupo, antro...",
     "noResults": "¡Buscas! Nunca hallas ¡Nada!",
     "listEvents": "Listado de conciertos",
@@ -46,6 +47,19 @@
     "posterWillBeRemoved": "El cartel actual será eliminado al guardar.",
     "posterTooLarge": "El cartel no puede superar los {max} MB.",
     "posterInvalidType": "Solo se permiten imágenes JPEG, PNG o WebP.",
+    "posterModeFile": "Subir fichero",
+    "posterModeUrl": "Importar desde URL",
+    "posterUrlPlaceholder": "URL de Instagram, Facebook u otra página del evento...",
+    "importPoster": "Importar",
+    "posterImportError": "No se pudo importar la imagen. Prueba a subirla manualmente.",
+    "posterImportFacebookBlocked": "Facebook no permite importar imágenes directamente. Abre la publicación, haz clic derecho en la imagen → «Copiar dirección de imagen» y pega esa URL aquí.",
+    "posterImportNoImage": "No se encontró ninguna imagen en esa URL. Prueba a subirla manualmente.",
+    "posterImportUnreachable": "No se pudo acceder a esa URL. Comprueba que es correcta o sube el cartel manualmente.",
+    "posterImportInvalidUrl": "La URL no es válida. Debe empezar por http:// o https://.",
+    "posterModeChangeTitle": "¿Descartar el cartel actual?",
+    "posterModeChangeMsg": "Si cambias de modo, el cartel que has cargado se descartará.",
+    "posterModeChangeOk": "Sí, descartar",
+    "posterModeChangeCancel": "Cancelar",
     "status": "Estado"
   },
   "auth": {
@@ -197,6 +211,7 @@
       "venuePlaceholder": "El garito...",
       "cityPlaceholder": "Madrid, Barcelona...",
       "sourceUrlPlaceholder": "https://...",
+      "ticketUrlPlaceholder": "https://...",
       "successTitle": "¡Concierto propuesto!",
       "successMsg": "Tu propuesta se ha enviado correctamente y queda pendiente de moderación.",
       "successOk": "Ver mis conciertos",
@@ -487,6 +502,14 @@
     "deleteConfirm": "¿Seguro que quieres eliminar este comentario? Esta acción no se puede deshacer.",
     "deleteOk": "Sí, eliminar",
     "deleteCancel": "Cancelar"
+  },
+  "share": {
+    "title": "Compartir",
+    "whatsapp": "WhatsApp",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "copied": "¡Copiado!",
+    "instagramHint": "Enlace copiado. Pégalo en Instagram."
   },
   "notifications": {
     "title": "Notificaciones",

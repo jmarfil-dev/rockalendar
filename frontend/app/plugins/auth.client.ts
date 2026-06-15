@@ -4,10 +4,8 @@ export default defineNuxtPlugin((_nuxtApp) => {
   const auth = useAuth();
   const notifications = useNotifications();
 
-  // Cargamos el token síncronamente para que el middleware de ruta pueda evaluar
+  // Cargamos la sesión síncronamente para que el middleware de ruta pueda evaluar
   // el estado de auth en la carga inicial (refresh en página privada).
-  // Los elementos dependientes de auth en páginas SSR deben estar en <ClientOnly>
-  // para evitar hydration mismatches.
   auth.loadFromStorage();
 
   if (auth.isAuthenticated.value) {
@@ -26,9 +24,7 @@ export default defineNuxtPlugin((_nuxtApp) => {
     try {
       const parsed = JSON.parse(event.newValue ?? "{}");
       if (parsed.type === "logout") {
-        auth.token.value = null;
-        auth.expiresAtMs.value = null;
-
+        auth.clearSession();
         navigateTo(ROUTES.login);
       }
     } catch {

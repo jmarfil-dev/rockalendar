@@ -3,7 +3,6 @@ package com.jmarfildev.rockalendar.notifications.api;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -23,6 +22,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.jmarfildev.rockalendar.common.annotations.ApiForbidden;
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
 import com.jmarfildev.rockalendar.notifications.api.doc.NotificationPageDoc;
@@ -47,7 +47,7 @@ public interface NotificationApi {
                  description = "Listado paginado de notificaciones",
                  content = @Content(schema = @Schema(implementation = NotificationPageDoc.class)))
     @ApiUnauthorized
-    Page<NotificationDto> list(@Parameter(description = "Bandeja (USER, MODERATION, ADMIN): resuelve automáticamente los tipos correspondientes") @RequestParam(required = false) NotificationType.Bandeja bandeja,
+    PageResponse<NotificationDto> list(@Parameter(description = "Bandeja (USER, MODERATION, ADMIN): resuelve automáticamente los tipos correspondientes") @RequestParam(required = false) NotificationType.Bandeja bandeja,
                                @Parameter(description = "Filtro explícito por tipos (ignorado si se especifica bandeja)") @RequestParam(required = false) List<NotificationType> types,
                                @PageableDefault(size = 20) Pageable pageable);
 

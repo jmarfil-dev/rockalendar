@@ -2,7 +2,6 @@ package com.jmarfildev.rockalendar.artists.api;
 
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -26,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import com.jmarfildev.rockalendar.artists.api.doc.ArtistPageDoc;
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.artists.api.dto.ArtistDto;
 import com.jmarfildev.rockalendar.artists.api.dto.CreateArtistRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
@@ -51,7 +51,7 @@ public interface ArtistModerationApi {
                  content = @Content(schema = @Schema(implementation = ArtistPageDoc.class)))
     @ApiUnauthorized
     @ApiForbidden
-    Page<ArtistDto> getOrphanArtists(@Parameter(description = "Filtro por nombre (opcional)") @RequestParam(required = false) String query,
+    PageResponse<ArtistDto> getOrphanArtists(@Parameter(description = "Filtro por nombre (opcional)") @RequestParam(required = false) String query,
                                      @PageableDefault(size = 20, sort = "name") Pageable pageable);
 
     @PostMapping

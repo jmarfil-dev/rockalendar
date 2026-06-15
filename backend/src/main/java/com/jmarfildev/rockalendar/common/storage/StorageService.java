@@ -46,6 +46,10 @@ public class StorageService {
         }
     }
 
+    public String getPublicUrl(String key) {
+        return storageProperties.publicUrlBase() + "/" + key;
+    }
+
     public void delete(String key) {
         if (key == null || key.isBlank()) {
             return;

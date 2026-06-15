@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -30,6 +29,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
 import com.jmarfildev.rockalendar.admin.api.doc.AdminEventPageDoc;
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto;
 import com.jmarfildev.rockalendar.admin.api.dto.AdminStatusOverrideRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
@@ -62,7 +62,7 @@ public interface AdminEventApi {
     @ApiUnauthorized
     @ApiForbidden
     @ApiBadRequest
-    Page<AdminEventListItemDto> listEvents(@Parameter(description = "Estados a incluir (por defecto: todos)") @RequestParam(required = false) List<
+    PageResponse<AdminEventListItemDto> listEvents(@Parameter(description = "Estados a incluir (por defecto: todos)") @RequestParam(required = false) List<
             EventStatus> statuses,
                                            @Parameter(description = "Código INE de provincia") @RequestParam(required = false) Optional<
                                                    Short> provinceId,

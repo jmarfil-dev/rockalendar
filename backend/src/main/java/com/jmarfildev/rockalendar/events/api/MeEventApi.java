@@ -2,7 +2,6 @@ package com.jmarfildev.rockalendar.events.api;
 
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -34,10 +33,14 @@ import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
 import com.jmarfildev.rockalendar.common.annotations.ApiForbidden;
 import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
+import com.jmarfildev.rockalendar.common.doc.ProblemDetailDoc;
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.events.api.doc.EventPrivatePageDoc;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto;
 import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
+import com.jmarfildev.rockalendar.events.api.dto.ScrapeEventPosterRequest;
+import com.jmarfildev.rockalendar.events.api.dto.ScrapeEventPosterResponse;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.application.MeEventTabEnum;
 
@@ -83,7 +86,7 @@ public interface MeEventApi {
                  description = "Listado de eventos del usuario",
                  content = @Content(schema = @Schema(implementation = EventPrivatePageDoc.class)))
     @ApiUnauthorized
-    Page<EventPrivateListItemDto> listMine(@Parameter(description = "Nombre de la pestaña") @RequestParam(defaultValue = "ALL") MeEventTabEnum tab,
+    PageResponse<EventPrivateListItemDto> listMine(@Parameter(description = "Nombre de la pestaña") @RequestParam(defaultValue = "ALL") MeEventTabEnum tab,
                                            @Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping("/{eventId}")
@@ -123,6 +126,30 @@ public interface MeEventApi {
                            @Parameter(description = "Cartel nuevo (opcional; si se omite se conserva el actual)") @RequestPart(value = "poster",
                                                                                                                                required = false) MultipartFile poster,
                            @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(defaultValue = "false") boolean removePoster);
+
+    @PostMapping("/scrape-poster")
+    @Operation(summary = "Importar cartel desde URL",
+               description = "Descarga la og:image de la URL indicada, la procesa (máximo 1200px, JPEG) y la sube al almacenamiento. "
+                       + "Devuelve la URL pública y la clave del objeto para incluirlos en la posterior llamada de propuesta o edición del evento.")
+    @ApiResponse(responseCode = "200",
+                 description = "Imagen importada correctamente",
+                 content = @Content(schema = @Schema(implementation = ScrapeEventPosterResponse.class)))
+    @ApiResponse(responseCode = "422",
+                 description = "URL inaccesible, sin og:image o imagen no válida",
+                 content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetailDoc.class)))
+    @ApiUnauthorized
+    @ApiBadRequest
+    ScrapeEventPosterResponse scrapePoster(@Parameter(description = "URL de la página de la que extraer el cartel",
+                                                      required = true) @Valid @org.springframework.web.bind.annotation.RequestBody ScrapeEventPosterRequest request);
+
+    @DeleteMapping("/scrape-poster")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Eliminar cartel importado por URL",
+               description = "Elimina del almacenamiento un cartel previamente subido mediante el endpoint de scraping. "
+                       + "Llamar cuando el usuario descarte una imagen importada antes de proponer el evento.")
+    @ApiResponse(responseCode = "204", description = "Cartel eliminado (o clave ignorada si no es válida)")
+    @ApiUnauthorized
+    void deleteScrapedPoster(@Parameter(description = "Clave del objeto en el almacenamiento") @RequestParam String key);
 
     @DeleteMapping("/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

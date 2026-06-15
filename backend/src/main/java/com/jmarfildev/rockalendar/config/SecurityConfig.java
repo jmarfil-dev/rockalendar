@@ -18,6 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -41,6 +42,7 @@ public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
     private final TokenRenewalFilter tokenRenewalFilter;
+    private final AuthCookieHelper cookieHelper;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -84,7 +86,8 @@ public class SecurityConfig {
 
             .oauth2ResourceServer(oauth2 -> oauth2.authenticationEntryPoint(unauthorizedError())
                                                   .accessDeniedHandler(forbiddenError())
-                                                  .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                                                  .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                                  .bearerTokenResolver(cookieBearerTokenResolver()))
             .addFilterAfter(tokenRenewalFilter, BearerTokenAuthenticationFilter.class);
 
         return http.build();
@@ -97,6 +100,11 @@ public class SecurityConfig {
         var registration = new FilterRegistrationBean<>(tokenRenewalFilter);
         registration.setEnabled(false);
         return registration;
+    }
+
+    @Bean
+    BearerTokenResolver cookieBearerTokenResolver() {
+        return cookieHelper::readToken;
     }
 
     @Bean

@@ -2,6 +2,7 @@ package com.jmarfildev.rockalendar.auth.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
+import com.jmarfildev.rockalendar.config.AuthCookieHelper;
 import com.jmarfildev.rockalendar.support.ContractApiTestUtils;
 import com.jmarfildev.rockalendar.support.TestConstants;
 
@@ -32,20 +34,22 @@ class AuthApiContractTest extends AbstractPostgresTest {
 
     private final String apiAuthLogin = "/api/auth/login";
     private final String apiAuthRegister = "/api/auth/register";
+    private final String apiAuthLogout = "/api/auth/logout";
 
     @Test
-    @DisplayName("POST /api/auth/login con credenciales válidas -> 200 y token")
-    void login_validCredentials_returnsToken() throws Exception {
+    @DisplayName("POST /api/auth/login con credenciales válidas -> 200, cookie httpOnly y expiresAt")
+    void login_validCredentials_returnsCookieAndExpiresAt() throws Exception {
         mockMvc.perform(post(apiAuthLogin).contentType(MediaType.APPLICATION_JSON)
                                             .content("""
                                                      { "email": "%s", "password": "%s" }
                                                      """.formatted(TestConstants.MOCK_USER_EMAIL, TestConstants.MOCK_USER_PASSWORD)))
                .andExpect(status().isOk())
                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-               .andExpect(jsonPath("$.accessToken").isString())
-               .andExpect(jsonPath("$.accessToken").isNotEmpty())
                .andExpect(jsonPath("$.expiresAt").isString())
-               .andExpect(jsonPath("$.expiresAt").isNotEmpty());
+               .andExpect(jsonPath("$.expiresAt").isNotEmpty())
+               .andExpect(cookie().exists(AuthCookieHelper.COOKIE_NAME))
+               .andExpect(cookie().httpOnly(AuthCookieHelper.COOKIE_NAME, true))
+               .andExpect(cookie().path(AuthCookieHelper.COOKIE_NAME, "/"));
     }
 
     @Test
@@ -60,18 +64,19 @@ class AuthApiContractTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/register -> 200 y token")
-    void register_asAnon_returns200() throws Exception {
+    @DisplayName("POST /api/auth/register -> 200, cookie httpOnly y expiresAt")
+    void register_asAnon_returnsCookieAndExpiresAt() throws Exception {
         mockMvc.perform(post(apiAuthRegister).contentType(MediaType.APPLICATION_JSON)
                                                .content("""
                                                         { "email": "user01@test.com", "password": "Test@1234" }
                                                         """))
                .andExpect(status().isOk())
                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-               .andExpect(jsonPath("$.accessToken").isString())
-               .andExpect(jsonPath("$.accessToken").isNotEmpty())
                .andExpect(jsonPath("$.expiresAt").isString())
-               .andExpect(jsonPath("$.expiresAt").isNotEmpty());
+               .andExpect(jsonPath("$.expiresAt").isNotEmpty())
+               .andExpect(cookie().exists(AuthCookieHelper.COOKIE_NAME))
+               .andExpect(cookie().httpOnly(AuthCookieHelper.COOKIE_NAME, true))
+               .andExpect(cookie().path(AuthCookieHelper.COOKIE_NAME, "/"));
     }
 
     @Test
@@ -98,5 +103,13 @@ class AuthApiContractTest extends AbstractPostgresTest {
                                                         { "email": "user02@test.com", "password": "%s" }
                                                         """.formatted(TestConstants.MOCK_USER_PASSWORD)))
                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("POST /api/auth/logout -> 204 y cookie limpiada (maxAge=0)")
+    void logout_clearsCookie() throws Exception {
+        mockMvc.perform(post(apiAuthLogout))
+               .andExpect(status().isNoContent())
+               .andExpect(cookie().maxAge(AuthCookieHelper.COOKIE_NAME, 0));
     }
 }

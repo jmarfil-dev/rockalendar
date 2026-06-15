@@ -1,13 +1,14 @@
 package com.jmarfildev.rockalendar.auth.api;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.Instant;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import com.jmarfildev.rockalendar.auth.api.dto.AuthTokenResponse;
+import jakarta.servlet.http.HttpServletResponse;
+
+import com.jmarfildev.rockalendar.auth.api.dto.AuthSessionResponse;
 import com.jmarfildev.rockalendar.auth.api.dto.ForgotPasswordRequest;
 import com.jmarfildev.rockalendar.auth.api.dto.LoginRequest;
 import com.jmarfildev.rockalendar.auth.api.dto.RegisterRequest;
@@ -15,6 +16,7 @@ import com.jmarfildev.rockalendar.auth.api.dto.ResetPasswordRequest;
 import com.jmarfildev.rockalendar.auth.application.AuthService;
 import com.jmarfildev.rockalendar.auth.application.PasswordResetService;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
+import com.jmarfildev.rockalendar.config.AuthCookieHelper;
 
 /**
  * @author jmarfil
@@ -25,24 +27,31 @@ import com.jmarfildev.rockalendar.common.helper.StringUtils;
 @Slf4j
 public class AuthController implements AuthApi {
 
-    // Token fake que parece legítimo para no delatar la trampa al bot
-    private static final String HONEYPOT_FAKE_TOK = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cmFwIn0.honeypot";
-
     private final AuthService authService;
     private final PasswordResetService passwordResetService;
+    private final AuthCookieHelper cookieHelper;
 
     @Override
-    public AuthTokenResponse login(LoginRequest request) {
-        return authService.login(request);
+    public AuthSessionResponse login(LoginRequest request, HttpServletResponse response) {
+        var token = authService.login(request);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieHelper.buildAuthCookie(token.token(), token.expiresAt()).toString());
+        return new AuthSessionResponse(token.expiresAt());
     }
 
     @Override
-    public AuthTokenResponse register(RegisterRequest request) {
+    public AuthSessionResponse register(RegisterRequest request, HttpServletResponse response) {
         if (StringUtils.blankToNull(request.website()) != null) {
             log.warn("Honeypot activado en /register (website='{}')", request.website());
-            return new AuthTokenResponse(HONEYPOT_FAKE_TOK, Instant.now().plusSeconds(3600));
+            return new AuthSessionResponse(java.time.Instant.now().plusSeconds(3600));
         }
-        return authService.register(request);
+        var token = authService.register(request);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieHelper.buildAuthCookie(token.token(), token.expiresAt()).toString());
+        return new AuthSessionResponse(token.expiresAt());
+    }
+
+    @Override
+    public void logout(HttpServletResponse response) {
+        response.addHeader(HttpHeaders.SET_COOKIE, cookieHelper.clearAuthCookie().toString());
     }
 
     @Override

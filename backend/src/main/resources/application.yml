@@ -92,6 +92,8 @@ security:
     secret: "${JWT_SECRET:?JWT_SECRET environment variable must be set}"
     issuer: "rockalendar"
     ttl-minutes: 2880
+  cookie:
+    secure: true
 
 # =================================
 # LOGGING

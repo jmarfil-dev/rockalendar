@@ -12,33 +12,20 @@ Estas implementaciones tienen prioridad sobre las demás.
 
 ### Seguridad
 
-- Guardar token en httpOnly cookies: al parecer es un agujero de seguridad importante.
-- Agregar rate limiting a todas las Request no GET.
-- Refresh token + httpOnly cookies: si almacenamos más datos personales y/o sensibles.
-  - Si alguien roba un token tiene acceso al email y puede proponer conciertos en su nombre. No es catastrófico.
-  - Logout en backend para evitar tokens robados.
+- El Logout de backend no hace blacklist de tokens. Habrá que hacerlo para evitar tokens robados _cuando haya más datos personales y/o sensibles_. Por ahora no es necesario, si alguien roba un token tiene acceso al email y puede proponer conciertos en su nombre, no es catastrófico.
 
 ### Backend
 
-- Cuando el tráfico crezca y no haga falta monitoriear: eliminar TrafficLoggingInterceptor y WebMvcConfig.
-- Base común para búsquedas, filtros y mapas.
-- Reemplazar `Page<T>` por un DTO propio de paginación: `PageResponse`:
-  - Control total del contrato JSON
-  - Desacoplar API pública de Spring Data
-  - Mantener `@EnableSpringDataWebSupport(VIA_DTO)` solo como solución temporal
-  - Estructura estable: `content`, `page`, `size`, `totalElements`, `totalPages`
-- Devolver `ResponseEntity` en los controladores y en `GlobalExceptionHandler` (`@ControllerAdvice`).
-- Anotaciones de validación compuestas si hay repetición real.
-- Validators propios solo si hay reglas reutilizables.
-- TRGM para Autocompletar de `artist`.
+- Anotaciones de validación compuestas _si hay repetición real_.
+- Validators propios solo _si hay reglas reutilizables_.
 
 ### Mejora de búsquedas
 
 **Mejora búsqueda de eventos públicos**
 
-**PRIORITARIO:** cuando haya volumen alto de datos:
+**PRIORITARIO:** _cuando haya volumen alto de datos_:
 - Medir con `EXPLAIN ANALYZE` sobre 2–3 consultas reales (búsqueda + listados)
-- Si hay muchos eventos REJECTED acumulados:
+- Si hay muchos eventos no APPROVED acumulados:
   - Migrar GIN global → GIN parcial APPROVED (y borrar el global)
 
 ~~~
@@ -55,21 +42,19 @@ Migrar búsqueda LIKE '%term%' (como está ahora en ArtistRepository) a pg_trgm:
 - Mantener límite Top 10 y orden por relevancia
 Motivo: escalar con cientos/miles de artistas sin degradar autocomplete.
 
-Cuándo hacerlo:
+_Cuándo hacerlo_:
 - artistas > 5 000–10 000
 - autocomplete empieza a “rascar” en producción
 - EXPLAIN muestra Seq Scan constante en artists
 
 ## Cookies
 
-- Banner de aviso del uso de cookies cuando se use alguna que no sea de sistema, por ahora no es obligatorio.
+- Banner de aviso del uso de cookies _cuando se use alguna que no sea de sistema_, por ahora no es obligatorio.
 
 ## Gestión del ciclo de vida de eventos
 
 - Lista de eventos públicos pasados.
 - Permitir eventos pasados en Administración.
-- EventAutoRejectionScheduler.REJECTION_MESSAGE configurable y traducible.
-- Desarrollar estado `DRAFT`.
 - Historial de estados para auditoría.
 - Estado `REQUEST_CANCEL` para solicitar cancelación de evento.
   - Acción `CANCEL` para moderadores: cancelar eventos en estados `APPROVED`.
@@ -136,18 +121,16 @@ Siendo realistas, no se van a proponer 1000 festivales al mes, pero puede haber 
 
 ## Funciones sociales (base)
 
+- Auto publicar en nuestras redes eventos al aporbarse.
 - Seguir artistas.
 - Notificación cuando se publica un nuevo evento de un artista seguido.
-- Compartir eventos / artistas por:
-  - WhatsApp
-  - X
-  - Instagram
-  - Facebook
+- Compartir eventos por:
+  - X (twitter)
 
 ## Notificaciones
 
 - Confirmar cuenta al registrarse.
-  - Para usuarios ya registrado, confirmar cuenta la primera vez que se logueen tras implementar la funcionalidad de notificaciones o en la configuración de cuenta que salgan todas las notificaciones deshabilitadas por defecto y que para activarlas sea necesario confirmar la cuenta.
+  - Para usuarios ya registrados, confirmar cuenta la primera vez que se logueen tras implementar la funcionalidad de notificaciones o en la configuración de cuenta que salgan todas las notificaciones deshabilitadas por defecto y que para activarlas sea necesario confirmar la cuenta.
   - Modificación de email en settings (depende de la confirmación de cuenta).
 - Canales: para esto se crea la interfaz NotificationChannel, hay que agregar un @Component nuevo por cada canal.
   - Email
@@ -209,12 +192,11 @@ Una vez que `locations` tenga coordenadas, la búsqueda por radio queda desbloqu
 
 ## Integraciones externas
 
-- hCaptcha progresivo en registro y login si el spam se vuelve un problema.
+- hCaptcha progresivo en registro y login _si el spam se vuelve un problema_.
 - Spotify:
   - Enlazar artista
   - Mostrar canciones populares
   - Verificación de artista
-- Plataformas de venta de entradas (Ticketmaster, Entradium, etc.).
 - Enlaces externos desde eventos.
 
 ## Monetización y sostenibilidad

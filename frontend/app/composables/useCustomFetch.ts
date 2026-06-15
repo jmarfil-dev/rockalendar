@@ -36,7 +36,8 @@ export async function fetchPublicResult<T>(url: string, options: FetchOptions = 
 }
 
 /**
- * Llamadas a API con autenticación necesaria
+ * Llamadas a API con autenticación necesaria.
+ * La cookie httpOnly se envía automáticamente por el navegador (mismo origen).
  */
 export async function fetchAuthResult<T>(url: string, options: FetchOptions = {}): Promise<ApiResult<T>> {
   const auth = useAuth();
@@ -44,19 +45,13 @@ export async function fetchAuthResult<T>(url: string, options: FetchOptions = {}
   try {
     const data = await $fetch<T>(url, {
       ...options,
-      headers: {
-        ...(options.headers ?? {}),
-        ...(auth.token.value ? { Authorization: `Bearer ${auth.token.value}` } : {}),
-      },
       onResponse({ response }) {
-        // Renovación silenciosa: el backend incluye un nuevo token cuando el actual está próximo a expirar.
-        // Se comprueba auth.token antes de aplicar: si el usuario hizo logout mientras la petición
-        // estaba en vuelo, no restauramos la sesión accidentalmente.
-        if (response.ok && import.meta.client && auth.token.value) {
-          const newToken = response.headers.get("X-Refresh-Token");
+        // Renovación silenciosa: el backend renueva la cookie y envía el nuevo expiresAt.
+        // Solo se actualiza el estado si la sesión sigue activa al recibir la respuesta.
+        if (response.ok && import.meta.client && auth.isAuthenticated.value) {
           const newExpiresAt = response.headers.get("X-Refresh-Token-Expires-At");
-          if (newToken && newExpiresAt) {
-            auth.setSession({ accessToken: newToken, expiresAt: newExpiresAt });
+          if (newExpiresAt) {
+            auth.updateExpiry(newExpiresAt);
           }
         }
       },

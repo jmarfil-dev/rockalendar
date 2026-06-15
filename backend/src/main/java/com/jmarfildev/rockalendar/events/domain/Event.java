@@ -85,6 +85,9 @@ public class Event {
     @Column(name = "source_url")
     private String sourceUrl;
 
+    @Column(name = "ticket_url")
+    private String ticketUrl;
+
     @Column(name = "poster_url", length = 500)
     private String posterUrl;
 

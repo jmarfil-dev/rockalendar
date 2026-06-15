@@ -17,6 +17,7 @@ export const useModerationEditEvent = (eventId: string) => {
     cityName: "",
     artists: [] as ArtistChip[],
     sourceUrl: "",
+    ticketUrl: "",
   });
 
   const posterFile = ref<File | null>(null);
@@ -44,6 +45,7 @@ export const useModerationEditEvent = (eventId: string) => {
     form.cityName = event.cityName;
     form.artists = event.artists.map((a) => ({ name: a.name }));
     form.sourceUrl = event.sourceUrl ?? "";
+    form.ticketUrl = event.ticketUrl ?? "";
     existingPosterUrl.value = event.posterUrl ?? null;
   }
 
@@ -78,6 +80,7 @@ export const useModerationEditEvent = (eventId: string) => {
       cityName: form.cityName,
       artists: form.artists.map((a) => a.name),
       sourceUrl: normalizeUrl(form.sourceUrl) || undefined,
+      ticketUrl: normalizeUrl(form.ticketUrl) || undefined,
     };
 
     const formData = new FormData();

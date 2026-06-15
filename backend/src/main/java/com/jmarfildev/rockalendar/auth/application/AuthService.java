@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import com.jmarfildev.rockalendar.auth.api.dto.AuthTokenResponse;
 import com.jmarfildev.rockalendar.auth.api.dto.LoginRequest;
-import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.auth.api.dto.RegisterRequest;
+import com.jmarfildev.rockalendar.auth.application.JwtTokenService.LoginToken;
 import com.jmarfildev.rockalendar.common.error.ConflictException;
 import com.jmarfildev.rockalendar.common.error.ErrorConstants;
+import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.users.domain.User;
 import com.jmarfildev.rockalendar.users.domain.UserRole;
 import com.jmarfildev.rockalendar.users.persistence.UserRepository;
@@ -39,7 +39,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
 
-    public AuthTokenResponse login(LoginRequest request) {
+    public LoginToken login(LoginRequest request) {
         Authentication auth;
         try {
             auth = authenticationManager
@@ -54,12 +54,11 @@ public class AuthService {
 
         var authorities = auth.getAuthorities().stream().map(a -> a.getAuthority()).toList();
 
-        var token = jwtTokenService.createToken(user, authorities);
-        return new AuthTokenResponse(token.token(), token.expiresAt());
+        return jwtTokenService.createToken(user, authorities);
     }
 
     @Transactional
-    public AuthTokenResponse register(RegisterRequest request) {
+    public LoginToken register(RegisterRequest request) {
         String normalizedEmail = StringUtils.normalizeEmail(request.email());
 
         User user = new User();
@@ -76,8 +75,7 @@ public class AuthService {
             throw new ConflictException(ErrorConstants.EMAIL_ALREADY_EXISTS);
         }
 
-        var token = jwtTokenService.createToken(user, List.of(user.getRole()));
         log.info("user registered userId={}", user.getId());
-        return new AuthTokenResponse(token.token(), token.expiresAt());
+        return jwtTokenService.createToken(user, List.of(user.getRole()));
     }
 }

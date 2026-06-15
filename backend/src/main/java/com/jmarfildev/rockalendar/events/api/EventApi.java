@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.events.api.doc.EventPublicPageDoc;
 import com.jmarfildev.rockalendar.events.api.dto.EventPublicDto;
@@ -56,7 +56,7 @@ public interface EventApi {
                  description = "Página de eventos públicos",
                  content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
     @ApiBadRequest
-    Page<EventPublicListItemDto> searchPublic(@Parameter(description = "Búsqueda libre (título, sala, ciudad, artista)",
+    PageResponse<EventPublicListItemDto> searchPublic(@Parameter(description = "Búsqueda libre (título, sala, ciudad, artista)",
                                                          example = "metallica madrid") @RequestParam Optional<String> query,
                                               @Parameter(description = "Fecha/hora desde (ISO-8601)",
                                                          example = "2026-04-01T00:00:00Z") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<
@@ -86,7 +86,7 @@ public interface EventApi {
     @ApiResponse(responseCode = "200",
                  description = "Página de eventos públicos",
                  content = @Content(schema = @Schema(implementation = EventPublicPageDoc.class)))
-    Page<EventPublicListItemDto> listHome(@Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
+    PageResponse<EventPublicListItemDto> listHome(@Parameter(description = "Paginación (page, size, sort)") @PageableDefault(size = 20) Pageable pageable);
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener evento público por ID", description = "Devuelve un evento público por su ID (solo estado APPROVED).")

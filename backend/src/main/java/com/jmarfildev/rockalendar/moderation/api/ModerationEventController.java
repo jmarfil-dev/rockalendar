@@ -2,7 +2,6 @@ package com.jmarfildev.rockalendar.moderation.api;
 
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.moderation.api.dto.ModerationApproveRequest;
@@ -38,18 +38,18 @@ public class ModerationEventController implements ModerationEventApi {
     }
 
     @Override
-    public Page<ModerationPendingListItemDto> listPending(Pageable pageable) {
-        return queryService.listPending(pageable);
+    public PageResponse<ModerationPendingListItemDto> listPending(Pageable pageable) {
+        return PageResponse.of(queryService.listPending(pageable));
     }
 
     @Override
-    public Page<ModerationApprovedListItemDto> listApproved(Pageable pageable) {
-        return queryService.listApproved(pageable);
+    public PageResponse<ModerationApprovedListItemDto> listApproved(Pageable pageable) {
+        return PageResponse.of(queryService.listApproved(pageable));
     }
 
     @Override
-    public Page<ModerationArchivedListItemDto> listArchived(Pageable pageable) {
-        return queryService.listArchived(pageable);
+    public PageResponse<ModerationArchivedListItemDto> listArchived(Pageable pageable) {
+        return PageResponse.of(queryService.listArchived(pageable));
     }
 
     @Override

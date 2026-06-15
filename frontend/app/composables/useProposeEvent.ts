@@ -5,6 +5,7 @@ import { applyFormErrors } from "~/utils/formErrors";
 
 export const useProposeEvent = () => {
   const { t } = useI18n();
+  const posterField = usePosterField();
 
   const form = reactive({
     title: "",
@@ -17,9 +18,9 @@ export const useProposeEvent = () => {
     cityName: "",
     artists: [] as ArtistChip[],
     sourceUrl: "",
+    ticketUrl: "",
   });
 
-  const posterFile = ref<File | null>(null);
   const submitting = ref(false);
   const errorMsg = ref<string | null>(null);
   const fieldErrors = ref<Record<string, string>>({});
@@ -51,12 +52,14 @@ export const useProposeEvent = () => {
       cityName: form.cityName,
       artists: form.artists.map((a) => a.name),
       sourceUrl: normalizeUrl(form.sourceUrl) || undefined,
+      ticketUrl: normalizeUrl(form.ticketUrl) || undefined,
+      posterKey: posterField.importedPosterKey.value || undefined,
     };
 
     const formData = new FormData();
     formData.append("event", new Blob([JSON.stringify(eventData)], { type: "application/json" }));
-    if (posterFile.value) {
-      formData.append("poster", posterFile.value);
+    if (posterField.mode.value === "file" && posterField.posterFile.value) {
+      formData.append("poster", posterField.posterFile.value);
     }
 
     try {
@@ -77,5 +80,5 @@ export const useProposeEvent = () => {
     }
   }
 
-  return { form, posterFile, submitting, errorMsg, fieldErrors, artistsError, submit, resetErrors };
+  return { form, posterField, submitting, errorMsg, fieldErrors, artistsError, submit, resetErrors };
 };
