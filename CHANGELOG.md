@@ -3,6 +3,23 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v1.2.0]
+
+### Added
+- [BACK+FRONT] Campo de URL de venta de entradas en eventos, disponible en los formularios de propuesta y edición.
+- [BACK+FRONT] Importar cartel de evento desde una URL (Instagram, Facebook, og:image) con scraping automático.
+- [FRONT] Botones para compartir evento en WhatsApp, Facebook e Instagram.
+- [FRONT] Manejo de la respuesta 429 (rate limit) con mensaje y segundos de espera.
+- [FRONT] Soporte PWA: app instalable con manifest, iconos y service worker (`@vite-pwa/nuxt`).
+
+### Fixed
+- [FRONT] El enlace de "ver agenda" no cubría toda la card del evento.
+
+### Changed
+- [BACK+FRONT] Autenticación JWT migrada de localStorage/header a cookie httpOnly; nuevo endpoint `POST /api/auth/logout`.
+- [BACK] Rate limiting extendido a todos los endpoints de escritura (antes solo auth), con buckets diferenciados para moderación/admin y usuarios estándar.
+- [BACK] `Page<T>` de Spring reemplazado por `PageResponse<T>` propio en todos los endpoints paginados.
+
 ## [v1.1.0]
 
 ### Added
