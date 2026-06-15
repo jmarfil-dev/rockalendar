@@ -28,6 +28,7 @@ import com.jmarfildev.rockalendar.common.error.ErrorConstants;
 import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.storage.ImageProcessingService;
+import com.jmarfildev.rockalendar.common.storage.OgImageScraperService;
 import com.jmarfildev.rockalendar.common.storage.StorageService;
 import com.jmarfildev.rockalendar.notifications.application.NotificationService;
 import com.jmarfildev.rockalendar.config.AbstractPostgresTest;
@@ -67,6 +68,8 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @MockitoBean
     ImageProcessingService imageProcessingService;
     @MockitoBean
+    OgImageScraperService ogImageScraperService;
+    @MockitoBean
     NotificationService notificationService;
 
     private final String mockTitle = "Concierto";
@@ -88,7 +91,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: invalid date range -> BadRequestException")
     void propose_invalidDateRange_throws() {
         var req = new SubmitEventRequest(mockTitle, "Desc", TestDates.rangeEndDate(), null, TestDates.rangeStartDate(), mockWizink,
-                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("Ska-P"), null, null);
+                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("Ska-P"), null, null, null);
 
         assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
                                                             .hasMessage(ErrorConstants.INVALID_DATE_RANGE);
@@ -98,7 +101,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: artists vacíos tras normalizar -> BadRequestException")
     void propose_artistsBecomeEmptyAfterNormalize_throws() {
         var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
-                                         TestConstants.MADRID, List.of("   ", "!!!", "´´´"), null, null);
+                                         TestConstants.MADRID, List.of("   ", "!!!", "´´´"), null, null, null);
 
         assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
                                                             .hasMessage(ErrorConstants.ARTIST_REQUIRED);
@@ -108,7 +111,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: citySlug se queda vacío tras normalizar -> BadRequestException")
     void propose_cityBecomesBlankAfterNormalize_throws() {
         var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
-                                         "!!!", List.of("Ska-P"), null, null);
+                                         "!!!", List.of("Ska-P"), null, null, null);
 
         assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
                                                             .hasMessage(ErrorConstants.CITY_REQUIRED);
@@ -118,7 +121,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: venueSlug se queda vacío tras normalizar -> BadRequestException")
     void propose_venueBecomesBlankAfterNormalize_throws() {
         var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, "***", factory.madrid().getIneCode(),
-                                         TestConstants.MADRID, List.of("Ska-P"), null, null);
+                                         TestConstants.MADRID, List.of("Ska-P"), null, null, null);
 
         assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
                                                             .hasMessage(ErrorConstants.VENUE_REQUIRED);
@@ -128,7 +131,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: title se queda vacío tras normalizar -> BadRequestException")
     void propose_titleBecomesBlankAfterNormalize_throws() {
         var req = new SubmitEventRequest("!!!", null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
-                                         TestConstants.MADRID, List.of("Ska-P"), null, null);
+                                         TestConstants.MADRID, List.of("Ska-P"), null, null, null);
 
         assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
                                                             .hasMessage(ErrorConstants.TITLE_REQUIRED);
@@ -140,7 +143,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         short missingProv = 99; // ine_code inexistente (rango válido: 1-52)
 
         var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, missingProv, TestConstants.MADRID,
-                                         List.of("Ska-P"), null, null);
+                                         List.of("Ska-P"), null, null, null);
 
         assertThatThrownBy(() -> service.propose(req, null)).isInstanceOf(BadRequestException.class)
                                                             .hasMessage(ErrorConstants.INVALID_PROVINCE);
@@ -150,7 +153,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: ok -> crea evento PENDING_MODERATION")
     void propose_ok_createPendingEvent() {
         var req = new SubmitEventRequest("  Ska-P en Madrid  ", "  descripcion  ", TestDates.madridDate(), null, null, "  WiZink Center  ",
-                                         factory.madrid().getIneCode(), "  Madrid  ", List.of("  Ska-P  "), "  https://example.com  ", null);
+                                         factory.madrid().getIneCode(), "  Madrid  ", List.of("  Ska-P  "), "  https://example.com  ", null, null);
 
         var saved = service.propose(req, null);
 
@@ -177,7 +180,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         long before = artistRepository.count();
 
         var req = new SubmitEventRequest("Against You en Madrid", null, TestDates.madridDate(), null, null, mockWizink,
-                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("  AgAinST- yOU "), null, null);
+                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("  AgAinST- yOU "), null, null, null);
 
         var saved = service.propose(req, null);
 
@@ -191,7 +194,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: artistas  no se duplican por slug y preservan orden (LinkedHashSet)")
     void propose_deduplicatesArtists_preservesOrder() {
         var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
-                                         TestConstants.MADRID, List.of("Ska-P", "  ska p  ", "Boikot"), null, null);
+                                         TestConstants.MADRID, List.of("Ska-P", "  ska p  ", "Boikot"), null, null, null);
 
         var saved = service.propose(req, null);
 
@@ -205,7 +208,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     @DisplayName("propose: description y sourceUrl en blanco se guardan como null")
     void propose_blankOptionalFields_becomeNull() {
         var req = new SubmitEventRequest(mockTitle, "    ", TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
-                                         TestConstants.MADRID, List.of("Ska-P"), "   ", null);
+                                         TestConstants.MADRID, List.of("Ska-P"), "   ", null, null);
 
         var saved = service.propose(req, null);
 
@@ -220,7 +223,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         var event = factory.approvedMadridAgainstYou();
         var req = new SubmitEventRequest("  Against You en concierto  ", "  descripcion  ", TestDates.madridDate(), null, null,
                                          "  WiZink Center  ", factory.madrid().getIneCode(), "  Madrid  ", List.of("  Against You  "),
-                                         "  https://example.com  ", null);
+                                         "  https://example.com  ", null, null);
 
         var updated = service.update(event.getId(), req, null, false);
 
@@ -266,7 +269,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
     void propose_admin_createsApprovedEventDirectly() {
         asAdmin();
         var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
-                                         TestConstants.MADRID, List.of("Ska-P"), null, null);
+                                         TestConstants.MADRID, List.of("Ska-P"), null, null, null);
 
         var saved = service.propose(req, null);
 
@@ -284,7 +287,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
 
         var req = new SubmitEventRequest("Título editado por admin", null, TestDates.madridDate(), null, null, mockWizink,
                                          factory.madrid().getIneCode(), TestConstants.MADRID, List.of(TestConstants.MOCK_ARTIST_NAME_AY),
-                                         null, null);
+                                         null, null, null);
 
         var updated = service.update(event.getId(), req, null, false);
 
@@ -299,7 +302,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         asAdmin();
 
         var req = new SubmitEventRequest("Mafalda corregido", null, TestDates.genericFutureDate(), null, null, "Sala Moon",
-                                         factory.valencia().getIneCode(), "València", List.of("Mafalda"), null, null);
+                                         factory.valencia().getIneCode(), "València", List.of("Mafalda"), null, null, null);
 
         var updated = service.update(event.getId(), req, null, false);
 
@@ -313,7 +316,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         asAdmin();
 
         var req = new SubmitEventRequest("Soziedad Alkoholika corregido", null, TestDates.madridDate(), null, null, "Sala Copérnico",
-                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("Soziedad Alkoholika"), null, null);
+                                         factory.madrid().getIneCode(), TestConstants.MADRID, List.of("Soziedad Alkoholika"), null, null, null);
 
         var updated = service.update(event.getId(), req, null, false);
 
@@ -379,7 +382,7 @@ class EventCommandServiceTest extends AbstractPostgresTest {
         doThrow(new DataIntegrityViolationException("duplicate key")).when(artistRepository).saveAndFlush(any());
 
         var req = new SubmitEventRequest(mockTitle, null, TestDates.madridDate(), null, null, mockWizink, factory.madrid().getIneCode(),
-                                         TestConstants.MADRID, List.of(TestConstants.MOCK_ARTIST_NAME_AY), null, null);
+                                         TestConstants.MADRID, List.of(TestConstants.MOCK_ARTIST_NAME_AY), null, null, null);
 
         var saved = service.propose(req, null);
 
