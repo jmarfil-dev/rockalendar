@@ -18,41 +18,50 @@ function goBack() {
   }
 }
 const { load: loadProvinces, options: provinceOptions, loading: provincesLoading } = useProvinces();
-const { form, posterFile, submitting, errorMsg, fieldErrors, artistsError, submit } = useProposeEvent();
+const { form, posterField, submitting, errorMsg, fieldErrors, artistsError, submit } = useProposeEvent();
+
+const {
+  mode: posterMode,
+  posterFile,
+  posterFileError,
+  urlInput: posterUrlInput,
+  importedPosterUrl,
+  isImporting: posterIsImporting,
+  importError: posterImportError,
+  previewUrl: posterPreviewUrl,
+  showModeConfirm: posterShowModeConfirm,
+  requestModeSwitch,
+  confirmModeSwitch,
+  cancelModeSwitch,
+  setPosterFile,
+  clearPoster: clearPosterState,
+  importFromUrl,
+} = posterField;
 
 const posterInputRef = ref<HTMLInputElement | null>(null);
-const posterPreviewUrl = computed(() => (posterFile.value ? URL.createObjectURL(posterFile.value) : null));
-const posterError = ref<string | null>(null);
 
-const POSTER_MAX_MB = 5;
-const POSTER_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const posterModeOptions = computed(() => [
+  { label: t("events.posterModeFile"), value: "file" },
+  { label: t("events.posterModeUrl"), value: "url" },
+]);
 
 function onPosterChange(e: Event) {
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0] ?? null;
-  posterError.value = null;
-
   if (!file) return;
-
-  if (!POSTER_ALLOWED_TYPES.includes(file.type)) {
-    posterError.value = t("events.posterInvalidType");
-    input.value = "";
-    return;
-  }
-
-  if (file.size > POSTER_MAX_MB * 1024 * 1024) {
-    posterError.value = t("events.posterTooLarge", { max: POSTER_MAX_MB });
-    input.value = "";
-    return;
-  }
-
-  posterFile.value = file;
+  const ok = setPosterFile(file);
+  if (!ok && posterInputRef.value) posterInputRef.value.value = "";
 }
 
-function clearPoster() {
-  posterFile.value = null;
-  posterError.value = null;
+function onClearPoster() {
+  clearPosterState();
   if (posterInputRef.value) posterInputRef.value.value = "";
+}
+
+function onPosterUrlBlur() {
+  if (posterUrlInput.value && !importedPosterUrl.value) {
+    importFromUrl();
+  }
 }
 
 const today = new Date();
@@ -273,17 +282,73 @@ async function onSuccessClose() {
 
           <!-- Cartel -->
           <div class="flex flex-column gap-2">
-            <label for="poster" class="text-sm text-color-secondary">{{ t("events.uploadPoster") }}</label>
+            <label class="text-sm text-color-secondary">{{ t("events.uploadPoster") }}</label>
 
-            <!-- Preview del fichero seleccionado -->
-            <div v-if="posterFile" class="flex flex-column gap-2">
-              <img
-                :src="posterPreviewUrl!"
-                :alt="t('events.posterPreview')"
-                class="border-round-lg border-1 surface-border"
-                style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" >
-              <div class="flex align-items-center gap-2">
-                <span class="text-sm text-color-secondary flex-1 overflow-hidden text-overflow-ellipsis white-space-nowrap">{{ posterFile.name }}</span>
+            <!-- Toggle Fichero / URL -->
+            <SelectButton
+              :model-value="posterMode"
+              :options="posterModeOptions"
+              option-value="value"
+              option-label="label"
+              :allow-empty="false"
+              @update:model-value="requestModeSwitch($event)" />
+
+            <!-- Modo: subir fichero -->
+            <template v-if="posterMode === 'file'">
+              <div v-if="posterFile" class="flex flex-column gap-2">
+                <img
+                  :src="posterPreviewUrl!"
+                  :alt="t('events.posterPreview')"
+                  class="border-round-lg border-1 surface-border"
+                  style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" >
+                <div class="flex align-items-center gap-2">
+                  <span class="text-sm text-color-secondary flex-1 overflow-hidden text-overflow-ellipsis white-space-nowrap">{{ posterFile.name }}</span>
+                  <Button
+                    type="button"
+                    :label="t('events.removePoster')"
+                    icon="pi pi-times"
+                    severity="secondary"
+                    outlined
+                    size="small"
+                    @click="onClearPoster" />
+                </div>
+              </div>
+              <div v-else>
+                <Button
+                  type="button"
+                  :label="t('events.uploadPoster')"
+                  icon="pi pi-upload"
+                  severity="secondary"
+                  outlined
+                  @click="posterInputRef?.click()" />
+              </div>
+              <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
+              <Message v-if="posterFileError" severity="error" variant="simple" size="small">{{ posterFileError }}</Message>
+            </template>
+
+            <!-- Modo: importar desde URL -->
+            <template v-else>
+              <div class="flex gap-2">
+                <InputText
+                  v-model="posterUrlInput"
+                  :placeholder="t('events.posterUrlPlaceholder')"
+                  :disabled="posterIsImporting"
+                  class="flex-1"
+                  @keydown.enter.prevent="importFromUrl()"
+                  @blur="onPosterUrlBlur" />
+                <Button
+                  type="button"
+                  :label="t('events.importPoster')"
+                  :loading="posterIsImporting"
+                  :disabled="!posterUrlInput || posterIsImporting"
+                  @click="importFromUrl()" />
+              </div>
+              <div v-if="importedPosterUrl" class="flex flex-column gap-2">
+                <img
+                  :src="importedPosterUrl"
+                  :alt="t('events.posterPreview')"
+                  class="border-round-lg border-1 surface-border"
+                  style="max-width: 100%; max-height: 320px; object-fit: contain; background: var(--surface-50)" >
                 <Button
                   type="button"
                   :label="t('events.removePoster')"
@@ -291,23 +356,13 @@ async function onSuccessClose() {
                   severity="secondary"
                   outlined
                   size="small"
-                  @click="clearPoster" />
+                  @click="onClearPoster" />
               </div>
-            </div>
+              <Message v-if="posterImportError" severity="warn" :closable="false" variant="simple" size="small">
+                {{ posterImportError }}
+              </Message>
+            </template>
 
-            <!-- Botón de selección -->
-            <div v-else>
-              <Button
-                type="button"
-                :label="t('events.uploadPoster')"
-                icon="pi pi-upload"
-                severity="secondary"
-                outlined
-                @click="posterInputRef?.click()" />
-            </div>
-
-            <input id="poster" ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
-            <Message v-if="posterError" severity="error" variant="simple" size="small">{{ posterError }}</Message>
             <small class="text-xs text-color-secondary">{{ t("events.posterHint") }}</small>
           </div>
 
@@ -360,6 +415,19 @@ async function onSuccessClose() {
       </template>
     </Card>
   </div>
+
+  <Dialog
+    v-model:visible="posterShowModeConfirm"
+    :header="t('events.posterModeChangeTitle')"
+    modal
+    :closable="false"
+    :style="{ width: '22rem' }">
+    <p class="m-0 text-color-secondary">{{ t("events.posterModeChangeMsg") }}</p>
+    <template #footer>
+      <Button :label="t('events.posterModeChangeCancel')" severity="secondary" outlined @click="cancelModeSwitch" />
+      <Button :label="t('events.posterModeChangeOk')" severity="danger" @click="confirmModeSwitch" />
+    </template>
+  </Dialog>
 
   <Dialog
     v-model:visible="showSuccessDialog"

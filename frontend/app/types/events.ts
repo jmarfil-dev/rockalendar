@@ -162,3 +162,8 @@ export type ModerationApproveRequest = {
 export type ModerationArchiveRequest = {
   reason: string;
 };
+
+export type ScrapeEventPosterResponse = {
+  posterUrl: string;
+  posterKey: string;
+};

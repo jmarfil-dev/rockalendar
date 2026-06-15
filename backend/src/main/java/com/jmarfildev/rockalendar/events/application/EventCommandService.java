@@ -31,10 +31,12 @@ import com.jmarfildev.rockalendar.common.helper.CurrentUser;
 import com.jmarfildev.rockalendar.common.helper.SlugNormalizer;
 import com.jmarfildev.rockalendar.common.helper.StringUtils;
 import com.jmarfildev.rockalendar.common.storage.ImageProcessingService;
+import com.jmarfildev.rockalendar.common.storage.OgImageScraperService;
 import com.jmarfildev.rockalendar.common.storage.StorageService;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.PossibleDuplicateDto;
 import com.jmarfildev.rockalendar.events.api.dto.ProposeEventResponse;
+import com.jmarfildev.rockalendar.events.api.dto.ScrapeEventPosterResponse;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.api.mapper.EventMapper;
 import com.jmarfildev.rockalendar.events.domain.Event;
@@ -76,6 +78,7 @@ public class EventCommandService {
     private final AutoModerationService autoModerationService;
     private final StorageService storageService;
     private final ImageProcessingService imageProcessingService;
+    private final OgImageScraperService ogImageScraperService;
     private final NotificationService notificationService;
 
     /**
@@ -133,6 +136,10 @@ public class EventCommandService {
         if (poster != null && !poster.isEmpty()) {
             uploadPosterToEvent(saved, poster);
         }
+        else if (req.posterKey() != null && !req.posterKey().isBlank()) {
+            saved.setPosterUrl(storageService.getPublicUrl(req.posterKey()));
+            saved.setPosterKey(req.posterKey());
+        }
 
         if (modResult != null && modResult.flagged()) {
             autoModerationService.logFlag(saved.getId(), modResult);
@@ -183,7 +190,7 @@ public class EventCommandService {
             log.info("possible duplicate detected on update eventId={} duplicateId={}", eventId, possibleDuplicateOfId);
         }
 
-        applyDataFields(event, in, poster, removePoster);
+        applyDataFields(event, in, poster, removePoster, req.posterKey());
         event.setModerationMessage(null);
 
         if (isAdmin) {
@@ -223,7 +230,7 @@ public class EventCommandService {
                                          boolean removePoster) {
         EventInputValidate in = validate(req, moderatorId);
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
-        applyDataFields(event, in, poster, removePoster);
+        applyDataFields(event, in, poster, removePoster, req.posterKey());
         return mapper.toPrivateDto(event);
     }
 
@@ -364,7 +371,7 @@ public class EventCommandService {
      * @param poster
      * @param removePoster
      */
-    private void applyDataFields(Event event, EventInputValidate in, MultipartFile poster, boolean removePoster) {
+    private void applyDataFields(Event event, EventInputValidate in, MultipartFile poster, boolean removePoster, String posterKey) {
         event.setTitle(in.title());
         event.setDescription(in.description());
         event.setStartDateTime(in.startDateTime());
@@ -388,6 +395,39 @@ public class EventCommandService {
             event.setPosterUrl(null);
             event.setPosterKey(null);
         }
+        else if (posterKey != null && !posterKey.isBlank()) {
+            storageService.delete(event.getPosterKey());
+            event.setPosterUrl(storageService.getPublicUrl(posterKey));
+            event.setPosterKey(posterKey);
+        }
+    }
+
+    /**
+     * Elimina un cartel pre-subido por scraping cuando el usuario lo descarta antes de proponer el evento.
+     * Solo se permiten claves bajo el prefijo posters/scraped/ para evitar borrados malintencionados.
+     */
+    public void deleteScrapedPoster(String key) {
+        if (key == null || !key.startsWith("posters/scraped/")) {
+            log.warn("intento de eliminar poster con clave inválida key={}", key);
+            return;
+        }
+        storageService.delete(key);
+        log.debug("poster scrapeado eliminado key={}", key);
+    }
+
+    /**
+     * Hace scraping de la og:image de la URL indicada, la procesa y la sube a MinIO.
+     * Devuelve la URL pública y la clave de objeto para que el cliente las incluya
+     * en la posterior llamada de propose/update.
+     * La imagen queda huérfana si el usuario no llega a proponer el evento — coste asumido.
+     */
+    public ScrapeEventPosterResponse scrapePoster(String sourceUrl) {
+        byte[] raw = ogImageScraperService.scrape(sourceUrl);
+        byte[] processed = imageProcessingService.process(raw);
+        String key = "posters/scraped/" + UUID.randomUUID() + ".jpg";
+        String publicUrl = storageService.upload(processed, key, Constants.IMAGE_CONTENT_TYPE);
+        log.debug("poster scrapeado y subido sourceUrl={} key={}", sourceUrl, key);
+        return new ScrapeEventPosterResponse(publicUrl, key);
     }
 
     /**
