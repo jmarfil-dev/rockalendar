@@ -79,6 +79,7 @@ export default defineNuxtConfig({
         { name: "twitter:card", content: "summary_large_image" },
         { name: "google-site-verification", content: "8otAV7tjZlORi3UnmE8swR5OGPRMvLjPgh7fKbmxC50" },
       ],
+      link: [{ rel: "apple-touch-icon", href: "/apple-touch-icon.png" }],
     },
   },
   routeRules: {
@@ -92,7 +93,7 @@ export default defineNuxtConfig({
       apiBase: "", // Se inyecta del fichero .env
     },
   },
-  modules: ["@nuxt/image", "@nuxt/eslint", "@primevue/nuxt-module", "@nuxtjs/i18n"],
+  modules: ["@nuxt/image", "@nuxt/eslint", "@primevue/nuxt-module", "@nuxtjs/i18n", "@vite-pwa/nuxt"],
   image: {
     domains: [storageHostname],
   },
@@ -122,6 +123,30 @@ export default defineNuxtConfig({
       cookieSecure: true,
       redirectOn: "root", // recomendado
       fallbackLocale: "en",
+    },
+  },
+  pwa: {
+    registerType: "autoUpdate",
+    manifest: {
+      name: "Rockalendar",
+      short_name: "Rockalendar",
+      description:
+        "Encuentra conciertos y festivales de punk, rock y metal en España. Impulsado por la comunidad, sin algoritmos ni tonterías corporativas.",
+      lang: "es",
+      start_url: "/",
+      display: "standalone",
+      theme_color: "#18181b",
+      background_color: "#18181b",
+      icons: [
+        { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
+        { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
+        { src: "pwa-maskable-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      ],
+    },
+    devOptions: {
+      // Permite probar el service worker también en `npm run dev`
+      enabled: true,
+      type: "module",
     },
   },
 });

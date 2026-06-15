@@ -11,6 +11,7 @@ useHead({
 
 <template>
   <NuxtRouteAnnouncer />
+  <NuxtPwaManifest />
   <Toast />
   <NuxtLayout>
     <NuxtPage />
