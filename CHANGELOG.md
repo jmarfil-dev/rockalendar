@@ -3,6 +3,14 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v1.2.1]
+
+### Added
+- [FRONT] Importación de cartel por URL disponible también en las pantallas de edición de eventos (usuario, moderación y administración).
+
+### Fixed
+- [BACK] Notificación duplicada a usuarios con rol ADMIN al publicar un comentario en un evento.
+
 ## [v1.2.0]
 
 ### Added
