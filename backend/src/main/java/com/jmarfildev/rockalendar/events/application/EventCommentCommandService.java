@@ -66,7 +66,6 @@ public class EventCommentCommandService {
                 NotificationService.PAYLOAD_PREVIEW, request.body().substring(0, Math.min(100, request.body().length()))
         );
         notificationService.notifyAllModerators(NotificationType.EVENT_COMMENT, eventId, payload);
-        notificationService.notifyAllAdmins(NotificationType.EVENT_COMMENT, eventId, payload);
     }
 
     @Transactional
