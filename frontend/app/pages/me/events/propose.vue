@@ -313,15 +313,14 @@ async function onSuccessClose() {
                     @click="onClearPoster" />
                 </div>
               </div>
-              <div v-else>
-                <Button
-                  type="button"
-                  :label="t('events.uploadPoster')"
-                  icon="pi pi-upload"
-                  severity="secondary"
-                  outlined
-                  @click="posterInputRef?.click()" />
-              </div>
+              <Button
+                v-else
+                type="button"
+                :label="t('events.uploadPoster')"
+                icon="pi pi-upload"
+                severity="secondary"
+                outlined
+                @click="posterInputRef?.click()" />
               <input ref="posterInputRef" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="onPosterChange" >
               <Message v-if="posterFileError" severity="error" variant="simple" size="small">{{ posterFileError }}</Message>
             </template>
