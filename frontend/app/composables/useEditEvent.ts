@@ -5,6 +5,7 @@ import { applyFormErrors } from "~/utils/formErrors";
 
 export const useEditEvent = (eventId: string) => {
   const { t } = useI18n();
+  const posterField = usePosterField();
 
   const form = reactive({
     title: "",
@@ -20,7 +21,6 @@ export const useEditEvent = (eventId: string) => {
     ticketUrl: "",
   });
 
-  const posterFile = ref<File | null>(null);
   const existingPosterUrl = ref<string | null>(null);
   const removePoster = ref(false);
   const loading = ref(true);
@@ -81,12 +81,13 @@ export const useEditEvent = (eventId: string) => {
       artists: form.artists.map((a) => a.name),
       sourceUrl: normalizeUrl(form.sourceUrl) || undefined,
       ticketUrl: normalizeUrl(form.ticketUrl) || undefined,
+      posterKey: posterField.importedPosterKey.value || undefined,
     };
 
     const formData = new FormData();
     formData.append("event", new Blob([JSON.stringify(eventData)], { type: "application/json" }));
-    if (posterFile.value) {
-      formData.append("poster", posterFile.value);
+    if (posterField.mode.value === "file" && posterField.posterFile.value) {
+      formData.append("poster", posterField.posterFile.value);
     }
 
     try {
@@ -108,5 +109,5 @@ export const useEditEvent = (eventId: string) => {
     }
   }
 
-  return { form, posterFile, existingPosterUrl, removePoster, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit };
+  return { form, posterField, existingPosterUrl, removePoster, loading, submitting, errorMsg, fieldErrors, artistsError, load, submit };
 };
