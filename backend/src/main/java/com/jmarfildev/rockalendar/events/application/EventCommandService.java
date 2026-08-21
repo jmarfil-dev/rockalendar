@@ -92,7 +92,7 @@ public class EventCommandService {
     public ProposeEventResponse propose(SubmitEventRequest req, MultipartFile poster) {
         UUID userId = currentUser.userId();
         boolean isAdmin = currentUser.isAdmin();
-        EventInputValidate in = validate(req, userId);
+        EventInputValidate in = validate(req, userId, false);
 
         // El admin publica directamente como APPROVED, sin pasar por auto-moderación
         var modResult = isAdmin ? null : autoModerationService.evaluate(in.title(), in.description(), in.artists(), userId);
@@ -111,6 +111,7 @@ public class EventCommandService {
                 : new PossibleDuplicateDto(duplicates.get(0).getId(), duplicates.get(0).getTitle(),
                                            EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
 
+        var now = OffsetDateTime.now();
         var event = Event.builder()
                          .title(in.title())
                          .description(in.description())
@@ -126,7 +127,11 @@ public class EventCommandService {
                          .ticketUrl(in.ticketUrl())
                          .status(initialStatus)
                          .createdByUserId(userId)
-                         .submittedAt(OffsetDateTime.now())
+                         .submittedAt(now)
+                         // El admin publica directamente como APPROVED sin pasar por moderación:
+                         // se registra como su propia moderación para que moderatedAt no quede nulo (evita "1970" en el front).
+                         .moderatedAt(isAdmin ? now : null)
+                         .moderatedByUserId(isAdmin ? userId : null)
                          .artists(in.artists())
                          .possibleDuplicateOf(possibleDuplicateOfId)
                          .build();
@@ -165,7 +170,7 @@ public class EventCommandService {
     public EventPrivateDto update(UUID eventId, SubmitEventRequest req, MultipartFile poster, boolean removePoster) {
         UUID userId = currentUser.userId();
         boolean isAdmin = currentUser.isAdmin();
-        EventInputValidate in = validate(req, userId);
+        EventInputValidate in = validate(req, userId, false);
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
 
@@ -194,8 +199,11 @@ public class EventCommandService {
         event.setModerationMessage(null);
 
         if (isAdmin) {
-            // El admin publica directamente como APPROVED
+            // El admin publica directamente como APPROVED sin pasar por moderación:
+            // se registra como su propia moderación para que moderatedAt no quede nulo (evita "1970" en el front).
             event.setStatus(EventStatus.APPROVED);
+            event.setModeratedAt(OffsetDateTime.now());
+            event.setModeratedByUserId(userId);
         }
         else {
             // Reenviar a moderación (con comprobación de moderación automática)
@@ -214,12 +222,15 @@ public class EventCommandService {
     }
 
     /**
-     * Permite a un moderador editar los datos de un evento sin cambiar su estado.
+     * Permite a un moderador o a un administrador editar los datos de un evento sin cambiar su estado.
      * La validación de estado y de propiedad (moderador no puede ser el autor) se hace en el llamador.
      * No re-ejecuta auto-moderación ni actualiza submittedAt.
      *
      * @param eventId id del evento
      * @param req datos nuevos
+     * @param dateTbd marca la fecha como no confirmada (aplazamiento sin fecha nueva). Solo puede llegar
+     *                a true desde {@code AdminEventCommandService.edit()} — el resto de llamadores
+     *                (edición de moderador) siempre pasan false, ya que no exponen esta opción en su API.
      * @return el evento actualizado
      */
     @Transactional
@@ -227,10 +238,12 @@ public class EventCommandService {
                                          UUID eventId,
                                          SubmitEventRequest req,
                                          MultipartFile poster,
-                                         boolean removePoster) {
-        EventInputValidate in = validate(req, moderatorId);
+                                         boolean removePoster,
+                                         boolean dateTbd) {
+        EventInputValidate in = validate(req, moderatorId, dateTbd);
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(ErrorConstants.EVENT_NOT_FOUND));
         applyDataFields(event, in, poster, removePoster, req.posterKey());
+        event.setDateTbd(dateTbd);
         return mapper.toPrivateDto(event);
     }
 
@@ -279,14 +292,22 @@ public class EventCommandService {
      * </ul>
      *
      * @param req request con los datos del evento
+     * @param dateTbd si es true, permite que la fecha de inicio esté en el pasado (evento con fecha
+     *                por confirmar, gestionado solo por {@code AdminEventCommandService.edit()})
      * @return un record con los datos validados
      */
-    private EventInputValidate validate(SubmitEventRequest req, UUID userId) {
+    private EventInputValidate validate(SubmitEventRequest req, UUID userId, boolean dateTbd) {
         // Construir startDateTime a partir de fecha + hora opcional en zona horaria española
         // Si no se informa de la hora, se pone el final del día para que el evento sea visible durante toda la jornada
         boolean startTimeUnknown = req.startTime() == null;
         LocalTime time = startTimeUnknown ? LocalTime.of(23, 59, 0) : req.startTime();
         OffsetDateTime startDateTime = req.startDate().atTime(time).atZone(ZoneId.of("Europe/Madrid")).toOffsetDateTime();
+
+        // SubmitEventRequest.startDate ya no lleva @FutureOrPresent porque solo el admin, marcando
+        // dateTbd=true, puede guardar una fecha pasada (fecha original de un evento aplazado sin fecha nueva).
+        if (!dateTbd && req.startDate().isBefore(LocalDate.now(ZoneId.of("Europe/Madrid")))) {
+            throw new BadRequestException(ErrorConstants.EVENT_START_DATE_PAST);
+        }
 
         CommonValidations.validateDateRange(req.startDate(), req.endDate());
 
@@ -376,6 +397,9 @@ public class EventCommandService {
         event.setDescription(in.description());
         event.setStartDateTime(in.startDateTime());
         event.setStartTimeUnknown(in.startTimeUnknown());
+        // Al aplicar una fecha validada se asume confirmada; moderatorEdit() la vuelve a marcar
+        // como pendiente de confirmar si el llamador (admin) lo pide explícitamente.
+        event.setDateTbd(false);
         event.setEndDate(in.endDate());
         event.setProvince(in.province());
         event.setCityName(in.cityName());

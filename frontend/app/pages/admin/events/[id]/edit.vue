@@ -295,7 +295,7 @@ function confirmLeave() {
                   :show-time="!form.startTimeUnknown"
                   hour-format="24"
                   date-format="dd/mm/yy"
-                  :min-date="today"
+                  :min-date="form.dateTbd ? undefined : today"
                   :invalid="!!fieldErrors['startDate']"
                   :manual-input="false"
                   show-icon
@@ -325,6 +325,16 @@ function confirmLeave() {
               <Message v-if="fieldErrors['startDate']" severity="error" variant="simple" size="small">
                 {{ t(fieldErrors["startDate"]) }}
               </Message>
+              <div class="flex align-items-start gap-2 mt-1">
+                <Checkbox
+                  v-model="form.dateTbd"
+                  input-id="dateTbd"
+                  :binary="true" />
+                <label for="dateTbd" class="text-sm text-color-secondary cursor-pointer">
+                  {{ t("admin.events.dateTbdLabel") }}
+                </label>
+              </div>
+              <small v-if="form.dateTbd" class="text-xs text-color-secondary">{{ t("admin.events.dateTbdHint") }}</small>
             </div>
 
             <div class="col-12 md:col-6 flex flex-column gap-2">

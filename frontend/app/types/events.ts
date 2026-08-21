@@ -21,6 +21,7 @@ export type EventPrivateListItem = {
   startTimeUnknown: boolean;
   provinceName: string;
   cityName: string;
+  dateTbd: boolean;
   status: EventStatus;
   moderationMessage?: string | null;
   submittedAt: string;
@@ -36,6 +37,7 @@ export type EventPublicListItem = {
   provinceName: string;
   cityName: string;
   posterUrl?: string | null;
+  dateTbd: boolean;
 };
 
 export type EventPublic = {
@@ -53,6 +55,7 @@ export type EventPublic = {
   sourceUrl?: string | null;
   ticketUrl?: string | null;
   posterUrl?: string | null;
+  dateTbd: boolean;
 };
 
 export type PossibleDuplicateDto = {
@@ -81,6 +84,7 @@ export type EventPrivateDto = {
   sourceUrl?: string | null;
   ticketUrl?: string | null;
   posterUrl?: string | null;
+  dateTbd: boolean;
   status: EventStatus;
   flagged: boolean;
   moderationMessage?: string | null;
@@ -133,6 +137,7 @@ export type AdminEventListItem = {
   startDateTime: string;
   startTimeUnknown: boolean;
   provinceName: string;
+  dateTbd: boolean;
   status: EventStatus;
 };
 

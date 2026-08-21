@@ -15,6 +15,7 @@ public record EventPrivateListItemDto(UUID id,
                                       boolean startTimeUnknown,
                                       String provinceName,
                                       String cityName,
+                                      boolean dateTbd,
                                       EventStatus status,
                                       String moderationMessage,
                                       OffsetDateTime submittedAt) {

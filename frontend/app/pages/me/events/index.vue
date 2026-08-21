@@ -132,7 +132,8 @@ const STATUS_SEVERITY: Record<EventStatus, string> = {
                   <div class="text-color-secondary text-sm flex flex-column gap-2">
                     <div>
                       <i class="pi pi-calendar mr-2" />
-                      {{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}
+                      <Tag v-if="event.dateTbd" :value="t('dates.tbdBadge')" severity="warn" />
+                      <span v-else>{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</span>
                     </div>
                     <div>
                       <i class="pi pi-compass mr-2" />

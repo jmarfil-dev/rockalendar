@@ -21,7 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
+// Nombre completo en el uso porque org.springframework.web.bind.annotation.RequestBody (parámetro,
+// usado en overrideStatus) colisionaría en nombre simple con esta anotación (a nivel de método).
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +32,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
 import com.jmarfildev.rockalendar.admin.api.doc.AdminEventPageDoc;
-import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto;
 import com.jmarfildev.rockalendar.admin.api.dto.AdminStatusOverrideRequest;
 import com.jmarfildev.rockalendar.common.annotations.ApiBadRequest;
@@ -37,6 +39,7 @@ import com.jmarfildev.rockalendar.common.annotations.ApiConflict;
 import com.jmarfildev.rockalendar.common.annotations.ApiForbidden;
 import com.jmarfildev.rockalendar.common.annotations.ApiNotFound;
 import com.jmarfildev.rockalendar.common.annotations.ApiUnauthorized;
+import com.jmarfildev.rockalendar.common.dto.PageResponse;
 import com.jmarfildev.rockalendar.events.api.dto.EventPrivateDto;
 import com.jmarfildev.rockalendar.events.api.dto.SubmitEventRequest;
 import com.jmarfildev.rockalendar.events.domain.EventStatus;
@@ -88,12 +91,17 @@ public interface AdminEventApi {
                                               required = true) @PathVariable UUID eventId);
 
     @PutMapping(value = "/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(encoding = @Encoding(name = "event", contentType = "application/json")))
     @Operation(summary = "Editar datos de cualquier evento",
                description = """
                              Permite al administrador editar los datos de un evento en estado
                              PENDING_MODERATION, NEEDS_CHANGES o APPROVED.
 
                              No cambia el estado del evento. Registra una acción ADMIN_EDITED en el historial de moderación.
+
+                             El parámetro dateTbd marca la fecha del evento como no confirmada (p. ej. un
+                             aplazamiento sin fecha nueva todavía). Permite guardar una fecha de inicio pasada
+                             y el evento no desaparece de los listados/búsqueda pública por tener fecha vencida.
                              """)
     @ApiResponse(responseCode = "200",
                  description = "Evento actualizado correctamente",
@@ -111,7 +119,8 @@ public interface AdminEventApi {
                          @Parameter(description = "Cartel nuevo (opcional)") @RequestPart(value = "poster",
                                                                                           required = false) MultipartFile poster,
                          @Parameter(description = "Si es true y no se envía poster, elimina el cartel existente") @RequestParam(defaultValue = "false") boolean removePoster,
-                         @Parameter(description = "Comentario opcional del administrador para el historial de auditoría") @RequestParam(required = false) @Size(max = 500) String comment);
+                         @Parameter(description = "Comentario opcional del administrador para el historial de auditoría") @RequestParam(required = false) @Size(max = 500) String comment,
+                         @Parameter(description = "Marca la fecha del evento como no confirmada (aplazado sin fecha nueva)") @RequestParam(defaultValue = "false") boolean dateTbd);
 
     @PostMapping("/{eventId}/status")
     @Operation(summary = "Forzar cambio de estado de un evento",

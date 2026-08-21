@@ -15,4 +15,5 @@ public record EventPublicListItemDto(UUID id,
                                      LocalDate endDate,
                                      String provinceName,
                                      String cityName,
-                                     String posterUrl) {}
+                                     String posterUrl,
+                                     boolean dateTbd) {}
