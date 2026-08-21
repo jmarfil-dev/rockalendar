@@ -231,8 +231,15 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                e.id, e.title, e.submittedAt, e.possibleDuplicateOf, e.status
            )
            FROM Event e
-           WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION
-              OR e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.FLAGGED
+           WHERE (
+               e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.PENDING_MODERATION
+               OR e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.FLAGGED
+           )
+           AND (
+               e.dateTbd = true
+               OR (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
+               OR (e.endDate IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
+           )
            """)
     Page<ModerationPendingListItemDto> findPending(Pageable pageable);
 
@@ -242,6 +249,11 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
            )
            FROM Event e
            WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
+           AND (
+               e.dateTbd = true
+               OR (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
+               OR (e.endDate IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
+           )
            """)
     Page<ModerationApprovedListItemDto> findApproved(Pageable pageable);
 
@@ -254,6 +266,11 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                com.jmarfildev.rockalendar.events.domain.EventStatus.REJECTED,
                com.jmarfildev.rockalendar.events.domain.EventStatus.HIDDEN,
                com.jmarfildev.rockalendar.events.domain.EventStatus.CANCELED
+           )
+           AND (
+               e.dateTbd = true
+               OR (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
+               OR (e.endDate IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
            )
            """)
     Page<ModerationArchivedListItemDto> findArchived(Pageable pageable);
