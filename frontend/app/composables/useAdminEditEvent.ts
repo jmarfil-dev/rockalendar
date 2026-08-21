@@ -20,6 +20,7 @@ export const useAdminEditEvent = (eventId: string) => {
     sourceUrl: "",
     ticketUrl: "",
     status: null as EventStatus | null,
+    dateTbd: false,
   });
 
   const existingPosterUrl = ref<string | null>(null);
@@ -49,6 +50,7 @@ export const useAdminEditEvent = (eventId: string) => {
     form.sourceUrl = event.sourceUrl ?? "";
     form.ticketUrl = event.ticketUrl ?? "";
     form.status = event.status;
+    form.dateTbd = event.dateTbd;
     existingPosterUrl.value = event.posterUrl ?? null;
     moderationMessage.value = event.moderationMessage ?? null;
   }
@@ -98,7 +100,11 @@ export const useAdminEditEvent = (eventId: string) => {
       const res = await fetchAuthResult<EventPrivateDto>(ROUTE_PATH.apiAdminEventDetail(eventId), {
         method: "PUT",
         body: formData,
-        query: { removePoster: removePoster.value, ...(comment?.trim() ? { comment: comment.trim() } : {}) },
+        query: {
+          removePoster: removePoster.value,
+          dateTbd: form.dateTbd,
+          ...(comment?.trim() ? { comment: comment.trim() } : {}),
+        },
       });
 
       if (res.ok) {

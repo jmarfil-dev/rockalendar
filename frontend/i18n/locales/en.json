@@ -242,6 +242,8 @@
       "saveSuccessTitle": "Changes saved",
       "saveSuccessMsg": "The concert has been updated successfully.",
       "moderationMessageLabel": "Moderation message",
+      "dateTbdLabel": "Date to be confirmed (event postponed without a new date)",
+      "dateTbdHint": "The event stays public even though its date is in the past. \"Date to be confirmed\" is shown instead of the date.",
       "saveConfirmTitle": "Save changes",
       "saveConfirmMsg": "The changes made to this concert will be saved.",
       "auditCommentLabel": "Audit comment (optional)",
@@ -350,6 +352,7 @@
     "place": "Place"
   },
   "dates": {
+    "tbdBadge": "Date to be confirmed",
     "date": "Date",
     "from": "From",
     "to": "To",
@@ -423,6 +426,7 @@
       "reasonRequired": "Reason is required",
       "invalidProvince": "Invalid provinceId",
       "invalidDateRange": "Invalid date range: dateFrom must be <= dateTo",
+      "eventStartDatePast": "Start date cannot be in the past",
       "pageSizeTooLarge": "Page size exceeds the maximum allowed limit",
       "wrongCurrentPassword": "Current password is incorrect",
       "wrongConfirmPassword": "Passwords do not match",

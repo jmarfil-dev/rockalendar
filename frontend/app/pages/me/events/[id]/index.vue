@@ -113,10 +113,13 @@ async function onDelete() {
           </div>
           <div class="flex align-items-center gap-2 text-color-secondary text-sm">
             <i class="pi pi-calendar" />
-            <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
-            <template v-if="event.endDate">
-              <span>→</span>
-              <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
+            <Tag v-if="event.dateTbd" :value="t('dates.tbdBadge')" severity="warn" />
+            <template v-else>
+              <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+              <template v-if="event.endDate">
+                <span>→</span>
+                <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
+              </template>
             </template>
           </div>
         </div>
@@ -228,10 +231,13 @@ async function onDelete() {
                     <div class="flex flex-column">
                       <span class="font-medium">{{ t("dates.date") }}</span>
                       <span class="text-color-secondary">
-                        <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
-                        <template v-if="event.endDate">
-                          <span class="mx-1">→</span>
-                          <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
+                        <Tag v-if="event.dateTbd" :value="t('dates.tbdBadge')" severity="warn" />
+                        <template v-else>
+                          <time :datetime="event.startDateTime">{{ formatEventDate(event.startDateTime, event.startTimeUnknown) }}</time>
+                          <template v-if="event.endDate">
+                            <span class="mx-1">→</span>
+                            <time :datetime="event.endDate">{{ formatEventEndDate(event.endDate) }}</time>
+                          </template>
                         </template>
                       </span>
                     </div>
