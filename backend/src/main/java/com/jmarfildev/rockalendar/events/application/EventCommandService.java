@@ -111,6 +111,7 @@ public class EventCommandService {
                 : new PossibleDuplicateDto(duplicates.get(0).getId(), duplicates.get(0).getTitle(),
                                            EventStatus.APPROVED.name().equals(duplicates.get(0).getStatus()));
 
+        var now = OffsetDateTime.now();
         var event = Event.builder()
                          .title(in.title())
                          .description(in.description())
@@ -126,7 +127,11 @@ public class EventCommandService {
                          .ticketUrl(in.ticketUrl())
                          .status(initialStatus)
                          .createdByUserId(userId)
-                         .submittedAt(OffsetDateTime.now())
+                         .submittedAt(now)
+                         // El admin publica directamente como APPROVED sin pasar por moderación:
+                         // se registra como su propia moderación para que moderatedAt no quede nulo (evita "1970" en el front).
+                         .moderatedAt(isAdmin ? now : null)
+                         .moderatedByUserId(isAdmin ? userId : null)
                          .artists(in.artists())
                          .possibleDuplicateOf(possibleDuplicateOfId)
                          .build();
@@ -194,8 +199,11 @@ public class EventCommandService {
         event.setModerationMessage(null);
 
         if (isAdmin) {
-            // El admin publica directamente como APPROVED
+            // El admin publica directamente como APPROVED sin pasar por moderación:
+            // se registra como su propia moderación para que moderatedAt no quede nulo (evita "1970" en el front).
             event.setStatus(EventStatus.APPROVED);
+            event.setModeratedAt(OffsetDateTime.now());
+            event.setModeratedByUserId(userId);
         }
         else {
             // Reenviar a moderación (con comprobación de moderación automática)
