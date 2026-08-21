@@ -3,6 +3,15 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v1.3.0]
+
+### Added
+- [BACK+FRONT] Fecha por confirmar (`dateTbd`) en eventos: permite mantener público un evento aprobado (p. ej. un festival aplazado sin fecha nueva) sin forzar una fecha futura ficticia. Solo gestionable por administración.
+
+### Fixed
+- [BACK] Las bandejas de moderación (pendientes, aprobados y archivados) mostraban eventos con fecha ya pasada.
+- [BACK] Los eventos auto-aprobados por un administrador quedaban con `moderatedAt` nulo, mostrándose como 1970 en el frontend; migración de backfill para los eventos existentes afectados.
+
 ## [v1.2.1]
 
 ### Added
