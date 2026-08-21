@@ -45,13 +45,15 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                    e.endDate,
                    p.name,
                    e.cityName,
-                   e.posterUrl
+                   e.posterUrl,
+                   e.dateTbd
                )
                FROM Event e
                JOIN e.province p
                WHERE e.status = com.jmarfildev.rockalendar.events.domain.EventStatus.APPROVED
                    AND (
-                       (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
+                       e.dateTbd = true
+                           OR (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
                            OR (e.endDate IS NULL AND e.startDateTime >= CURRENT_TIMESTAMP)
                    )
            """)
@@ -59,7 +61,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("""
                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.dateTbd, e.status, e.moderationMessage, e.submittedAt
                )
                FROM Event e
                JOIN e.province p
@@ -70,7 +72,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("""
                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.dateTbd, e.status, e.moderationMessage, e.submittedAt
                )
                FROM Event e
                JOIN e.province p
@@ -88,7 +90,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
      */
     @Query("""
                SELECT new com.jmarfildev.rockalendar.events.api.dto.EventPrivateListItemDto(
-                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.status, e.moderationMessage, e.submittedAt
+                   e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.cityName, e.dateTbd, e.status, e.moderationMessage, e.submittedAt
                )
                FROM Event e
                JOIN e.province p
@@ -118,6 +120,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                      p.name               AS provinceName,
                      e.city_name          AS cityName,
                      e.poster_url         AS posterUrl,
+                     e.date_tbd           AS dateTbd,
                      s.score              AS score
                    FROM search_public_events(
                      :q, :minSim, :ftsW, :trgmW,
@@ -175,6 +178,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
                      p.name               AS provinceName,
                      e.city_name          AS cityName,
                      e.poster_url         AS posterUrl,
+                     e.date_tbd           AS dateTbd,
                      s.score              AS score
                    FROM search_public_events_fallback(
                      :q, :minSim, :ftsW, :trgmW,
@@ -258,7 +262,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("""
            SELECT new com.jmarfildev.rockalendar.admin.api.dto.AdminEventListItemDto(
-               e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.status
+               e.id, e.title, e.startDateTime, e.startTimeUnknown, p.name, e.dateTbd, e.status
            )
            FROM Event e
            JOIN e.province p
@@ -268,7 +272,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
              AND e.startDateTime <= COALESCE(:dateTo,   e.startDateTime)
              AND (:titleLike  IS NULL OR LOWER(e.title) LIKE :titleLike)
              AND (
-                 (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
+                 e.dateTbd = true
+                 OR (e.endDate IS NOT NULL AND e.endDate >= CURRENT_DATE)
                  OR (e.endDate IS NULL  AND e.startDateTime >= CURRENT_TIMESTAMP)
              )
            """)

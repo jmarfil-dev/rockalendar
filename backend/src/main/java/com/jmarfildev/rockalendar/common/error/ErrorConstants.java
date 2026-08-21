@@ -35,6 +35,7 @@ public final class ErrorConstants {
     public static final String REASON_REQUIRED = "error.400.reasonRequired";
     public static final String INVALID_PROVINCE = "error.400.invalidProvince";
     public static final String INVALID_DATE_RANGE = "error.400.invalidDateRange";
+    public static final String EVENT_START_DATE_PAST = "error.400.eventStartDatePast";
     public static final String PAGE_SIZE_TOO_LARGE = "error.400.pageSizeTooLarge";
     public static final String WRONG_CURRENT_PASSWORD = "error.400.wrongCurrentPassword";
     public static final String WRONG_CONFIRM_PASSWORD = "error.400.wrongConfirmPassword";

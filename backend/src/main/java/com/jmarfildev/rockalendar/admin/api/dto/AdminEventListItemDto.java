@@ -14,4 +14,5 @@ public record AdminEventListItemDto(
         OffsetDateTime startDateTime,
         boolean startTimeUnknown,
         String provinceName,
+        boolean dateTbd,
         EventStatus status) {}

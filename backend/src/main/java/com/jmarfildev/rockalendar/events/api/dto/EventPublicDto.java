@@ -24,4 +24,5 @@ public record EventPublicDto(UUID id,
                              List<ArtistDto> artists,
                              String sourceUrl,
                              String ticketUrl,
-                             String posterUrl) {}
+                             String posterUrl,
+                             boolean dateTbd) {}

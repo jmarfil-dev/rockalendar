@@ -18,5 +18,6 @@ public interface EventPublicSearchProjection {
 
     String getPosterUrl();
     boolean isStartTimeUnknown();
+    boolean isDateTbd();
     Double getScore(); // Para ordenar por relevancia en query
 }
