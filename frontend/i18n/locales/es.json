@@ -242,6 +242,8 @@
       "saveSuccessTitle": "Cambios guardados",
       "saveSuccessMsg": "El concierto se ha actualizado correctamente.",
       "moderationMessageLabel": "Mensaje de moderación",
+      "dateTbdLabel": "Fecha por confirmar (evento aplazado sin fecha nueva)",
+      "dateTbdHint": "El evento se mantiene público aunque su fecha esté en el pasado. Se muestra «Fecha por confirmar» en vez de la fecha.",
       "saveConfirmTitle": "Guardar cambios",
       "saveConfirmMsg": "Se guardarán los cambios realizados en este concierto.",
       "auditCommentLabel": "Comentario de auditoría (opcional)",
@@ -352,7 +354,8 @@
     "date": "Fecha",
     "from": "Desde",
     "to": "Hasta",
-    "invalidRange": "La fecha fin no puede ser anterior a la fecha inicio"
+    "invalidRange": "La fecha fin no puede ser anterior a la fecha inicio",
+    "tbdBadge": "Fecha por confirmar"
   },
   "artists": {
     "upcomingEvents": "Próximos conciertos",
@@ -422,6 +425,7 @@
       "reasonRequired": "Razón es obligatorio",
       "invalidProvince": "Provincia no válida",
       "invalidDateRange": "Rango de fecha no válido: dateFrom debe ser <= dateTo",
+      "eventStartDatePast": "La fecha de inicio no puede ser pasada",
       "pageSizeTooLarge": "Tamaño de página excede el límite máximo",
       "wrongCurrentPassword": "La contraseña actual no es correcta",
       "wrongConfirmPassword": "Las contraseñas no coinciden",

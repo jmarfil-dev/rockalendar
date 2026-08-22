@@ -46,8 +46,13 @@ public class AdminEventController implements AdminEventApi {
     }
 
     @Override
-    public EventPrivateDto edit(UUID eventId, SubmitEventRequest request, MultipartFile poster, boolean removePoster, String comment) {
-        return commandService.edit(eventId, request, poster, removePoster, comment);
+    public EventPrivateDto edit(UUID eventId,
+                               SubmitEventRequest request,
+                               MultipartFile poster,
+                               boolean removePoster,
+                               String comment,
+                               boolean dateTbd) {
+        return commandService.edit(eventId, request, poster, removePoster, comment, dateTbd);
     }
 
     @Override

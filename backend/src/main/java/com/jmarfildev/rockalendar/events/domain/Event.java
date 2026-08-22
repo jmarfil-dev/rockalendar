@@ -59,6 +59,9 @@ public class Event {
     @Column(name = "start_time_unknown", nullable = false)
     private boolean startTimeUnknown;
 
+    @Column(name = "date_tbd", nullable = false)
+    private boolean dateTbd;
+
     @Column(name = "end_date")
     private LocalDate endDate;
 

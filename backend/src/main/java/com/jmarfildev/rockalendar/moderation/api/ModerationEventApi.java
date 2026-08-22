@@ -18,7 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
+// Nombre completo en el uso porque org.springframework.web.bind.annotation.RequestBody (parámetro,
+// usado en approve/reject/etc) colisionaría en nombre simple con esta anotación (a nivel de método).
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -118,6 +121,7 @@ public interface ModerationEventApi {
      */
 
     @PutMapping(value = "/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(encoding = @Encoding(name = "event", contentType = "application/json")))
     @Operation(summary = "Editar datos de un evento pendiente",
                description = "Permite al moderador corregir los datos de un evento en PENDING_MODERATION sin cambiar su estado. "
                        + "Registra una acción MODERATOR_EDITED en el historial de moderación.")

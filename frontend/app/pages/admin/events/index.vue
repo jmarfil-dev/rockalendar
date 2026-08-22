@@ -272,9 +272,10 @@ watch(filterQ, () => {
           field="startDateTime"
           :header="t('dates.date')"
           sortable
-          style="width: 6rem; white-space: nowrap">
+          style="width: 9rem; white-space: nowrap">
           <template #body="{ data }">
-            {{ formatDate(data.startDateTime) }}
+            <Tag v-if="data.dateTbd" :value="t('dates.tbdBadge')" severity="warn" />
+            <span v-else>{{ formatDate(data.startDateTime) }}</span>
           </template>
         </Column>
 

@@ -99,7 +99,8 @@ public class ModerationEventCommandService {
         action.setCreatedAt(OffsetDateTime.now());
 
         try {
-            EventPrivateDto updated = eventCommandService.moderatorEdit(moderatorId, eventId, req, poster, removePoster);
+            // El moderador nunca puede marcar la fecha como no confirmada (dateTbd): solo el admin lo expone en su API.
+            EventPrivateDto updated = eventCommandService.moderatorEdit(moderatorId, eventId, req, poster, removePoster, false);
             moderationActionRepository.saveAndFlush(action);
             log.info("moderator edited event data eventId={} moderatorId={}", eventId, moderatorId);
             return updated;

@@ -177,9 +177,10 @@ const onPage = (e: { page: number; first: number; rows: number }) => {
                     <div class="flex flex-column gap-1">
                       <div>
                         <i class="pi pi-calendar mr-2" />
-                        <time :datetime="ev.startDateTime">{{ formatEventDate(ev.startDateTime, ev.startTimeUnknown) }}</time>
+                        <Tag v-if="ev.dateTbd" :value="t('dates.tbdBadge')" severity="warn" />
+                        <time v-else :datetime="ev.startDateTime">{{ formatEventDate(ev.startDateTime, ev.startTimeUnknown) }}</time>
                       </div>
-                      <div v-if="ev.endDate" class="pl-4">
+                      <div v-if="ev.endDate && !ev.dateTbd" class="pl-4">
                         <span class="mr-1">→</span>
                         <time :datetime="ev.endDate">{{ formatEventEndDate(ev.endDate) }}</time>
                       </div>
