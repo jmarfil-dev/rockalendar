@@ -109,6 +109,8 @@ export const useAdminEditEvent = (eventId: string) => {
 
       if (res.ok) {
         clearArtistAutocompleteCache();
+        existingPosterUrl.value = res.data.posterUrl ?? null;
+        posterField.resetAfterSave();
         return res.data;
       }
 

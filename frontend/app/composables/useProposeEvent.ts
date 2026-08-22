@@ -70,6 +70,7 @@ export const useProposeEvent = () => {
 
       if (res.ok) {
         clearArtistAutocompleteCache();
+        posterField.resetAfterSave();
         return res.data;
       }
 
