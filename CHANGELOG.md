@@ -3,6 +3,11 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v1.3.1]
+
+### Fixed
+- [FRONT] Al importar un cartel por URL y guardar el evento, si se permanecía en la misma pantalla de edición (admin) y se volvía a tocar el selector de cartel (reimportar, cambiar de modo o quitar imagen), se borraba por error el cartel ya guardado en producción.
+
 ## [v1.3.0]
 
 ### Added
