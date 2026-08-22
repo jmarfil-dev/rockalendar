@@ -152,6 +152,11 @@ async function confirmSave() {
     showSaveConfirmDialog.value = false;
     initialFormSnapshot.value = JSON.stringify({ ...form, status: undefined });
     showSaveDialog.value = true;
+    // Tras guardar, el cartel nuevo (si lo había) pasa a ser el existente:
+    // se sale del modo "cambiando cartel" y se limpia el aviso de eliminación pendiente,
+    // para que el bloque de cartel refleje el estado ya persistido en vez del transitorio.
+    changingPoster.value = false;
+    removePoster.value = false;
   }
 }
 
