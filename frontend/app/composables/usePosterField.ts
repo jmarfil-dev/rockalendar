@@ -72,6 +72,23 @@ export const usePosterField = () => {
     importError.value = null;
   }
 
+  /**
+   * Debe llamarse tras un guardado exitoso del evento (propose/update/edit).
+   * A partir de aquí, la key importada ya es el cartel permanente del evento, no un
+   * descarte pendiente: si no se limpia este estado, un reintento de importación,
+   * un cambio de modo o el botón de quitar cartel dispararían el borrado del cartel
+   * que ya está en producción (tryDeleteScrapedPoster), pensando que es una importación huérfana.
+   */
+  function resetAfterSave() {
+    mode.value = "file";
+    posterFile.value = null;
+    posterFileError.value = null;
+    urlInput.value = "";
+    importedPosterUrl.value = null;
+    importedPosterKey.value = null;
+    importError.value = null;
+  }
+
   function setPosterFile(file: File) {
     posterFileError.value = null;
     if (!POSTER_ALLOWED_TYPES.includes(file.type)) {
@@ -168,5 +185,6 @@ export const usePosterField = () => {
     setPosterFile,
     clearPoster,
     importFromUrl,
+    resetAfterSave,
   };
 };
