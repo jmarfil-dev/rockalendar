@@ -153,6 +153,33 @@ Coolify lo gestiona automáticamente con **Let's Encrypt** (gratuito). No hay qu
 
 ---
 
+## Mantenimiento de Coolify
+
+Coolify no se actualiza solo — hay que entrar de vez en cuando y comprobar si hay una versión nueva, sobre todo cuando se anuncia una vulnerabilidad de seguridad (Coolify está hecho en PHP/Laravel, así que los avisos de seguridad de PHP le afectan directamente).
+
+**Versión actual: v4.4.7** (actualizado el 22/10/2026).
+
+> **Por qué importa no dejarlo pasar mucho tiempo:** en octubre de 2026 saltó una vulnerabilidad crítica de PHP (CVE-2026-109618 / CVE-2026-109619, "PHP2Shell", RCE no autenticada). En ese momento la instancia llevaba **casi dos años** en una versión beta sin actualizar. El salto tan grande hizo que la actualización no fuera trivial — un simple botón de "actualizar" no bastaba. Actualizar con más frecuencia (aunque sea solo revisar cada mes si hay parche) evita tener que lidiar con esto.
+
+### Cómo actualizar
+1. Si la versión actual es muy antigua (una beta, o lleva muchos meses sin tocar), primero instala manualmente la versión estable más cercana por SSH:
+   ```bash
+   curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash -s <version>
+   ```
+2. Desde ahí, salta directo a la última estable (mismo comando, con la versión final) o usa el panel: **Settings → Updates → Check Manually**.
+
+### Dos trampas conocidas al actualizar desde una versión muy antigua
+Si tras actualizar el panel deja de cargar en su dominio (p. ej. redirige a la web principal en vez de mostrar el login):
+- **Clave SSH de "localhost" desincronizada.** Coolify se gestiona a sí mismo por SSH como si fuera un servidor remoto más. En saltos grandes de versión, la clave privada que usa para esto se puede regenerar sin que la pública se añada a `/root/.ssh/authorized_keys` del servidor — y sin esa clave, Coolify no puede escribir la configuración del proxy (ni la suya propia). Se soluciona añadiendo la clave pública correspondiente a `authorized_keys` manualmente.
+
+Si tras actualizar el panel carga pero se queda bloqueado con errores de JavaScript (tooltips atascados, pantalla borrosa):
+- **Caché de configuración de Laravel.** Cualquier cambio en `/data/coolify/source/.env` (como añadir `PUSHER_HOST`/`PUSHER_PORT` para el websocket del panel) no se aplica con un simple `docker restart coolify` — hay que limpiar la caché de configuración de Laravel dentro del contenedor:
+  ```bash
+  docker exec coolify php artisan config:clear
+  ```
+
+---
+
 ## GDPR
 
 | Requisito                    | Cómo se cumple                         |
