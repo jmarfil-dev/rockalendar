@@ -3,6 +3,11 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v1.3.3]
+
+### Fixed
+- [BACK] La conexión SMTP (Brevo) no verificaba que el hostname del certificado TLS coincidiera con el servidor real, permitiendo en teoría una suplantación del servidor de correo (CVE-2026-40992).
+
 ## [v1.3.2]
 
 ### Fixed
