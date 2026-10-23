@@ -13,6 +13,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.ErrorResponseException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -132,6 +133,18 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         return build(pd, HttpStatus.CONFLICT.getReasonPhrase(), ErrorConstants.DB_CONSTRAINT, req.getRequestURI(),
                      ErrorConstants.TYPE_409_CONFLICT);
+    }
+
+    /**
+     * Habitual en tráfico de escáneres/bots probando rutas con el método equivocado — no es un fallo interno,
+     * así que se registra en WARN sin stack trace y se devuelve 405 en vez de caer en el catch-all como 500.
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ProblemDetail handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
+        log.warn("Method not supported: {} {}", req.getMethod(), req.getRequestURI());
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.METHOD_NOT_ALLOWED);
+        return build(pd, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(), ErrorConstants.METHOD_NOT_ALLOWED, req.getRequestURI(),
+                     ErrorConstants.TYPE_405_METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)

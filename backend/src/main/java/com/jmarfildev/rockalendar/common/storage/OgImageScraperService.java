@@ -1,7 +1,9 @@
 package com.jmarfildev.rockalendar.common.storage;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -87,12 +89,34 @@ public class OgImageScraperService {
     }
 
     private void validateHttpUrl(String url) {
+        URI uri;
         try {
-            String scheme = URI.create(url).getScheme();
-            if (!"http".equals(scheme) && !"https".equals(scheme)) {
-                throw new StorageException(ErrorConstants.SCRAPE_INVALID_URL);
-            }
+            uri = URI.create(url);
         } catch (IllegalArgumentException e) {
+            throw new StorageException(ErrorConstants.SCRAPE_INVALID_URL);
+        }
+
+        String scheme = uri.getScheme();
+        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+            throw new StorageException(ErrorConstants.SCRAPE_INVALID_URL);
+        }
+
+        String host = uri.getHost();
+        if (host == null) {
+            throw new StorageException(ErrorConstants.SCRAPE_INVALID_URL);
+        }
+
+        // Bloquea SSRF hacia infraestructura interna (loopback, red Docker, link-local).
+        // No protege contra DNS rebinding (resolución distinta entre esta comprobación y la petición real).
+        try {
+            for (InetAddress address : InetAddress.getAllByName(host)) {
+                if (address.isLoopbackAddress() || address.isLinkLocalAddress()
+                        || address.isSiteLocalAddress() || address.isMulticastAddress()
+                        || address.isAnyLocalAddress()) {
+                    throw new StorageException(ErrorConstants.SCRAPE_INVALID_URL);
+                }
+            }
+        } catch (UnknownHostException e) {
             throw new StorageException(ErrorConstants.SCRAPE_INVALID_URL);
         }
     }

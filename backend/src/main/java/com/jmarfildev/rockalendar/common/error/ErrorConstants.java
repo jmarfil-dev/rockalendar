@@ -18,6 +18,7 @@ public final class ErrorConstants {
     public static final String TYPE_409_CONFLICT = "conflict";
     public static final String TYPE_409_MODERATION_STATE = "moderation-state";
     public static final String TYPE_409_EVENT_STATE = "event-state";
+    public static final String TYPE_405_METHOD_NOT_ALLOWED = "method-not-allowed";
     public static final String TYPE_429_TOO_MANY_REQUESTS = "too-many-requests";
     public static final String TYPE_500_SERVER = "internal-error";
 
@@ -80,6 +81,9 @@ public final class ErrorConstants {
 
     // Conflict 409 genérico (constraint de BD no capturada explícitamente)
     public static final String DB_CONSTRAINT = "error.409.dbConstraint";
+
+    // Method Not Allowed 405
+    public static final String METHOD_NOT_ALLOWED = "error.405.methodNotAllowed";
 
     // Too Many Requests 429
     public static final String RATE_LIMIT_EXCEEDED = "error.429.rateLimitExceeded";

@@ -3,6 +3,12 @@
 Este documento resume los cambios relevantes por versión Rockalendar.
 El versionado de releases se marca mediante tags (p. ej. `v0.1-backend`).
 
+## [v1.3.2]
+
+### Fixed
+- [BACK] Vulnerabilidad SSRF en la importación de cartel por URL: el scraper de imagen social podía usarse para intentar acceder a direcciones internas del servidor (red Docker, servicios internos).
+- [BACK] Las peticiones con un método HTTP no soportado (p. ej. `GET` en un endpoint que espera `POST`) devolvían `500` en vez de `405`.
+
 ## [v1.3.1]
 
 ### Fixed
